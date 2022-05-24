@@ -1,6 +1,5 @@
 package com.pro.maluli.module.home.startLive.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -10,13 +9,9 @@ import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.AnchorInfoEntity;
 import com.pro.maluli.common.entity.JoinLiveEntity;
-import com.pro.maluli.common.entity.LastTimeLiveEntity;
-import com.pro.maluli.common.entity.OneToOneLiveEntity;
 import com.pro.maluli.common.entity.SeeLiveUserEntity;
 import com.pro.maluli.common.entity.ShareLiveEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;

@@ -1207,8 +1207,8 @@ public interface Api {
      */
     @Multipart
     @POST("https://lemon.fengxiangzb.com/admin/ajax/upload_many")
-    Observable<BaseResponse<UpdateImgEntity>> uploadVideo(
-            @PartMap Map<String, RequestBody> files);
+    Observable<BaseResponse<UpdateImgEntity>> uploadVideo(@PartMap Map<String, RequestBody> files);
+
     /**
      * 添加小视频
      *

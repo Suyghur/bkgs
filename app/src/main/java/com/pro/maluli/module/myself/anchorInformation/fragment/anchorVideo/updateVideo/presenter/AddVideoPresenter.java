@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.AnchorImgEntity;
-import com.pro.maluli.common.entity.AnchorLabelEntity;
 import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
@@ -70,8 +68,7 @@ public class AddVideoPresenter extends BasePresenter<IAddVideoContraction.View> 
                     RequestBody.create(MediaType.parse("multipart/form-data"), file));
 
         }
-        MultipartBody.Part desc =
-                MultipartBody.Part.createFormData("desc", trim);
+        MultipartBody.Part desc = MultipartBody.Part.createFormData("desc", trim);
         add(mService.subVideo(map, desc)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<UserInfoEntity>>(mView) {

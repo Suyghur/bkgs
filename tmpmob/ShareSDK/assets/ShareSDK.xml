@@ -18,7 +18,7 @@
 <ShortMessage Enable="false" />
 <Wechat AppId="wxcd85b6660fcabc91" AppSecret="24efe7e7780fd4386f12f2ad23f29b7f" ShareByAppClient="true" BypassApproval="false" Enable="true" />
 <WechatMoments AppId="wxcd85b6660fcabc91" AppSecret="24efe7e7780fd4386f12f2ad23f29b7f" ShareByAppClient="true" BypassApproval="false" Enable="true" />
-<QQ Id="1" SortId="7" AppId="1109489237" AppKey="SoOOoxf3sRKhl4Jg" ShareByAppClient="true" BypassApproval="false" Enable="true" />
+<QQ AppId="1109489237" AppKey="SoOOoxf3sRKhl4Jg" ShareByAppClient="true" BypassApproval="false" Enable="true" />
 <Instapaper Enable="false" />
 <Pocket Enable="false" />
 <YouDao Enable="false" />

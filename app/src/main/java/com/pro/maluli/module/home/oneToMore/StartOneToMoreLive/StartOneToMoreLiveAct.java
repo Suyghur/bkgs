@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -1415,7 +1416,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     }
 
     //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {

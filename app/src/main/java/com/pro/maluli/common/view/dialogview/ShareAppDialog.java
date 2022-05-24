@@ -34,7 +34,6 @@ import cn.sharesdk.tencent.qq.QQ;
  * Created by  kingsley on 2019/10/17 0017.
  * 确认付款
  */
-
 public class ShareAppDialog extends DialogFragment implements View.OnClickListener {
     private Dialog mDetailDialog;
     private LinearLayout dismissLL, qqLL, wechatLL, wechatPyqLL, QQZoneLL, downImagLL;

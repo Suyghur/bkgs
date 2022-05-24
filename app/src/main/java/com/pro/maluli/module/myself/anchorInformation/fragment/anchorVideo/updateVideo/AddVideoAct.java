@@ -1,35 +1,25 @@
 package com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.os.Bundle;
-import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.camera.core.SurfaceRequest;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.hw.videoprocessor.VideoProcessor;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -37,25 +27,17 @@ import com.luck.picture.lib.listener.OnResultCallbackListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
-import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
-import com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.addImg.adapter.DefaultItemAnimator;
-import com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.addImg.adapter.EditImgAdapter;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.TrimVideoActivity;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo.presenter.AddVideoPresenter;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo.presenter.IAddVideoContraction;
 import com.yalantis.ucrop.view.OverlayView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -156,24 +138,21 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
 
         switch (view.getId()) {
             case R.id.addvideoIv:
-
                 videoUrlOnUpdate = "";
                 PictureSelector.create(this)
                         .openGallery(PictureMimeType.ofVideo())
                         .isEnableCrop(true)
                         .freeStyleCropMode(OverlayView.FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH)
                         .imageEngine(GlideEngine.createGlideEngine())
+                        .videoQuality(0)
                         .maxSelectNum(1)
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override
                             public void onResult(List<LocalMedia> result) {
+                                for (LocalMedia localMedia : result) {
+                                    Log.d("bkgs", localMedia.toString());
+                                }
                                 // onResult Callback
-//                                String sad = "";
-//                                List<File> files = new ArrayList<>();
-//                                for (int i = 0; i < result.size(); i++) {
-//                                    File file = new File(result.get(i).getPath());
-//                                    files.add(file);
-//                                }
                                 Intent intent = new Intent(AddVideoAct.this, TrimVideoActivity.class);
                                 intent.putExtra("videoPath", result.get(0).getRealPath());
                                 intent.putExtra("maxVideoTime", maxVideoTime);
@@ -205,7 +184,6 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
                 files.add(file);
                 presenter.submitVideo(editGgEt.getText().toString().trim(), files);
 //                presenter.subImg(files);
-
 
                 break;
         }

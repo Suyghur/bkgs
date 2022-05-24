@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'com.mob.sdk'
 MobSDK {
-    appKey "2b9e4be99298c"
-    appSecret "d25f4efce889d3ae207a0f8a5f8a9586"
+    appKey "33f4bc8319c59"
+    appSecret "b484ed1be57d5e335c79ecaaedcac668"
 //    spEdition "fp" // 设定MobSDK为隐私协议适配版本
     ShareSDK {
         loopShare true
@@ -23,8 +23,8 @@ MobSDK {
                 enable true
             }
             QQ {
-                id 1
-                sortId 7
+//                id 1
+//                sortId 7
                 appId "1109489237"
                 appKey "SoOOoxf3sRKhl4Jg"
                 shareByAppClient true
@@ -44,11 +44,14 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.pro.maluli"
-        minSdkVersion 19
-        targetSdkVersion 30
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.appTargetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         multiDexEnabled true
 
         ndk {
@@ -57,26 +60,12 @@ android {
         }
 
         manifestPlaceholders = [
-                JPUSH_PKGNAME : "com.pro.maluli",
+                JPUSH_PKGNAME: "com.pro.maluli",
                 JPUSH_APPKEY : "212cf2c14dedabf45f2408f5", //JPush 上注册的包名对应的 Appkey.
-                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 
-    buildTypes {
-        release {
-            // 移除无用的resource文件
-            shrinkResources false
-            //是否混淆
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
-        }
-    }
     //设置签名，debug运行也用正式签名
     signingConfigs {
         config {
@@ -87,6 +76,26 @@ android {
             v1SigningEnabled true
             v2SigningEnabled true
         }
+    }
+
+    buildTypes {
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            shrinkResources false
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     packagingOptions {
@@ -123,6 +132,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.8.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.7'
+
+    implementation 'com.github.yellowcath:VideoProcessor:2.4.2'
 //    api 'com.alibaba:fastjson:1.2.10'
 
 //    implementation project(':uikit')

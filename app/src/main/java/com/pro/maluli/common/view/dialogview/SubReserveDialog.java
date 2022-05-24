@@ -28,7 +28,6 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.entity.ImageEntity;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
-import com.pro.maluli.module.home.base.applyForAnchor.ApplyForAnchorAct;
 import com.pro.maluli.module.myself.myAccount.appeal.adapter.AppealAdapter;
 import com.yalantis.ucrop.view.OverlayView;
 
@@ -111,9 +110,9 @@ public class SubReserveDialog extends DialogFragment implements View.OnClickList
         selectImgRv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         selectImgRv.setAdapter(adapter);
 
-        //         先注册需要点击的子控件id（注意，请不要写在convert方法里）
+        // 先注册需要点击的子控件id（注意，请不要写在convert方法里）
         adapter.addChildClickViewIds(R.id.selectImgRiv, R.id.deleteImg);
-// 设置子控件点击监听
+        // 设置子控件点击监听
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
