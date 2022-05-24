@@ -115,9 +115,9 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
         adapter = new RechargePayTypeAdapter(entities);
         payTypeRlv.setLayoutManager(new GridLayoutManager(this, 3));
         payTypeRlv.setAdapter(adapter);
-//         先注册需要点击的子控件id（注意，请不要写在convert方法里）
+        // 先注册需要点击的子控件id（注意，请不要写在convert方法里）
         adapter.addChildClickViewIds(R.id.payTypeLL);
-// 设置子控件点击监听
+        // 设置子控件点击监听
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -201,7 +201,7 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
                     // 判断resultStatus 为9000则代表支付成功
                     if (TextUtils.equals(resultStatus, "9000")) {
                         // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                        ToastUtils.showShort("成功");
+                        ToastUtils.showShort("充值成功");
                     } else {
                         // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                     }

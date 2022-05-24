@@ -149,9 +149,6 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override
                             public void onResult(List<LocalMedia> result) {
-                                for (LocalMedia localMedia : result) {
-                                    Log.d("bkgs", localMedia.toString());
-                                }
                                 // onResult Callback
                                 Intent intent = new Intent(AddVideoAct.this, TrimVideoActivity.class);
                                 intent.putExtra("videoPath", result.get(0).getRealPath());
