@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_titlebar_layout" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_147"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_f9f9f9_6">
+
+        <EditText
+            android:id="@+id/editIntroEt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:ellipsize="end"
+            android:gravity="top"
+            android:hint="请输入您的简介"
+            android:paddingHorizontal="@dimen/dp_15"
+            android:paddingTop="@dimen/dp_13"
+            android:textColorHint="@color/c_6a6368"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/inputMaxTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_13"
+            android:text="0/200"
+            android:textColor="@color/c_958f94"
+            android:textSize="@dimen/sp_10" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/subMitTv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_42"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@drawable/selector_input_success_btn"
+        android:gravity="center"
+        android:text="保存"
+        android:textColor="@drawable/selector_color_btn_textcolor"
+        android:textSize="@dimen/dp_16" />
+</LinearLayout>

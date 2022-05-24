@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_ffffff_10"
+        android:gravity="bottom">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/onlineNumberTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:text="条评论"
+                android:textColor="@color/c_342C33"
+                android:textSize="@dimen/sp_16" />
+
+            <LinearLayout
+                android:id="@+id/dismissLL"
+                android:layout_width="@dimen/dp_30"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dp_15"
+                android:gravity="center_vertical|right"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dp_10">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_13"
+                    android:layout_height="@dimen/dp_13"
+
+                    android:background="@mipmap/ic_close_x"
+                    android:padding="@dimen/dp_65" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <LinearLayout
+            android:paddingHorizontal="@dimen/dp_15"
+            android:paddingVertical="@dimen/dp_8"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="@dimen/dp_52"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:paddingLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="留下您的评论吧......"
+                android:id="@+id/sendTv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/rl"
+                android:background="@drawable/shape_f3f3f3_29" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/nim_touch_bg"
+    android:clickable="true"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dip"
+        android:minHeight="@dimen/dp_71">
+
+        <FrameLayout
+            android:id="@+id/portrait_panel"
+            android:layout_width="@dimen/dp_70"
+            android:layout_height="@dimen/dp_70"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true">
+
+            <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+                android:id="@+id/img_head"
+                android:layout_width="@dimen/avatar_size_default"
+                android:layout_height="@dimen/avatar_size_default"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="12dp"/>
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:id="@+id/content_layout"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tv_nickname"
+            android:orientation="vertical"
+            android:layout_toRightOf="@id/portrait_panel"
+            android:layout_alignBottom="@id/portrait_panel"
+            android:layout_marginRight="10dip">
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:layout_toRightOf="@id/portrait_panel"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:text="dsfaasfsd"
+                android:textColor="@color/color_black_333333"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="none"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="sdfadfa"
+                android:scrollHorizontally="true"
+                android:textColor="@color/color_aaaaaa_content_text"
+                android:gravity="center_vertical"
+                android:textSize="14sp"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="16dip"
+            android:textColor="@color/color_aaaaaa_content_text"
+            android:textSize="@dimen/text_small_size_ten_sp"/>
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/bottom_line"
+        style="@style/horizontal_light_thin_divider"
+        android:layout_marginLeft="70dip"/>
+
+</LinearLayout>

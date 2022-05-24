@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_ffffff_10"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_10">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarClv"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40" />
+
+        <LinearLayout
+            android:id="@+id/payTypeLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_7"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:maxWidth="@dimen/dp_200"
+                android:layout_weight="1"
+                android:id="@+id/nameTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100高手币"
+                android:textColor="@color/c_342C33"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/timeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_2"
+                android:text="2021年7月29日11:00"
+                android:textColor="@color/c_958f94"
+                android:textSize="@dimen/dp_14" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/numberBkTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="@dimen/dp_2"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="100高手币"
+                android:textColor="@color/c_8e1d77"
+                android:textSize="@dimen/sp_16" />
+<LinearLayout
+    android:layout_below="@+id/numberBkTv"
+    android:layout_alignParentEnd="true"
+    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="right"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/resourceTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        android:textColor="@color/c_958f94"
+        android:textSize="@dimen/sp_14" />
+
+    <TextView
+        android:layout_marginLeft="@dimen/dp_6"
+        android:visibility="visible"
+        android:id="@+id/giftTypeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        android:textColor="@color/c_958f94"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:background="@color/c_dcdcdc" />
+</LinearLayout>

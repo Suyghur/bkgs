@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">百科高手</string>
+    <string name="Main_sec_finish_string">再按一次退出</string>
+    <string name="Main_tab_home_string">首页</string>
+    <string name="Main_tab_video_string">小视频</string>
+    <string name="Main_tab_message_string">消息中心</string>
+    <string name="Main_tab_mine_string">我的</string>
+    <string name="Login_String">登录</string>
+    <string name="Login_register">注册</string>
+    <string name="viewpager_indicator">%1$s/%2$s</string>
+    <string name="in_process">正在处理...</string>
+    <item name="tag_key_data" type="id" />
+    <item name="tag_key_position" type="id" />
+</resources>

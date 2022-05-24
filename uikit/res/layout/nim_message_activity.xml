@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/message_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:visibility="gone"
+            app:elevation="0dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:subtitleTextAppearance="@style/Toolbar.SubTitleText"
+                app:titleTextAppearance="@style/Toolbar.TitleText" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+                <RelativeLayout
+                    android:id="@+id/leftImg_ly"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <ImageView
+                        android:id="@+id/leftImg"
+                        android:layout_width="@dimen/dp_size_24"
+                        android:layout_height="@dimen/dp_size_24"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dp_size_15"
+                        android:background="@drawable/ic_back_left" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:maxEms="9"
+                    android:minEms="2"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_right"
+                    android:layout_width="50dp"
+                    android:layout_height="44dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/iv_title"
+                        android:layout_width="@dimen/dp_size_17"
+                        android:layout_height="@dimen/dp_size_17"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:src="@drawable/ic_more_message" />
+                </RelativeLayout>
+            </RelativeLayout>
+            <com.netease.nim.uikit.business.session.activity.my.view.MarqueeTextView
+                android:id="@+id/topMsgTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_36"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/dp_size_15"
+                android:text="--"
+                android:layout_centerInParent="true"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textSize="@dimen/sp_14"
+                android:textColor="#342c33"
+                android:background="#dcdcdc"
+                android:marqueeRepeatLimit="marquee_forever"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container_snapshot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

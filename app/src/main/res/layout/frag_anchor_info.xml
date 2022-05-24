@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/dp_30"
+    android:paddingHorizontal="@dimen/dp_15">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_3"
+            android:text="主播标签"
+            android:textColor="@color/c_342C33"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/editLabelTv"
+            android:padding="@dimen/dp_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dp_3"
+            android:text="编辑"
+            android:textColor="@color/c_958f94"
+            android:textSize="@dimen/sp_14" />
+    </RelativeLayout>
+
+    <com.pro.maluli.common.view.myselfView.LabelsView
+        android:id="@+id/labeleLV"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_width="match_parent"
+        app:labelBackground="@drawable/shape_f9f9f9_3"
+        app:labelTextColor="@color/c_6a6368"
+        app:labelTextPaddingBottom="5dp"
+        app:labelTextPaddingLeft="10dp"
+        app:labelTextPaddingRight="10dp"
+        app:labelTextPaddingTop="5dp"
+        app:wordMargin="@dimen/dp_10"
+        android:minHeight="@dimen/dp_50"
+        app:lineMargin="@dimen/dp_10"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/lableTipsTv"
+        android:gravity="center"
+        android:text="暂无标签"
+        android:textSize="@dimen/sp_18"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:background="@color/c_dcdcdc" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_3"
+            android:text="主播介绍"
+            android:textColor="@color/c_342C33"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/editJsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dp_3"
+            android:text="编辑"
+            android:textColor="@color/c_958f94"
+            android:textSize="@dimen/sp_14" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/anchorInfoTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="--"
+        android:textColor="@color/c_342C33"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>

@@ -1,0 +1,10 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <!-- 小圆点View -->
+    <View
+        android:id="@+id/v_dot"
+        android:layout_width="@dimen/dp_15"
+        android:layout_height="2dp"
+        android:background="@drawable/shape_30ffffff_4"/>
+</RelativeLayout>

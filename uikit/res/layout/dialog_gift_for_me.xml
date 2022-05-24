@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/giftMainRl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_ffffff_top10"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/titleRl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/onlineNumberTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:text="收到礼物"
+                android:textColor="#342C33"
+                android:textSize="@dimen/sp_16" />
+
+            <LinearLayout
+                android:id="@+id/dismissLL"
+                android:layout_width="@dimen/dp_size_30"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dp_size_15"
+                android:gravity="center_vertical|right"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dp_10">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_size_13"
+                    android:layout_height="@dimen/dp_size_13"
+
+                    android:background="@drawable/ic_close_x"
+                    android:padding="@dimen/dp_size_65" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_size_200"
+            android:minHeight="@dimen/dp_size_200"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/giftRlv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/dp_size_200"
+                android:visibility="visible" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/nodataTv"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_size_200"
+                android:text="暂时没有收到礼物哦"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dp_size_18" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_size_62"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/dp_size_15">
+
+            <TextView
+                android:id="@+id/tipsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已扣除手续费"
+                android:textColor="#342C33"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:id="@+id/yigognTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tipsTv"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="与该用户私信累计获得："
+                android:textColor="#FF6A6368"
+                android:textSize="@dimen/dp_14" />
+
+            <TextView
+                android:id="@+id/allMoneyTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tipsTv"
+                android:layout_marginLeft="@dimen/dp_4"
+                android:layout_marginTop="@dimen/dp_4"
+                android:layout_toRightOf="@+id/yigognTv"
+                android:text="--"
+                android:textColor="#FF6A6368"
+                android:textSize="@dimen/dp_14" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_ffffff_10"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="@dimen/max_text_bubble_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <TextView
+            android:text="预约信息"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="phone|email|web"
+            android:gravity="center_vertical|left"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="3dip"
+            android:maxWidth="@dimen/max_text_bubble_width"
+            android:textColor="@color/color_black_b3000000"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="你好呀"
+            android:id="@+id/contentGiftTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="phone|email|web"
+            android:gravity="center_vertical|left"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="3dip"
+            android:maxWidth="@dimen/max_text_bubble_width"
+            android:textColor="@color/color_black_b3000000"
+            android:textSize="16sp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectImgRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</FrameLayout>

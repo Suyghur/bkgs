@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_5">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:background="@drawable/shape_20000000_4"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_6">
+
+
+        <TextView
+            android:id="@+id/msgTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="系统通知：请勿在直播间内传播色情、
+赌博等信息"
+            android:textColor="@color/c_ffffff"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
+</RelativeLayout>

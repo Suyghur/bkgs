@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:id="@+id/topClickRl"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/contentRl"
+        android:layout_width="match_parent"
+        android:layout_height="298dp"
+        android:background="@drawable/shape_292728_top10">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_above="@id/viewLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_size_15" />
+
+        <LinearLayout
+            android:layout_above="@id/viewLine"
+            android:id="@+id/ll_dot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/bottomLL"
+            android:layout_marginHorizontal="@dimen/dp_size_15"
+            android:background="#30ffffff" />
+
+        <LinearLayout
+            android:id="@+id/bottomLL"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_size_46"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/dp_size_15">
+
+            <ImageView
+                android:layout_width="@dimen/dp_size_20"
+                android:layout_height="@dimen/dp_size_20"
+                android:src="@drawable/ic_bk" />
+
+            <TextView
+                android:id="@+id/myBlanceTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_size_7"
+                android:text="1543"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_24" />
+
+            <TextView
+                android:paddingVertical="@dimen/dp_10"
+                android:id="@+id/gotRechargeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_size_7"
+                android:text="充值"
+                android:textColor="#FFFFA743"
+                android:textSize="@dimen/sp_14" />
+
+            <ImageView
+                android:layout_width="@dimen/dp_size_20"
+                android:layout_height="@dimen/dp_size_20"
+                android:src="@drawable/ic_yello_right_jt" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

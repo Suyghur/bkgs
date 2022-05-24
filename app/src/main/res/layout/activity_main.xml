@@ -1,0 +1,157 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rgMainTab"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/rgMainTab"
+        android:background="@color/bg_Gray" />
+
+    <RadioGroup
+        android:id="@+id/rgMainTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <RadioButton
+            android:id="@+id/rbMainTabHome"
+            style="@style/radioMainTabStyle"
+            android:checked="true"
+            android:drawableTop="@drawable/selector_main_tab_home"
+            android:text="@string/Main_tab_home_string" />
+
+        <RadioButton
+            android:id="@+id/rbMainTabWealth"
+            style="@style/radioMainTabStyle"
+            android:drawableTop="@drawable/selector_main_tab_video"
+            android:text="小视频" />
+        <RadioButton
+            android:id="@+id/rbMainTabMessage"
+            style="@style/radioMainTabStyle"
+            android:drawableTop="@drawable/selector_main_tab_message"
+            android:text="私信" />
+        <RadioButton
+            android:id="@+id/rbMainTabMine"
+            style="@style/radioMainTabStyle"
+            android:drawableTop="@drawable/selector_main_tab_mine"
+            android:text="@string/Main_tab_mine_string" />
+
+    </RadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/messageTestLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/xiaoxi_noyong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_main_tab_message"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/haveNews_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_15"
+                    android:layout_alignTop="@+id/xiaoxi_noyong"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/dp_20"
+                    android:layout_toRightOf="@+id/xiaoxi_noyong"
+                    android:background="@drawable/shape_yuan_fc595e"
+                    android:gravity="center"
+                    android:minWidth="@dimen/dp_15"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text=""
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/woxiaoxi_noyong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_main_tab_mine"
+                    android:visibility="invisible" />
+
+                <View
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:layout_marginRight="@dimen/dp_5"
+                    android:id="@+id/customerNewTv"
+                    android:layout_width="@dimen/dp_7"
+                    android:layout_height="@dimen/dp_7"
+                    android:layout_toRightOf="@+id/woxiaoxi_noyong"
+                    android:background="@drawable/shape_yuan_fc595e"
+                    />
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text=""
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

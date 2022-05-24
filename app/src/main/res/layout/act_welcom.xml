@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.pro.maluli.common.view.myselfView.CustomVideoView
+        android:id="@+id/videoview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/startIv"
+        android:background="@drawable/ic_splash_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/mTime"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_34"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/dp_35"
+        android:layout_marginRight="@dimen/dp_18"
+        android:background="@drawable/shape_30_000000_29"
+        android:gravity="center"
+        android:minWidth="@dimen/dp_78"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:text="跳过"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
+    <TextView
+        android:id="@+id/checkDetailTv"
+        android:gravity="center"
+        android:text="点击这里，跳转详情页面"
+        android:textColor="@color/c_95928e"
+        android:textSize="@dimen/sp_16"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:background="@drawable/shape_f5f5f5_32"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_50"/>
+</RelativeLayout>

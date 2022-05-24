@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_titlebar_layout" />
+
+    <EditText
+        android:id="@+id/inputLabelEt"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@null"
+        android:hint="请输入标签"
+        android:maxLength="10"
+        android:paddingHorizontal="@dimen/dp_15"
+        android:textSize="@dimen/sp_18" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:background="@color/c_dcdcdc" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="自定义标签最多10个字"
+        android:textColor="#958f94"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>

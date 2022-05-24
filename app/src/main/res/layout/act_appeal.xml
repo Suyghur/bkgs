@@ -1,0 +1,96 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_titlebar_layout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:id="@+id/inputContentEt"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_117"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@drawable/shape_fefefe_10_dfdfdf"
+                android:gravity="top"
+                android:hint="举报/申诉/意见反馈内容不能为空"
+                android:paddingHorizontal="@dimen/dp_10"
+                android:paddingTop="@dimen/dp_13"
+                android:textSize="@dimen/sp_14" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectImgRv"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/selectChatRl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_44"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/shape_f9f9f9_30"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/feedTypeTv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:text="请选择联系方式"
+                    android:textColor="@color/c_958f94"
+                    android:textSize="@dimen/sp_14" />
+
+                <ImageView
+                    android:id="@+id/iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dp_15"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:src="@mipmap/ic_down" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/inputNumberEt"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_42"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/shape_f9f9f9_30"
+                android:hint="请输入联系方式"
+                android:paddingLeft="@dimen/dp_10"
+                android:textSize="@dimen/sp_14" />
+
+
+            <TextView
+                android:id="@+id/submitFeedTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_42"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@drawable/shape_b23299_d23db3_34"
+                android:gravity="center"
+                android:text="提交"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_16" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

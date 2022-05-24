@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mine_mian_ll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
+
+    <include
+        android:id="@+id/nodataView"
+        layout="@layout/no_data_layout"
+        android:visibility="gone">
+
+    </include>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tipsVideoTv"
+        android:layout_gravity="center"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dp_25"
+        android:background="@drawable/shape_ffffff_10"
+        android:gravity="center"
+        android:text="游客限制观看,请登录"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16" />
+</FrameLayout>

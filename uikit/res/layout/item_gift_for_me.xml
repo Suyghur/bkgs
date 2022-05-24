@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/dp_10"
+        android:paddingVertical="@dimen/dp_10">
+
+        <com.netease.nim.uikit.common.ui.imageview.CircleImageView
+            android:id="@+id/avaterCiv"
+            android:layout_width="@dimen/dp_size_32"
+            android:layout_height="@dimen/dp_size_32"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_size_5" />
+
+        <TextView
+            android:id="@+id/userNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/avaterCiv"
+            android:text="sdad"
+            android:textColor="#FF342C33"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/tiemTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/userNameTv"
+            android:layout_marginTop="@dimen/dp_4"
+            android:layout_toRightOf="@+id/avaterCiv"
+            android:text="设置"
+            android:textColor="#FFB1B1B1"
+            android:textSize="@dimen/sp_12" />
+
+        <TextView
+            android:id="@+id/giftType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/moneyTv"
+            android:text="sdad"
+            android:textColor="#FF342C33"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/moneyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/userNameTv"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:text="设置"
+            android:textColor="#FFA743"
+            android:textSize="@dimen/sp_14" />
+
+    </RelativeLayout>
+</LinearLayout>

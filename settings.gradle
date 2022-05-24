@@ -1,0 +1,6 @@
+rootProject.name = 'bkgs'
+include ':app'
+include ':uikit'
+include ':playerkit'
+include "video-effect"
+include "video-compressor"

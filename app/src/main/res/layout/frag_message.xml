@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mine_mian_ll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_15"
+        android:paddingVertical="@dimen/dp_5">
+
+        <LinearLayout
+            android:id="@+id/searchMsgLL"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_32"
+            android:layout_weight="1"
+            android:background="@drawable/shape_8e1d77_32_1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/dp_10">
+
+            <ImageView
+                android:layout_width="@dimen/dp_12"
+                android:layout_height="@dimen/dp_12"
+                android:src="@mipmap/ic_search" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="主播昵称，ID号，直播间标题，标签，分类"
+                android:textColorHint="@color/c_b1b1b1"
+                android:textSize="@dimen/sp_12" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/systemLL"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_46"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_15">
+
+        <ImageView
+            android:layout_width="@dimen/dp_22"
+            android:layout_height="@dimen/dp_22"
+            android:layout_marginRight="@dimen/dp_9"
+            android:src="@mipmap/ic_system_msg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="系统通知"
+            android:textColor="@color/c_6A6368"
+            android:textSize="@dimen/dp_16" />
+
+        <TextView
+            android:id="@+id/hasMessageImg"
+            android:layout_width="@dimen/dp_16"
+            android:layout_height="@dimen/dp_16"
+            android:background="@drawable/shape_yuan_fc595e"
+            android:gravity="center"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_9"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@mipmap/ic_right" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:background="@color/c_dcdcdc" />
+
+    <LinearLayout
+        android:id="@+id/yuyueLL"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_46"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_15">
+
+        <ImageView
+            android:layout_width="@dimen/dp_22"
+            android:layout_height="@dimen/dp_22"
+            android:layout_marginRight="@dimen/dp_9"
+            android:src="@mipmap/ic_yy_msg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="预约消息"
+            android:textColor="@color/c_6A6368"
+            android:textSize="@dimen/dp_16" />
+
+        <TextView
+            android:id="@+id/yuyueMessageTv"
+            android:layout_width="@dimen/dp_16"
+            android:layout_height="@dimen/dp_16"
+            android:background="@drawable/shape_yuan_fc595e"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_9"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@mipmap/ic_right" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:background="@color/c_dcdcdc" />
+
+    <LinearLayout
+        android:id="@+id/lineUpLL"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_46"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_15">
+
+        <ImageView
+            android:layout_width="@dimen/dp_22"
+            android:layout_height="@dimen/dp_22"
+            android:layout_marginRight="@dimen/dp_9"
+            android:src="@mipmap/ic_yy_pd_msg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="预约排队"
+            android:textColor="@color/c_6A6368"
+            android:textSize="@dimen/dp_16" />
+
+        <TextView
+            android:id="@+id/queenMessageTv"
+            android:layout_width="@dimen/dp_16"
+            android:layout_height="@dimen/dp_16"
+            android:background="@drawable/shape_yuan_fc595e"
+            android:gravity="center"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_9"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@mipmap/ic_right" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_7"
+        android:background="@color/c_efefef" />
+
+    <LinearLayout
+        android:id="@+id/recentLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <fragment
+            android:id="@+id/recent_contacts_fragment"
+            android:name="com.netease.nim.uikit.business.recent.RecentContactsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></fragment>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/emptyBg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/dp_size_50"
+        android:contentDescription="@string/empty"
+        android:drawableTop="@drawable/nim_messages_list_empty_bg"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/dp_size_5"
+        android:text="还没有会话，找个主播聊聊吧！"
+        android:visibility="visible" />
+
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_inputdlg_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:elevation="5dp"
+    android:transformPivotY="-5dp"
+    android:translationY="5dp"
+    android:outlineSpotShadowColor="#595151"
+    android:outlineAmbientShadowColor="#595151"
+    android:visibility="visible">
+
+    <RelativeLayout
+        android:id="@+id/rl_comment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+      >
+
+        <EditText
+            android:id="@+id/et_input_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="45dp"
+            android:background="@null"
+            android:gravity="center|left"
+            android:hint="说点什么..."
+            android:imeActionLabel="发送"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/shape_edit_cursor"
+            android:imeOptions="actionDone"
+            android:lineSpacingMultiplier="1.1"
+            android:maxHeight="120dp"
+            android:maxLength="100"
+            android:maxLines="3"
+            android:minHeight="80dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/black_21"
+            android:textColorHint="#6f6f6f"
+            android:textSize="@dimen/text_size_15"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            tools:ignore="InvalidImeActionId" />
+
+
+        <ImageView
+            android:layout_centerVertical="true"
+            android:id="@+id/iv_confirm"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="5dp"
+            android:background="@drawable/ic_douyin_send" />
+
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

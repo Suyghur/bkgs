@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_5">
+
+    <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+        android:id="@+id/headCiv"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+       />
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/dp_3"
+        android:layout_toRightOf="@+id/headCiv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/nameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置"
+            android:textColor="@color/c_ffffff"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:layout_marginTop="@dimen/dp_5"
+            android:id="@+id/msgTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_20000000_4"
+            android:padding="@dimen/dp_6"
+            android:text="设置"
+            android:textColor="@color/c_ffffff"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
+</RelativeLayout>

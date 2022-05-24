@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_titlebar_layout" />
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_127"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_weight="2.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_f9f9f9_6">
+
+            <EditText
+                android:id="@+id/editGgEt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:ellipsize="end"
+                android:gravity="top"
+                android:hint="请输入小视频描述~~~"
+                android:paddingHorizontal="@dimen/dp_15"
+                android:paddingTop="@dimen/dp_13"
+                android:textColorHint="@color/c_6a6368"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/inputMaxTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_13"
+                android:text="0/50"
+                android:textColor="@color/c_958f94"
+                android:textSize="@dimen/sp_10" />
+        </RelativeLayout>
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/addvideoIv"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:scaleType="fitXY"
+            android:background="@mipmap/ic_add_img"
+            app:riv_corner_radius="@dimen/dp_10"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/submitVideoTv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_42"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@drawable/shape_b23299_d23db3_34"
+        android:gravity="center"
+        android:text="确认发布"
+        android:textColor="@color/_ccffffff"
+        android:textSize="@dimen/sp_16" />
+</LinearLayout>

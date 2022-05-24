@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:id="@+id/dismissTopRl"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_ffffff_10"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_horizontal"
+        android:minHeight="@dimen/dp_200"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/dp_15">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/toptipsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:text="在线观众:"
+                android:textColor="@color/c_342C33"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/onlineNumberTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@id/toptipsTv"
+                android:text="--"
+                android:textColor="@color/c_342C33"
+                android:textSize="@dimen/sp_16" />
+
+
+            <LinearLayout
+                android:id="@+id/dismissLL"
+                android:layout_width="@dimen/dp_30"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical|right"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dp_10">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_13"
+                    android:layout_height="@dimen/dp_13"
+
+                    android:background="@mipmap/ic_close_x"
+                    android:padding="@dimen/dp_65" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_20"
+            android:background="@drawable/shape_f9f9f9_30"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/dp_10">
+
+            <ImageView
+                android:id="@+id/iv"
+                android:layout_width="@dimen/dp_15"
+                android:layout_height="@dimen/dp_15"
+                android:src="@mipmap/ic_search_hui_bg" />
+
+            <EditText
+                android:id="@+id/inputOnlineEt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_3"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入用户名称进行搜索"
+                android:imeOptions="actionSearch"
+                android:paddingLeft="@dimen/dp_4"
+                android:singleLine="true"
+                android:textColorHint="@color/c_b1b1b1"
+                android:textSize="@dimen/sp_12" />
+
+        </LinearLayout>
+
+        <com.pro.maluli.common.view.myselfView.MaxHeightRecyclerView
+            android:id="@+id/onlineMemberRl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:limit_maxHeight="@dimen/dp_200" />
+
+        <TextView
+            android:id="@+id/nodataTv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_100"
+            android:gravity="center"
+            android:text="暂无数据"
+            android:textColor="@color/c_342C33"
+            android:textSize="@dimen/sp_18"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</RelativeLayout>
