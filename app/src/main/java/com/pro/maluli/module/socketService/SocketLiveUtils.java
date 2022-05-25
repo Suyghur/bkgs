@@ -6,10 +6,9 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pro.maluli.common.entity.OnTwoOneSocketEntity;
-import com.pro.maluli.common.entity.ReserveEntity;
 import com.pro.maluli.module.socketService.event.OTOEvent;
-import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
+import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
@@ -20,7 +19,6 @@ import java.net.URI;
 public enum SocketLiveUtils {
     INSTANCE;
     private WebSocketClient mWebSocketClient;//唯一
-    public static final String TAG = "socketzhibo";
     public boolean isRunning = false;
     public String socketUrl;
     boolean isFinish = false;
@@ -36,7 +34,7 @@ public enum SocketLiveUtils {
     private Runnable heartBeatRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.e("JWebSocketClientService", "心跳包检测websocket连接状态");
+            Logger.e("心跳包检测websocket连接状态");
             if (isFinish) {
                 closeConnect();
                 return;
@@ -94,7 +92,7 @@ public enum SocketLiveUtils {
             mWebSocketClient = new WebSocketClient(uri) {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
-                    Log.i(TAG, "onOpen: SOCKET 已启动");
+                    Logger.e("onOpen: SOCKET 已启动");
                 }
 
                 @Override
@@ -105,19 +103,16 @@ public enum SocketLiveUtils {
 //                    msg_id 0-推送失败 1-正常推送 2-设定时间 3-加时 4-开始 5-结束
 //                    FSocketRes res = new FSocketRes();
 //                    res.fromJSONAuto(s);
-                    Log.i(TAG, "onMessage: " + s);
+                    Logger.e("onMessage: " + s);
                     OTOEvent oneEvent = new OTOEvent();
                     switch (msgType) {
                         case 1000://连接成功提示
-
                             break;
                         case 1://一对一预约页面
-                            OnTwoOneStartEntity entity = JSONObject.parseObject(JSON.parseObject(s)
-                                    .getString("data"), OnTwoOneStartEntity.class);
+                            OnTwoOneStartEntity entity = JSONObject.parseObject(JSON.parseObject(s).getString("data"), OnTwoOneStartEntity.class);
                             oneEvent.setEntity(entity);
                             oneEvent.setMsg_id(msgType);
                             EventBus.getDefault().post(oneEvent);
-
                             break;
                         case 5://结束直播
                         case 6://评分
@@ -126,20 +121,20 @@ public enum SocketLiveUtils {
                         case 404://用户异常退出
                             oneEvent.setMsg_id(msgType);
                             EventBus.getDefault().post(oneEvent);
-
                             break;
                     }
                 }
 
                 @Override
                 public void onClose(int i, String s, boolean b) {
-                    Log.i(TAG, "onClose: SOCKET 已关闭");
+                    Logger.e("onClose: SOCKET 已关闭");
 //                    isFinish=true;
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Log.i(TAG, "onClose: SOCKET 已关闭,连接出错");
+                    Logger.e("onClose: SOCKET 已关闭,连接出错, err: " + e.getLocalizedMessage());
+                    e.printStackTrace();
                 }
             };
 

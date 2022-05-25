@@ -1,5 +1,8 @@
 package com.pro.maluli.module.home.oneToOne.queue;
 
+import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.VIDEO_PERMISSIONS;
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -7,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.netease.lava.nertc.sdk.NERtc;
+import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nim.uikit.common.media.imagepicker.camera.ConfirmationDialog;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -38,7 +43,6 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.AppIdConstants;
-import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.OneToOneLiveEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
@@ -46,7 +50,6 @@ import com.pro.maluli.common.entity.SeeLiveUserEntity;
 import com.pro.maluli.common.networkRequest.Url;
 import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.utils.preferences.Preferences;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
@@ -55,9 +58,6 @@ import com.pro.maluli.common.view.dialogview.EditPersonDialog;
 import com.pro.maluli.common.view.dialogview.SubReserveDialog;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.myselfView.QFolderTextView;
-import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
-import com.pro.maluli.module.home.base.HomeFrag;
-import com.pro.maluli.module.home.base.adapter.HomeTopVideoFrg;
 import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.OneTopVideoFrg;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueAdapter;
@@ -65,9 +65,9 @@ import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueBannerAdapter;
 import com.pro.maluli.module.home.oneToOne.queue.presenter.IOneToOneQueueContraction;
 import com.pro.maluli.module.home.oneToOne.queue.presenter.OneToOneQueuePresenter;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
-import com.pro.maluli.module.other.login.LoginAct;
 import com.pro.maluli.module.socketService.SocketUtils;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
+import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -85,16 +85,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.PERMISSIONS_FRAGMENT_DIALOG;
-import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.VIDEO_PERMISSIONS;
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
-
 /**
  * @author Kingsley
  * @date 2021/6/15
  */
-public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.View,
-        OneToOneQueuePresenter> implements IOneToOneQueueContraction.View {
+public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.View, OneToOneQueuePresenter> implements IOneToOneQueueContraction.View {
     @BindView(R.id.pointLL)
     LinearLayout pointLL;
     @BindView(R.id.anchorAvaterCiv)
@@ -150,17 +145,19 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     private String reserveNumber;
     private boolean isFristLive;//判断是否是第一次创建直播间
     private boolean mDataServiceBind;
+    private String liveBg;
+    private String liveTitle;
     private boolean isFristStart = true;
     boolean isStartVideo = false;
     private boolean isStartLive;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
 
-    /**
-     * socket
-     *
-     * @return
-     */
+    //    /**
+//     * socket
+//     *
+//     * @return
+//     */
 //    public DataService mDataService;
 //    public String socketUrl = "";
 //    private ServiceConnection coreServiceConnection = new ServiceConnection() {
@@ -189,14 +186,18 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         StatusbarUtils.setStatusBarView(this);
         isFristLive = getIntent().getBooleanExtra("IS_FRIST_LIVE", false);
         isStartLive = getIntent().getBooleanExtra("isStartLive", false);
+        liveBg = getIntent().getStringExtra("LIVE_BG");
+        liveTitle = getIntent().getStringExtra("LIVE_TITLE");
         presenter.anchor_id = getIntent().getStringExtra("ANCHOR_ID");
+
+        Logger.d("title: " + liveTitle);
+        Logger.d("bg: " + liveBg);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            startForegroundService(DataService.getIntent(this));
 //        } else {
 //            startService(DataService.getIntent(this));//启动数据服务
 //        }
 //        mDataServiceBind = bindService(DataService.getIntent(), coreServiceConnection, Context.BIND_AUTO_CREATE);
-
     }
 
     @Override
@@ -209,6 +210,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         super.onResume();
         String lasdak = AcacheUtil.getToken(OneToOneQueueAct.this, true).substring(7);
         String url = Url.SOCKET_URL + "?anchor_id=" + presenter.anchor_id + "&token=" + lasdak;
+        Logger.e(url);
         SocketUtils.INSTANCE.onStartCommand(url);
         startTime();
     }
@@ -238,8 +240,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
             public void onFinish() {
                 Message message = new Message();
                 message.what = UPTATE_VIEWPAGER;
-                if (reserveEntity!=null&&
-                        reserveEntity.getBanner()!=null&&autoCurrIndex == reserveEntity.getBanner().size() - 1) {
+                if (reserveEntity != null && reserveEntity.getBanner() != null && autoCurrIndex == reserveEntity.getBanner().size() - 1) {
                     autoCurrIndex = -1;
                 }
                 if (isStartVideo) {
@@ -326,10 +327,12 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doTradeListEvent(OnTwoOneEvent tradeListEvent) {
+        Logger.e("一对一排队 doTradeListEvent");
         if (tradeListEvent != null) {
             setQueueSuccess(tradeListEvent.getEntity());
         }
     }
+
     private class TopVideoAdapter extends FragmentPagerAdapter {
         public TopVideoAdapter(FragmentManager fm) {
             super(fm);
@@ -350,8 +353,10 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
             return topVideoFragment.get(position);
         }
     }
+
     List<Fragment> topVideoFragment;
     TopVideoAdapter topVideoAdapter;
+
     private void autoBanner() {
         topVideoFragment.clear();
         for (int i = 0; i < reserveEntity.getBanner().size(); i++) {
@@ -386,7 +391,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         bannerViewPager.setAdapter(topVideoAdapter);
         bannerViewPager.setCurrentItem(0);   //
 //        bannerViewPager.setOffscreenPageLimit(0);
-//        bannerViewAdapter = new QueueBannerAdapter(this, reserveEntity.getBanner());
+        bannerViewAdapter = new QueueBannerAdapter(this, reserveEntity.getBanner());
 //        bannerViewPager.setAdapter(bannerViewAdapter);
         bannerViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -462,18 +467,16 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     }
 
 
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPTATE_VIEWPAGER:
-                    if (msg.arg1 != 0) {
-                        bannerViewPager.setCurrentItem(msg.arg1);
-                    } else {
-                        bannerViewPager.setCurrentItem(msg.arg1, false);
-                    }
-                    startTime();
-                    break;
+            if (msg.what == UPTATE_VIEWPAGER) {
+                if (msg.arg1 != 0) {
+                    bannerViewPager.setCurrentItem(msg.arg1);
+                } else {
+                    bannerViewPager.setCurrentItem(msg.arg1, false);
+                }
+                startTime();
             }
         }
     };
@@ -507,21 +510,25 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
                 presenter.canReserve();
                 break;
             case R.id.startLiveTv://开播
-//                    presenter.startLive("1", liveTitle, liveBg, "", "", "");
                 if (reserveEntity.getInfo().getLive().getType() == 2) {
                     ToastUtils.showShort("对众直播间未关闭，不能开始直播");
                     return;
                 }
-                if (reserveEntity.getInfo().getLive().getType() == 0) {
-                    gotoActivity(OneToOneAct.class);
-                    return;
+                if (TextUtils.isEmpty(liveTitle)) {
+                    liveTitle = reserveEntity.getInfo().getLive().getTitle();
                 }
-                if (reserveEntity != null && reserveEntity.getInfo().getReport_num() > 0) {
-                    presenter.getliveInfo();
+                if (TextUtils.isEmpty(liveBg)) {
+                    liveBg = reserveEntity.getInfo().getLive().getImage();
+                }
+                if (reserveEntity.getInfo().getLive().getType() == 1) {
+                    if (reserveEntity != null && reserveEntity.getInfo().getReport_num() > 0) {
+                        presenter.getLiveInfo();
+                    } else {
+                        ToastUtils.showShort("请先设置预约人数！");
+                    }
                 } else {
-                    ToastUtils.showShort("请先设置预约人数！");
+                    presenter.startLive("1", liveTitle, liveBg);
                 }
-
                 break;
             case R.id.attentionTv://关注
                 presenter.anchorSub();
@@ -583,6 +590,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Override
     public void setQueueSuccess(ReserveEntity data) {
+        Logger.e("setQueueSuccess");
         this.reserveEntity = data;
         if (data.getInfo().getIs_live() == 1) {
             LiveingLL.setVisibility(View.VISIBLE);
@@ -596,7 +604,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         liveIdTv.setText("ID:" + data.getInfo().getAnchor_no());
         liveTimeStatusTv.setText(data.getInfo().getProgress_text());
         ReserveNumberTv.setText(String.format("%1$s/%2$s", data.getInfo().getAppoint_num() + "", data.getInfo().getReport_num() + ""));
-//是自己的话不能编辑
+        // 是自己的话不能编辑
         spanna.setText(TextUtils.isEmpty(data.getInfo().getAppoint_desc()) ? "主播暂未填写公告" : data.getInfo().getAppoint_desc(), null);
         spanna.setForbidFold(false);
         spanna.setFoldLine(2);
@@ -643,12 +651,12 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
             }
         }
-        if (isFristStart){
+        if (isFristStart) {
             setDianDian(reserveEntity.getBanner().size());
             autoBanner();
         }
 
-
+        Logger.e("appoint list size: " + data.getInfo().getAppoint_list().size());
         if (data.getInfo().getAppoint_list().size() == 0) {
             nodataView.setVisibility(View.VISIBLE);
             reserveRlv.setVisibility(View.GONE);
@@ -697,90 +705,52 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Override
     public void setStartInfo(OneToOneEntity data) {
-//        StatusCode status = NIMClient.getStatus();
-//        if (NIMClient.getStatus() != StatusCode.LOGINED) {
-//            //未登录
-//            LoginInfo loginInfo = new LoginInfo(Preferences.getLoginInfo().getAccount(), Preferences.getLoginInfo().getToken(), AppIdConstants.WY_APP_KEY);
-//            RequestCallback<LoginInfo> callback =
-//                    new RequestCallback<LoginInfo>() {
-//                        @Override
-//                        public void onSuccess(LoginInfo param) {
-//                            if (!TextUtils.isEmpty(param.getAccount())) {
-//                                DemoCache.setAccount(Preferences.getLoginInfo().getAccount());
-//                                saveLoginInfo(loginInfo);
-//                            }
-//                            Bundle bundle = new Bundle();
-//                            bundle.putString("ROOMID", String.valueOf(data.getChannelName()));
-//                            bundle.putInt("UID", data.getUid());
-//                            bundle.putString("PUSH_URL", String.valueOf(data.getPush_url()));
-//                            bundle.putString("liveId", String.valueOf(data.getRoom_id()));
-//                            gotoActivity(StartLiveAct.class, true, bundle);
-//                        }
-//
-//                        @Override
-//                        public void onFailed(int code) {
-//                            ToastUtils.showShort("进入失败");
-//
-//                        }
-//
-//                        @Override
-//                        public void onException(Throwable exception) {
-//
-//                        }
-//                    };
-//            NIMClient.getService(AuthService.class).login(loginInfo).setCallback(callback);
-//        } else if (NIMClient.getStatus() == StatusCode.LOGINED) {
-//            Bundle bundle = new Bundle();
-//            bundle.putString("ROOMID", String.valueOf(data.getChannelName()));
-//            bundle.putInt("UID", data.getUid());
-//            bundle.putString("PUSH_URL", String.valueOf(data.getPush_url()));
-//            bundle.putString("liveId", String.valueOf(data.getRoom_id()));
-//            gotoActivity(StartLiveAct.class, true, bundle);
-//        }
-
+        if (reserveEntity != null && reserveEntity.getInfo().getReport_num() > 0) {
+            presenter.getLiveInfo();
+        } else {
+            ToastUtils.showShort("请先设置预约人数！");
+        }
     }
 
     @Override
     public void setDqLiveInfo(OneToOneLiveEntity data) {
-
         if (NIMClient.getStatus() != StatusCode.LOGINED) {
             //未登录
             LoginInfo loginInfo = new LoginInfo(Preferences.getLoginInfo().getAccount(), Preferences.getLoginInfo().getToken(), AppIdConstants.WY_APP_KEY);
-            RequestCallback<LoginInfo> callback =
-                    new RequestCallback<LoginInfo>() {
-                        @Override
-                        public void onSuccess(LoginInfo param) {
-                            if (!TextUtils.isEmpty(param.getAccount())) {
-                                DemoCache.setAccount(Preferences.getLoginInfo().getAccount());
-                                saveLoginInfo(loginInfo);
-                            }
-                            Bundle bundle = new Bundle();
-                            bundle.putString("liveId", String.valueOf(data.getRoom_id()));
-                            gotoActivity(StartLiveAct.class, true, bundle);
-                        }
+            RequestCallback<LoginInfo> callback = new RequestCallback<LoginInfo>() {
+                @Override
+                public void onSuccess(LoginInfo param) {
+                    if (!TextUtils.isEmpty(param.getAccount())) {
+                        DemoCache.setAccount(Preferences.getLoginInfo().getAccount());
+                        saveLoginInfo(loginInfo);
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString("liveId", String.valueOf(data.getRoom_id()));
+                    gotoActivity(StartLiveAct.class, true, bundle);
+                }
 
-                        @Override
-                        public void onFailed(int code) {
-                            ToastUtils.showShort("进入失败");
+                @Override
+                public void onFailed(int code) {
+                    ToastUtils.showShort("进入失败");
+                }
 
-                        }
-
-                        @Override
-                        public void onException(Throwable exception) {
-
-                        }
-                    };
+                @Override
+                public void onException(Throwable exception) {
+                    exception.printStackTrace();
+                }
+            };
             NIMClient.getService(AuthService.class).login(loginInfo).setCallback(callback);
         } else if (NIMClient.getStatus() == StatusCode.LOGINED) {
             Bundle bundle = new Bundle();
             bundle.putString("liveId", String.valueOf(data.getRoom_id()));
             gotoActivity(StartLiveAct.class, true, bundle);
         }
-
     }
+
     public static final int REQUEST_VIDEO_PERMISSIONS = 1;
 
     public static final String PERMISSIONS_FRAGMENT_DIALOG = "permission_dialog";
+
     private void requestVideoPermissions() {
         if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
             new ConfirmationDialog().show(getFragmentManager(), PERMISSIONS_FRAGMENT_DIALOG);

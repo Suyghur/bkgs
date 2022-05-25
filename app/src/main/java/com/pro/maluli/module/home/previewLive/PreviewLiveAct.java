@@ -1,7 +1,10 @@
 package com.pro.maluli.module.home.previewLive;
 
+import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.PERMISSIONS_FRAGMENT_DIALOG;
+import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.VIDEO_PERMISSIONS;
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +21,7 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
+import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nim.uikit.common.media.imagepicker.camera.ConfirmationDialog;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -39,9 +41,7 @@ import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.PayInLiveDialog;
 import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.common.view.myselfView.StarBar;
-import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
-import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.pushstream.PushStream;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.home.previewLive.adapter.PreviewLiveAdapter;
 import com.pro.maluli.module.home.previewLive.presenter.IPreviewLiveContraction;
@@ -50,7 +50,6 @@ import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.video.videoact.VideoAct;
 
-import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -60,16 +59,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.PERMISSIONS_FRAGMENT_DIALOG;
-import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.VIDEO_PERMISSIONS;
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
-
 /**
  * @author Kingsley
  * @date 2021/6/15
  */
-public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View, PreviewLivePresenter>
-        implements IPreviewLiveContraction.View {
+public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View, PreviewLivePresenter> implements IPreviewLiveContraction.View {
 
     PreviewLiveAdapter previewLiveAdapter;
     @BindView(R.id.anchorAvaterCiv)
@@ -395,11 +389,11 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
     @Override
     public void setJoinLiveSuccess(JoinLiveEntity data) {
         //       type 直播间类型 (1:一对一, 2:一对多,3:接受预约,4:闲置中)
-        if (data.getStatus_code().equalsIgnoreCase("302")){
+        if (data.getStatus_code().equalsIgnoreCase("302")) {
             ToastUtils.showShort("您已把主播拉黑，无法进入该主播直播间");
             return;
         }
-        if ("301".equalsIgnoreCase(data.getStatus_code())){
+        if ("301".equalsIgnoreCase(data.getStatus_code())) {
             ToastUtils.showShort("为合理控制青少年的使用时间，每日22:00至次日凌晨6:00无法使用百科高手");
             return;
         }

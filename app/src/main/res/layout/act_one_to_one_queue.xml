@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/c_f9f9f9"
@@ -10,9 +11,9 @@
         layout="@layout/top_titlebar_layout" />
 
     <ScrollView
-        android:layout_above="@+id/anchorEidtLl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/anchorEidtLl"
         android:layout_below="@id/toobar">
 
         <LinearLayout
@@ -35,11 +36,11 @@
                     android:layout_marginBottom="0dp" />
 
                 <LinearLayout
-                    android:layout_centerHorizontal="true"
                     android:id="@+id/pointLL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal" />
             </RelativeLayout>
@@ -136,8 +137,7 @@
                                 android:id="@+id/leveImg"
                                 android:layout_width="@dimen/dp_25"
                                 android:layout_height="@dimen/dp_13"
-                                android:layout_marginLeft="@dimen/dp_5"
-                                 />
+                                android:layout_marginLeft="@dimen/dp_5" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -256,27 +256,27 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <TextView
-                            android:layout_weight="1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
+                            android:layout_weight="1"
                             android:text="排队情况"
                             android:textColor="@color/c_342C33"
                             android:textSize="@dimen/sp_16" />
+
                         <TextView
                             android:id="@+id/liveTimeStatusTv"
-                            android:paddingHorizontal="@dimen/dp_10"
-                            android:paddingVertical="@dimen/dp_6"
-                            android:background="@drawable/shape_dcdcdc_28_line"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
+                            android:background="@drawable/shape_dcdcdc_28_line"
+                            android:paddingHorizontal="@dimen/dp_10"
+                            android:paddingVertical="@dimen/dp_6"
                             android:text="排队情况"
                             android:textColor="@color/c_342C33"
                             android:textSize="@dimen/sp_14" />
-
-
                     </LinearLayout>
                 </LinearLayout>
 
@@ -299,8 +299,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/reserveRlv"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_queue_person" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

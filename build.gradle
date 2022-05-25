@@ -1,17 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
-    repositories {
-        maven { url "https://jitpack.io" }
-        mavenCentral()
-        google()
-        // 1.添加MobSDK Maven地址
-        maven {
-            url "https://mvn.mob.com/android"
-        }
-    }
     ext {
+        kotlinVersion = '1.6.0'
         compileSdkVersion = 30
         buildToolsVersion = '30.0.3'
         minSdkVersion = 21
@@ -24,33 +15,43 @@ buildscript {
         appSourceCompatibility = 1.8
         appTargetCompatibility = 1.8
 //        nimOutputDir = "nim-outputs-${versionName}-${getBuildTime()}-${getGitVersion()}"
-
         //参考other-sdks 下的版本， 严格按照绑定的NRTC 版本来 ，使用 fetch_nrtc.sh 更新NRTC时会自动修改
 //        nosSdkVersion = '1.0.1'
 //        reportSdkVersion = '2.0.8'
     }
+
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://developer.huawei.com/repo' }
+        maven { url "https://mvn.mob.com/android" }
+        google()
+        mavenCentral()
+        jcenter()
+    }
+    allprojects {
+        repositories {
+            maven { url 'https://maven.aliyun.com/repository/public' }
+            maven { url 'https://jitpack.io' }
+            maven { url 'https://developer.huawei.com/repo' }
+            maven { url "https://mvn.mob.com/android" }
+            google()
+            mavenCentral()
+            jcenter()
+        }
+    }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.1"
+        classpath 'com.android.tools.build:gradle:7.0.2'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
         // 2.注册MobSDK
         classpath "com.mob.sdk:MobSDK:2018.0319.1724"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
-allprojects {
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-        mavenCentral()
-        jcenter()
-        google()
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'http://developer.huawei.com/repo/' }
-        maven { url "https://jitpack.io" }
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 

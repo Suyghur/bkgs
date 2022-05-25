@@ -1,16 +1,14 @@
 package com.pro.maluli.module.socketService;
 
 import android.os.Handler;
-import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
+import android.os.Looper;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.pro.maluli.common.entity.OnTwoOneSocketEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
+import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
@@ -18,30 +16,26 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 public enum SocketUtils {
     INSTANCE;
     private WebSocketClient mWebSocketClient;//唯一
-    public static final String TAG = "SocketUtils";
     public boolean isRunning = false;
     public String socketUrl;
-    boolean isFinish=false;
+    boolean isFinish = false;
 
 
-    public interface SocketListener{
+    public interface SocketListener {
         void OnTwoOneYY(OnTwoOneSocketEntity entity);
     }
+
     //    -------------------------------------websocket心跳检测------------------------------------------------
     private static final long HEART_BEAT_RATE = 10 * 1000;//每隔10秒进行一次对长连接的心跳检测
-    private Handler mHandler = new Handler();
-    private Runnable heartBeatRunnable = new Runnable() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Runnable heartBeatRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.e("JWebSocketClientService", "心跳包检测websocket连接状态");
-            if (isFinish){
+            Logger.e("心跳包检测websocket连接状态");
+            if (isFinish) {
                 return;
             }
             if (mWebSocketClient != null) {
@@ -53,8 +47,6 @@ public enum SocketUtils {
                 mWebSocketClient = null;
                 initSocket(socketUrl);
             }
-
-
             //每隔一定的时间，对长连接进行一次心跳检测
             mHandler.postDelayed(this, HEART_BEAT_RATE);
         }
@@ -74,7 +66,7 @@ public enum SocketUtils {
             @Override
             public void run() {
                 try {
-                    Log.e("JWebSocketClientService", "开启重连");
+                    Logger.e("开启重连");
                     mWebSocketClient.reconnectBlocking();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -85,17 +77,14 @@ public enum SocketUtils {
 
     public void initSocket(String url) {
         this.socketUrl = url;
-        isFinish=false;
+        isFinish = false;
         try {
             URI uri;
             uri = URI.create(socketUrl);
-//            if (mWebSocketClient != null) {
-//                return;
-//            }
             mWebSocketClient = new WebSocketClient(uri) {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
-                    Log.i(TAG, "onOpen: SOCKET 已启动");
+                    Logger.e("onOpen: SOCKET 已启动");
                 }
 
                 @Override
@@ -103,34 +92,26 @@ public enum SocketUtils {
                     isRunning = true;
                     JSONObject jsonObject = JSONObject.parseObject(s);
                     int msgType = jsonObject.getInteger("msg_id");
-
-//                    FSocketRes res = new FSocketRes();
-//                    res.fromJSONAuto(s);
-                    Log.i(TAG, "onMessage: " + s);
-
+                    Logger.e("onMessage: " + s);
                     switch (msgType) {
                         case 1000://连接成功提示
-
                             break;
                         case 1://一对一预约页面
-                            ReserveEntity entity = JSONObject.parseObject(JSON.parseObject(s)
-                                    .getString("data"),ReserveEntity.class);
-
+                            ReserveEntity entity = JSONObject.parseObject(JSON.parseObject(s).getString("data"), ReserveEntity.class);
                             OnTwoOneEvent oneEvent = new OnTwoOneEvent(entity);
                             EventBus.getDefault().post(oneEvent);
-
                             break;
                     }
                 }
 
                 @Override
                 public void onClose(int i, String s, boolean b) {
-                    Log.i(TAG, "onClose: SOCKET 已关闭");
+                    Logger.e("onClose: SOCKET 已关闭");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Log.i(TAG, "onClose: SOCKET 已关闭");
+                    Logger.e("onClose: SOCKET 已关闭");
                 }
             };
 
@@ -148,7 +129,6 @@ public enum SocketUtils {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -173,7 +153,7 @@ public enum SocketUtils {
      * 断开连接
      */
     public void closeConnect() {
-        isFinish=true;
+        isFinish = true;
         try {
             if (null != mWebSocketClient) {
                 mWebSocketClient.close();

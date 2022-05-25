@@ -201,7 +201,7 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
                     // 判断resultStatus 为9000则代表支付成功
                     if (TextUtils.equals(resultStatus, "9000")) {
                         // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                        ToastUtils.showShort("充值成功");
+                        ToastUtils.showShort("充值成功，稍后到账");
                     } else {
                         // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                     }

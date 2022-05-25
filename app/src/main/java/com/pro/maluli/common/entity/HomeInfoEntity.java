@@ -13,7 +13,6 @@ public class HomeInfoEntity implements Serializable {
     private List<BannerBean> banner;
 
     public static HomeInfoEntity objectFromData(String str) {
-
         return new Gson().fromJson(str, HomeInfoEntity.class);
     }
 
@@ -69,6 +68,15 @@ public class HomeInfoEntity implements Serializable {
         public void setCreated_at(String created_at) {
             this.created_at = created_at;
         }
+
+        @Override
+        public String toString() {
+            return "NoticeBean{" +
+                    "id=" + id +
+                    ", title='" + title + '\'' +
+                    ", created_at='" + created_at + '\'' +
+                    '}';
+        }
     }
 
     public static class CategoryBean implements Serializable {
@@ -76,7 +84,6 @@ public class HomeInfoEntity implements Serializable {
         private List<ListBean> list;
 
         public static CategoryBean objectFromData(String str) {
-
             return new Gson().fromJson(str, CategoryBean.class);
         }
 
@@ -128,6 +135,15 @@ public class HomeInfoEntity implements Serializable {
 
             public void setIs_teenager(int is_teenager) {
                 this.is_teenager = is_teenager;
+            }
+
+            @Override
+            public String toString() {
+                return "AllBean{" +
+                        "id=" + id +
+                        ", title='" + title + '\'' +
+                        ", is_teenager=" + is_teenager +
+                        '}';
             }
         }
 
@@ -223,10 +239,30 @@ public class HomeInfoEntity implements Serializable {
                 public String getPickerViewText() {
                     return title;
                 }
+
+                @Override
+                public String toString() {
+                    return "ChildBean{" +
+                            "id=" + id +
+                            ", title='" + title + '\'' +
+                            ", is_teenager=" + is_teenager +
+                            '}';
+                }
             }
 
             public void setChildren(List<ChildBean> children) {
                 this.children = children;
+            }
+
+            @Override
+            public String toString() {
+                return "ListBean{" +
+                        "id=" + id +
+                        ", title='" + title + '\'' +
+                        ", is_teenager=" + is_teenager +
+                        ", isSelect=" + isSelect +
+                        ", children=" + children +
+                        '}';
             }
         }
     }
@@ -291,5 +327,26 @@ public class HomeInfoEntity implements Serializable {
         public void setCreated_at(String created_at) {
             this.created_at = created_at;
         }
+
+        @Override
+        public String toString() {
+            return "BannerBean{" +
+                    "id=" + id +
+                    ", url='" + url + '\'' +
+                    ", file_type=" + file_type +
+                    ", title='" + title + '\'' +
+                    ", link='" + link + '\'' +
+                    ", created_at='" + created_at + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "HomeInfoEntity{" +
+                "notice=" + notice +
+                ", category=" + category +
+                ", banner=" + banner +
+                '}';
     }
 }

@@ -3,7 +3,7 @@ package com.pro.maluli.common.networkRequest;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.utils.AcacheUtil;
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
 
 import io.reactivex.functions.Consumer;
 
@@ -26,7 +26,7 @@ public abstract class SuccessConsumer<T> implements Consumer<T> {
                 ||code==ResponseCode.NO_MONEY) {
             onSuccess(response);
         } else if (code == ResponseCode.NO_LOGIN) {
-            AcacheUtil.loginOut(MyAppliaction.getApp());
+            AcacheUtil.loginOut(BKGSApplication.getApp());
         } else {
             mBaseView.onError(code, baseResponse.getMsg());
 

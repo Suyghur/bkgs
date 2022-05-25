@@ -29,14 +29,12 @@ import com.netease.lava.nertc.sdk.NERtc;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.LastTimeLiveEntity;
-import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.WindowSoftModeAdjustResizeExecutor;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.home.oneToMore.base.oneToMore.OneToMoreAct;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailAct;
 import com.yalantis.ucrop.view.OverlayView;
@@ -53,8 +51,6 @@ import butterknife.OnClick;
  * @date 2021/6/15
  */
 public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneToOnePresenter> implements IOneToOneContraction.View {
-
-
     @BindView(R.id.finishIv)
     ImageView finishIv;
     @BindView(R.id.subImgLiveBgLL)
@@ -72,6 +68,7 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
     private String imgUrl;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
+
     @Override
     public OneToOnePresenter initPresenter() {
         return new OneToOnePresenter(this);
@@ -129,7 +126,7 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(str);
-        final int start = str.indexOf("《")+1;//第一个出现的位置
+        final int start = str.indexOf("《") + 1;//第一个出现的位置
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -153,6 +150,7 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
         xieyiTv.setText(ssb, TextView.BufferType.SPANNABLE);
         requestPermissionsIfNeeded();
     }
+
     private void requestPermissionsIfNeeded() {
 
         final List<String> missedPermissions = NERtc.checkPermission(this);
@@ -163,6 +161,7 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
             isGranted = true;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -186,6 +185,7 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
         }
 
     }
+
     @Override
     public void doBusiness() {
         presenter.getFansListInfo();
@@ -243,8 +243,14 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
                     ToastUtils.showShort("请选择主播封面");
                     return;
                 }
-
-                presenter.startLive("1", inputLiveTitleEt.getText().toString().trim(), imgUrl);
+                Bundle bundle = new Bundle();
+                bundle.putString("LIVE_BG", imgUrl);
+                bundle.putString("LIVE_TITLE", inputLiveTitleEt.getText().toString().trim());
+                bundle.putString("ANCHOR_ID", "");
+                bundle.putBoolean("IS_FRIST_LIVE", true);
+                gotoActivity(OneToOneQueueAct.class, true, bundle);
+//                setStartInfo();
+//                presenter.startLive("1", inputLiveTitleEt.getText().toString().trim(), imgUrl);
                 break;
         }
     }
@@ -255,15 +261,15 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
         GlideUtils.loadImage(OneToOneAct.this, imgUrl, livebgRiv);
     }
 
-    @Override
-    public void setStartInfo(OneToOneEntity data) {
-        Bundle bundle = new Bundle();
-        bundle.putString("LIVE_BG", imgUrl);
-        bundle.putString("LIVE_TITLE", inputLiveTitleEt.getText().toString().trim());
-        bundle.putString("ANCHOR_ID", "");
-        bundle.putBoolean("IS_FRIST_LIVE",true);
-        gotoActivity(OneToOneQueueAct.class, true, bundle);
-    }
+//    @Override
+//    public void setStartInfo(OneToOneEntity data) {
+//        Bundle bundle = new Bundle();
+//        bundle.putString("LIVE_BG", imgUrl);
+//        bundle.putString("LIVE_TITLE", inputLiveTitleEt.getText().toString().trim());
+//        bundle.putString("ANCHOR_ID", "");
+//        bundle.putBoolean("IS_FRIST_LIVE", true);
+//        gotoActivity(OneToOneQueueAct.class, true, bundle);
+//    }
 
     @Override
     public void setLastLive(LastTimeLiveEntity data) {

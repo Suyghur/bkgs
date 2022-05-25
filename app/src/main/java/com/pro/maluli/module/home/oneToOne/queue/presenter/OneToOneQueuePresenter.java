@@ -9,7 +9,6 @@ import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.OneToOneLiveEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
-import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 import com.pro.maluli.common.utils.StringUtils;
 
@@ -24,12 +23,31 @@ import okhttp3.RequestBody;
 
 public class OneToOneQueuePresenter extends BasePresenter<IOneToOneQueueContraction.View> implements IOneToOneQueueContraction.Presenter {
     public int page = 1;
-    public String anchor_id="";
+    public String anchor_id = "";
 
     public OneToOneQueuePresenter(Context context) {
         super(context);
     }
 
+    @Override
+    public void startLive(String type, String title, String imgUrl) {
+        add(mService.startLive(type, title, imgUrl, "", "", "0")
+                .compose(getTransformer())
+                .subscribe(new SuccessConsumer<BaseResponse<OneToOneEntity>>(mView) {
+                    @Override
+                    public void onSuccess(BaseResponse<OneToOneEntity> response) {
+                        dismissLoading(mContext);
+                        mView.setStartInfo(response.getData());
+//                        mView.setStartInfo(response.getData());
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        dismissLoading(mContext);
+                        throwable.printStackTrace();
+                    }
+                }));
+    }
 
     @Override
     public void getReserveInfo() {
@@ -137,28 +155,28 @@ public class OneToOneQueuePresenter extends BasePresenter<IOneToOneQueueContract
                 }));
     }
 
-    @Override
-    public void startLive(String type, String title, String imgUrl, String model, String money, String people) {
-//        add(mService.startLive(type, title, imgUrl, "", "")
-//                .compose(getTransformer())
-//                .subscribe(new SuccessConsumer<BaseResponse<OneToOneEntity>>(mView) {
-//                    @Override
-//                    public void onSuccess(BaseResponse<OneToOneEntity> response) {
-//                        dismissLoading(mContext);
-//                        mView.setStartInfo(response.getData());
-//
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//                        dismissLoading(mContext);
-//                        throwable.printStackTrace();
-//                    }
-//                }));
-    }
+//    @Override
+//    public void startLive(String type, String title, String imgUrl, String model, String money, String people) {
+////        add(mService.startLive(type, title, imgUrl, "", "")
+////                .compose(getTransformer())
+////                .subscribe(new SuccessConsumer<BaseResponse<OneToOneEntity>>(mView) {
+////                    @Override
+////                    public void onSuccess(BaseResponse<OneToOneEntity> response) {
+////                        dismissLoading(mContext);
+////                        mView.setStartInfo(response.getData());
+////
+////                    }
+////                }, new Consumer<Throwable>() {
+////                    @Override
+////                    public void accept(Throwable throwable) throws Exception {
+////                        dismissLoading(mContext);
+////                        throwable.printStackTrace();
+////                    }
+////                }));
+//    }
 
     @Override
-    public void getliveInfo() {
+    public void getLiveInfo() {
         add(mService.getOneLiveInfo()
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<OneToOneLiveEntity>>(mView) {
@@ -173,6 +191,7 @@ public class OneToOneQueuePresenter extends BasePresenter<IOneToOneQueueContract
                     }
                 }));
     }
+
     @Override
     public void canReserve() {
         showLoading(mContext);

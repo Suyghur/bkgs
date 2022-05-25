@@ -14,7 +14,7 @@ public interface IOneToOneContraction extends BaseView {
 
         void setUpdateImgSuccess(UpdateImgEntity data);
 
-        void setStartInfo(OneToOneEntity data);
+//        void setStartInfo(OneToOneEntity data);
 
         void setLastLive(LastTimeLiveEntity data);
     }

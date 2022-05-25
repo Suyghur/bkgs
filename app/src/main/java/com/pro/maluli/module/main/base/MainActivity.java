@@ -1,6 +1,7 @@
 package com.pro.maluli.module.main.base;
 
-import android.app.Activity;
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -21,15 +22,15 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftEvent;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
+import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
+import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
@@ -46,11 +47,8 @@ import com.netease.nimlib.sdk.avsignalling.event.UserJoinEvent;
 import com.netease.nimlib.sdk.avsignalling.event.UserLeaveEvent;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.SystemMessageObserver;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.entity.MessageListEntity;
 import com.pro.maluli.common.entity.ProtocolDetailEntity;
@@ -62,14 +60,11 @@ import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.PackageUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.preferences.Preferences;
-import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.NoticeDialog;
 import com.pro.maluli.common.view.dialogview.PrivacyDialog;
-import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.pro.maluli.common.view.dialogview.TeenagerDialog;
 import com.pro.maluli.common.view.dialogview.TeenarNoSeeDialog;
 import com.pro.maluli.module.home.base.HomeFrag;
-import com.pro.maluli.module.home.base.fragment.child.HomeChildFrag;
 import com.pro.maluli.module.home.oneToOne.answerPhone.AnswerPhoneAct;
 import com.pro.maluli.module.main.base.presenter.DialogActivity;
 import com.pro.maluli.module.main.base.presenter.IMainContraction;
@@ -80,22 +75,18 @@ import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.myself.base.MyselfFrag;
 import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
-import com.pro.maluli.module.other.login.LoginAct;
 import com.pro.maluli.module.socketService.event.CallEvent;
 import com.pro.maluli.module.video.base.SmallVideoFrag;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
 
 /**
  * @author Kingsley
@@ -668,8 +659,8 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     @Override
     public void setYouthSuccess(YouthEntity data) {
+        Logger.e("setYouthSuccess");
         if (entity != null && entity.getIs_teenager() == 1) {
-
             return;
         }
         if (AcacheUtil.isShowTeenager(MainActivity.this)) {

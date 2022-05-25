@@ -1,16 +1,13 @@
 package com.pro.maluli.module.home.base.adapter;
 
 import android.content.Intent;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,19 +16,14 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.base.BaseFragment;
-import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.home.base.fragment.child.HomeChildFrag;
+import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
-
-import java.io.Serializable;
-import java.util.List;
 
 public class HomeTopVideoFrg extends Fragment {
     HomeInfoEntity.BannerBean bannerBean;
@@ -84,7 +76,7 @@ public class HomeTopVideoFrg extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.e("nihao", "onCreateView");
+        Logger.e("onCreateView");
         if (!isVideo()) {//ͼƬ
             if (mainView == null) {
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_img, container, false);
@@ -101,23 +93,15 @@ public class HomeTopVideoFrg extends Fragment {
                         Uri content_url = Uri.parse(bannerBean.getLink());//此处填链接
                         intent.setData(content_url);
                         startActivity(intent);
-//                    if (bannerListener != null) {
-//                        bannerListener.imgClick(position);
-//                    }
                     }
                 });
-                Glide.with(getActivity()).load(bannerBean.getUrl()).into(mainTopRiv);
+                Glide.with(requireActivity()).load(bannerBean.getUrl()).into(mainTopRiv);
             }
-
             return mainView;
         } else {//
             if (mainView == null) {
-
-
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_video, container, false);
                 jcVideoPlayer = mainView.findViewById(R.id.jcVideoPlayer);
-//            jcVideoPlayer.onVideoPause();
-//            jcVideoPlayer.onVideoReset();
                 if (ACache.get(getActivity()).getAsString("MUTE").equalsIgnoreCase("1")) {
                     GSYVideoManager.instance().setNeedMute(true);
                     jcVideoPlayer.setMute(true);
@@ -284,11 +268,7 @@ public class HomeTopVideoFrg extends Fragment {
 
 
     public boolean isVideo() {
-        if (bannerBean != null && bannerBean.getFile_type() == 1) {
-            return false;
-        } else {
-            return true;
-        }
+        return bannerBean == null || bannerBean.getFile_type() != 1;
     }
 
     @Override
@@ -300,10 +280,7 @@ public class HomeTopVideoFrg extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        //只有当fragment可见时，才进行加载数据
-//        if (isVisibleToUser) {
-            lazyLoad();
-//        }
+        lazyLoad();
     }
 
     /**
@@ -313,7 +290,7 @@ public class HomeTopVideoFrg extends Fragment {
     private void lazyLoad() {
         if (getUserVisibleHint() && isPrepared /*&& !isLazyLoaded*/) {
             //界面可见
-            Log.e("nihao", "lazyLoad");
+            Logger.e("lazyLoad");
             startVideo();
             try {
                 new Handler().postDelayed(new Runnable() {
@@ -324,7 +301,7 @@ public class HomeTopVideoFrg extends Fragment {
                 }, 300);
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
             isLazyLoaded = true;
         } else {
@@ -343,22 +320,12 @@ public class HomeTopVideoFrg extends Fragment {
         if (isVideo()) {
             GSYVideoManager.releaseAllVideos();
         }
-//        GSYVideoManager.onPause();
-//        if (jcVideoPlayer!=null){
-//            jcVideoPlayer.getCurrentPlayer().onVideoPause();
-//        }
-//        try {
-//            GSYVideoManager.instance().getPlayer().release();
-//        } catch (Exception e) {
-//
-//        }
     }
 
     @Override
     public void onDestroy() {
         isLazyLoaded = false;
         isPrepared = false;
-//        GSYVideoManager.releaseAllVideos();
         if (jcVideoPlayer != null) {
             jcVideoPlayer.getCurrentPlayer().setVideoAllCallBack(null);
             jcVideoPlayer.release();
@@ -371,10 +338,8 @@ public class HomeTopVideoFrg extends Fragment {
             if (jcVideoPlayer.getGSYVideoManager().isPlaying()) {
                 return;
             }
-            Log.e("nihao", "startPlayLogic");
+            Logger.e("startPlayLogic");
             GSYVideoManager.releaseAllVideos();
-//            jcVideoPlayer.release();
-//            jcVideoPlayer.onVideoReset();
             jcVideoPlayer.setUpLazy(bannerBean.getUrl(), false, null, null, "");
             jcVideoPlayer.startPlayLogic();
         }
@@ -387,7 +352,7 @@ public class HomeTopVideoFrg extends Fragment {
             }, 300);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -401,7 +366,7 @@ public class HomeTopVideoFrg extends Fragment {
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0, 0);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         } else {
             jcVideoPlayer.setMute(false);
@@ -409,7 +374,7 @@ public class HomeTopVideoFrg extends Fragment {
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0.5f, 0.5f);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }

@@ -29,22 +29,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.iceteck.silicompressorr.SiliCompressor;
-import com.marvhong.videoeffect.FillMode;
 import com.marvhong.videoeffect.GlVideoView;
 import com.marvhong.videoeffect.composer.Mp4Composer;
 import com.marvhong.videoeffect.helper.MagicFilterFactory;
 import com.marvhong.videoeffect.helper.MagicFilterType;
 import com.marvhong.videoeffect.utils.ConfigUtils;
 import com.pro.maluli.R;
-import com.pro.maluli.common.base.BaseActivity;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.adapter.TrimVideoAdapter;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.utilsTailor.BaseActivity1;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.utilsTailor.ExtractFrameWorkThread;
@@ -278,7 +274,7 @@ public class TrimVideoActivity extends BaseActivity1 {
             ImageView iv = itemView.findViewById(R.id.iv);
             FilterModel model = mVideoEffects.get(i);
             int thumbId = MagicFilterFactory.filterType2Thumb(mMagicFilterTypes[i]);
-            Glide.with(MyAppliaction.getApp())
+            Glide.with(BKGSApplication.getApp())
                     .load(thumbId)
                     .into(iv);
             tv.setText(model.getName());

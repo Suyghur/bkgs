@@ -15,13 +15,10 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.HomeInfoEntity;
-import com.pro.maluli.common.entity.LastTimeLiveEntity;
-import com.pro.maluli.common.entity.OneToOneEntity;
-import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.WindowSoftModeAdjustResizeExecutor;
 import com.pro.maluli.module.home.base.classify.adapter.ClassiftAdapter;
 import com.pro.maluli.module.home.base.classify.adapter.ClassiftChildAdapter;
+import com.pro.maluli.toolkit.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,14 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @author Kingsley
  * @date 2021/6/15
  */
 public class ClassiftAct extends BaseMvpActivity<IClassiftContraction.View, ClassiftPresenter> implements IClassiftContraction.View {
-
 
     @BindView(R.id.lv_category_list)
     RecyclerView lvCategoryList;
@@ -59,6 +54,9 @@ public class ClassiftAct extends BaseMvpActivity<IClassiftContraction.View, Clas
         BarUtils.setStatusBarLightMode(this, true);
         StatusbarUtils.setStatusBarView(this);
         homeInfoEntity = (HomeInfoEntity) getIntent().getSerializableExtra("Home_data");
+        for (HomeInfoEntity.CategoryBean.ListBean bean : homeInfoEntity.getCategory().getList()) {
+            Logger.e(bean.toString());
+        }
     }
 
     @Override
@@ -73,7 +71,10 @@ public class ClassiftAct extends BaseMvpActivity<IClassiftContraction.View, Clas
         lvCategoryList.setLayoutManager(new LinearLayoutManager(this));
         lvChlidList.setLayoutManager(new LinearLayoutManager(this));
         //移除自己添加的全部选项
-        homeInfoEntity.getCategory().getList().remove(0);
+        if (homeInfoEntity.getCategory().getList().get(0).getId() == 0) {
+            // 移除全部
+            homeInfoEntity.getCategory().getList().remove(0);
+        }
         homeInfoEntity.getCategory().getList().get(0).setSelect(true);
 //        homeInfoEntity.getCategory().getList().get(0).getChildren().remove(0);
         adapter = new ClassiftAdapter(homeInfoEntity.getCategory().getList(), ClassiftAct.this);

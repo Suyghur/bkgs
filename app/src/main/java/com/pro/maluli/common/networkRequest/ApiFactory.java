@@ -1,14 +1,12 @@
- package com.pro.maluli.common.networkRequest;
+package com.pro.maluli.common.networkRequest;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.blankj.utilcode.util.DeviceUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pro.maluli.common.utils.AcacheUtil;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
+import com.pro.maluli.toolkit.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -54,11 +52,11 @@ public class ApiFactory {
                             public Response intercept(Chain chain) throws IOException {
                                 Request request = chain.request();
                                 Request.Builder requestBuilder = request.newBuilder();
-                                String token = AcacheUtil.getToken(MyAppliaction.getApp(), false);
+                                String token = AcacheUtil.getToken(BKGSApplication.getApp(), false);
                                 requestBuilder.addHeader("Authorization",
                                         TextUtils.isEmpty(token) ? "" : token);
                                 requestBuilder.addHeader("X-Device-Id",
-                                        JPushInterface.getRegistrationID(MyAppliaction.getApp()));
+                                        JPushInterface.getRegistrationID(BKGSApplication.getApp()));
                                 return chain.proceed(requestBuilder.build());
                             }
                         })
@@ -67,7 +65,7 @@ public class ApiFactory {
                         .addInterceptor(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                             @Override
                             public void log(String message) {
-                                Log.e("OKHTTP", message);
+                                Logger.e("bkgs_network", message);
                             }
                         }).setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build())

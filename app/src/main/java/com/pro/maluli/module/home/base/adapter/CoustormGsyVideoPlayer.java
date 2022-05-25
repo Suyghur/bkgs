@@ -1,20 +1,13 @@
 package com.pro.maluli.module.home.base.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.R;
-import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.utils.ACache;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.app.MyAppliaction;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 

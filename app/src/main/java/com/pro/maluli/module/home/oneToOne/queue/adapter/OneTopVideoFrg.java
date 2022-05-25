@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +16,12 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.home.base.adapter.CoustormGsyVideoPlayer;
+import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
@@ -78,7 +77,7 @@ public class OneTopVideoFrg extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.e("nihao", "onCreateView");
+        Logger.e("onCreateView");
         if (!isVideo()) {//ͼƬ
             if (mainView == null) {
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_img, container, false);
@@ -296,7 +295,7 @@ public class OneTopVideoFrg extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         //只有当fragment可见时，才进行加载数据
 //        if (isVisibleToUser) {
-            lazyLoad();
+        lazyLoad();
 //        }
     }
 
@@ -307,7 +306,7 @@ public class OneTopVideoFrg extends Fragment {
     private void lazyLoad() {
         if (getUserVisibleHint() && isPrepared /*&& !isLazyLoaded*/) {
             //界面可见
-            Log.e("nihao", "lazyLoad");
+            Logger.e("lazyLoad");
             startVideo();
             try {
                 new Handler().postDelayed(new Runnable() {
@@ -365,10 +364,8 @@ public class OneTopVideoFrg extends Fragment {
             if (jcVideoPlayer.getGSYVideoManager().isPlaying()) {
                 return;
             }
-            Log.e("nihao", "startPlayLogic");
+            Logger.e("startPlayLogic");
             GSYVideoManager.releaseAllVideos();
-//            jcVideoPlayer.release();
-//            jcVideoPlayer.onVideoReset();
             jcVideoPlayer.setUpLazy(bannerBean.getUrl(), false, null, null, "");
             jcVideoPlayer.startPlayLogic();
         }
@@ -381,7 +378,7 @@ public class OneTopVideoFrg extends Fragment {
             }, 300);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

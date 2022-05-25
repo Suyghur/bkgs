@@ -9,13 +9,13 @@ import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
 
 
 public class UIUtils {
 
     public static Context getContext() {
-        return MyAppliaction.getApp();
+        return BKGSApplication.getApp();
     }
 
     public static Resources getResources() {

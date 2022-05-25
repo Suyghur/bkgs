@@ -1,31 +1,25 @@
 package com.pro.maluli.module.app;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 
-import androidx.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
 
 import com.bumptech.glide.Glide;
 import com.mob.MobSDK;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nim.uikit.business.session.myCustom.extension.SessionHelper;
-import com.netease.nim.uikit.common.media.imagepicker.loader.ImageLoader;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.util.NIMUtil;
-//import com.nostra13.universalimageloader.core.DisplayImageOptions;
-//import com.nostra13.universalimageloader.core.ImageLoader;
-//import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.pro.maluli.R;
-import com.pro.maluli.common.utils.PackageUtils;
 import com.pro.maluli.common.utils.preferences.Preferences;
-import com.pro.maluli.common.utils.preferences.UserPreferences;
 import com.pro.maluli.module.chatRoom.ChatRoomSessionHelper;
+import com.pro.maluli.toolkit.Logger;
 import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +29,7 @@ import java.io.IOException;
 import cn.jpush.android.api.JPushInterface;
 
 
-public class MyAppliaction extends MultiDexApplication {
+public class BKGSApplication extends Application {
 
     /**
      * MD5:  7A:B1:84:CB:0E:E1:D0:1E:AA:1F:14:27:C1:56:F1:91
@@ -44,7 +38,7 @@ public class MyAppliaction extends MultiDexApplication {
      */
     public static final int UPLOAD_STEP = 100;//多少步上传一次；
 
-    private static MyAppliaction mApplication;
+    private static BKGSApplication mApplication;
     /**
      * 缓存拍照图片路径
      */
@@ -53,18 +47,19 @@ public class MyAppliaction extends MultiDexApplication {
     /**
      * 获取Application
      */
-    public static MyAppliaction getApp() {
+    public static BKGSApplication getApp() {
         return mApplication;
     }
 
     public boolean socketOnline = false;
 
 
-//    @Override
-//    protected void attachBaseContext(Context base) {
-////        super.attachBaseContext(AppLanguageUtils.attachBaseContext(base, ToolUtils.getAppLanguage(base)));
-////        MultiDex.install(this);
-//    }
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+        Logger.initZap(this);
+    }
 
     @Override
     public void onCreate() {
@@ -78,7 +73,9 @@ public class MyAppliaction extends MultiDexApplication {
 //        initLoadImageView();
         initBugly();
 
+
     }
+
     //初始化bug上传
     private void initBugly() {
 //        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
@@ -97,6 +94,7 @@ public class MyAppliaction extends MultiDexApplication {
 
         Bugly.init(getApplicationContext(), "dd30375eac", false);
     }
+
     /**
      * 获取进程号对应的进程名
      *

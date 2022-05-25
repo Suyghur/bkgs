@@ -2,20 +2,18 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@mipmap/ic_main_onetomore_bg"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@mipmap/ic_main_onetomore_bg">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:focusableInTouchMode="true"
-        android:focusable="true"
         android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
 
         android:orientation="vertical">
-
-
 
 
         <RelativeLayout
@@ -138,7 +136,6 @@
                 android:text="开启直播间"
                 android:textColor="@color/c_ffffff"
                 android:textSize="@dimen/sp_16" />
-
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

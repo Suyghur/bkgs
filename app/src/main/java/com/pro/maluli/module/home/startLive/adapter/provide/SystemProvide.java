@@ -5,9 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.view.TextureView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,15 +13,8 @@ import androidx.annotation.NonNull;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.provider.BaseItemProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomViewHolderHelper;
-import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage;
 import com.pro.maluli.R;
-import com.pro.maluli.common.utils.AntiShake;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.app.MyAppliaction;
-import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
-import com.pro.maluli.module.main.base.MainActivity;
 
 import org.jetbrains.annotations.NotNull;
 

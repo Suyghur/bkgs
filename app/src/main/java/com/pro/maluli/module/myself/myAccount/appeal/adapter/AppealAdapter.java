@@ -8,9 +8,8 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.ImageEntity;
-import com.pro.maluli.common.entity.RechargeEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,10 +30,10 @@ public class AppealAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHolder>
         // type =0 添加图片按钮 type=1 加载本地图片
         if (entity.getType() == 0) {
             deleteImg.setVisibility(View.GONE);
-            roundedImageView.setImageDrawable(MyAppliaction.getApp().getResources().getDrawable(R.mipmap.ic_add_img));
+            roundedImageView.setImageDrawable(BKGSApplication.getApp().getResources().getDrawable(R.mipmap.ic_add_img));
         } else {
             deleteImg.setVisibility(View.VISIBLE);
-            GlideUtils.loadImage(MyAppliaction.getApp(), entity.getUrl(), roundedImageView);
+            GlideUtils.loadImage(BKGSApplication.getApp(), entity.getUrl(), roundedImageView);
         }
     }
 }

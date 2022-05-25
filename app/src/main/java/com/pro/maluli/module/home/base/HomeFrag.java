@@ -1,17 +1,13 @@
 package com.pro.maluli.module.home.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,19 +19,14 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.blankj.utilcode.util.BarUtils;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
-import com.netease.nim.uikit.business.session.activity.my.dialog.MessageAssessDialog;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MsgService;
@@ -47,13 +38,11 @@ import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.entity.LastTimeLiveEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.utils.ACache;
-import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
 import com.pro.maluli.module.home.announcement.AnnouncementAct;
-import com.pro.maluli.module.home.base.adapter.BannerViewAdapter;
 import com.pro.maluli.module.home.base.adapter.HomeTopVideoFrg;
 import com.pro.maluli.module.home.base.adapter.SimpleTextAdapter;
 import com.pro.maluli.module.home.base.applyForAnchor.ApplyForAnchorAct;
@@ -62,12 +51,12 @@ import com.pro.maluli.module.home.base.fragment.child.HomeChildFrag;
 import com.pro.maluli.module.home.base.presenter.HomePresenter;
 import com.pro.maluli.module.home.base.presenter.IHomeContraction;
 import com.pro.maluli.module.home.homeSearch.SearchHomeAct;
-import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
 import com.pro.maluli.module.home.oneToMore.base.oneToMore.OneToMoreAct;
 import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
+import com.pro.maluli.toolkit.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -79,13 +68,9 @@ import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.xj.marqueeview.MarqueeView;
 import com.xj.marqueeview.base.MultiItemTypeAdapter;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -97,8 +82,7 @@ import butterknife.OnClick;
  *
  * @author 23203
  */
-public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresenter>
-        implements IHomeContraction.View {
+public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresenter> implements IHomeContraction.View {
     @BindView(R.id.mine_mian_ll)
     CoordinatorLayout mine_mian_ll;
     @BindView(R.id.marqueeView)
@@ -135,7 +119,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     private LastTimeLiveEntity lastTimeLiveEntity;
     boolean isStartVideo = true;//判断视频是否在播放，如果在播放，则不主动滑动viewpager
     ActivityResultLauncher<Intent> intentActivityResultLauncher;
-    private boolean isRefresh=true;//是否下拉刷新了
+    private boolean isRefresh = true;//是否下拉刷新了
 
     @Override
     public HomePresenter initPresenter() {
@@ -306,20 +290,12 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @OnClick({R.id.gotoLiveIv, R.id.classificationIv, R.id.searchLL, R.id.exitTeenagerTv})
     public void onViewClick(View view) {
-//        if (!ToolUtils.isFastClick()) {
-//
-//            return;
-//        }
         switch (view.getId()) {
             case R.id.gotoLiveIv:
                 if (!ToolUtils.isLoginTips(getActivity(), getChildFragmentManager())) {
                     return;
                 }
-
                 presenter.getLiveInfo();
-//                LiveAssessDialog liveAssessDialog = new LiveAssessDialog();
-//                liveAssessDialog.show(getChildFragmentManager(),"LiveAssessDialog");
-
                 break;
             case R.id.searchLL:
                 gotoActivity(SearchHomeAct.class);
@@ -331,7 +307,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Home_data", homeInfoEntity);
 //                gotoActivity(ClassiftAct.class, false, bundle);
-                Intent intent = new Intent(getActivity(), ClassiftAct.class);
+                Intent intent = new Intent(requireActivity(), ClassiftAct.class);
                 intent.putExtras(bundle);
                 intentActivityResultLauncher.launch(intent);
 //                startActivityForResult(intent, 110);
@@ -402,10 +378,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void setHomeInfo(HomeInfoEntity data) {
-        if (homeInfoEntity!=null){
-            if (homeInfoEntity.getCategory().getList().size() == data.getCategory().getList().size()+1 && !isRefresh) {
-                //判断数组一样就不更新数据
-                //为了实现 首页进入直播主页后返回首页需要回来原先的位置
+        if (homeInfoEntity != null) {
+            if (homeInfoEntity.getCategory().getList().size() == data.getCategory().getList().size() + 1 && !isRefresh) {
+                // 判断数组一样就不更新数据
+                // 为了实现 首页进入直播主页后返回首页需要回来原先的位置
+                Logger.e("判断数组一样就不更新数据");
                 homeInfoEntity = data;
                 return;
             }
@@ -419,7 +396,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         noticeBeans = data.getNotice();
         if (noticeBeans.size() > 0) {
             simpleTextAdapter = new SimpleTextAdapter(mContext, noticeBeans);
-
             simpleTextAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position, View view) {
@@ -438,7 +414,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             fragments.clear();
         }
 
-
         HomeInfoEntity.CategoryBean.ListBean listBean = new HomeInfoEntity.CategoryBean.ListBean();
         HomeInfoEntity.CategoryBean.ListBean.ChildBean childBean = new HomeInfoEntity.CategoryBean.ListBean.ChildBean();
         List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> childBeans = new ArrayList<>();
@@ -452,7 +427,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         homeInfoEntity.getCategory().getList().add(0, listBean);
         for (int i = 0; i < homeInfoEntity.getCategory().getList().size(); i++) {
             Fragment fragment = HomeChildFrag.newInstance(homeInfoEntity.getCategory().getList().get(i).getChildren());
-
             fragments.add(fragment);
         }
         //new一个适配器
@@ -461,8 +435,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         homeViewPager.setAdapter(mAdapter);
         //设置Tab与ViewPager关联
         homeTpStl.setViewPager(homeViewPager);
-        homeViewPager.setCurrentItem(positionLive);   //һ��ʼ��ѡ��
-
+        homeViewPager.setCurrentItem(positionLive);
     }
 
     /**
@@ -667,7 +640,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                     HomeTopVideoFrg frg = (HomeTopVideoFrg) topVideoFragment.get(position);
                     if (!isHidden) {
 //                        frg.startVideo();
-                        Log.e("nihao", "frg.startVideo()");
+                        Logger.e("frg.startVideo()");
                         isStartVideo = false;
                     }
 
@@ -689,23 +662,21 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         startTime();
     }
 
-    private Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
 
-            switch (msg.what) {
-                case UPTATE_VIEWPAGER:
-                    if (isHidden) {
-                        return;
-                    }
-                    Log.e("nihao", "setCurrentItem");
-                    if (msg.arg1 != 0) {
-                        bannerViewPager.setCurrentItem(msg.arg1);
-                    } else {
-                        bannerViewPager.setCurrentItem(msg.arg1, false);
-                    }
-                    startTime();
-                    break;
+            if (msg.what == UPTATE_VIEWPAGER) {
+                if (isHidden) {
+                    return;
+                }
+                Logger.e("setCurrentItem");
+                if (msg.arg1 != 0) {
+                    bannerViewPager.setCurrentItem(msg.arg1);
+                } else {
+                    bannerViewPager.setCurrentItem(msg.arg1, false);
+                }
+                startTime();
             }
         }
     };
@@ -735,7 +706,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 if (autoCurrIndex == homeInfoEntity.getBanner().size() - 1) {
                     autoCurrIndex = -1;
                 }
-                Log.e("nihao", "sendMessage");
+                Logger.e("sendMessage");
 //                if (GSYVideoManager.i)
                 message.arg1 = autoCurrIndex + 1;
                 mHandler.sendMessage(message);

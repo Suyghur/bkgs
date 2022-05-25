@@ -5,15 +5,12 @@ import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.OneToOneLiveEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
-import com.pro.maluli.common.entity.UpdateImgEntity;
 
 import java.io.File;
 import java.util.List;
 
 public interface IOneToOneQueueContraction extends BaseView {
     interface View extends BaseView {
-
-
 
         void setQueueSuccess(ReserveEntity data);
 
@@ -25,7 +22,12 @@ public interface IOneToOneQueueContraction extends BaseView {
 
         void setReserveSuccess();
     }
+
     interface Presenter extends IClear {
+
+        void startLive(String type, String title, String imgUrl);
+
+//        void startLive(String type, String title, String imgUrl, String model, String money, String people);
 
         void getReserveInfo();
 
@@ -37,9 +39,8 @@ public interface IOneToOneQueueContraction extends BaseView {
 
         void changeLiveInfo(String number, String desc);
 
-        void startLive(String type, String title, String imgUrl, String model, String money, String people);
 
-        void getliveInfo();
+        void getLiveInfo();
 
         void canReserve();
 

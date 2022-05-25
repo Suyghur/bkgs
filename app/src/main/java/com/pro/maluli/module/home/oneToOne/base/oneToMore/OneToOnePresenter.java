@@ -26,14 +26,13 @@ public class OneToOnePresenter extends BasePresenter<IOneToOneContraction.View> 
 
     @Override
     public void startLive(String type, String title, String imgUrl) {
-        add(mService.startLive(type, title, imgUrl, "", "","0")
+        add(mService.startLive(type, title, imgUrl, "", "", "0")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<OneToOneEntity>>(mView) {
                     @Override
                     public void onSuccess(BaseResponse<OneToOneEntity> response) {
                         dismissLoading(mContext);
-                        mView.setStartInfo(response.getData());
-
+//                        mView.setStartInfo(response.getData());
                     }
                 }, new Consumer<Throwable>() {
                     @Override

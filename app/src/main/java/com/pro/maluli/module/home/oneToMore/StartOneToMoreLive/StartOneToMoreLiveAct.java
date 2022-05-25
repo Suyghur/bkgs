@@ -48,7 +48,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.netease.lava.nertc.sdk.NERtcCallbackEx;
@@ -86,7 +85,6 @@ import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.log.sdk.wrapper.NimLog;
 import com.netease.nimlib.sdk.AbortableFuture;
-import com.netease.nimlib.sdk.InvocationFuture;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -100,7 +98,6 @@ import com.netease.nimlib.sdk.avsignalling.event.CanceledInviteEvent;
 import com.netease.nimlib.sdk.avsignalling.event.ChannelCloseEvent;
 import com.netease.nimlib.sdk.avsignalling.event.ChannelCommonEvent;
 import com.netease.nimlib.sdk.avsignalling.event.ControlEvent;
-import com.netease.nimlib.sdk.avsignalling.event.InviteAckEvent;
 import com.netease.nimlib.sdk.avsignalling.event.InvitedEvent;
 import com.netease.nimlib.sdk.avsignalling.event.UserJoinEvent;
 import com.netease.nimlib.sdk.avsignalling.event.UserLeaveEvent;
@@ -140,7 +137,6 @@ import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.CanFinishDialog;
 import com.pro.maluli.common.view.dialogview.InputTextLiveDialog;
 import com.pro.maluli.common.view.dialogview.LianmaiDialog;
-import com.pro.maluli.common.view.dialogview.LiveAssessDialog;
 import com.pro.maluli.common.view.dialogview.LiveMoreDialog;
 import com.pro.maluli.common.view.dialogview.OnlineMemberDialog;
 import com.pro.maluli.common.view.dialogview.ShareAppDialog;
@@ -149,19 +145,19 @@ import com.pro.maluli.common.view.dialogview.gift.GiftDialog;
 import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.SlideLayout;
 import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
-import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.StartOneToMoreLivePresenter;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.IStartOneToMoreLiveContraction;
+import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.StartOneToMoreLivePresenter;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.pushstream.PushStream;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.home.previewLive.adapter.PreviewLiveAdapter;
 import com.pro.maluli.module.home.startLive.AudioInputPanel;
-import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.home.startLive.adapter.StartLiveAdapter;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.service.FloatingViewMoreService;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.socketService.SocketLiveUtils;
 import com.pro.maluli.module.socketService.event.OTOEvent;
+import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -190,8 +186,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Kingsley
  * @date 2021/6/15
  */
-public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveContraction.View,
-        StartOneToMoreLivePresenter> implements IStartOneToMoreLiveContraction.View, NERtcCallbackEx, ModuleProxy {
+public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveContraction.View, StartOneToMoreLivePresenter> implements IStartOneToMoreLiveContraction.View, NERtcCallbackEx, ModuleProxy {
     @BindView(R.id.vv_local_user)
     NERtcVideoView vv_local_user;
     @BindView(R.id.changeCameraIV)
@@ -259,7 +254,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     RecyclerView anchorImgRv;
     @BindView(R.id.chronometer)//在线观众人数
     Chronometer chronometer;
-    @BindView(R.id.ReserveTv)//在线观众人数
+    @BindView(R.id.ReserveTv)//预约人数
     TextView ReserveTv;
 
 
@@ -495,7 +490,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     List<AnchorInfoEntity.PictureBean> pictureBeanList = new ArrayList<>();
 
     @Override
-    public void setAnchorInfo(AnchorInfoEntity data) {//获取主播信息页
+    public void setAnchorInfo(AnchorInfoEntity data) {
+        // 获取主播信息页
         ReserveTv.setText(String.format("已预约：%1$s/%2$s", data.getAppoint_num(), data.getReport_num()));
         anchorInfoEntity = data;
         numberReserve = data.getAppoint_num();
@@ -1199,7 +1195,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                     public void operation(int type) {
                         switch (type) {//1举报 2投屏 3清屏 4分享
                             case 1:
-                                if (userInfoEntity!=null&&userInfoEntity.getIs_teenager()==1){
+                                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
                                     ToastUtils.showShort("青少年模式不能使用该功能");
                                     return;
                                 }
@@ -1358,7 +1354,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         return;
                     }
                     onTextMessageSendButtonPressed(msg);
-
                 }
 
                 @Override
@@ -1519,7 +1514,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      */
     private void cancelInvite() {
         try {
-
             InviteParamBuilder param = new InviteParamBuilder(channelId, lmAccid, invitedRequestId);
             param.offlineEnabled(true);
             NIMClient.getService(SignallingService.class).cancelInvite(param).setCallback(new RequestCallback<Void>() {
@@ -1553,9 +1547,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      */
     private void agreeLianmai() {
 //        enableClick(false);
-        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(),
-                invitedEvent.getFromAccountId(),
-                invitedEvent.getRequestId());
+        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(), invitedEvent.getFromAccountId(), invitedEvent.getRequestId());
         NIMClient.getService(SignallingService.class).acceptInviteAndJoin(inviteParam, 0).setCallback(
                 new RequestCallbackWrapper<ChannelFullInfo>() {
 
@@ -1640,6 +1632,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 //        IMMessage textMessage = createTextMessage(text);
         IMMessage textMessage = ChatRoomMessageBuilder.createChatRoomTextMessage(roomId, msg);
         if (container.proxy.sendMessage(textMessage)) {
+            Logger.e("aaaaa");
 //            restoreText(true);
 //            messageEditText.setText("");
         }
@@ -1657,7 +1650,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     }
 
 
-    //聊天信息回调liaotian11
+    // 聊天信息回调
     Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
         @Override
         public void onEvent(List<ChatRoomMessage> messages) {
@@ -1670,44 +1663,47 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                 // 保证显示到界面上的消息，来自同一个聊天室
                 if (isMyMessage(message) && message.getMsgType() != MsgTypeEnum.notification) {
                     if (message.getMsgType() == MsgTypeEnum.custom) {
-                        String alldata = message.getAttachment().toJson(false);
-                        JSONObject jsonObjectTop = JSONObject.parseObject(alldata);
+                        String allData = message.getAttachStr();
+                        Logger.e(allData);
+                        JSONObject jsonObjectTop = JSONObject.parseObject(allData);
                         int type = jsonObjectTop.getInteger("type");
                         try {
-                            if (type == CustomAttachmentType.RedPacket) {
-                                showGift(message);
-                            }
-                            if (type == CustomAttachmentType.lianmai) {
-                                JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
-                                String anchorPhoto = jsonObject.getString("playingStatus");//1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
-                                showTipisPlaying(anchorPhoto);
-                                return;
-                            }
-                            if (type == CustomAttachmentType.SystemMsg) {
-                                //有人进入直播间了
-                                numberReserve++;
-                                ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
-                            }
-                            if (type == CustomAttachmentType.SystemMsgOut) {
-                                //有人取消预约直播
-                                numberReserve--;
-                                ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
-                                return;
+                            switch (type) {
+                                case CustomAttachmentType.RedPacket:
+                                    showGift(message);
+                                    messageList.add(message);
+                                    needRefresh = true;
+                                    break;
+                                case CustomAttachmentType.lianmai:
+                                    JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
+                                    String anchorPhoto = jsonObject.getString("playingStatus");//1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
+                                    showTipisPlaying(anchorPhoto);
+                                    break;
+                                case CustomAttachmentType.SystemMsg:
+                                    // 有人进入直播间了
+                                    Logger.e("有人预约直播, numReserve: " + numberReserve);
+                                    numberReserve++;
+                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
+                                    messageList.add(message);
+                                    needRefresh = true;
+                                    break;
+                                case CustomAttachmentType.SystemMsgOut:
+                                    // 有人取消预约直播
+                                    Logger.e("有人取消预约直播, numReserve: " + numberReserve);
+                                    numberReserve--;
+                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
+                                    break;
                             }
                         } catch (Exception e) {
-
+                            e.printStackTrace();
                         }
-
                     }
-                    messageList.add(message);
-                    needRefresh = true;
                 } else {
                     try {
-                        //来自聊天室通知
+                        // 来自聊天室通知
+                        Logger.e("来自聊天室通知");
                         ChatRoomNotificationAttachment attachment = (ChatRoomNotificationAttachment) message.getAttachment();
-                        if (attachment.getType() == NotificationType.ChatRoomMemberIn ||
-                                attachment.getType() == NotificationType.ChatRoomMemberExit ||
-                                attachment.getType() == NotificationType.LeaveTeam) {
+                        if (attachment.getType() == NotificationType.ChatRoomMemberIn || attachment.getType() == NotificationType.ChatRoomMemberExit || attachment.getType() == NotificationType.LeaveTeam) {
                             //有用户进入或者退出直播间
                             getOnlineMumber();
                             if (attachment.getType() == NotificationType.ChatRoomMemberExit) {
@@ -1726,7 +1722,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                             stopLiveDialog();
                         }
                         if (attachment.getType() == NotificationType.ChatRoomInfoUpdated) {
-
                             Map<String, Object> remote = attachment.getExtension();
                             if (remote != null && !remote.isEmpty()) {
                                 try {
@@ -1735,15 +1730,14 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                                         return;
                                     }
                                     showLianmaiView(avatar, !avatar.equals("1"));
-
                                 } catch (Exception e) {
-
+                                    e.printStackTrace();
                                 }
 
                             }
                         }
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 }
 
@@ -1799,8 +1793,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     public boolean isMyMessage(ChatRoomMessage message) {
         try {
-            return message.getSessionType() == container.sessionType &&
-                    message.getSessionId() != null && message.getSessionId().equals(container.account);
+            return message.getSessionType() == container.sessionType && message.getSessionId() != null && message.getSessionId().equals(container.account);
         } catch (Exception e) {
             return false;
         }
@@ -2127,17 +2120,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             NIMClient.getService(ChatRoomService.class).exitChatRoom(roomId);
             NERtcEx.getInstance().release();
             releasePlayer();
-//            closeChannel();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         if (audioInputPanel != null) {
             audioInputPanel.onDestroy();
         }
-//        if (aitManager != null) {
-//            aitManager.reset();
-//        }
     }
 
     /**
@@ -2194,11 +2183,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void doBusiness() {
-//        presenter.getSeeLiveUserInfo();
-//
         presenter.getliveInfo();
         presenter.getAnchorInfo();
-
     }
 
 //    @Override
@@ -2309,12 +2295,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     public boolean sendMessage(IMMessage msg) {
         ChatRoomMessage message = (ChatRoomMessage) msg;
-
+        Logger.e("sendMessage");
         // 检查是否转换成机器人消息
-//        message = changeToRobotMsg(message);
-
+//      message = changeToRobotMsg(message);
         ChatRoomHelper.buildMemberTypeInRemoteExt(message, roomId);
-
         NIMClient.getService(ChatRoomService.class).sendMessage(message, false)
                 .setCallback(new RequestCallback<Void>() {
                     @Override
@@ -2385,9 +2369,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private NumberAnim giftNumberAnim;
 
     private void showGift(ChatRoomMessage tag) {
-        String alldata = tag.getAttachment().toJson(false);
+        String allData = tag.getAttachment().toJson(false);
         CustomizeInfoEntity entity = new CustomizeInfoEntity();
-        CustomizeInfoEntity entity1 = entity.goJsonYes(alldata);
+        CustomizeInfoEntity entity1 = entity.goJsonYes(allData);
         String tag2 = tag.getFromAccount() + entity1.getGift_id();
         View newGiftView = ll_gift_group.findViewWithTag(tag2);
         // 是否有该tag类型的礼物
@@ -2847,15 +2831,15 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     BaseTipsDialog baseTipsDialog;
 
     private void showFinishAct() {
-        if (baseTipsDialog != null && baseTipsDialog.getDialog() != null
-                && baseTipsDialog.getDialog().isShowing()) {
+        Logger.e("showFinishAct");
+        if (baseTipsDialog != null && baseTipsDialog.getDialog() != null && baseTipsDialog.getDialog().isShowing()) {
             return;
         }
         baseTipsDialog = new BaseTipsDialog();
         Bundle bundle1 = new Bundle();
         bundle1.putString("showContent", "是否确定退出直播间？");
         bundle1.putString("TITLE_DIO", "退出直播间");
-        bundle1.putString("comfirm", "退出");
+        bundle1.putString("comfirm", "取消");
         if (isAvater) {
 //            bundle1.putString("comfirm", "退出");
             bundle1.putString("cancel", "结束直播");
@@ -2869,11 +2853,16 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             @Override
             public void comfirm() {
                 //退出直播间
+                if (!isAvater) {
+                    exit();
+                }
+                baseTipsDialog.dismiss();
 //                if (!isAvater) {
-                exit();
+//                exit();
 //                    return;
 //                }
 //                presenter.closeLive();
+//                baseTipsDialog.dismiss();
             }
 
             @Override
@@ -2895,10 +2884,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     protected void onRestart() {
         super.onRestart();
-        stopVideoService();//关闭悬浮窗服务
-
+        //关闭悬浮窗服务
+        stopVideoService();
         presenter.getliveInfo();
-//关闭悬浮窗之后从新设置视频布局
+        // 关闭悬浮窗之后从新设置视频布局
         if (camareIv.isSelected()) {
             setLocalVideoEnable(false);
         } else {
@@ -2972,7 +2961,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     public void startVideoService() {
         moveTaskToBack(true);//最小化Activity
         boolean isWork = isServiceWork(this, FloatingViewMoreService.class.getCanonicalName());
-        Log.e("12341234", "startVideoService-isWork=" + isWork);
+        Logger.e("startVideoService-isWork=" + isWork);
         if (!isWork) {
             releasePlayer();
             Intent intent = new Intent(this, FloatingViewMoreService.class);//开启服务显示悬浮框
@@ -3009,7 +2998,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      */
     public void stopVideoService() {
         boolean isWork = isServiceWork(this, FloatingViewMoreService.class.getCanonicalName());
-        Log.e("12341234", "stopVideoService-isWork=" + isWork);
+        Logger.e("stopVideoService-isWork=" + isWork);
         if (isWork) {
             unbindService(mVideoServiceConnection);//不显示悬浮框
         }

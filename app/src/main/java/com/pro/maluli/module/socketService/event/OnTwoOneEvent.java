@@ -1,6 +1,5 @@
 package com.pro.maluli.module.socketService.event;
 
-import com.pro.maluli.common.entity.OnTwoOneSocketEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
 
 public class OnTwoOneEvent {

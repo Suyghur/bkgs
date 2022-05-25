@@ -20,7 +20,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +63,7 @@ import com.netease.nim.uikit.business.session.dialogFragment.gift.GiftForMeDialo
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
 import com.netease.nim.uikit.business.session.myCustom.extension.CustomAttachmentType;
+import com.netease.nim.uikit.business.session.myCustom.extension.SystemAttachment;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.log.sdk.wrapper.NimLog;
@@ -92,7 +92,6 @@ import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData;
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
-import com.netease.nimlib.sdk.msg.constant.NotificationType;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.pro.maluli.R;
@@ -109,9 +108,9 @@ import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.utils.preferences.Preferences;
+import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.CanFinishDialog;
 import com.pro.maluli.common.view.dialogview.EditLiveTimeDialog;
-import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.GuestListDialog;
 import com.pro.maluli.common.view.dialogview.InputTextLiveDialog;
 import com.pro.maluli.common.view.dialogview.LiveAssessDialog;
@@ -119,7 +118,6 @@ import com.pro.maluli.common.view.dialogview.LiveMoreDialog;
 import com.pro.maluli.common.view.dialogview.ShareAppDialog;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.dialogview.gift.GiftDialog;
-import com.netease.nim.uikit.business.session.myCustom.extension.SystemAttachment;
 import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.ISlideListener;
 import com.pro.maluli.common.view.slideView.SlideLayout;
@@ -137,6 +135,7 @@ import com.pro.maluli.module.socketService.event.CallEvent;
 import com.pro.maluli.module.socketService.event.OTOEvent;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
+import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -163,8 +162,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Kingsley
  * @date 2021/6/15
  */
-public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, StartLivePresenter>
-        implements IStartLiveContraction.View, NERtcCallbackEx, ModuleProxy {
+public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, StartLivePresenter> implements IStartLiveContraction.View, NERtcCallbackEx, ModuleProxy {
     @BindView(R.id.vv_local_user)
     NERtcVideoView vv_local_user;
     @BindView(R.id.vv_remote_user)
@@ -226,7 +224,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     TextView liveTipsTv;
     @BindView(R.id.slide_layout)
     SlideLayout slide_layout;
-
 
     @BindView(R.id.ll_gift_group)
     LinearLayout ll_gift_group;
@@ -935,7 +932,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
 
         //创建广播
-        innerReceiver = new InnerRecevier();
+        innerReceiver = new InnerReceiver();
         //动态注册广播
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         //启动广播
@@ -991,7 +988,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     }
 
     int openStaus = 0;
-    InnerRecevier innerReceiver;//监听home键
+    InnerReceiver innerReceiver;//监听home键
 
     ChannelBaseInfo channelInfo;
 
@@ -1089,20 +1086,20 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
                     } else {
                         try {
-                        if (message.getMsgType() == MsgTypeEnum.custom) {
-                            String alldata = message.getAttachment().toJson(false);
-                            JSONObject jsonObjectTop = JSONObject.parseObject(alldata);
-                            int type = jsonObjectTop.getInteger("type");
-                            try {
-                                if (type == CustomAttachmentType.RedPacket) {
-                                    showGift(message);
+                            if (message.getMsgType() == MsgTypeEnum.custom) {
+                                String alldata = message.getAttachment().toJson(false);
+                                JSONObject jsonObjectTop = JSONObject.parseObject(alldata);
+                                int type = jsonObjectTop.getInteger("type");
+                                try {
+                                    if (type == CustomAttachmentType.RedPacket) {
+                                        showGift(message);
+                                    }
+                                } catch (Exception e) {
                                 }
-                            } catch (Exception e) {
                             }
-                        }
-                        messageList.add(message);
-                        needRefresh = true;
-                        }catch (Exception e){
+                            messageList.add(message);
+                            needRefresh = true;
+                        } catch (Exception e) {
 
                         }
                     }
@@ -1320,7 +1317,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             NERtcEx.getInstance().release();
             closeChannel();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         if (audioInputPanel != null) {
@@ -1588,18 +1585,11 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         push_url = data.getInfo().getPush_url();
         nertc_token = data.getInfo().getNertc_token();
 
-        if (data.getInfo().getIs_appoint() == 1) {
-            ReserveTv.setSelected(true);
-        } else {
-            ReserveTv.setSelected(false);
-        }
+        ReserveTv.setSelected(data.getInfo().getIs_appoint() == 1);
         if (!TextUtils.isEmpty(roomId) && !TextUtils.isEmpty(liveId)) {
             joinLiaoTianSHi();
             joinChannel(nertc_token, channelName, uid);
-
         }
-
-
     }
 
     @Override
@@ -2063,7 +2053,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                         } else if (code == ResponseCode.RES_CHATROOM_ROOM_MUTED) {
                             ToastHelper.showToast(NimUIKit.getContext(), "全体禁言");
                         } else {
-                            ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败!" );
+                            ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败!");
                         }
                     }
 
@@ -2159,9 +2149,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             String url = Url.SOCKET_URL + "room?room_id=" + liveId + "&token=" + lasdak;
             SocketLiveUtils.INSTANCE.onStartCommand(url);
         }
-
         presenter.getShareImg();
-
     }
 
     /**
@@ -2194,7 +2182,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                 case 1:
                     socketEntity = tradeListEvent.getEntity();
                     if (socketEntity != null) {
-
 //                        presenter.zhuboId = socketEntity.;
                         Glide.with(StartLiveAct.this).load(socketEntity.getAvatar()).into(anchorAvaterCiv);
                         Glide.with(StartLiveAct.this).load(socketEntity.getLevel()).into(leveImg);
@@ -2219,10 +2206,9 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                         if (socketEntity.getNow_time() > 0) {
                             isShowEndliveDialog = false;
                         }
-//-1-未开始直播 0-直播已结束 1-直播中
+                        //-1-未开始直播 0-直播已结束 1-直播中
                         if (socketEntity.getType() == 0) {
-                            if (liveEndDialog != null && liveEndDialog.getDialog() != null
-                                    && liveEndDialog.getDialog().isShowing()) {
+                            if (liveEndDialog != null && liveEndDialog.getDialog() != null && liveEndDialog.getDialog().isShowing()) {
 
                             } else {
                                 if (!isShowEndliveDialog) {
@@ -2238,12 +2224,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                                     liveEndDialog.setArguments(bundle2);
                                     liveEndDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
                                 }
-
                                 isShowEndliveDialog = true;
                             }
-
                         }
-                        if (socketEntity.getSpecial_count() > 0 && "特邀".equalsIgnoreCase(endliveTv.getText().toString())&&isAnchor) {
+                        if (socketEntity.getSpecial_count() > 0 && "特邀".equalsIgnoreCase(endliveTv.getText().toString()) && isAnchor) {
                             teyaoNumberTv.setVisibility(View.VISIBLE);
                             teyaoNumberTv.setText(socketEntity.getSpecial_count() + "");
                         } else {
@@ -2254,13 +2238,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                     break;
                 case 5:
                     if (!isAnchor) {
-//                        ToastUtils.showShort("直播已经结束了");
-//                        finish();
                         liveTipsTv.setVisibility(View.VISIBLE);
                         liveTipsTv.setText("直播已经结束了");
                         leaveChannel();
                         NIMClient.getService(ChatRoomService.class).exitChatRoom(roomId);
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -2269,9 +2250,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                                 }
                             }
                         }, 3000);
-
-
-                    } else {
 
                     }
                     break;
@@ -2351,42 +2329,37 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doCallEvent(CallEvent callEvent) {
-        /**
+        /*
          * 拒绝邀请1
-         接受邀请2
-         *
+         * 接受邀请2
          */
-        if (callEvent != null) {
-            if (callEvent.getAckStatus() == 1) {
-                if (handler != null && runnable != null) {
-                    handler.removeCallbacks(runnable);
+        if (callEvent != null && callEvent.getAckStatus() == 1) {
+            if (handler != null && runnable != null) {
+                handler.removeCallbacks(runnable);
+            }
+            BaseTipsDialog baseTipsDialog1 = new BaseTipsDialog();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("showContent", "对方拒绝邀请");
+            bundle2.putString("comfirm", "再次邀请");
+            bundle2.putString("cancel", "结束");
+            baseTipsDialog1.setArguments(bundle2);
+            baseTipsDialog1.show(getSupportFragmentManager(), "BaseTipsDialog");
+            baseTipsDialog1.setOnTwoBaseTipsListener(new BaseTipsDialog.OnTwoBaseTipsListener() {
+                @Override
+                public void comfirm() {
+                    inviteOther(accid);
                 }
-                BaseTipsDialog baseTipsDialog1 = new BaseTipsDialog();
-                Bundle bundle2 = new Bundle();
-                bundle2.putString("showContent", "对方拒绝邀请");
-                bundle2.putString("comfirm", "再次邀请");
-                bundle2.putString("cancel", "结束");
-                baseTipsDialog1.setArguments(bundle2);
-                baseTipsDialog1.show(getSupportFragmentManager(), "BaseTipsDialog");
-                baseTipsDialog1.setOnTwoBaseTipsListener(new BaseTipsDialog.OnTwoBaseTipsListener() {
-                    @Override
-                    public void comfirm() {
-                        inviteOther(accid);
-                    }
 
-                    @Override
-                    public void cancel() {
+                @Override
+                public void cancel() {
 //                        if (callEvent.isJump()) {
-                        presenter.jumpLive();
+                    presenter.jumpLive();
 //                        } else {
 //                            presenter.endLive();
 //
 //                        }
-                    }
-                });
-            } else {
-
-            }
+                }
+            });
         }
 
     }
@@ -2396,22 +2369,19 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         super.onRestart();
         isSmall = false;
         stopVideoService();//关闭悬浮窗服务
-//关闭悬浮窗之后从新设置视频布局
+        // 关闭悬浮窗之后从新设置视频布局
         NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
-//        NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
-
-//        NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, uid);
-        if (otherUid != 0l) {
+        // NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
+        // NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, uid);
+        if (otherUid != 0L) {
             NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, otherUid);
         }
-
     }
 
     /**
      * 广播监听home键盘，显示小窗口
      */
-    class InnerRecevier extends BroadcastReceiver {
-
+    static class InnerReceiver extends BroadcastReceiver {
         final String SYSTEM_DIALOG_REASON_KEY = "reason";
 
         final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
@@ -2434,9 +2404,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         }
     }
 
-    /**
-     * -----------------------------------------------------------------悬浮窗————————————————————————————
-     */
+    // -----------------------------------------------------------------悬浮窗————————————————————————————
 //    private static final int OVERLAY_PERMISSION_REQUEST_CODE = 100;
     private boolean issubPremission;
 
@@ -2472,9 +2440,8 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                     PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
                         @Override
                         public void onGranted() {
-//同意
+                            // 同意
                             startVideoService();
-
                         }
 
                         @Override
@@ -2499,15 +2466,15 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      * 打开悬浮窗服务
      */
     public void startVideoService() {
-
         boolean isWork = isServiceWork(this, FloatingViewService.class.getCanonicalName());
-        Log.e("12341234", "startVideoService-isWork=" + isWork);
+        Logger.e("startVideoService-isWork=" + isWork);
         if (!isWork) {
             Intent intent = new Intent(this, FloatingViewService.class);//开启服务显示悬浮框
 //            startService(intent);
             bindService(intent, mVideoServiceConnection, Context.BIND_AUTO_CREATE);
         }
-        moveTaskToBack(true);//最小化Activity
+        //最小化Activity
+        moveTaskToBack(true);
     }
 
     ServiceConnection mVideoServiceConnection = new ServiceConnection() {
@@ -2541,7 +2508,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      */
     public void stopVideoService() {
         boolean isWork = isServiceWork(this, FloatingViewService.class.getCanonicalName());
-        Log.e("12341234", "stopVideoService-isWork=" + isWork);
+        Logger.e("stopVideoService-isWork=" + isWork);
         if (isWork) {
             unbindService(mVideoServiceConnection);//不显示悬浮框
         }
@@ -2554,8 +2521,8 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      * @param className 是包名+服务的类名（例如：net.loonggg.testbackstage.TestService）
      * @return true代表正在运行，false代表服务没有正在运行
      */
-    public boolean isServiceWork(Context mContext, String className) {
-        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+    public boolean isServiceWork(Context context, String className) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> serviceList = activityManager.getRunningServices(Integer.MAX_VALUE);
         if (!(serviceList.size() > 0)) {
             return false;
@@ -2578,7 +2545,5 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 //        }
 //    }
 
-/**
- * -----------------------------------------------------------------悬浮窗————————————————————————————
- */
+    // -----------------------------------------------------------------悬浮窗————————————————————————————
 }

@@ -1,15 +1,10 @@
 package com.pro.maluli.module.socketService;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,27 +12,12 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.pro.maluli.common.networkRequest.Url;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.app.MyAppliaction;
+import com.pro.maluli.module.app.BKGSApplication;
 
-import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -60,7 +40,7 @@ public class DataService extends Service {
     private static final Intent SERVICE_INTENT = new Intent();
 
     static {
-        SERVICE_INTENT.setComponent(new ComponentName(MyAppliaction.getApp().getPackageName(),
+        SERVICE_INTENT.setComponent(new ComponentName(BKGSApplication.getApp().getPackageName(),
                 "com.pro.maluli.module.socketService.DataService"));
     }
 

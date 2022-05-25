@@ -2,33 +2,25 @@ package com.pro.maluli.common.networkRequest;
 
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
+import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.AboutMeEntity;
-import com.pro.maluli.common.entity.AnchorVideoEntity;
-import com.pro.maluli.common.entity.ApplyLimitEntity;
-import com.pro.maluli.common.entity.BKRecordEntity;
-import com.pro.maluli.common.entity.CanTimeVideoEntity;
-import com.pro.maluli.common.entity.CommentVideoEntity;
-import com.pro.maluli.common.entity.JoinLiveEntity;
-import com.pro.maluli.common.entity.LineUpEntity;
-import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
-import com.pro.maluli.common.entity.MessageListEntity;
-import com.pro.maluli.common.entity.ReserveDetailEntity;
-import com.pro.maluli.common.entity.ReserveMessageEntity;
-import com.pro.maluli.common.entity.RewardDetailEntity;
-import com.pro.maluli.common.entity.SearchEntity;
-import com.pro.maluli.common.entity.ShareLiveEntity;
-import com.pro.maluli.common.entity.SystemDetailEntity;
-import com.pro.maluli.common.entity.VideoEntity;
-import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
 import com.pro.maluli.common.entity.AnchorLabelEntity;
+import com.pro.maluli.common.entity.AnchorVideoEntity;
+import com.pro.maluli.common.entity.ApplyLimitEntity;
+import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.BlackListEntity;
+import com.pro.maluli.common.entity.CanTimeVideoEntity;
+import com.pro.maluli.common.entity.CommentVideoEntity;
 import com.pro.maluli.common.entity.FeedBackDetailEntity;
 import com.pro.maluli.common.entity.FeedbackEntity;
 import com.pro.maluli.common.entity.HomeInfoEntity;
+import com.pro.maluli.common.entity.JoinLiveEntity;
 import com.pro.maluli.common.entity.LastTimeLiveEntity;
+import com.pro.maluli.common.entity.LineUpEntity;
+import com.pro.maluli.common.entity.MessageListEntity;
 import com.pro.maluli.common.entity.MyAccountEntity;
 import com.pro.maluli.common.entity.NoticeEntity;
 import com.pro.maluli.common.entity.OneToOneEntity;
@@ -37,12 +29,20 @@ import com.pro.maluli.common.entity.PayInfoEntity;
 import com.pro.maluli.common.entity.ProtocolDetailEntity;
 import com.pro.maluli.common.entity.ProtocolEntity;
 import com.pro.maluli.common.entity.RechargeEntity;
+import com.pro.maluli.common.entity.ReserveDetailEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
+import com.pro.maluli.common.entity.ReserveMessageEntity;
+import com.pro.maluli.common.entity.RewardDetailEntity;
+import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.entity.SeeLiveUserEntity;
+import com.pro.maluli.common.entity.ShareLiveEntity;
+import com.pro.maluli.common.entity.SystemDetailEntity;
 import com.pro.maluli.common.entity.SystemMsgEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
+import com.pro.maluli.common.entity.VideoEntity;
 import com.pro.maluli.common.entity.WatchListEntity;
+import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.entity.WelcomInfoEntity;
 import com.pro.maluli.common.entity.WithDrawRecordEntity;
 import com.pro.maluli.common.entity.YouthEntity;
@@ -141,6 +141,7 @@ public interface Api {
      */
     @GET("message/appoint_list")
     Observable<BaseResponse<LineUpEntity>> getlineUpList();
+
     /**
      * 预约排队已读接口
      *
@@ -280,6 +281,7 @@ public interface Api {
      */
     @GET("live/share")
     Observable<BaseResponse<ShareLiveEntity>> shareImgForOtOLive(@Query("id") String id);
+
     /**
      * 一对一直播分享
      *
@@ -287,7 +289,6 @@ public interface Api {
      */
     @GET("live/apply")
     Observable<BaseResponse<ApplyLimitEntity>> subApplyLimit();
-
 
 
     /**
@@ -451,6 +452,7 @@ public interface Api {
      */
     @GET("message/list")
     Observable<BaseResponse<MessageListEntity>> getMessageList();
+
     /**
      * 我的消息页
      *
@@ -459,6 +461,7 @@ public interface Api {
     @FormUrlEncoded
     @POST("anchor/is_anchor")
     Observable<BaseResponse<Object>> checkIsAnchor(@Field("accid") String accid);
+
     /**
      * 我的消息页
      *
@@ -491,6 +494,7 @@ public interface Api {
     @FormUrlEncoded
     @POST("video/comment_video")
     Observable<BaseResponse<VideoEntity>> subCommentVideo(@Field("id") String id, @Field("comment") String comment);
+
     /**
      * 分享小视频
      *
@@ -499,6 +503,7 @@ public interface Api {
     @FormUrlEncoded
     @POST("video/share_video")
     Observable<BaseResponse<VideoEntity>> subShareVideo(@Field("id") String id);
+
     /**
      * 下载小视频小视频
      *
@@ -619,6 +624,7 @@ public interface Api {
      */
     @GET("message/chat")
     Observable<BaseResponse<MessageCanScoreEntity>> getMessageScore(@Query("accid") String accid);
+
     /**
      * 拉入黑名单
      *
@@ -628,6 +634,7 @@ public interface Api {
     @POST("user/back_anchor")
     Observable<BaseResponse<Object>> addBlack(@Field("accid") String accid,
                                               @Field("anchor_id") String anchor_id);
+
     /**
      * 移除黑名单
      *
@@ -636,7 +643,7 @@ public interface Api {
     @FormUrlEncoded
     @POST("user/backlist")
     Observable<BaseResponse<Object>> removeBlack(@Field("accid") String accid,
-                                              @Field("anchor_id") String anchor_id,
+                                                 @Field("anchor_id") String anchor_id,
                                                  @Field("id") String id);
 
     /**
@@ -709,6 +716,7 @@ public interface Api {
                                                           @Field("images") String images,
                                                           @Field("rel_type") String rel_type,
                                                           @Field("rel") String rel);
+
     /**
      * 冻结申诉
      *
@@ -717,9 +725,10 @@ public interface Api {
     @FormUrlEncoded
     @POST("anchor/draw_report")
     Observable<BaseResponse<FeedbackEntity>> getCashReport(@Field("content") String content,
-                                                          @Field("images") String images,
-                                                          @Field("rel_type") String rel_type,
-                                                          @Field("rel") String rel);
+                                                           @Field("images") String images,
+                                                           @Field("rel_type") String rel_type,
+                                                           @Field("rel") String rel);
+
     /**
      * 主播申诉
      *
@@ -728,9 +737,10 @@ public interface Api {
     @FormUrlEncoded
     @POST("live/report")
     Observable<BaseResponse<FeedbackEntity>> getLivesubReport(@Field("content") String content,
-                                                          @Field("images") String images,
-                                                          @Field("rel_type") String rel_type,
-                                                          @Field("rel") String rel);
+                                                              @Field("images") String images,
+                                                              @Field("rel_type") String rel_type,
+                                                              @Field("rel") String rel);
+
     /**
      * 举报是直播间，或者私信
      *
@@ -739,12 +749,12 @@ public interface Api {
     @FormUrlEncoded
     @POST("user/report")
     Observable<BaseResponse<FeedbackEntity>> getreport(@Field("content") String content,
-                                                          @Field("images") String images,
-                                                          @Field("rel_type") String rel_type,
-                                                          @Field("rel") String rel,
-                                                          @Field("type") String type,
-                                                          @Field("report_member_id") String report_member_id,
-                                                          @Field("room_id") String room_id);
+                                                       @Field("images") String images,
+                                                       @Field("rel_type") String rel_type,
+                                                       @Field("rel") String rel,
+                                                       @Field("type") String type,
+                                                       @Field("report_member_id") String report_member_id,
+                                                       @Field("room_id") String room_id);
 
     /**
      * 意见反馈详情
@@ -938,6 +948,7 @@ public interface Api {
      */
     @GET("user/anchor_flow_search_history")
     Observable<BaseResponse<SearchEntity>> getSearchRewardHistory();
+
     /**
      * 提现记录
      *
@@ -953,6 +964,7 @@ public interface Api {
      */
     @GET("search_history")
     Observable<BaseResponse<SearchEntity>> getSearchHomeHistory();
+
     /**
      * 消息搜索记录
      *
@@ -960,6 +972,7 @@ public interface Api {
      */
     @GET("message/search_history")
     Observable<BaseResponse<SearchEntity>> getSearchMSgHistory();
+
     /**
      * 消息搜索记录
      *
@@ -992,6 +1005,7 @@ public interface Api {
      */
     @HTTP(method = "DELETE", path = "search_history", hasBody = true)
     Observable<BaseResponse<Object>> deleteHomeSearchHistory();
+
     /**
      * 清空聊天搜索搜索记录
      *
@@ -1216,5 +1230,5 @@ public interface Api {
      */
     @Multipart
     @POST("anchor/video")
-    Observable<BaseResponse<JoinLiveEntity>> subVideo(@PartMap Map<String, RequestBody> filesl,  @Part MultipartBody.Part desc);
+    Observable<BaseResponse<JoinLiveEntity>> subVideo(@PartMap Map<String, RequestBody> filesl, @Part MultipartBody.Part desc);
 }

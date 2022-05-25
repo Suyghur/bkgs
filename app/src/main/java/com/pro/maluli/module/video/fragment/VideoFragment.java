@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -16,68 +15,46 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.PermissionUtils;
-import com.blankj.utilcode.util.ResourceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.chad.library.adapter.base.listener.OnLoadMoreListener;
-import com.chad.library.adapter.base.listener.OnUpFetchListener;
-import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
-import com.chad.library.adapter.base.module.BaseLoadMoreModule;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.mob.MobSDK;
-import com.netease.nim.uikit.common.util.string.MD5;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.CommentVideoEntity;
 import com.pro.maluli.common.entity.VideoEntity;
-import com.pro.maluli.common.utils.DonwloadSaveImg;
 import com.pro.maluli.common.utils.HttpUtil;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.common.view.dialogview.CommentDF;
 import com.pro.maluli.common.view.dialogview.DeleteDialog;
-import com.pro.maluli.common.view.dialogview.ShareAppDialog;
 import com.pro.maluli.common.view.dialogview.ShareVideoDialog;
 import com.pro.maluli.common.view.dialogview.presenter.InputTextMsgDialog;
 import com.pro.maluli.common.view.dialogview.presenter.adapter.CommentListAdapter;
 import com.pro.maluli.common.view.myselfView.LikeLayout;
 import com.pro.maluli.common.view.myselfView.StarBar;
-import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
-import com.pro.maluli.module.myself.setting.base.SettingAct;
-import com.pro.maluli.module.other.login.LoginAct;
-import com.pro.maluli.module.video.base.presenter.ISmallVideoContraction;
-import com.pro.maluli.module.video.base.presenter.SmallVideoPresenter;
-import com.pro.maluli.module.video.events.CanScrollEvent;
 import com.pro.maluli.module.video.events.CanStartEvent;
 import com.pro.maluli.module.video.events.ClearPositionEvent;
 import com.pro.maluli.module.video.fragment.recyclerUtils.RecyclerViewUtil;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.VideoFragmentPresenter;
+import com.pro.maluli.toolkit.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -92,19 +69,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -519,117 +488,117 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         videoPlayer.setVideoAllCallBack(new VideoAllCallBack() {
             @Override
             public void onStartPrepared(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onStartPrepared");
+                Logger.e(videoBean.getVideo().getUrl() + "onStartPrepared");
             }
 
             @Override
             public void onPrepared(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onPrepared");
+                Logger.e(videoBean.getVideo().getUrl() + "onPrepared");
             }
 
             @Override
             public void onClickStartIcon(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickStartIcon");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickStartIcon");
             }
 
             @Override
             public void onClickStartError(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickStartError");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickStartError");
             }
 
             @Override
             public void onClickStop(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickStop");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickStop");
             }
 
             @Override
             public void onClickStopFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickStopFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickStopFullscreen");
             }
 
             @Override
             public void onClickResume(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickResume");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickResume");
             }
 
             @Override
             public void onClickResumeFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickResumeFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickResumeFullscreen");
             }
 
             @Override
             public void onClickSeekbar(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickSeekbar");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickSeekbar");
             }
 
             @Override
             public void onClickSeekbarFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickSeekbarFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickSeekbarFullscreen");
             }
 
             @Override
             public void onAutoComplete(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onAutoComplete");
+                Logger.e(videoBean.getVideo().getUrl() + "onAutoComplete");
             }
 
             @Override
             public void onComplete(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onComplete");
+                Logger.e(videoBean.getVideo().getUrl() + "onComplete");
             }
 
             @Override
             public void onEnterFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onEnterFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onEnterFullscreen");
             }
 
             @Override
             public void onQuitFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onQuitFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onQuitFullscreen");
             }
 
             @Override
             public void onQuitSmallWidget(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onQuitSmallWidget");
+                Logger.e(videoBean.getVideo().getUrl() + "onQuitSmallWidget");
             }
 
             @Override
             public void onEnterSmallWidget(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onEnterSmallWidget");
+                Logger.e(videoBean.getVideo().getUrl() + "onEnterSmallWidget");
             }
 
             @Override
             public void onTouchScreenSeekVolume(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onTouchScreenSeekVolume");
+                Logger.e(videoBean.getVideo().getUrl() + "onTouchScreenSeekVolume");
             }
 
             @Override
             public void onTouchScreenSeekPosition(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onTouchScreenSeekPosition");
+                Logger.e(videoBean.getVideo().getUrl() + "onTouchScreenSeekPosition");
             }
 
             @Override
             public void onTouchScreenSeekLight(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onTouchScreenSeekLight");
+                Logger.e(videoBean.getVideo().getUrl() + "onTouchScreenSeekLight");
             }
 
             @Override
             public void onPlayError(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onPlayError");
+                Logger.e(videoBean.getVideo().getUrl() + "onPlayError");
             }
 
             @Override
             public void onClickStartThumb(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickStartThumb");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickStartThumb");
             }
 
             @Override
             public void onClickBlank(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickBlank");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickBlank");
             }
 
             @Override
             public void onClickBlankFullscreen(String url, Object... objects) {
-                Log.e("nihao", videoBean.getVideo().getUrl() + "onClickBlankFullscreen");
+                Logger.e(videoBean.getVideo().getUrl() + "onClickBlankFullscreen");
             }
         });
 //        likeLayout.setLikeLayoutListener(new LikeLayout.LikeLayoutListener() {
@@ -1085,7 +1054,7 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     @Override
     public void downVideoSuccess(String download_url) {
 //        downMp4(download_url);
-        if (TextUtils.isEmpty(download_url)){
+        if (TextUtils.isEmpty(download_url)) {
             ToastUtils.showShort("下载视频失败");
             return;
         }

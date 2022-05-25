@@ -38,6 +38,7 @@ import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailA
  */
 
 public class TeenagerDialog extends DialogFragment implements View.OnClickListener {
+
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private ProgressWebView contentTv;
@@ -45,7 +46,6 @@ public class TeenagerDialog extends DialogFragment implements View.OnClickListen
     private LinearLayout gotoTeenagerLL;
     private YouthEntity youthEntity;
     private RoundedImageView bottomImg;
-
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

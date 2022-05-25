@@ -1,12 +1,13 @@
 package com.pro.maluli.module.myself.anchorInformation.base;
 
+import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,23 +37,19 @@ import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.view.dialogview.ShareAppDialog;
 import com.pro.maluli.common.view.dialogview.ShareVideoDialog;
-import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
 import com.pro.maluli.common.view.myselfView.StarBar;
-import com.pro.maluli.module.home.oneToMore.base.oneToMore.OneToMoreAct;
 import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.myself.anchorInformation.anchorMore.AnchorMoreAct;
 import com.pro.maluli.module.myself.anchorInformation.base.presenter.AnchorInformationPresenter;
 import com.pro.maluli.module.myself.anchorInformation.base.presenter.IAnchorInformationContraction;
-import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.AnchorInfoFrag;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.AnchorImageFrag;
+import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.AnchorInfoFrag;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.base.AnchorVideoFrag;
-import com.pro.maluli.module.video.videoact.VideoAct;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoView;
 
@@ -66,8 +63,6 @@ import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
 
 /**
  * @author Kingsley
@@ -195,7 +190,7 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
                         if (isFrist) {
                             videoPlayer.setUpLazy(new_video, false, null, null, "");
                             videoPlayer.startPlayLogic();
-                            Log.e("nihao", "播放");
+                            Logger.e("播放");
                         }
 
                     }
@@ -213,8 +208,8 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
                 } else if (Math.abs(verticalOffset) + Math.abs(view_toolbar.getHeight()) >= appbarLayout.getHeight()) {
                     topControlRl.setVisibility(View.VISIBLE);
                     if (videoPlayer.isInPlayingState() && videoPlayer.getCurrentState() != GSYVideoView.CURRENT_STATE_NORMAL) {
-                        Log.e("nihao", "暂停");
-                        Log.e("nihao", "sdfas" + verticalOffset);
+                        Logger.e("暂停");
+                        Logger.e("sdfas" + verticalOffset);
                         videoPlayer.onVideoPause();
                         videoPlayer.onVideoReset();
                     }

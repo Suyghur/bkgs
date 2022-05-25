@@ -7,10 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -20,23 +17,15 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.module.app.MyAppliaction;
-import com.pro.maluli.module.main.base.MainActivity;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.other.login.LoginAct;
+import com.pro.maluli.toolkit.Logger;
 
-import org.w3c.dom.Document;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +41,7 @@ public class ToolUtils {
 
         String macAddress = null;
         WifiManager wifiManager =
-                (WifiManager) MyAppliaction.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                (WifiManager) BKGSApplication.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = (null == wifiManager ? null : wifiManager.getConnectionInfo());
 
         if (!wifiManager.isWifiEnabled()) {
@@ -226,19 +215,19 @@ public class ToolUtils {
     /**
      * 分享图片
      */
-    public static void shareImg(Handler handler, String type, String imgurl) {
+    public static void shareImg(Handler handler, String type, String imgUrl) {
         Platform.ShareParams sp = new Platform.ShareParams();
-//        sp.setTitle("测试分享的标题");
+        sp.setTitle("百科高手");
 //        sp.setTitleUrl("http://sharesdk.cn"); // 标题的超链接
 //        sp.setText("测试分享的文本");
         sp.setShareType(Platform.SHARE_IMAGE);
-        sp.setImageUrl(imgurl);
+        sp.setImageUrl(imgUrl);
 //        sp.setSite("发布分享的网站名称");
 //        sp.setSiteUrl("发布分享网站的地址");
-        Platform qq = ShareSDK.getPlatform(type);
-        Log.e("nihao", "type: " + type);
-// 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
-        qq.setPlatformActionListener(new PlatformActionListener() {
+        Platform platform = ShareSDK.getPlatform(type);
+        Logger.e("type: " + type);
+        // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
+        platform.setPlatformActionListener(new PlatformActionListener() {
             public void onError(Platform arg0, int arg1, Throwable arg2) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
                 Message message = new Message();
@@ -258,7 +247,7 @@ public class ToolUtils {
             }
         });
 // 执行图文分享
-        qq.share(sp);
+        platform.share(sp);
     }
 
     /**
@@ -273,10 +262,10 @@ public class ToolUtils {
         sp.setTitle(title);
 //        sp.setSite("发布分享的网站名称");
 //        sp.setSiteUrl("发布分享网站的地址");
-        Platform qq = ShareSDK.getPlatform(type);
-        Log.e("nihao", "type: " + type);
+        Platform platform = ShareSDK.getPlatform(type);
+        Logger.e("type: " + type);
 // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
-        qq.setPlatformActionListener(new PlatformActionListener() {
+        platform.setPlatformActionListener(new PlatformActionListener() {
             public void onError(Platform arg0, int arg1, Throwable arg2) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
                 Message message = new Message();
@@ -296,24 +285,26 @@ public class ToolUtils {
             }
         });
 // 执行图文分享
-        qq.share(sp);
+        platform.share(sp);
     }
 
     /**
      * 分享视频
      */
     public static void shareVideo(Handler handler, String type, String videoUrl, String text, String imgUrl) {
+        Logger.d("shareVideo");
         Platform.ShareParams sp = new Platform.ShareParams();
         sp.setTitle("百科高手");
         sp.setText(text);
-        sp.setTitleUrl("百科高手");
+        sp.setTitleUrl(videoUrl);
         sp.setImageUrl(imgUrl);
-        sp.setShareType(Platform.SHARE_VIDEO);
+        sp.setShareType(Platform.SHARE_WEBPAGE);
         sp.setUrl(videoUrl);
-        Platform qq = ShareSDK.getPlatform(type);
-        Log.e("nihao", "type: " + type);
-// 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
-        qq.setPlatformActionListener(new PlatformActionListener() {
+//        sp.setSiteUrl(videoUrl);
+        Platform platform = ShareSDK.getPlatform(type);
+        Logger.e("type: " + type);
+        // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
+        platform.setPlatformActionListener(new PlatformActionListener() {
             public void onError(Platform arg0, int arg1, Throwable arg2) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
                 Message message = new Message();
@@ -333,7 +324,7 @@ public class ToolUtils {
             }
         });
 // 执行图文分享
-        qq.share(sp);
+        platform.share(sp);
     }
 
     /**
@@ -407,6 +398,7 @@ public class ToolUtils {
         }
         return true;
     }
+
     /**
      * 手机号用****号隐藏中间数字
      *
