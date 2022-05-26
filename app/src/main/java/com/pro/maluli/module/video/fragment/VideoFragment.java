@@ -88,15 +88,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter>
-        implements IVideoFragmentContraction.View, View.OnClickListener {
+public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter> implements IVideoFragmentContraction.View, View.OnClickListener {
     private int mCurrentPosition;
     private LinearLayout commentLL;
-    StandardGSYVideoPlayer videoPlayer;
+    private StandardGSYVideoPlayer videoPlayer;
     private LikeLayout likeLayout;
     private VideoEntity videoBean;
-    private TextView commentNumberTv, likeNumberTv,
-            shareNumberTv, anchorNameTv, liveIdTv, attentionTv, serviceTv, statusTv;
+    private TextView commentNumberTv, likeNumberTv, shareNumberTv, anchorNameTv, liveIdTv, attentionTv, serviceTv, statusTv;
     private LinearLayout LiveingLL;
     private CircleImageView anchorAvaterCiv;
     private ImageView liveingIv, leveImg, LoveIv, shareVideoIv;
@@ -126,7 +124,7 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 
     }
 
@@ -458,13 +456,7 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
             statusTv.setVisibility(View.VISIBLE);
             statusTv.setText("对众直播中");
         }
-        if (videoBean.getVideo().getIs_like() == 1) {
-            LoveIv.setSelected(true);
-        } else {
-            LoveIv.setSelected(false);
-
-        }
-
+        LoveIv.setSelected(videoBean.getVideo().getIs_like() == 1);
 
         ImageView imageView = new ImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);

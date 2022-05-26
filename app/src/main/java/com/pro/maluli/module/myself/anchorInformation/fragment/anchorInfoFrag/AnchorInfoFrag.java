@@ -52,7 +52,7 @@ public class AnchorInfoFrag extends BaseMvpFragment<IAnchorInfoContraction.View,
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
         presenter.getAnchorInfo();
     }
 

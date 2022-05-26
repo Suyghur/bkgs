@@ -17,7 +17,6 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-
             <EditText
                 android:id="@+id/inputContentEt"
                 android:layout_width="match_parent"
@@ -33,9 +32,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/selectImgRv"
-                android:layout_marginHorizontal="@dimen/dp_15"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_15" />
 
             <LinearLayout
                 android:id="@+id/selectChatRl"

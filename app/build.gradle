@@ -132,7 +132,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.8.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.7'
 
-    implementation 'com.github.yellowcath:VideoProcessor:2.4.2'
     /**SmartRefreshLayout  下拉刷新**/
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
     /**
@@ -157,18 +156,14 @@ dependencies {
      * 视频播放
      */
 //    implementation 'com.shuyu:gsyVideoPlayer-java:7.1.2'
-    implementation 'com.github.carguo.GSYvideoplayer:gsyVideoPlayer-java:v8.1.7-release-jitpack'
+//    implementation 'com.github.carguo.GSYvideoplayer:gsyVideoPlayer-java:v8.1.7-release-jitpack'
 //    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
 //    implementation 'com.shuyu:gsyVideoPlayer-armv64:7.1.2'
     //根据你的需求ijk模式的so
 //    implementation 'com.shuyu:gsyVideoPlayer-armv5:7.1.2'
 //    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
 
-    //根据你的需求ijk模式的so
-    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v8.1.7-release-jitpack'
-//    implementation 'com.shuyu:gsyVideoPlayer-arm64:7.1.2'
-//    implementation 'com.shuyu:gsyVideoPlayer-x64:7.1.2'
-//    implementation 'com.shuyu:gsyVideoPlayer-x86:7.1.2'
+    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.1.7-release-jitpack'
 /**
  * 一个强大并且灵活的RecyclerViewAdapter
  */
@@ -236,8 +231,8 @@ dependencies {
     /**
      * 极光推送
      */
-    implementation 'cn.jiguang.sdk:jpush:4.5.0'  // 此处以JPush 4.5.0 版本为例。
-    implementation 'cn.jiguang.sdk:jcore:3.1.2'  // 此处以JCore 3.1.2 版本为例。
+    implementation 'cn.jiguang.sdk:jpush:4.6.6'
+    implementation 'cn.jiguang.sdk:jcore:3.2.4'
 
     implementation project(':toolkit')
     implementation project(':uikit')

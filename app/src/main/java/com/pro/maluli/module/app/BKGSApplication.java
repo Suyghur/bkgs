@@ -19,6 +19,9 @@ import com.netease.nimlib.sdk.util.NIMUtil;
 import com.pro.maluli.common.utils.preferences.Preferences;
 import com.pro.maluli.module.chatRoom.ChatRoomSessionHelper;
 import com.pro.maluli.toolkit.Logger;
+import com.pro.maluli.toolkit.MMKVManager;
+import com.shuyu.gsyvideoplayer.cache.CacheFactory;
+import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.tencent.bugly.Bugly;
 
 import java.io.BufferedReader;
@@ -27,6 +30,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import cn.jpush.android.api.JPushInterface;
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
+import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager;
 
 
 public class BKGSApplication extends Application {
@@ -39,6 +44,8 @@ public class BKGSApplication extends Application {
     public static final int UPLOAD_STEP = 100;//多少步上传一次；
 
     private static BKGSApplication mApplication;
+
+    public static int youthModeStatus = 0;
     /**
      * 缓存拍照图片路径
      */
@@ -53,12 +60,12 @@ public class BKGSApplication extends Application {
 
     public boolean socketOnline = false;
 
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
         Logger.initZap(this);
+        MMKVManager.getInstance().init(this);
     }
 
     @Override
@@ -154,7 +161,10 @@ public class BKGSApplication extends Application {
             SessionHelper.init();
             // 聊天室聊天窗口的定制初始化。
             ChatRoomSessionHelper.init();
+            PlayerFactory.setPlayManager(Exo2PlayerManager.class);
+            CacheFactory.setCacheManager(ExoPlayerCacheManager.class);
         }
+
     }
 
 
@@ -176,6 +186,5 @@ public class BKGSApplication extends Application {
         }
         return loginInfo;
     }
-
 
 }

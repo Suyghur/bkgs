@@ -72,7 +72,7 @@ public class AnchorVideoFrag extends BaseMvpFragment<IAnchorVideoContraction.Vie
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
         presenter.getAnchorInfo(String.valueOf(presenter.anchorId));
     }
 

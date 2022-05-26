@@ -2,7 +2,6 @@ package com.pro.maluli.module.video.base.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -29,15 +28,13 @@ public final class VideoHomeAdapter extends FragmentStateAdapter {
         this.list = list;
     }
 
-
     @NotNull
     @Override
     public Fragment createFragment(int position) {
-        if ("101".equalsIgnoreCase(list.get(position).getStatus_code())){//广告fragment
+        if ("101".equalsIgnoreCase(list.get(position).getStatus_code())) {//广告fragment
             return (Fragment) InfoFragment.getNewInstance(list.get(position).getAdvert());
-        }else {
+        } else {
             return (Fragment) VideoFragment.getNewInstance(list.get(position));
-
         }
     }
 

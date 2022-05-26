@@ -8,7 +8,7 @@ public interface ISmallVideoContraction extends BaseView {
     interface View extends BaseView {
         void setVideoInfo(VideoEntity data);
 
-        void setvideoTime();
+        void setVideoTime();
 
 
         void setNoSeeVideo(String msg);

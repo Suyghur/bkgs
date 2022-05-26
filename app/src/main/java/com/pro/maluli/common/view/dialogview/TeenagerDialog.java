@@ -94,10 +94,6 @@ public class TeenagerDialog extends DialogFragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dismissLL:
-                if (mDetailDialog != null) {
-                    mDetailDialog.dismiss();
-                }
-                break;
             case R.id.submitTv:
                 if (mDetailDialog != null) {
                     mDetailDialog.dismiss();

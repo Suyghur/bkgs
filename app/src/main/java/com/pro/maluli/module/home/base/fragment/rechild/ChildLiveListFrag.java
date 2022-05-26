@@ -73,7 +73,7 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 //        presenter.getUserInfo();
     }
 

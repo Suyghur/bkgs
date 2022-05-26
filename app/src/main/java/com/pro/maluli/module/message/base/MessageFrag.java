@@ -79,7 +79,7 @@ public class MessageFrag extends BaseMvpFragment<IMessageContraction.View, Messa
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 //        presenter.getUserInfo();
         presenter.getMessageList();
     }

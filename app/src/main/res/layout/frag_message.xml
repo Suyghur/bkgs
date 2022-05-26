@@ -34,7 +34,7 @@
                 android:layout_marginLeft="@dimen/dp_10"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="主播昵称，ID号，直播间标题，标签，分类"
+                android:text="主播昵称、聊天记录"
                 android:textColorHint="@color/c_b1b1b1"
                 android:textSize="@dimen/sp_12" />
 

@@ -26,11 +26,9 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.chatroom.ChatRoomService;
 import com.netease.nimlib.sdk.chatroom.constant.MemberQueryType;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
-import com.netease.nimlib.sdk.chatroom.model.MemberOption;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.dialogAdapter.LianmaiAdapter;
-import com.pro.maluli.common.view.dialogview.dialogAdapter.OnlineMemberAdapter;
 import com.pro.maluli.common.view.myselfView.MaxHeightRecyclerView;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.LianmaiEntity;
 
@@ -106,12 +104,16 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
                                 return;
                             }
                         }
-
                     }
                     return;
                 }
                 if (onFreezeTipsListener != null) {
-                    onFreezeTipsListener.comfirm(memberAll.get(position).getAccount(), memberAll.get(position).getAvatar());
+                    ChatRoomMember member = memberAll.get(position);
+                    if (member.isMuted()) {
+                        onFreezeTipsListener.onBan();
+                    } else {
+                        onFreezeTipsListener.comfirm(member.getAccount(), member.getAvatar());
+                    }
                     dismiss();
                 }
             }
@@ -139,8 +141,6 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
                         hasDataSeeView(memberSearch);
                         adapter.setList(memberSearch);
                     }
-
-
                     return true;
                 }
                 return false;
@@ -211,7 +211,9 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
     }
 
     public interface OnBaseTipsListener {
-        void comfirm(String accid, String avatar);//0去申述，2去绑定
+        void comfirm(String accid, String avatar);
+
+        void onBan();
     }
 
     public interface OnLianMaiListtener {

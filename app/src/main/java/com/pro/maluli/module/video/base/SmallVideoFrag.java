@@ -1,13 +1,12 @@
 package com.pro.maluli.module.video.base;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.viewpager2.widget.ViewPager2;
@@ -16,27 +15,21 @@ import com.blankj.utilcode.util.BarUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.VideoEntity;
-import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.common.view.dialogview.TipsNofinishDialog;
 import com.pro.maluli.module.other.login.LoginAct;
 import com.pro.maluli.module.video.base.adapter.VideoHomeAdapter;
-import com.pro.maluli.module.video.base.presenter.SmallVideoPresenter;
 import com.pro.maluli.module.video.base.presenter.ISmallVideoContraction;
-import com.pro.maluli.module.video.events.CanScrollEvent;
+import com.pro.maluli.module.video.base.presenter.SmallVideoPresenter;
 import com.pro.maluli.module.video.events.CanStartEvent;
 import com.pro.maluli.module.video.events.ClearPositionEvent;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import kotlin.collections.CollectionsKt;
 
 /**
  * 首页信息
@@ -72,7 +65,7 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
     }
 
     @Override
@@ -114,18 +107,14 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
         countDownTimer.start();
     }
 
-    private Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case UPTATE_SMALL_VIDEO:
-                    if (isHidden) {
-                        return;
-                    }
-                    presenter.videoTime();
-//                    startTime();
-                    break;
+            if (msg.what == UPTATE_SMALL_VIDEO) {
+                if (isHidden) {
+                    return;
+                }
+                presenter.videoTime();
             }
         }
     };
@@ -148,6 +137,7 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
         BarUtils.addMarginTopEqualStatusBarHeight(mine_mian_ll);
 
         this.mPagerAdapter = new VideoHomeAdapter(getChildFragmentManager(), getActivity().getLifecycle(), videoBeans);
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -187,7 +177,6 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
     @Override
     public void doBusiness() {
         presenter.getVideo();
-
     }
 
     @Override
@@ -226,7 +215,7 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
     }
 
     @Override
-    public void setvideoTime() {
+    public void setVideoTime() {
         startTime();
     }
 

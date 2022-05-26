@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cancelTv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:id="@+id/cancelTv"
     android:orientation="vertical">
 
     <LinearLayout
@@ -132,7 +132,7 @@
             android:layout_height="@dimen/dp_size_38"
             android:layout_marginHorizontal="@dimen/dp_size_15"
             android:layout_marginTop="@dimen/dp_size_25"
-            android:background="@drawable/shape_b23299_d23db3_34"
+            android:background="@drawable/shape_20000000_32"
             android:gravity="center"
             android:text="确认评分"
             android:textColor="#ffffff"
@@ -144,8 +144,7 @@
             android:layout_marginHorizontal="@dimen/dp_size_15"
             android:layout_marginTop="@dimen/dp_size_15"
             android:layout_marginBottom="@dimen/dp_size_20"
-            android:text="该评价为匿名评价，主播评价将在次日显示统
-计结果"
+            android:text="该评价为匿名评价，主播评价将在次日显示统计结果"
             android:textColor="#958f94"
             android:textSize="@dimen/sp_14" />
     </LinearLayout>

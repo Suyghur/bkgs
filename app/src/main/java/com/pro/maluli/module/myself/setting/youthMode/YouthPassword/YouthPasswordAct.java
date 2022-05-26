@@ -3,7 +3,6 @@ package com.pro.maluli.module.myself.setting.youthMode.YouthPassword;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
@@ -12,10 +11,9 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.ForgetPwdDialog;
-import com.pro.maluli.common.view.dialogview.FreezeTipsDialog;
 import com.pro.maluli.common.view.myselfView.VerifyEditText;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.presenter.IYouthPasswordContraction;
 import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.presenter.YouthPasswordPresenter;
 
@@ -27,7 +25,6 @@ import butterknife.OnClick;
  * @date 2021/6/15
  */
 public class YouthPasswordAct extends BaseMvpActivity<IYouthPasswordContraction.View, YouthPasswordPresenter> implements IYouthPasswordContraction.View {
-
 
     @BindView(R.id.verifyEditText)
     VerifyEditText verifyEditText;
@@ -83,7 +80,7 @@ public class YouthPasswordAct extends BaseMvpActivity<IYouthPasswordContraction.
                     topTipsTv.setText("确认模式密码");
                 } else if (inputNumber == 2) {
                     if (fristInput.equalsIgnoreCase(input)) {
-                        presenter.setYouthStatu(input);
+                        presenter.setYouthStatus(input);
                     } else {
                         inputNumber = 1;
                         topTipsTv.setText("设置模式密码");
@@ -101,35 +98,34 @@ public class YouthPasswordAct extends BaseMvpActivity<IYouthPasswordContraction.
 
     @OnClick({R.id.forgetPwdTv})
     public void onClick(View view) {
-//        if (!ToolUtils.isFastClick()) {
-//            return;
-//        }
-        switch (view.getId()) {
-            case R.id.forgetPwdTv:
-                ForgetPwdDialog dialogFragment = new ForgetPwdDialog();
-                Bundle bundle = new Bundle();
-                bundle.putString("Youth_find_password_tips", entity.getTop().getFind_password());
-                dialogFragment.setArguments(bundle);
-                dialogFragment.setCancelable(true);
-                dialogFragment.show(getSupportFragmentManager(), "ForgetPwdDialog");
-                break;
+        if (view.getId() == R.id.forgetPwdTv) {
+            ForgetPwdDialog dialogFragment = new ForgetPwdDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString("Youth_find_password_tips", entity.getTop().getFind_password());
+            dialogFragment.setArguments(bundle);
+            dialogFragment.setCancelable(true);
+            dialogFragment.show(getSupportFragmentManager(), "ForgetPwdDialog");
         }
-
     }
 
     @Override
     public void doBusiness() {
         presenter.getYouthModelInfo();
-
     }
 
     @Override
     public void setYouthSuccess(YouthEntity data) {
-
     }
 
     @Override
     public void startSuccess() {
+        BKGSApplication.youthModeStatus = 1;
+        finish();
+    }
+
+    @Override
+    public void stopSuccess() {
+        BKGSApplication.youthModeStatus = 0;
         finish();
     }
 }

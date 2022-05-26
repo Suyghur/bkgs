@@ -136,6 +136,7 @@ import com.pro.maluli.module.socketService.event.OTOEvent;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
 import com.pro.maluli.toolkit.Logger;
+import com.pro.maluli.toolkit.ToastExtKt;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -938,13 +939,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         //启动广播
         registerReceiver(innerReceiver, intentFilter);
 
-//默认麦克风关闭
+        // 默认麦克风关闭
         if (!isAnchor) {
             microphoneIv.setSelected(true);
             carmerIv.setSelected(true);
             setLocalAudioEnable(false);
             setLocalVideoEnable(false);
-            ToastUtils.showShort("为保护您的个人隐私，直播间摄像头与麦克风默认关闭，如有需要可点击打开");
+            ToastExtKt.showToast(this, "为保护您的个人隐私，直播间摄像头与麦克风默认关闭，如有需要可点击打开");
+//            ToastUtils.showShort("为保护您的个人隐私，直播间摄像头与麦克风默认关闭，如有需要可点击打开");
         }
 
         slide_layout.setmListeners(new SlideLayout.DragListener() {

@@ -31,6 +31,7 @@
     <application
         android:name=".module.app.BKGSApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_app_logo"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
@@ -38,7 +39,8 @@
         android:roundIcon="@mipmap/ic_app_logo"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".module.myself.anchorInformation.base.SeeBigPictuerAct"></activity>
+
+        <activity android:name=".module.myself.anchorInformation.base.SeeBigPictuerAct" />
         <!-- 网易云心配置信息========================================================== -->
         <meta-data
             android:name="com.netease.nim.appKey"
@@ -101,116 +103,132 @@
 
         <activity
             android:name=".module.other.welcome.WelcomAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/ThemeSplash">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".module.main.base.MainActivity"
-            android:launchMode="singleTask">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".module.other.login.LoginAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.other.getCode.GetCodeAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.other.verificationCode.VerificationCodeAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.base.SettingAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.aboutMe.AboutMeAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.feedback.base.FeedBackAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.feedback.feedBackDetail.FeedBackDetailAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.userAgreement.base.UserAgreementAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.other.findPassword.FindPasswordAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.other.MsmLogin.MsmLoginAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.personalCenter.PersonalCenterAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.watchlist.WatchListAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.fans.MyFansAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.anchorInformation.base.AnchorInformationAct"
-            android:screenOrientation="portrait">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.myAccount.withdraw.base.WithdrawAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.myAccount.recharge.RechargeAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.myAccount.base.MyAccountAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.myAccount.withdraw.detail.RewardDetailAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.myAccount.appeal.AppealAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.youthMode.base.YouthModeAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.youthMode.YouthPassword.YouthPasswordAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.anchorInformation.editLabel.EditLabelAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.anchorInformation.addLabel.AddLabelAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.anchorInformation.fragment.anchorImage.addImg.EditImgAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.blacklist.BlackListAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.setting.changeBindMobile.ChangeBindMobileAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.home.base.applyForAnchor.ApplyForAnchorAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".module.myself.userAgreement.protocolDetail.ProtocolDetailAct"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait" />
 
         <activity
@@ -234,7 +252,7 @@
         <activity
             android:name=".module.home.previewLive.PreviewLiveAct"
             android:screenOrientation="portrait" />
-        
+
         <activity
             android:name=".module.home.oneToOne.base.oneToMore.OneToOneAct"
             android:screenOrientation="portrait" />

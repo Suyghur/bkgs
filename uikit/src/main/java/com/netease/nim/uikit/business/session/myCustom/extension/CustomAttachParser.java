@@ -68,7 +68,7 @@ public class CustomAttachParser implements MsgAttachmentParser {
                 attachment.fromJson(data);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return attachment;

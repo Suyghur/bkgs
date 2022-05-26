@@ -13,7 +13,7 @@ public abstract class BaseMvpFragment<V extends BaseView, P extends BasePresente
 
     public abstract P initPresenter();
 
-    public abstract void onWakeBussiness();
+    public abstract void onWakeBusiness();
 
     //是否执行唤醒监听
     public boolean wakeListener = true;
@@ -37,7 +37,7 @@ public abstract class BaseMvpFragment<V extends BaseView, P extends BasePresente
             return;
         }
         if (!hidden && wakeListener) {
-            onWakeBussiness();
+            onWakeBusiness();
         }
     }
 
@@ -45,7 +45,7 @@ public abstract class BaseMvpFragment<V extends BaseView, P extends BasePresente
     public void onResume() {
         super.onResume();
         if ( !isHidden && wakeListener) {
-            onWakeBussiness();
+            onWakeBusiness();
         }
 
     }

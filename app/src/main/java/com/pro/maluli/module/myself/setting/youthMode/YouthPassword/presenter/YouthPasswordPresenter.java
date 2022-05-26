@@ -7,6 +7,7 @@ import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
+import com.pro.maluli.toolkit.Logger;
 
 import io.reactivex.functions.Consumer;
 
@@ -33,7 +34,7 @@ public class YouthPasswordPresenter extends BasePresenter<IYouthPasswordContract
     }
 
     @Override
-    public void setYouthStatu(String input) {
+    public void setYouthStatus(String input) {
         showLoading(mContext);
         add(mService.startYouth(input)
                 .compose(getTransformer())
@@ -63,7 +64,7 @@ public class YouthPasswordPresenter extends BasePresenter<IYouthPasswordContract
                     public void onSuccess(BaseResponse<YouthEntity> response) {
                         dismissLoading(mContext);
                         ToastUtils.showShort(response.getMsg());
-                        mView.startSuccess();
+                        mView.stopSuccess();
                     }
                 }, new Consumer<Throwable>() {
                     @Override

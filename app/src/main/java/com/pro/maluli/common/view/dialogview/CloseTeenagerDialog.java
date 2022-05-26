@@ -82,10 +82,6 @@ public class CloseTeenagerDialog extends DialogFragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dismissLL:
-                if (mDetailDialog != null) {
-                    mDetailDialog.dismiss();
-                }
-                break;
             case R.id.submitTv:
                 if (mDetailDialog != null) {
                     mDetailDialog.dismiss();
@@ -97,7 +93,7 @@ public class CloseTeenagerDialog extends DialogFragment implements View.OnClickL
                 }
                 if (mDetailDialog != null) {
                     Intent intent = new Intent(getActivity(), YouthModeAct.class);
-                    getActivity().startActivity(intent);
+                    requireActivity().startActivity(intent);
                     mDetailDialog.dismiss();
                 }
                 break;

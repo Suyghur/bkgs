@@ -10,6 +10,7 @@ import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.LianmaiEntity;
+import com.pro.maluli.toolkit.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +55,8 @@ public class LianmaiAdapter extends BaseQuickAdapter<ChatRoomMember, LianmaiAdap
             baseViewHolder.statusTv.setVisibility(View.VISIBLE);
         }
         boolean isLianmai = false;
-        if (entitiesList != null) {//判断是否有连麦
+        if (entitiesList != null) {
+            //判断是否有连麦
             for (int i = 0; i < entitiesList.size(); i++) {
                 if (listBean.getAccount().equalsIgnoreCase(entitiesList.get(i).getAccid())) {
                     isLianmai = true;
@@ -68,16 +70,6 @@ public class LianmaiAdapter extends BaseQuickAdapter<ChatRoomMember, LianmaiAdap
                 baseViewHolder.statusTv.setVisibility(View.GONE);
                 baseViewHolder.statusTv.setSelected(false);
             }
-        }
-
-    }
-
-    @OnClick(R.id.likeTv)
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.likeTv:
-
-                break;
         }
     }
 

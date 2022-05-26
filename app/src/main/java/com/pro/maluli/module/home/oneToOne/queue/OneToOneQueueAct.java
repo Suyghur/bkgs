@@ -58,7 +58,6 @@ import com.pro.maluli.common.view.dialogview.EditPersonDialog;
 import com.pro.maluli.common.view.dialogview.SubReserveDialog;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.myselfView.QFolderTextView;
-import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.OneTopVideoFrg;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueAdapter;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueBannerAdapter;
@@ -152,6 +151,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     private boolean isStartLive;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
+    private BaseTipsDialog reserveTipsDialog = null;
 
     //    /**
 //     * socket
@@ -779,11 +779,25 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Override
     public void setReserveSuccess() {
-        ToastUtils.showShort("预约成功，请打开手机声音、视频、通话、通知等相关权限，并尽量保留在本APP页面，避免错过主播来电邀请");
-        if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
-            requestVideoPermissions();
-//            return;
-        }
+        reserveTipsDialog = new BaseTipsDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("showContent", "预约成功，请打开手机声音、视频、通话、通知等相关权限，并尽量保留在本APP页面，避免错过主播来电邀请");
+        bundle.putString("comfirm", "知道了");
+        bundle.putBoolean("CANCEL_SEE", true);
+        reserveTipsDialog.setArguments(bundle);
+        reserveTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
+        reserveTipsDialog.setOnConfirmListener(new BaseTipsDialog.OnBaseTipsListener() {
+            @Override
+            public void comfirm() {
+                if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
+                    requestVideoPermissions();
+                    if (reserveTipsDialog != null) {
+                        reserveTipsDialog.dismiss();
+                        reserveTipsDialog = null;
+                    }
+                }
+            }
+        });
     }
 
     @Override

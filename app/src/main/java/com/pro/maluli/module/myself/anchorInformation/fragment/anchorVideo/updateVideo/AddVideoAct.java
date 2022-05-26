@@ -7,7 +7,6 @@ import android.media.MediaMetadataRetriever;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.hw.videoprocessor.VideoProcessor;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -144,7 +142,8 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
                         .isEnableCrop(true)
                         .freeStyleCropMode(OverlayView.FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH)
                         .imageEngine(GlideEngine.createGlideEngine())
-                        .videoQuality(0)
+                        .setCameraVideoFormat(PictureMimeType.MP4)
+//                        .videoQuality(0)
                         .maxSelectNum(1)
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override

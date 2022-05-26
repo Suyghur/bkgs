@@ -7,7 +7,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,16 +18,14 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.AnchorInfoEntity;
 import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.common.view.dialogview.SelectTimeDialog;
 import com.pro.maluli.common.view.myselfView.LabelsView;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.adapter.SearchBkDetailAdapter;
-import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.SearchBkDetailPresenter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.ISearchBkDetailContraction;
+import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.SearchBkDetailPresenter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -89,17 +86,17 @@ public class SearchBkDetailAct extends BaseMvpActivity<ISearchBkDetailContractio
     public void viewInitialization() {
         nodataTipsTv.setText("抱歉，未查找到相关结果");
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
-        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-        /**
-         * 加载更多
-         */
-        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                bkDetailSfl.finishLoadMore(1000);
-                presenter.getBkDetail();
-            }
-        });
+//        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
+//        /**
+//         * 加载更多
+//         */
+//        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//                bkDetailSfl.finishLoadMore(1000);
+//                presenter.getBkDetail();
+//            }
+//        });
         /**
          * 下拉刷新
          */

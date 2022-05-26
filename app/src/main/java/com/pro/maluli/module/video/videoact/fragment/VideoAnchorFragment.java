@@ -132,7 +132,7 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 
     }
 

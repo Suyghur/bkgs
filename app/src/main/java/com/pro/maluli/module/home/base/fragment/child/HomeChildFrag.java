@@ -59,7 +59,7 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 //        presenter.getUserInfo();
     }
 

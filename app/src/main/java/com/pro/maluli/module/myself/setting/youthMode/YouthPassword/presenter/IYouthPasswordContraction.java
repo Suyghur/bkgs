@@ -10,12 +10,14 @@ public interface IYouthPasswordContraction extends BaseView {
         void setYouthSuccess(YouthEntity data);
 
         void startSuccess();
+
+        void stopSuccess();
     }
 
     interface Presenter extends IClear {
         void getYouthModelInfo();
 
-        void setYouthStatu(String input);
+        void setYouthStatus(String input);
 
         void stopYouth(String input);
     }

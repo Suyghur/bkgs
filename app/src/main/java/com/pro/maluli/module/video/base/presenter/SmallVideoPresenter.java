@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.entity.VideoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
@@ -54,16 +53,15 @@ public class SmallVideoPresenter extends BasePresenter<ISmallVideoContraction.Vi
 //                            return;
                             }
                         } catch (Exception e) {
-
+                            e.printStackTrace();
                         } finally {
-                            mView.setvideoTime();
+                            mView.setVideoTime();
                         }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         throwable.printStackTrace();
-
                     }
                 }));
     }

@@ -63,7 +63,7 @@ public class AnchorImageFrag extends BaseMvpFragment<IAnchorImageContraction.Vie
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
     }
 
     @Override

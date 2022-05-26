@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.setting.youthMode.base;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -12,15 +11,11 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.BlackListPresenter;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
 import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.YouthPasswordAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.presenter.IYouthModeContraction;
 import com.pro.maluli.module.myself.setting.youthMode.base.presenter.YouthModePresenter;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -34,7 +29,6 @@ public class YouthModeAct extends BaseMvpActivity<IYouthModeContraction.View, Yo
     WebView youthWv;
     @BindView(R.id.startYouthTv)
     TextView startYouthTv;
-
     YouthEntity entity;
 
     @Override
@@ -78,14 +72,11 @@ public class YouthModeAct extends BaseMvpActivity<IYouthModeContraction.View, Yo
 //        if (!ToolUtils.isFastClick()) {
 //            return;
 //        }
-        switch (view.getId()) {
-            case R.id.startYouthTv:
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("YouthPasswordAct_KEY", entity);
-                gotoActivity(YouthPasswordAct.class, false, bundle);
-                break;
+        if (view.getId() == R.id.startYouthTv) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("YouthPasswordAct_KEY", entity);
+            gotoActivity(YouthPasswordAct.class, false, bundle);
         }
-
     }
 
     @Override

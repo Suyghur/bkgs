@@ -259,5 +259,45 @@ public class OnTwoOneStartEntity implements Serializable {
         public void setImages(List<String> images) {
             this.images = images;
         }
+
+        @Override
+        public String toString() {
+            return "SpecialListBean{" +
+                    "id=" + id +
+                    ", anchor_id=" + anchor_id +
+                    ", status=" + status +
+                    ", content='" + content + '\'' +
+                    ", start_time=" + start_time +
+                    ", end_time=" + end_time +
+                    ", created_at='" + created_at + '\'' +
+                    ", uid=" + uid +
+                    ", nickname='" + nickname + '\'' +
+                    ", avatar='" + avatar + '\'' +
+                    ", accid='" + accid + '\'' +
+                    ", images=" + images +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "OnTwoOneStartEntity{" +
+                "is_self=" + is_self +
+                ", is_sub=" + is_sub +
+                ", anchor_no='" + anchor_no + '\'' +
+                ", anchor_accid='" + anchor_accid + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", level='" + level + '\'' +
+                ", appoint_num=" + appoint_num +
+                ", report_num=" + report_num +
+                ", now_time=" + now_time +
+                ", play_time=" + play_time +
+                ", set_time=" + set_time +
+                ", type=" + type +
+                ", special_count=" + special_count +
+                ", now_appoint_num=" + now_appoint_num +
+                ", special_list=" + special_list +
+                '}';
     }
 }

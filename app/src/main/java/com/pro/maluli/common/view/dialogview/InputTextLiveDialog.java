@@ -1,6 +1,5 @@
 package com.pro.maluli.common.view.dialogview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
@@ -115,7 +114,7 @@ public class InputTextLiveDialog extends AppCompatDialog {
                     messageTextView.setText("");
                     InputTextLiveDialog.this.dismiss();
                 } else {
-                Toast.makeText(mContext, "请输入文字", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "请输入文字", Toast.LENGTH_LONG).show();
                 }
                 messageTextView.setText(null);
             }
@@ -203,7 +202,7 @@ public class InputTextLiveDialog extends AppCompatDialog {
         super.dismiss();
         //dismiss之前重置mLastDiff值避免下次无法打开
         mLastDiff = 0;
-        if (mOnTextSendListener!=null) mOnTextSendListener.dismiss();
+        if (mOnTextSendListener != null) mOnTextSendListener.dismiss();
 
     }
 

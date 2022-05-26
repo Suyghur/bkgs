@@ -42,6 +42,7 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.home.announcement.AnnouncementAct;
 import com.pro.maluli.module.home.base.adapter.HomeTopVideoFrg;
 import com.pro.maluli.module.home.base.adapter.SimpleTextAdapter;
@@ -127,16 +128,17 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
 //        presenter.getUserInfo();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
-                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
+//                userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
+//                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
+                if (BKGSApplication.youthModeStatus == 1) {
                     gotoLiveIv.setVisibility(View.GONE);
                     exitTeenagerTv.setVisibility(View.VISIBLE);
-                    if (isFristResume) {
+                    if (isFirstResume) {
                         presenter.getHomeInfo();
                     }
                 } else {
@@ -190,10 +192,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     }
 
     public boolean isLogin() {
-        if (userInfoEntity == null) {
-            return false;
-        }
-        return true;
+        return userInfoEntity != null;
     }
 
     @Override
@@ -236,11 +235,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             }
         });
 
-        smarRef.setRefreshHeader(new ClassicsHeader(getActivity()));
-        smarRef.setRefreshFooter(new ClassicsFooter(getActivity()));
+        smarRef.setRefreshHeader(new ClassicsHeader(requireActivity()));
+        smarRef.setRefreshFooter(new ClassicsFooter(requireActivity()));
         smarRef.setEnableLoadMore(false);
-        /**
-         * 加载更多
+        /*
+          加载更多
          */
         smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -249,8 +248,8 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 ToastHelper.showToast(getContext(), "sdfasdf");
             }
         });
-        /**
-         * 下拉刷新
+        /*
+          下拉刷新
          */
         smarRef.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -277,7 +276,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                     if (data != null) {
                         one = data.getIntExtra("ClassiftOne", 0);
                         two = data.getIntExtra("ClassiftTwo", 0);
-                        isFristResume = false;
+                        isFirstResume = false;
                     }
                     homeViewPager.setCurrentItem(one + 1);   //һ��ʼ��ѡ��
                     HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
@@ -311,7 +310,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 intent.putExtras(bundle);
                 intentActivityResultLauncher.launch(intent);
 //                startActivityForResult(intent, 110);
-
                 break;
         }
     }
@@ -333,7 +331,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 //        }
 //    }
 
-    boolean isFristResume = true;
+    boolean isFirstResume = true;
 
     @Override
     public void onResume() {
@@ -346,10 +344,10 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             gotoLiveIv.setVisibility(View.VISIBLE);
             exitTeenagerTv.setVisibility(View.GONE);
         }
-        if (isFristResume) {
+        if (isFirstResume) {
             presenter.getHomeInfo();
         }
-        isFristResume = true;
+        isFirstResume = true;
         isStartVideo = true;
 
         if (ACache.get(getActivity()).getAsString("MUTE").equalsIgnoreCase("1")) {
@@ -357,17 +355,16 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0, 0);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         } else {
             GSYVideoManager.instance().setNeedMute(false);
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0.5f, 0.5f);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
-
     }
 
     @Override
@@ -468,43 +465,53 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                     if (type == 1) {//对众直播
                         gotoActivity(OneToMoreAct.class);
                     } else {//一对一直播
-
                         gotoActivity(OneToOneAct.class);
                     }
                 }
             });
         } else {
-            showDialog(data.getStatus_code());
+            showDialog(data);
         }
     }
 
-    private void showDialog(String status_code) {
+    private void showDialog(LastTimeLiveEntity data) {
         BaseTipsDialog baseTipsDialog = new BaseTipsDialog();
         Bundle bundle1 = new Bundle();
-        if ("1005".equalsIgnoreCase(status_code)) {
-            bundle1.putString("showContent", "您尚未成为主播，是否申请成为主播");
-            bundle1.putString("comfirm", "去申请");
-        } else if ("1002".equalsIgnoreCase(status_code)) {
-            bundle1.putString("showContent", "您的申请未能通过审核");
-            bundle1.putString("comfirm", "再次提交");
-            bundle1.putBoolean("CANCEL_SEE", true);
-        } else if ("1006".equalsIgnoreCase(status_code)) {
-            bundle1.putString("showContent", "您的主播申请已提交，请耐心等待平台审核");
-            bundle1.putString("comfirm", "知道了");
-            bundle1.putBoolean("CANCEL_SEE", true);
-        } else if ("1007".equalsIgnoreCase(status_code)) {
-            bundle1.putString("TITLE_DIO", "禁播通知");
-            bundle1.putString("showContent", lastTimeLiveEntity.getReason());
-            bundle1.putString("comfirm", "去申诉");
+        switch (data.getStatus_code()) {
+            case "1002":
+                bundle1.putString("showContent", "您的申请未能通过审核");
+                bundle1.putString("comfirm", "再次提交");
+                bundle1.putBoolean("CANCEL_SEE", true);
+                break;
+            case "1005":
+                bundle1.putString("showContent", "您尚未成为主播，是否申请成为主播");
+                bundle1.putString("comfirm", "去申请");
+                break;
+            case "1006":
+                bundle1.putString("showContent", "您的主播申请已提交，请耐心等待平台审核");
+                bundle1.putString("comfirm", "知道了");
+                bundle1.putBoolean("CANCEL_SEE", true);
+                break;
+            case "1007":
+                if (data.getCan_report() == 1) {
+                    bundle1.putString("TITLE_DIO", "禁播通知");
+                    bundle1.putString("showContent", lastTimeLiveEntity.getReason());
+                    bundle1.putString("comfirm", "去申诉");
+                } else {
+                    bundle1.putString("TITLE_DIO", "禁播通知");
+                    bundle1.putString("showContent", "您的申诉已提交，请等待后台反馈");
+                    bundle1.putString("comfirm", "知道了");
+                    bundle1.putBoolean("CANCEL_SEE", true);
+                }
+                break;
         }
-
         baseTipsDialog.setArguments(bundle1);
         baseTipsDialog.show(getChildFragmentManager(), "BaseTipsDialog");
         baseTipsDialog.setOnConfirmListener(new BaseTipsDialog.OnBaseTipsListener() {
             @Override
             public void comfirm() {
                 Bundle bundle = new Bundle();
-                switch (status_code) {
+                switch (data.getStatus_code()) {
                     case "1005":
                         bundle.putSerializable("classification", (Serializable) homeInfoEntity.getCategory().getList());
                         gotoActivity(ApplyForAnchorAct.class, false, bundle);
@@ -517,9 +524,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                     case "1006":
                         break;
                     case "1007":
-                        Bundle bundle2 = new Bundle();
-                        bundle2.putString("SUB_TYPE", "1");
-                        gotoActivity(AppealAct.class, false, bundle2);
+                        if (data.getCan_report() == 1) {
+                            Bundle bundle2 = new Bundle();
+                            bundle2.putString("SUB_TYPE", "1");
+                            gotoActivity(AppealAct.class, false, bundle2);
+                        }
                         break;
                 }
 
@@ -757,7 +766,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         try {
             GSYVideoManager.instance().getPlayer().release();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);

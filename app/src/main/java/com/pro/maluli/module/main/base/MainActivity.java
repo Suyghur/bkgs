@@ -3,8 +3,6 @@ package com.pro.maluli.module.main.base;
 import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -63,7 +61,8 @@ import com.pro.maluli.common.utils.preferences.Preferences;
 import com.pro.maluli.common.view.dialogview.NoticeDialog;
 import com.pro.maluli.common.view.dialogview.PrivacyDialog;
 import com.pro.maluli.common.view.dialogview.TeenagerDialog;
-import com.pro.maluli.common.view.dialogview.TeenarNoSeeDialog;
+import com.pro.maluli.common.view.dialogview.TeenagerNoSeeDialog;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.home.base.HomeFrag;
 import com.pro.maluli.module.home.oneToOne.answerPhone.AnswerPhoneAct;
 import com.pro.maluli.module.main.base.presenter.DialogActivity;
@@ -77,7 +76,6 @@ import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
 import com.pro.maluli.module.socketService.event.CallEvent;
 import com.pro.maluli.module.video.base.SmallVideoFrag;
-import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -161,7 +159,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         });
         rbMainTabMine.setOnClickListener(v -> switchFragment(3));
         initEvent();
-        registerObser(true);
+        registerObserve(true);
 
 
     }
@@ -349,11 +347,9 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         }
     }
 
-    private void registerObser(boolean b) {
+    private void registerObserve(boolean b) {
         NIMClient.getService(SignallingServiceObserver.class).observeOnlineNotification(nimOnlineObserver, b);
-        NIMClient.getService(SystemMessageObserver.class)
-                .observeUnreadCountChange(sysMsgUnreadCountChangedObserver, b);
-
+        NIMClient.getService(SystemMessageObserver.class).observeUnreadCountChange(sysMsgUnreadCountChangedObserver, b);
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatus, b);
     }
 
@@ -361,37 +357,33 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        registerObser(false);
+        registerObserve(false);
         EventBus.getDefault().unregister(this);
     }
 
-
-    private static final int REQUEST_ID = 1001;
-
-
-    /**
-     * 获取 rtc AppKey
-     */
-    private String getRtcAppKey() {
-        ApplicationInfo appInfo = null;
-        try {
-            appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (appInfo == null) {
-            return null;
-        }
-        return appInfo.metaData.getString("com.netease.nim.appKey");
-    }
-
-    /**
-     * 已经登陆过，自动登陆
-     */
-    private boolean canAutoLogin() {
-        LoginInfo loginInfo = Preferences.getLoginInfo();
-        return loginInfo.valid();
-    }
+//    /**
+//     * 获取 rtc AppKey
+//     */
+//    private String getRtcAppKey() {
+//        ApplicationInfo appInfo = null;
+//        try {
+//            appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        if (appInfo == null) {
+//            return null;
+//        }
+//        return appInfo.metaData.getString("com.netease.nim.appKey");
+//    }
+//
+//    /**
+//     * 已经登陆过，自动登陆
+//     */
+//    private boolean canAutoLogin() {
+//        LoginInfo loginInfo = Preferences.getLoginInfo();
+//        return loginInfo.valid();
+//    }
 
     private void loginUiKit() {
         if (TextUtils.isEmpty(Preferences.getLoginInfo().getAccount())) {
@@ -402,32 +394,24 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             LoginInfo loginInfo = new LoginInfo(Preferences.getLoginInfo().getAccount(), Preferences.getLoginInfo().getToken());
             // 登录
             RequestCallback<LoginInfo> callback = new RequestCallback<LoginInfo>() {
-
                 @Override
                 public void onSuccess(LoginInfo param) {
                     if (!TextUtils.isEmpty(param.getAccount())) {
                         DemoCache.setAccount(param.getAccount());
                         saveLoginInfo(loginInfo);
                     }
-
                 }
 
                 @Override
                 public void onFailed(int code) {
-                    if (code == 302 || code == 404) {
-                    } else {
-                    }
                 }
 
                 @Override
                 public void onException(Throwable exception) {
                 }
             };
-
             NIMClient.getService(AuthService.class).login(loginInfo).setCallback(callback);
-        } else {
         }
-
     }
 
     private void initEvent() {
@@ -441,14 +425,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     }
 
     private void switchFragment(int pos) {
-//        if (pos == 2) {
-//            if (!ToolUtils.isLogin(MainActivity.this, true)) {
-//
-//                return;
-//            }
-//        }
-
-
         position = pos;
         rgMainTab.check(resId[position]);
         ft = getSupportFragmentManager().beginTransaction();
@@ -487,8 +463,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     private void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(getApplicationContext(),
-                    "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -496,13 +471,13 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         }
     }
 
-    UserInfoEntity entity;
+    UserInfoEntity userInfoEntity;
     NoticeDialog noticeDialog;
-    TeenarNoSeeDialog teenarNoSeeDialog;
+    TeenagerNoSeeDialog teenagerNoSeeDialog;
 
     @Override
     public void setUserInfoSuccess(UserInfoEntity data) {
-        entity = data;
+        userInfoEntity = data;
         if (!PackageUtils.getVersionName(MainActivity.this).equalsIgnoreCase(data.getAndroid_version()) || data.getNew_report() == 1) {
             customerNewTv.setVisibility(View.VISIBLE);
         } else {
@@ -514,7 +489,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         presenter.getProtocoList("3");
 //            return;
 //        }
-        showNotice(entity.getNotice());
+        showNotice(userInfoEntity.getNotice());
 
 
         //是否开启青少年模式
@@ -522,31 +497,28 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             rbMainTabWealth.setVisibility(View.GONE);
             rbMainTabMessage.setVisibility(View.GONE);
             messageTestLL.setVisibility(View.GONE);
-            boolean b = ToolUtils.isCurrentInTimeScope(22, 0, 6, 0);
-            if (b) {
-                if (teenarNoSeeDialog != null && teenarNoSeeDialog.getDialog() != null
-                        && teenarNoSeeDialog.getDialog().isShowing()) {
-
-                } else {
-                    teenarNoSeeDialog = new TeenarNoSeeDialog();
-                    teenarNoSeeDialog.show(getSupportFragmentManager(), "TeenarNoSeeDialog");
-                    teenarNoSeeDialog.setOnConfirmListener(new TeenarNoSeeDialog.OnBaseTipsListener() {
-                        @Override
-                        public void comfirm() {
-                            gotoActivity(YouthModeAct.class);
-                        }
-
-                        @Override
-                        public void finishAll() {
-                            finish();
-                            System.exit(0);
-                        }
-                    });
-
-                }
-
-
-            }
+//            boolean b = ToolUtils.isCurrentInTimeScope(22, 0, 6, 0);
+//            if (b) {
+//                if (teenarNoSeeDialog != null && teenarNoSeeDialog.getDialog() != null && teenarNoSeeDialog.getDialog().isShowing()) {
+//
+//                } else {
+//                    teenarNoSeeDialog = new TeenagerNoSeeDialog();
+//                    teenarNoSeeDialog.show(getSupportFragmentManager(), "TeenarNoSeeDialog");
+//                    teenarNoSeeDialog.setOnConfirmListener(new TeenagerNoSeeDialog.OnBaseTipsListener() {
+//                        @Override
+//                        public void comfirm() {
+//                            gotoActivity(YouthModeAct.class);
+//                        }
+//
+//                        @Override
+//                        public void finishAll() {
+//                            finish();
+//                            System.exit(0);
+//                        }
+//                    });
+//
+//                }
+//            }
         } else {
             messageTestLL.setVisibility(View.VISIBLE);
             rbMainTabWealth.setVisibility(View.VISIBLE);
@@ -588,21 +560,19 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     @Override
     public void setSubRealConceal() {
-        showNotice(entity.getNotice());
+        showNotice(userInfoEntity.getNotice());
     }
 
     @Override
     public void setNoticeSuccess() {
-        if (entity != null && entity.getNotice().size() != 0) {
-            entity.getNotice().remove(0);
-            showNotice(entity.getNotice());
+        if (userInfoEntity != null && userInfoEntity.getNotice().size() != 0) {
+            userInfoEntity.getNotice().remove(0);
+            showNotice(userInfoEntity.getNotice());
         }
-
     }
 
     @Override
     public void setGiftInfo(GiftEntity data) {
-
         GiftEvent giftEvent = new GiftEvent();
         giftEvent.setGiftEntity(data);
         EventBus.getDefault().post(giftEvent);
@@ -659,13 +629,30 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     @Override
     public void setYouthSuccess(YouthEntity data) {
-        Logger.e("setYouthSuccess");
-        if (entity != null && entity.getIs_teenager() == 1) {
+        BKGSApplication.youthModeStatus = data.getMember().getIs_teenager();
+        if (data.getMember().getIs_teenager() == 1 && data.getMember().getIs_ban() == 1) {
+            // 青少年模式禁止登陆
+            teenagerNoSeeDialog = new TeenagerNoSeeDialog();
+            teenagerNoSeeDialog.show(getSupportFragmentManager(), "TeenagerNoSeeDialog");
+            teenagerNoSeeDialog.setOnConfirmListener(new TeenagerNoSeeDialog.OnBaseTipsListener() {
+                @Override
+                public void comfirm() {
+                    gotoActivity(YouthModeAct.class);
+                }
+
+                @Override
+                public void finishAll() {
+                    finish();
+                    System.exit(0);
+                }
+            });
             return;
         }
+
         if (AcacheUtil.isShowTeenager(MainActivity.this)) {
             return;
         }
+
         AcacheUtil.saveTeenager(MainActivity.this);
         TeenagerDialog dialog = new TeenagerDialog();
         Bundle bundle = new Bundle();
@@ -714,9 +701,9 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
                     if (isFinish) {
                         presenter.agreeNotice(type);
                     } else {
-                        if (entity != null && entity.getNotice().size() != 0) {
-                            entity.getNotice().remove(0);
-                            showNotice(entity.getNotice());
+                        if (userInfoEntity != null && userInfoEntity.getNotice().size() != 0) {
+                            userInfoEntity.getNotice().remove(0);
+                            showNotice(userInfoEntity.getNotice());
                         }
                     }
                 }

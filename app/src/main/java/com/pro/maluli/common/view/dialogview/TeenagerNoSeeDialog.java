@@ -3,11 +3,9 @@ package com.pro.maluli.common.view.dialogview;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +14,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
+import com.pro.maluli.module.app.BKGSApplication;
+import com.pro.maluli.toolkit.Logger;
 
 
 /**
@@ -23,14 +23,15 @@ import com.pro.maluli.common.utils.ToolUtils;
  * 确认付款
  */
 
-public class TeenarNoSeeDialog extends DialogFragment implements View.OnClickListener {
+public class TeenagerNoSeeDialog extends DialogFragment implements View.OnClickListener {
+
     private Dialog mDetailDialog;
     private TextView comfirmTv;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDetailDialog = new Dialog(getActivity(), R.style.dialog_bottom);
-        mDetailDialog.setContentView(R.layout.dialog_teenar_no_see);
+        mDetailDialog.setContentView(R.layout.dialog_teenager_no_see);
         mDetailDialog.setCancelable(true);
         //设置背景为透明
         mDetailDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(), android.R.color.transparent));
@@ -58,8 +59,7 @@ public class TeenarNoSeeDialog extends DialogFragment implements View.OnClickLis
 
     private void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(getActivity(),
-                    "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             if (onFreezeTipsListener != null) {
@@ -75,22 +75,34 @@ public class TeenarNoSeeDialog extends DialogFragment implements View.OnClickLis
     }
 
     public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
+        void comfirm();
 
         void finishAll();
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.comfirmTv:
-                if (onFreezeTipsListener != null) {
-                    onFreezeTipsListener.comfirm();
-                }
-                if (mDetailDialog != null) {
-                    mDetailDialog.dismiss();
-                }
-                break;
+        if (v.getId() == R.id.comfirmTv) {
+            if (onFreezeTipsListener != null) {
+                onFreezeTipsListener.comfirm();
+            }
+//            if (mDetailDialog != null) {
+//                mDetailDialog.dismiss();
+//            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.e(BKGSApplication.youthModeStatus);
+        if (BKGSApplication.youthModeStatus == 0) {
+            mDetailDialog.dismiss();
         }
     }
 }

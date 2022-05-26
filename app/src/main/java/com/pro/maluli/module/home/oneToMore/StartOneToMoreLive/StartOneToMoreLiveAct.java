@@ -158,6 +158,7 @@ import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.socketService.SocketLiveUtils;
 import com.pro.maluli.module.socketService.event.OTOEvent;
 import com.pro.maluli.toolkit.Logger;
+import com.pro.maluli.toolkit.ToastExtKt;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -784,7 +785,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     LianmaiDialog lianmaiDialogPD;
 
     public void lianmaiPaidui(List<LianmaiEntity> lianmaiEntities) {
-//        if (lianm)
+        Logger.d("aaaaa");
         connectLL.setVisibility(View.GONE);
         Bundle bundle = new Bundle();
         bundle.putSerializable("roomId", roomId);
@@ -805,11 +806,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                 }
             });
         } else {
-//            lianmaiDialogPD.setArguments(bundle);
             lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
             lianmaiDialogPD.show(getSupportFragmentManager(), "OnlineMemberDialog");
         }
-
     }
 
     /**
@@ -834,6 +833,11 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                     LMavatar = avatar;
                     joinRoom(accid);
                 }
+
+                @Override
+                public void onBan() {
+                    ToastExtKt.showToast(StartOneToMoreLiveAct.this, "该用户已被您禁言，请先解除禁言后，再发起连麦");
+                }
             });
         } else {
 //            getChannelNumber();
@@ -857,9 +861,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                 try {
                     roomMember = param.get(0);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 if (roomMember != null && roomMember.isMuted()) {
-                    ToastUtils.showShort("你被禁言，不能发起连麦");
+                    ToastExtKt.showToast(StartOneToMoreLiveAct.this, "你被禁言，不能发起连麦");
                 } else {
                     BaseTipsDialog baseTipsDialog1 = new BaseTipsDialog();
                     Bundle bundle2 = new Bundle();
@@ -942,18 +947,16 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             return;
         }
         long selfUid = System.nanoTime();
-        NIMClient.getService(SignallingService.class).join(channelId, selfUid, "", false).setCallback(
-                new RequestCallbackWrapper<ChannelFullInfo>() {
-
-                    @Override
-                    public void onResult(int i, ChannelFullInfo channelFullInfo, Throwable throwable) {
-                        if (i == ResponseCode.RES_SUCCESS || i == ResponseCode.RES_CHANNEL_MEMBER_HAS_EXISTS) {
-                            inviteOther(accid);
-                        } else {
-                            showToast("加入房间失败 code=" + i);
-                        }
-                    }
-                });
+        NIMClient.getService(SignallingService.class).join(channelId, selfUid, "", false).setCallback(new RequestCallbackWrapper<ChannelFullInfo>() {
+            @Override
+            public void onResult(int i, ChannelFullInfo channelFullInfo, Throwable throwable) {
+                if (i == ResponseCode.RES_SUCCESS || i == ResponseCode.RES_CHANNEL_MEMBER_HAS_EXISTS) {
+                    inviteOther(accid);
+                } else {
+                    showToast("加入房间失败 code=" + i);
+                }
+            }
+        });
     }
 
     /**
@@ -1553,25 +1556,19 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
                     @Override
                     public void onResult(int code, ChannelFullInfo channelFullInfo, Throwable throwable) {
-//                        enableClick(true);                    //参考官方文档中关于api以及错误码的说明
-                        if (code == ResponseCode.RES_SUCCESS) {//接收邀请成功
-//                            channelInfo = channelFullInfo.getChannelBaseInfo();
-
-//                            leave();
+                        //参考官方文档中关于api以及错误码的说明
+                        if (code == ResponseCode.RES_SUCCESS) {
+                            //接收邀请成功
                             if (!isAvater) {
                                 releasePlayer();
                                 joinChannel(nertc_token, channelName, uid);
-//                                setLocalVideoEnable(false);
                             }
 
                             ToastHelper.showToast(StartOneToMoreLiveAct.this, "连麦成功！");
                             lianmainIngView();
 
                         } else {
-                            ToastHelper.showToast(StartOneToMoreLiveAct.this, "接收邀请返回的结果 ， code = " + code +
-                                    (throwable == null ? "" : ", throwable = " +
-                                            throwable.getMessage()));
-//                            finish();
+                            ToastHelper.showToast(StartOneToMoreLiveAct.this, "接收邀请返回的结果 ， code = " + code + (throwable == null ? "" : ", throwable = " + throwable.getMessage()));
                         }
                     }
                 });
@@ -1603,18 +1600,16 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      */
     private void leave() {
         try {
-            NIMClient.getService(SignallingService.class).leave(channelId, false, null).setCallback(
-                    new RequestCallbackWrapper<Void>() {
-
-                        @Override
-                        public void onResult(int i, Void aVoid, Throwable throwable) {
-                            if (i == ResponseCode.RES_SUCCESS) {
-                            } else {
-                            }
-                        }
-                    });
+            NIMClient.getService(SignallingService.class).leave(channelId, false, null).setCallback(new RequestCallbackWrapper<Void>() {
+                @Override
+                public void onResult(int i, Void aVoid, Throwable throwable) {
+                    if (i == ResponseCode.RES_SUCCESS) {
+                    } else {
+                    }
+                }
+            });
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
     }
@@ -1631,13 +1626,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         }
 //        IMMessage textMessage = createTextMessage(text);
         IMMessage textMessage = ChatRoomMessageBuilder.createChatRoomTextMessage(roomId, msg);
-        if (container.proxy.sendMessage(textMessage)) {
-            Logger.e("aaaaa");
+        container.proxy.sendMessage(textMessage);
 //            restoreText(true);
 //            messageEditText.setText("");
-        }
     }
-
 
     protected IMMessage createTextMessage(String text) {
         return MessageBuilder.createTextMessage(container.account, container.sessionType, text);
@@ -1648,7 +1640,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         super.finish();
         ActivityTaskManager.getInstance().removeSingleInstanceActivity(this);
     }
-
 
     // 聊天信息回调
     Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
@@ -1716,7 +1707,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                                     }
                                 }
                             }
-
                         }
                         if (attachment.getType() == NotificationType.ChatRoomClose) {
                             stopLiveDialog();
@@ -1773,17 +1763,14 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     /**
      * 接收到主播关闭打开麦克风和摄像头 //1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
-     *
-     * @param anchorPhoto
      */
     private void showTipisPlaying(String anchorPhoto) {
         switch (anchorPhoto) {
             case "1":
+            case "3":
                 break;
             case "2":
                 ToastUtils.showShort("主播关闭了麦克风");
-                break;
-            case "3":
                 break;
             case "4":
                 ToastUtils.showShort("主播关闭了摄像头");
@@ -1795,9 +1782,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         try {
             return message.getSessionType() == container.sessionType && message.getSessionId() != null && message.getSessionId().equals(container.account);
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         }
-
+        return false;
     }
 
     Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
@@ -1809,7 +1796,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
         }
     };
-
 
     /**
      * 加入房间

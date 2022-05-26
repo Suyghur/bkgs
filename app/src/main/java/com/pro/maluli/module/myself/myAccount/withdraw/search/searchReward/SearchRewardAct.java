@@ -18,23 +18,17 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.myselfView.LabelsView;
-import com.pro.maluli.module.myself.myAccount.withdraw.search.adapter.SearchBkDetailAdapter;
-import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.ISearchBkDetailContraction;
-import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.SearchBkDetailPresenter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.adapter.SearchRewardAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.presenter.ISearchRewardContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.presenter.SearchRewardPresenter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
@@ -66,7 +60,6 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
     private List<RewardDetailEntity.ListBean> entities = new ArrayList<>();
     private List<SearchEntity.ListBean> lableList = new ArrayList<>();
 
-
     @Override
     public SearchRewardPresenter initPresenter() {
         return new SearchRewardPresenter(this);
@@ -87,19 +80,20 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
     @Override
     public void viewInitialization() {
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
-        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-        /**
-         * 加载更多
-         */
-        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                bkDetailSfl.finishLoadMore(1000);
-                presenter.getBkDetail();
-            }
-        });
-        /**
-         * 下拉刷新
+//        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
+//        /*
+//          加载更多
+//         */
+//        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//                Logger.d("加载更多");
+//                bkDetailSfl.finishLoadMore(1000);
+//                presenter.getBkDetail();
+//            }
+//        });
+        /*
+          下拉刷新
          */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -145,10 +139,7 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-//                    Log.i(TAG, "获取焦点");
                     isSHowHistory(true);
-                } else {
-//                    Log.i(TAG, "失去焦点");
                 }
             }
         });
@@ -201,11 +192,8 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
     KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
         @Override
         public void onSoftInputChanged(int height) {
-            if (height == 0) {
-//                isSHowHistory(false);
-            } else {
+            if (height != 0) {
                 isSHowHistory(true);
-
             }
         }
     };
@@ -215,9 +203,7 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
         presenter.page = 1;
         presenter.getBkDetail();
         presenter.getSearchHistory();
-
         KeyboardUtils.registerSoftInputChangedListener(getWindow(), onSoftInputChangedListener);
-
     }
 
     @Override

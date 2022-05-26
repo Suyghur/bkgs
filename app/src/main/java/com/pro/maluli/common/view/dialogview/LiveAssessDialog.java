@@ -1,9 +1,7 @@
 package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -39,6 +37,7 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDetailDialog = new Dialog(getActivity(), R.style.dialog_bottom);
         mDetailDialog.setContentView(R.layout.dialog_assess_message);
+        mDetailDialog.setCanceledOnTouchOutside(false);
         abilityStar = mDetailDialog.findViewById(R.id.abilityStar);
         serviceStar = mDetailDialog.findViewById(R.id.serviceStar);
         //设置背景为透明
@@ -80,11 +79,12 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
 
     private void canOnclick() {
         if (srviceNumber == 0 && abilityNumber == 0) {
-            comfirmTv.setAlpha(0.6f);
+            comfirmTv.setBackgroundResource(R.drawable.shape_20000000_32);
+            comfirmTv.setClickable(false);
         } else {
-            comfirmTv.setAlpha(1f);
+            comfirmTv.setBackgroundResource(R.drawable.shape_b23299_d23db3_34);
+            comfirmTv.setClickable(true);
         }
-
     }
 
     private OnBaseTipsListener onFreezeTipsListener;

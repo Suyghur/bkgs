@@ -4,6 +4,13 @@ import java.io.Serializable;
 
 public class LastTimeLiveEntity implements Serializable {
     private String status_code;
+    private int can_report;
+    private String title;
+    private String image;
+    private int is_live;
+    private int type;
+    private String reason;
+    private int room_id;
 
     public String getReason() {
         return reason;
@@ -12,8 +19,6 @@ public class LastTimeLiveEntity implements Serializable {
     public void setReason(String reason) {
         this.reason = reason;
     }
-
-    private String reason;
 
     public String getStatus_code() {
         return status_code;
@@ -39,11 +44,6 @@ public class LastTimeLiveEntity implements Serializable {
         this.image = image;
     }
 
-    private String title;
-    private String image;
-    private int is_live;
-    private int type;
-
     public int getIs_live() {
         return is_live;
     }
@@ -68,6 +68,11 @@ public class LastTimeLiveEntity implements Serializable {
         this.room_id = room_id;
     }
 
-    private int room_id;
+    public int getCan_report() {
+        return can_report;
+    }
 
+    public void setCan_report(int can_report) {
+        this.can_report = can_report;
+    }
 }

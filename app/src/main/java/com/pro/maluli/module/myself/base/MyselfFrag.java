@@ -103,7 +103,7 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
     }
 
     @Override
-    public void onWakeBussiness() {
+    public void onWakeBusiness() {
         if (!ToolUtils.isLogin(getActivity(), false)) {
             topLinear1.setVisibility(View.GONE);
             topLinear2.setVisibility(View.GONE);
