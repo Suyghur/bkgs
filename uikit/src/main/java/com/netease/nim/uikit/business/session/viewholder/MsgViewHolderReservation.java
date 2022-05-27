@@ -3,25 +3,18 @@ package com.netease.nim.uikit.business.session.viewholder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.myCustom.adapter.ReservationAdapter;
-import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
 import com.netease.nim.uikit.business.session.myCustom.extension.ReservationMsgAttachment;
-import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.business.session.viewholder.reservationAct.CheckImgAct;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseQuickAdapter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class MsgViewHolderReservation extends MsgViewHolderBase {
 
@@ -54,12 +47,13 @@ public class MsgViewHolderReservation extends MsgViewHolderBase {
                 selectImgRv.setLayoutManager(new GridLayoutManager(context, 3));
                 adapter = new ReservationAdapter(context, attachment.getImgs());
                 selectImgRv.setAdapter(adapter);
+//                selectImgRv.addItemDecoration(new SpaceItemDecoration(context));
                 adapter.setOnItemOnClickListener(new ReservationAdapter.onItemOnClickListener() {
                     @Override
                     public void onItem(int position) {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("Imgs", (Serializable) attachment.getImgs());
-                        bundle.putInt("position",position);
+                        bundle.putInt("position", position);
                         Intent intent = new Intent(context, CheckImgAct.class);
                         intent.putExtras(bundle);
                         context.startActivity(intent);

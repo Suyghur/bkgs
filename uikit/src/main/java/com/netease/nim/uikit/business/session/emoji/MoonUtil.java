@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class MoonUtil {
     private static final float DEF_SCALE = 0.6f;
     private static final float SMALL_SCALE = 0.45F;
+    private static Pattern mATagPattern = Pattern.compile("<a.*?>.*?</a>");
 
     public static void identifyFaceExpression(Context context,
                                               View textView, String value, int align) {
@@ -92,8 +93,6 @@ public class MoonUtil {
         }
         return mSpannableString;
     }
-
-    private static Pattern mATagPattern = Pattern.compile("<a.*?>.*?</a>");
 
     public static SpannableString makeSpannableStringTags(Context context, String value, float scale, int align) {
         return makeSpannableStringTags(context, value, DEF_SCALE, align, true);

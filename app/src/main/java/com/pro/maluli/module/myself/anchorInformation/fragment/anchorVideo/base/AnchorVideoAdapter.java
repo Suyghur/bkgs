@@ -9,12 +9,9 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.module.LoadMoreModule;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.google.android.material.transition.Hold;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.AnchorVideoEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +23,17 @@ import butterknife.ButterKnife;
 
 public class AnchorVideoAdapter extends BaseQuickAdapter<AnchorInfoEntity.VideoBean,
         AnchorVideoAdapter.ViewHolder> implements LoadMoreModule {
-    private Context context;
     public HashMap<Integer, Boolean> SelectedMap;
     List<AnchorInfoEntity.VideoBean> videoBeans;
+    private Context context;
     private boolean isShowSelect;
+
+    public AnchorVideoAdapter(List<AnchorInfoEntity.VideoBean> data, Context context) {
+        super(R.layout.item_info_video, data);
+        this.context = context;
+        this.videoBeans = data;
+        SelectedMap = new HashMap<>();
+    }
 
     public HashMap<Integer, Boolean> getSelectedMap() {
         return SelectedMap;
@@ -48,13 +52,6 @@ public class AnchorVideoAdapter extends BaseQuickAdapter<AnchorInfoEntity.VideoB
 
 //        notifyDataSetChanged();
 
-    }
-
-    public AnchorVideoAdapter(List<AnchorInfoEntity.VideoBean> data, Context context) {
-        super(R.layout.item_info_video, data);
-        this.context = context;
-        this.videoBeans = data;
-        SelectedMap = new HashMap<>();
     }
 
     @NotNull

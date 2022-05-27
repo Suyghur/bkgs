@@ -6,16 +6,15 @@ import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.VideoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 
 import io.reactivex.functions.Consumer;
 
 public class CommentFragmentPresenter extends BasePresenter<ICommentFragmentContraction.View> implements ICommentFragmentContraction.Presenter {
+    public int page;
+
     public CommentFragmentPresenter(Context context) {
         super(context);
     }
-
-    public int page;
 
     @Override
     public void getCommentVideo(String videoId) {

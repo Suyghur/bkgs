@@ -11,7 +11,6 @@ public interface IStartOneToMoreLiveContraction extends BaseView {
     interface View extends BaseView {
 
 
-
         void setGiftInfo(GiftEntity data);
 
         void setJoinLiveSuccess(JoinLiveEntity data);
@@ -30,8 +29,10 @@ public interface IStartOneToMoreLiveContraction extends BaseView {
 
         void giftFormeSuccess(GiftForMeEntity giftForMeEntity);
     }
+
     interface Presenter extends IClear {
         void anchorSub();
+
         void closeLive();
 
         void getliveInfo();
@@ -39,7 +40,9 @@ public interface IStartOneToMoreLiveContraction extends BaseView {
         void getGiftInfo();
 
         void getAnchorInfo();
+
         void getShareImg();
+
         void sendGift(GiftEntity.ListBean giftId);
 
         void getGiftForMe();

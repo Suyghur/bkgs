@@ -41,13 +41,10 @@ public class ContactDataAdapter extends BaseAdapter {
     private final ContactGroupStrategy groupStrategy;
 
     private final IContactDataProvider dataProvider;
-
-    private AbsContactDataList datas;
-
     private final HashMap<String, Integer> indexes = new HashMap<>();
-
+    private final List<Task> tasks = new ArrayList<>();
+    private AbsContactDataList datas;
     private ContactItemFilter filter;
-
     private ContactItemFilter disableFilter;
 
     public ContactDataAdapter(Context context, ContactGroupStrategy groupStrategy, IContactDataProvider dataProvider) {
@@ -173,8 +170,6 @@ public class ContactDataAdapter extends BaseAdapter {
         startTask(query, true);
     }
 
-    private final List<Task> tasks = new ArrayList<>();
-
     /**
      * 启动搜索任务
      *
@@ -205,6 +200,38 @@ public class ContactDataAdapter extends BaseAdapter {
 
     private void onTaskFinish(Task task) {
         tasks.remove(task);
+    }
+
+    /**
+     * 数据未准备
+     */
+    protected void onPreReady() {
+    }
+
+    /**
+     * 数据加载完成
+     */
+    protected void onPostLoad(boolean empty, String query, boolean all) {
+    }
+
+    /**
+     * 加载完成后，加入非数据项
+     *
+     * @return
+     */
+    protected List<? extends AbsContactItem> onNonDataItems() {
+        return null;
+    }
+
+    private Map<String, Integer> getIndexes() {
+        return this.indexes;
+    }
+
+    private void updateIndexes(Map<String, Integer> indexes) {
+        // CLEAR
+        this.indexes.clear();
+        // SET
+        this.indexes.putAll(indexes);
     }
 
     /**
@@ -258,40 +285,6 @@ public class ContactDataAdapter extends BaseAdapter {
         protected void onCancelled() {
             onTaskFinish(this);
         }
-    }
-
-
-    /**
-     * 数据未准备
-     */
-    protected void onPreReady() {
-    }
-
-    /**
-     * 数据加载完成
-     */
-    protected void onPostLoad(boolean empty, String query, boolean all) {
-    }
-
-    /**
-     * 加载完成后，加入非数据项
-     *
-     * @return
-     */
-    protected List<? extends AbsContactItem> onNonDataItems() {
-        return null;
-    }
-
-
-    private Map<String, Integer> getIndexes() {
-        return this.indexes;
-    }
-
-    private void updateIndexes(Map<String, Integer> indexes) {
-        // CLEAR
-        this.indexes.clear();
-        // SET
-        this.indexes.putAll(indexes);
     }
 
 }

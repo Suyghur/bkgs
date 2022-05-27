@@ -12,25 +12,14 @@ import android.view.ViewTreeObserver;
  */
 public class SoftKeyBoardListener {
 
-    private View rootView;//activity的根视图
     int rootViewVisibleHeight;//纪录根视图的显示高度
+    private View rootView;//activity的根视图
     private OnSoftKeyBoardChangeListener onSoftKeyBoardChangeListener;
-
-    public SoftKeyBoardListener(Activity activity, OnSoftKeyBoardChangeListener listener) {
-        if (activity == null) return;
-        this.onSoftKeyBoardChangeListener = listener;
-        //获取activity的根视图
-        rootView = activity.getWindow().getDecorView();
-        if (rootView == null) return;
-        //监听视图树中全局布局发生改变或者视图树中的某个视图的可视状态发生改变
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
-    }
-
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
             //获取当前根视图在屏幕上显示的大小
-            if (rootView == null){
+            if (rootView == null) {
                 rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 return;
             }
@@ -67,9 +56,19 @@ public class SoftKeyBoardListener {
         }
     };
 
+    public SoftKeyBoardListener(Activity activity, OnSoftKeyBoardChangeListener listener) {
+        if (activity == null) return;
+        this.onSoftKeyBoardChangeListener = listener;
+        //获取activity的根视图
+        rootView = activity.getWindow().getDecorView();
+        if (rootView == null) return;
+        //监听视图树中全局布局发生改变或者视图树中的某个视图的可视状态发生改变
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+    }
+
     public void setOnSoftKeyBoardChangeListener(OnSoftKeyBoardChangeListener onSoftKeyBoardChangeListener) {
         this.onSoftKeyBoardChangeListener = onSoftKeyBoardChangeListener;
-        if (onSoftKeyBoardChangeListener == null){
+        if (onSoftKeyBoardChangeListener == null) {
             rootView.getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
             rootView = null;
         }

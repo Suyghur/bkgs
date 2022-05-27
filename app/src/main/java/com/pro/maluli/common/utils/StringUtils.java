@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016/7/5 0005.

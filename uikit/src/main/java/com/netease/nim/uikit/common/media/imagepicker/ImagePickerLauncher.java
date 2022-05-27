@@ -3,6 +3,9 @@ package com.netease.nim.uikit.common.media.imagepicker;
 import android.app.Activity;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.media.imagepicker.option.DefaultImagePickerOption;
 import com.netease.nim.uikit.common.media.imagepicker.option.ImagePickerOption;
@@ -13,9 +16,6 @@ import com.netease.nim.uikit.common.media.model.GLImage;
 import com.netease.nim.uikit.common.ui.dialog.CustomAlertDialog;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 
 /**
@@ -38,7 +38,7 @@ public class ImagePickerLauncher {
         dialog.setTitle(titleResId);
         dialog.addItem(context.getString(R.string.input_panel_take), () -> takePhoto(context, requestCode));
         dialog.addItem(context.getString(R.string.choose_from_photo_album),
-                       () -> selectImageFromAlbum(context, requestCode));
+                () -> selectImageFromAlbum(context, requestCode));
         dialog.show();
     }
 
@@ -51,14 +51,14 @@ public class ImagePickerLauncher {
         dialog.setTitle(titleResId);
         dialog.addItem(context.getString(R.string.input_panel_take), () -> takePhoto(context, requestCode));
         dialog.addItem(context.getString(R.string.choose_from_photo_album),
-                       () -> selectImage(context, requestCode, option));
+                () -> selectImage(context, requestCode, option));
         dialog.show();
     }
 
     private static void takePhoto(Activity activity, int requestCode) {
         ImagePickerOption option = DefaultImagePickerOption.getInstance();
         option.setPickType(ImagePickerOption.PickType.Image).setShowCamera(true).setMultiMode(false).setSelectMax(1)
-              .setCrop(false);
+                .setCrop(false);
         ImagePicker.getInstance().setOption(option);
         Intent takePictureIntent = new Intent(activity, ImageTakeActivity.class);
         activity.startActivityForResult(takePictureIntent, requestCode);

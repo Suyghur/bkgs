@@ -15,8 +15,8 @@ import java.lang.ref.WeakReference;
 
 public class NormalProgressDialog extends ProgressDialog implements DialogInterface.OnCancelListener {
 
-    private WeakReference<Context> mContextWeakReference;
     private volatile static NormalProgressDialog sDialog;
+    private WeakReference<Context> mContextWeakReference;
 
     public NormalProgressDialog(Context context) {
         this(context, -1);
@@ -29,15 +29,6 @@ public class NormalProgressDialog extends ProgressDialog implements DialogInterf
         setOnCancelListener(this);
     }
 
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        Context context = mContextWeakReference.get();
-        if (context != null) {
-            //取消网络请求...
-
-        }
-    }
-
     public static synchronized void showLoading(Context context) {
         showLoading(context, "loading...");
     }
@@ -48,7 +39,7 @@ public class NormalProgressDialog extends ProgressDialog implements DialogInterf
 
     public static synchronized void showLoading(Context context, CharSequence message, boolean cancelable) {
         try {
-            if (sDialog != null && sDialog.isShowing()&& !((Activity) context).isFinishing()) {
+            if (sDialog != null && sDialog.isShowing() && !((Activity) context).isFinishing()) {
                 sDialog.dismiss();
             }
             sDialog = new NormalProgressDialog(context);
@@ -74,9 +65,18 @@ public class NormalProgressDialog extends ProgressDialog implements DialogInterf
         }
     }
 
-    public static  void stopLoading(Activity activity) {
-        if (activity!=null&&!activity.isFinishing()){
+    public static void stopLoading(Activity activity) {
+        if (activity != null && !activity.isFinishing()) {
             stopLoading();
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        Context context = mContextWeakReference.get();
+        if (context != null) {
+            //取消网络请求...
+
         }
     }
 }

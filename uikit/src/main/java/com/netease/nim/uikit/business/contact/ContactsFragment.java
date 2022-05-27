@@ -54,28 +54,64 @@ import java.util.Set;
 public class ContactsFragment extends TFragment {
 
     private ContactDataAdapter adapter;
+    /**
+     * *********************************** 在线状态 *******************************
+     */
 
+    OnlineStateChangeObserver onlineStateChangeObserver = new OnlineStateChangeObserver() {
+        @Override
+        public void onlineStateChange(Set<String> accounts) {
+            // 更新
+            adapter.notifyDataSetChanged();
+        }
+    };
     private ListView listView;
-
     private TextView countText;
-
     private LivIndex litterIdx;
-
     private View loadingFrame;
-
     private ContactsCustomization customization;
-
     private ReloadFrequencyControl reloadControl = new ReloadFrequencyControl();
+    ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
+        @Override
+        public void onAddedOrUpdatedFriends(List<String> accounts) {
+            reloadWhenDataChanged(accounts, "onAddedOrUpdatedFriends", true);
+        }
+
+        @Override
+        public void onDeletedFriends(List<String> accounts) {
+            reloadWhenDataChanged(accounts, "onDeletedFriends", true);
+        }
+
+        @Override
+        public void onAddUserToBlackList(List<String> accounts) {
+            reloadWhenDataChanged(accounts, "onAddUserToBlackList", true);
+        }
+
+        @Override
+        public void onRemoveUserFromBlackList(List<String> accounts) {
+            reloadWhenDataChanged(accounts, "onRemoveUserFromBlackList", true);
+        }
+    };
+    private UserInfoObserver userInfoObserver = new UserInfoObserver() {
+        @Override
+        public void onUserInfoChanged(List<String> accounts) {
+            reloadWhenDataChanged(accounts, "onUserInfoChanged", true, false); // 非好友资料变更，不用刷新界面
+        }
+    };
+    private Observer<Void> loginSyncCompletedObserver = new Observer<Void>() {
+        @Override
+        public void onEvent(Void aVoid) {
+            getHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    reloadWhenDataChanged(null, "onLoginSyncCompleted", false);
+                }
+            }, 50);
+        }
+    };
 
     public void setContactsCustomization(ContactsCustomization customization) {
         this.customization = customization;
-    }
-
-    private static final class ContactsGroupStrategy extends ContactGroupStrategy {
-        public ContactsGroupStrategy() {
-            add(ContactGroupStrategy.GROUP_NULL, -1, "");
-            addABC(0);
-        }
     }
 
     /**
@@ -187,6 +223,10 @@ public class ContactsFragment extends TFragment {
 //        OverScrollDecoratorHelper.setUpOverScroll(listView);
     }
 
+    /**
+     * *********************************** 通讯录加载控制 *******************************
+     */
+
     private void buildLitterIdx(View view) {
         LetterIndexView livIndex = view.findViewById(R.id.liv_index);
         livIndex.setNormalColor(getResources().getColor(R.color.contacts_letters_color));
@@ -195,44 +235,6 @@ public class ContactsFragment extends TFragment {
         litterIdx = adapter.createLivIndex(listView, livIndex, litterHit, imgBackLetter);
 
         litterIdx.show();
-    }
-
-    private final class ContactItemClickListener implements OnItemClickListener, OnItemLongClickListener {
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            AbsContactItem item = (AbsContactItem) adapter.getItem(position);
-            if (item == null) {
-                return;
-            }
-
-            int type = item.getItemType();
-
-            if (type == ItemTypes.FUNC && customization != null) {
-                customization.onFuncItemClick(item);
-                return;
-            }
-
-            if (type == ItemTypes.FRIEND && item instanceof ContactItem && NimUIKitImpl.getContactEventListener() != null) {
-                NimUIKitImpl.getContactEventListener().onItemClick(getActivity(), (((ContactItem) item).getContact()).getContactId());
-            }
-        }
-
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                       int position, long id) {
-            AbsContactItem item = (AbsContactItem) adapter.getItem(position);
-            if (item == null) {
-                return false;
-            }
-
-            if (item instanceof ContactItem && NimUIKitImpl.getContactEventListener() != null) {
-                NimUIKitImpl.getContactEventListener().onItemLongClick(getActivity(), (((ContactItem) item).getContact()).getContactId());
-            }
-
-            return true;
-        }
     }
 
     public void scrollToTop() {
@@ -247,10 +249,6 @@ public class ContactsFragment extends TFragment {
             }
         }
     }
-
-    /**
-     * *********************************** 通讯录加载控制 *******************************
-     */
 
     /**
      * 加载通讯录数据并刷新
@@ -298,47 +296,6 @@ public class ContactsFragment extends TFragment {
     }
 
     /**
-     * 通讯录加载频率控制
-     */
-    class ReloadFrequencyControl {
-        boolean isReloading = false;
-        boolean needReload = false;
-        boolean reloadParam = false;
-
-        boolean canDoReload(boolean param) {
-            if (isReloading) {
-                // 正在加载，那么计划加载完后重载
-                needReload = true;
-                if (param) {
-                    // 如果加载过程中又有多次reload请求，多次参数只要有true，那么下次加载就是reload(true);
-                    reloadParam = true;
-                }
-                LogUtil.i(UIKitLogTag.CONTACT, "pending reload task");
-
-                return false;
-            } else {
-                // 如果当前空闲，那么立即开始加载
-                isReloading = true;
-                return true;
-            }
-        }
-
-        boolean continueDoReloadWhenCompleted() {
-            return needReload;
-        }
-
-        void resetStatus() {
-            isReloading = false;
-            needReload = false;
-            reloadParam = false;
-        }
-
-        boolean getReloadParam() {
-            return reloadParam;
-        }
-    }
-
-    /**
      * *********************************** 用户资料、好友关系变更、登录数据同步完成观察者 *******************************
      */
 
@@ -347,47 +304,6 @@ public class ContactsFragment extends TFragment {
         NimUIKit.getContactChangedObservable().registerObserver(friendDataChangedObserver, register);
         LoginSyncDataStatusObserver.getInstance().observeSyncDataCompletedEvent(loginSyncCompletedObserver);
     }
-
-    ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
-        @Override
-        public void onAddedOrUpdatedFriends(List<String> accounts) {
-            reloadWhenDataChanged(accounts, "onAddedOrUpdatedFriends", true);
-        }
-
-        @Override
-        public void onDeletedFriends(List<String> accounts) {
-            reloadWhenDataChanged(accounts, "onDeletedFriends", true);
-        }
-
-        @Override
-        public void onAddUserToBlackList(List<String> accounts) {
-            reloadWhenDataChanged(accounts, "onAddUserToBlackList", true);
-        }
-
-        @Override
-        public void onRemoveUserFromBlackList(List<String> accounts) {
-            reloadWhenDataChanged(accounts, "onRemoveUserFromBlackList", true);
-        }
-    };
-
-    private UserInfoObserver userInfoObserver = new UserInfoObserver() {
-        @Override
-        public void onUserInfoChanged(List<String> accounts) {
-            reloadWhenDataChanged(accounts, "onUserInfoChanged", true, false); // 非好友资料变更，不用刷新界面
-        }
-    };
-
-    private Observer<Void> loginSyncCompletedObserver = new Observer<Void>() {
-        @Override
-        public void onEvent(Void aVoid) {
-            getHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    reloadWhenDataChanged(null, "onLoginSyncCompleted", false);
-                }
-            }, 50);
-        }
-    };
 
     private void reloadWhenDataChanged(List<String> accounts, String reason, boolean reload) {
         reloadWhenDataChanged(accounts, reason, reload, true);
@@ -432,22 +348,96 @@ public class ContactsFragment extends TFragment {
         reload(reload);
     }
 
-    /**
-     * *********************************** 在线状态 *******************************
-     */
-
-    OnlineStateChangeObserver onlineStateChangeObserver = new OnlineStateChangeObserver() {
-        @Override
-        public void onlineStateChange(Set<String> accounts) {
-            // 更新
-            adapter.notifyDataSetChanged();
-        }
-    };
-
     private void registerOnlineStateChangeListener(boolean register) {
         if (!NimUIKitImpl.enableOnlineState()) {
             return;
         }
         NimUIKitImpl.getOnlineStateChangeObservable().registerOnlineStateChangeListeners(onlineStateChangeObserver, register);
+    }
+
+    private static final class ContactsGroupStrategy extends ContactGroupStrategy {
+        public ContactsGroupStrategy() {
+            add(ContactGroupStrategy.GROUP_NULL, -1, "");
+            addABC(0);
+        }
+    }
+
+    private final class ContactItemClickListener implements OnItemClickListener, OnItemLongClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                                long id) {
+            AbsContactItem item = (AbsContactItem) adapter.getItem(position);
+            if (item == null) {
+                return;
+            }
+
+            int type = item.getItemType();
+
+            if (type == ItemTypes.FUNC && customization != null) {
+                customization.onFuncItemClick(item);
+                return;
+            }
+
+            if (type == ItemTypes.FRIEND && item instanceof ContactItem && NimUIKitImpl.getContactEventListener() != null) {
+                NimUIKitImpl.getContactEventListener().onItemClick(getActivity(), (((ContactItem) item).getContact()).getContactId());
+            }
+        }
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                       int position, long id) {
+            AbsContactItem item = (AbsContactItem) adapter.getItem(position);
+            if (item == null) {
+                return false;
+            }
+
+            if (item instanceof ContactItem && NimUIKitImpl.getContactEventListener() != null) {
+                NimUIKitImpl.getContactEventListener().onItemLongClick(getActivity(), (((ContactItem) item).getContact()).getContactId());
+            }
+
+            return true;
+        }
+    }
+
+    /**
+     * 通讯录加载频率控制
+     */
+    class ReloadFrequencyControl {
+        boolean isReloading = false;
+        boolean needReload = false;
+        boolean reloadParam = false;
+
+        boolean canDoReload(boolean param) {
+            if (isReloading) {
+                // 正在加载，那么计划加载完后重载
+                needReload = true;
+                if (param) {
+                    // 如果加载过程中又有多次reload请求，多次参数只要有true，那么下次加载就是reload(true);
+                    reloadParam = true;
+                }
+                LogUtil.i(UIKitLogTag.CONTACT, "pending reload task");
+
+                return false;
+            } else {
+                // 如果当前空闲，那么立即开始加载
+                isReloading = true;
+                return true;
+            }
+        }
+
+        boolean continueDoReloadWhenCompleted() {
+            return needReload;
+        }
+
+        void resetStatus() {
+            isReloading = false;
+            needReload = false;
+            reloadParam = false;
+        }
+
+        boolean getReloadParam() {
+            return reloadParam;
+        }
     }
 }

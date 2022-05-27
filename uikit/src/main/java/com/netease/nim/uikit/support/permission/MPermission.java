@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -33,25 +34,6 @@ public class MPermission extends BaseMPermission {
 
     public static MPermission with(Fragment fragment) {
         return new MPermission(fragment);
-    }
-
-    public MPermission setRequestCode(int requestCode) {
-        this.requestCode = requestCode;
-        return this;
-    }
-
-    public MPermission permissions(String... permissions) {
-        this.permissions = permissions;
-        return this;
-    }
-
-    /**
-     * ********************* request *********************
-     */
-
-    @TargetApi(value = Build.VERSION_CODES.M)
-    public void request() {
-        doRequestPermissions(object, requestCode, permissions);
     }
 
     @TargetApi(value = Build.VERSION_CODES.M)
@@ -166,5 +148,24 @@ public class MPermission extends BaseMPermission {
                 e.printStackTrace();
             }
         }
+    }
+
+    public MPermission setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+        return this;
+    }
+
+    public MPermission permissions(String... permissions) {
+        this.permissions = permissions;
+        return this;
+    }
+
+    /**
+     * ********************* request *********************
+     */
+
+    @TargetApi(value = Build.VERSION_CODES.M)
+    public void request() {
+        doRequestPermissions(object, requestCode, permissions);
     }
 }

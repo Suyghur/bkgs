@@ -3,13 +3,14 @@ package com.netease.nim.uikit.common.media.imagepicker.video;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.TextureView;
 
-/**
+import androidx.annotation.RequiresApi;
 
+/**
+ *
  */
 
 public class GLVideoView extends TextureView implements TextureView.SurfaceTextureListener {
@@ -39,16 +40,16 @@ public class GLVideoView extends TextureView implements TextureView.SurfaceTextu
         init();
     }
 
+    public Callback getCallback() {
+        return callback;
+    }
+
     public void setCallback(Callback callback) {
         this.callback = callback;
 
-        if (surface != null && callback != null){
+        if (surface != null && callback != null) {
             callback.onSurfaceAvailable(surface);
         }
-    }
-
-    public Callback getCallback() {
-        return callback;
     }
 
     private void init() {
@@ -58,7 +59,7 @@ public class GLVideoView extends TextureView implements TextureView.SurfaceTextu
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         surface = new Surface(surfaceTexture);
-        if (callback != null){
+        if (callback != null) {
             callback.onSurfaceAvailable(surface);
         }
     }
@@ -70,11 +71,11 @@ public class GLVideoView extends TextureView implements TextureView.SurfaceTextu
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-        if (callback != null){
+        if (callback != null) {
             callback.onSurfaceDestroyed();
         }
 
-        if (surface != null){
+        if (surface != null) {
             surface.release();
             surface = null;
         }
@@ -89,6 +90,7 @@ public class GLVideoView extends TextureView implements TextureView.SurfaceTextu
 
     public interface Callback {
         void onSurfaceAvailable(Surface surface);
+
         void onSurfaceDestroyed();
     }
 }

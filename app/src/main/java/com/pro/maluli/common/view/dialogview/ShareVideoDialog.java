@@ -9,11 +9,8 @@ import android.widget.LinearLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.utils.DonwloadSaveImg;
 import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 
 /**
@@ -23,10 +20,11 @@ import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 public class ShareVideoDialog extends DialogFragment implements View.OnClickListener {
     private Dialog mDetailDialog;
-    private LinearLayout dismissLL, qqLL, wechatLL, wechatPyqLL, QQZoneLL,downImagLL;
+    private LinearLayout dismissLL, qqLL, wechatLL, wechatPyqLL, QQZoneLL, downImagLL;
     private String imgurl;
     private View videoline;
-    private boolean isShareVideo=true;
+    private boolean isShareVideo = true;
+    private OnShareAppListener onShareAppListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -50,11 +48,11 @@ public class ShareVideoDialog extends DialogFragment implements View.OnClickList
         downImagLL = mDetailDialog.findViewById(R.id.downImagLL);
         videoline = (View) mDetailDialog.findViewById(R.id.videoline);
 
-        isShareVideo =getArguments().getBoolean("IS_SHARE_VIDEO",true);
-        if (!isShareVideo){
+        isShareVideo = getArguments().getBoolean("IS_SHARE_VIDEO", true);
+        if (!isShareVideo) {
             downImagLL.setVisibility(View.GONE);
             videoline.setVisibility(View.GONE);
-        }else {
+        } else {
             downImagLL.setVisibility(View.VISIBLE);
             videoline.setVisibility(View.VISIBLE);
         }
@@ -68,15 +66,8 @@ public class ShareVideoDialog extends DialogFragment implements View.OnClickList
         return mDetailDialog;
     }
 
-    private OnShareAppListener onShareAppListener;
-
     public void setOnShareAppListener(OnShareAppListener onShareAppListener) {
         this.onShareAppListener = onShareAppListener;
-    }
-
-    public interface OnShareAppListener {
-        void gotoShare(int type);//0去申述，2去绑定
-        void downloadVideo();
     }
 
     @Override
@@ -89,7 +80,7 @@ public class ShareVideoDialog extends DialogFragment implements View.OnClickList
             case R.id.dismissLL:
                 break;
             case R.id.downImagLL:
-                if (onShareAppListener!=null){
+                if (onShareAppListener != null) {
                     onShareAppListener.downloadVideo();
                 }
 
@@ -118,5 +109,11 @@ public class ShareVideoDialog extends DialogFragment implements View.OnClickList
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnShareAppListener {
+        void gotoShare(int type);//0去申述，2去绑定
+
+        void downloadVideo();
     }
 }

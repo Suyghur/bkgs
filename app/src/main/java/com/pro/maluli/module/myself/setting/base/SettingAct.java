@@ -15,9 +15,6 @@ import android.widget.TextView;
 import com.alipay.sdk.app.AuthTask;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.auth.AuthService;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.ACEConstant;
@@ -30,7 +27,6 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.alipay.AuthResult;
 import com.pro.maluli.common.utils.alipay.OrderInfoUtil2_0;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
 import com.pro.maluli.module.myself.setting.aboutMe.AboutMeAct;
 import com.pro.maluli.module.myself.setting.base.presenter.ISettingContraction;
 import com.pro.maluli.module.myself.setting.base.presenter.SettingPresenter;
@@ -40,7 +36,6 @@ import com.pro.maluli.module.myself.setting.feedback.base.FeedBackAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
 import com.pro.maluli.module.other.getCode.GetCodeAct;
 import com.pro.maluli.module.other.login.LoginAct;
-import com.tencent.bugly.proguard.B;
 
 import java.util.Map;
 
@@ -53,6 +48,31 @@ import butterknife.OnClick;
  */
 public class SettingAct extends BaseMvpActivity<ISettingContraction.View, SettingPresenter> implements ISettingContraction.View {
 
+    /**
+     * 用于支付宝支付业务的入参 app_id。
+     */
+    public static final String APPID = "2019112069363025";
+    /**
+     * 用于支付宝账户登录授权业务的入参 pid。
+     */
+    public static final String PID = "2088531588331177";
+    /**
+     * 用于支付宝账户登录授权业务的入参 target_id。
+     */
+    public static final String TARGET_ID = "BKGS";
+    /**
+     * pkcs8 格式的商户私钥。
+     * <p>
+     * 如下私钥，RSA2_PRIVATE 或者 RSA_PRIVATE 只需要填入一个，如果两个都设置了，本 Demo 将优先
+     * 使用 RSA2_PRIVATE。RSA2_PRIVATE 可以保证商户交易在更加安全的环境下进行，建议商户使用
+     * RSA2_PRIVATE。
+     * <p>
+     * 建议使用支付宝提供的公私钥生成工具生成和获取 RSA2_PRIVATE。
+     * 工具地址：https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=106097&docType=1
+     */
+    public static final String RSA2_PRIVATE = "";
+    public static final String RSA_PRIVATE = "";
+    private static final int SDK_AUTH_FLAG = 3;
     @BindView(R.id.leftImg)
     ImageView leftImg;
     @BindView(R.id.leftImg_ly)
@@ -81,8 +101,49 @@ public class SettingAct extends BaseMvpActivity<ISettingContraction.View, Settin
     View customerNewTv;
     @BindView(R.id.appUpdata)
     View appUpdata;
+    // TODO: 2021/9/6
+    //要用Handler回到主线程操作UI，否则会报错
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @SuppressWarnings("unused")
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 1:
+                    String weChatData = (String) msg.obj;
+                    QQWeChatBind("1", weChatData);
+                    break;
+                //微信登录
+                case 2:
+                    String weChatData1 = (String) msg.obj;
+                    QQWeChatBind("2", weChatData1);
+                    break;
+                case SDK_AUTH_FLAG: {
+                    @SuppressWarnings("unchecked")
+                    AuthResult authResult = new AuthResult((Map<String, String>) msg.obj, true);
+                    String resultStatus = authResult.getResultStatus();
+
+                    // 判断resultStatus 为“9000”且result_code
+                    // 为“200”则代表授权成功，具体状态码代表含义可参考授权接口文档
+                    if (TextUtils.equals(resultStatus, "9000") && TextUtils.equals(authResult.getResultCode(), "200")) {
+                        String user_id = authResult.getUser_id();
+                        String auth_code = authResult.getAuthCode();
+                        String alipay_open_id = authResult.getAlipayOpenId();
+                        // 获取alipay_open_id，调支付时作为参数extern_token 的value
+                        // 传入，则支付账户为该授权账户
+                        presenter.bindAlipay(auth_code, alipay_open_id, user_id);
+                        ToastUtils.showShort("授权成功");
+                    } else {
+                        ToastUtils.showShort("授权失败");
+                        // 其他状态值则为授权失败
+                    }
+                    break;
+                }
+            }
+        }
+    };
     private UserInfoEntity entity;
-    private static final int SDK_AUTH_FLAG = 3;
 
     @Override
     public SettingPresenter initPresenter() {
@@ -158,7 +219,7 @@ public class SettingAct extends BaseMvpActivity<ISettingContraction.View, Settin
                 }
                 Bundle b = new Bundle();
                 b.putString("Mobile", entity.getPhone());
-                gotoActivity(ChangeBindMobileAct.class,false,b);
+                gotoActivity(ChangeBindMobileAct.class, false, b);
                 break;
             case R.id.bindWeChatLL:
                 if (!ToolUtils.isLoginTips(SettingAct.this, getSupportFragmentManager())) {
@@ -258,75 +319,6 @@ public class SettingAct extends BaseMvpActivity<ISettingContraction.View, Settin
         presenter.bindWechatAndQQ(type, weChatData);
     }
 
-    // TODO: 2021/9/6  
-    //要用Handler回到主线程操作UI，否则会报错
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @SuppressWarnings("unused")
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 1:
-                    String weChatData = (String) msg.obj;
-                    QQWeChatBind("1", weChatData);
-                    break;
-                //微信登录
-                case 2:
-                    String weChatData1 = (String) msg.obj;
-                    QQWeChatBind("2", weChatData1);
-                    break;
-                case SDK_AUTH_FLAG: {
-                    @SuppressWarnings("unchecked")
-                    AuthResult authResult = new AuthResult((Map<String, String>) msg.obj, true);
-                    String resultStatus = authResult.getResultStatus();
-
-                    // 判断resultStatus 为“9000”且result_code
-                    // 为“200”则代表授权成功，具体状态码代表含义可参考授权接口文档
-                    if (TextUtils.equals(resultStatus, "9000") && TextUtils.equals(authResult.getResultCode(), "200")) {
-                        String user_id = authResult.getUser_id();
-                        String auth_code = authResult.getAuthCode();
-                        String alipay_open_id = authResult.getAlipayOpenId();
-                        // 获取alipay_open_id，调支付时作为参数extern_token 的value
-                        // 传入，则支付账户为该授权账户
-                        presenter.bindAlipay(auth_code, alipay_open_id, user_id);
-                        ToastUtils.showShort("授权成功");
-                    } else {
-                        ToastUtils.showShort("授权失败");
-                        // 其他状态值则为授权失败
-                    }
-                    break;
-                }
-            }
-        }
-    };
-    /**
-     * 用于支付宝支付业务的入参 app_id。
-     */
-    public static final String APPID = "2019112069363025";
-
-    /**
-     * 用于支付宝账户登录授权业务的入参 pid。
-     */
-    public static final String PID = "2088531588331177";
-
-    /**
-     * 用于支付宝账户登录授权业务的入参 target_id。
-     */
-    public static final String TARGET_ID = "BKGS";
-    /**
-     * pkcs8 格式的商户私钥。
-     * <p>
-     * 如下私钥，RSA2_PRIVATE 或者 RSA_PRIVATE 只需要填入一个，如果两个都设置了，本 Demo 将优先
-     * 使用 RSA2_PRIVATE。RSA2_PRIVATE 可以保证商户交易在更加安全的环境下进行，建议商户使用
-     * RSA2_PRIVATE。
-     * <p>
-     * 建议使用支付宝提供的公私钥生成工具生成和获取 RSA2_PRIVATE。
-     * 工具地址：https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=106097&docType=1
-     */
-    public static final String RSA2_PRIVATE = "";
-    public static final String RSA_PRIVATE = "";
-
     /**
      * 支付宝账户授权业务示例
      */
@@ -400,9 +392,9 @@ public class SettingAct extends BaseMvpActivity<ISettingContraction.View, Settin
             alpayBindTv.setText(StringUtils.StringToNull(entity.getBind_alipay()));
         }
         //意见反馈是否有信息
-        if (response.getNew_report()==1){
+        if (response.getNew_report() == 1) {
             customerNewTv.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             customerNewTv.setVisibility(View.GONE);
         }
         //软件是否可以更新

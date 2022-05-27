@@ -43,10 +43,10 @@
                 android:layout_height="wrap_content"
                 android:background="@color/color_background"
                 android:numColumns="4"
-                android:paddingBottom="25dip"
                 android:paddingLeft="12dip"
-                android:paddingRight="12dip"
                 android:paddingTop="16dip"
+                android:paddingRight="12dip"
+                android:paddingBottom="25dip"
                 android:verticalSpacing="16dip" />
         </LinearLayout>
     </ScrollView>

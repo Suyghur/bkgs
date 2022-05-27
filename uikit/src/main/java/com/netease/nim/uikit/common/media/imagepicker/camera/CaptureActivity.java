@@ -1,5 +1,8 @@
 package com.netease.nim.uikit.common.media.imagepicker.camera;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -16,9 +19,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
@@ -31,6 +31,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ToastHelper;
@@ -48,64 +52,65 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-
 public class CaptureActivity extends AppCompatActivity {
 
-    private static final String TAG = CaptureActivity.class.getSimpleName();
-
     public static final String[] VIDEO_PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,};
-
     public static final int VIDEO_PERMISSIONS_REQUEST_CODE = 1;
-
-    private Handler mainHandler;
-
-    private Camera mCamera;
-
-    private int cameraId;
-
-    private CameraPreview mPreview;
-
-    private MediaRecorder mMediaRecorder;
-
-    private LongPressRunnable longPressRunnable;
-
-    private boolean isAction = false;
-
-    private boolean isRecording = false;
-
-    private boolean isCameraFront = false;//当前是否是前置摄像头
-
-    private int currentTime;
-
-    private View captureButton;
-
-    private TextView tvBalanceTime;//录制剩余时间
-
-    private ImageView ivSwitchCamera;//切换前后摄像头
-
-    private ImageView ivClose;//关闭该Activity
-
-    private CircleProgressView mProgressView;//录像进度条
-
-    private TextView cameraTip;
-
-    private ImageView capturebg;
-
-    private OrientationEventListener mOrientationListener;
-
-    private String pictureSavePath;
-
-    private String videoSavePath;
-
-    private int videoWidth;
-
-    private int videoHeight;
-
+    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
+    public static final String PERMISSIONS_FRAGMENT_DIALOG = "permission_dialog";
+    private static final String TAG = CaptureActivity.class.getSimpleName();
     public static int RECORD_MAX_TIME = 15;//录制的总时长秒数，单位秒，默认15秒
-
     public static int RECORD_MIN_TIME = 1;//最小录制时长，单位秒，默认1秒
+    private Handler mainHandler;
+    private Camera mCamera;
+    private int cameraId;
+    private CameraPreview mPreview;
+    private MediaRecorder mMediaRecorder;
+    private LongPressRunnable longPressRunnable;
+    private boolean isAction = false;
+    private boolean isRecording = false;
+    private boolean isCameraFront = false;//当前是否是前置摄像头
+    private int currentTime;
+    private View captureButton;
+    private TextView tvBalanceTime;//录制剩余时间
+    private ImageView ivSwitchCamera;//切换前后摄像头
+    private ImageView ivClose;//关闭该Activity
+    private CircleProgressView mProgressView;//录像进度条
+    private TextView cameraTip;
+    private ImageView capturebg;
+    private OrientationEventListener mOrientationListener;
+    private String pictureSavePath;
+    private String videoSavePath;
+    private int videoWidth;
+    private int videoHeight;
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            long now = TimeUtil.getNow_millisecond();
+            File pictureFile = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE, String.valueOf(now));
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file, check storage permissions");
+                return;
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+                pictureSavePath = pictureFile.getAbsolutePath();
+                String pictureName = pictureFile.getName();
+                BitmapFactory.Options options = ImageUtil.getOptions(pictureSavePath);
+                GLImage image = GLImage.Builder.newBuilder().setWidth(options.outWidth).setHeight(options.outHeight)
+                        .setMimeType(options.outMimeType).setPath(pictureSavePath).setName(
+                                pictureName).setSize(pictureFile.length()).setAddTime(now).build();
+                ImagePreviewRetakeActivity.start(CaptureActivity.this, image);
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+        }
+    };
 
     public static void start(Activity activity) {
         start(activity, Constants.RESULT_CODE_RECORD_VIDEO);
@@ -218,9 +223,9 @@ public class CaptureActivity extends AppCompatActivity {
         if (requestCode == Constants.RESULT_CODE_CONFIRM_VIDEO) {
             if (resultCode == Activity.RESULT_OK) {
                 GLImage yixinVideo = GLImage.Builder.newBuilder().setAddTime(TimeUtil.getNow_millisecond()).setDuration(
-                        currentTime * 1000).setSize(new File(videoSavePath).length()).setHeight(videoHeight).setWidth(
-                        videoWidth).setMimeType("video/mp4") // FIXME
-                                                    .setPath(videoSavePath).build();
+                                currentTime * 1000).setSize(new File(videoSavePath).length()).setHeight(videoHeight).setWidth(
+                                videoWidth).setMimeType("video/mp4") // FIXME
+                        .setPath(videoSavePath).build();
                 ArrayList<GLImage> selectedVideos = new ArrayList<>(1);
                 selectedVideos.add(yixinVideo);
                 Intent intent = new Intent();
@@ -248,35 +253,6 @@ public class CaptureActivity extends AppCompatActivity {
         // get an image from the camera
         mCamera.takePicture(null, null, mPicture);
     }
-
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            long now = TimeUtil.getNow_millisecond();
-            File pictureFile = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE, String.valueOf(now));
-            if (pictureFile == null) {
-                Log.d(TAG, "Error creating media file, check storage permissions");
-                return;
-            }
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-                pictureSavePath = pictureFile.getAbsolutePath();
-                String pictureName = pictureFile.getName();
-                BitmapFactory.Options options = ImageUtil.getOptions(pictureSavePath);
-                GLImage image = GLImage.Builder.newBuilder().setWidth(options.outWidth).setHeight(options.outHeight)
-                                               .setMimeType(options.outMimeType).setPath(pictureSavePath).setName(
-                                pictureName).setSize(pictureFile.length()).setAddTime(now).build();
-                ImagePreviewRetakeActivity.start(CaptureActivity.this, image);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
-        }
-    };
 
     private void switchCamera() {
         mCamera.stopPreview();
@@ -456,24 +432,7 @@ public class CaptureActivity extends AppCompatActivity {
             mCamera.release();        // release the camera for other applications
             mCamera = null;
         }
-    }
-
-    private class LongPressRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            // initialize video camera
-            if (prepareVideoRecorder()) {
-                startMediaRecorder();
-            } else {
-                // prepare didn't work, release the camera
-                releaseMediaRecorder();
-                // inform user
-            }
-        }
-    }
-
-    private Runnable progressRunnable = new Runnable() {
+    }    private Runnable progressRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -540,11 +499,6 @@ public class CaptureActivity extends AppCompatActivity {
         cameraTip.setVisibility(View.VISIBLE);
     }
 
-
-    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
-
-    public static final String PERMISSIONS_FRAGMENT_DIALOG = "permission_dialog";
-
     private void requestVideoPermissions() {
         if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
             new ConfirmationDialog().show(getFragmentManager(), PERMISSIONS_FRAGMENT_DIALOG);
@@ -580,16 +534,33 @@ public class CaptureActivity extends AppCompatActivity {
                 for (int result : grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
                         ErrorDialog.newInstance(getString(R.string.permission_request)).show(getFragmentManager(),
-                                                                                             PERMISSIONS_FRAGMENT_DIALOG);
+                                PERMISSIONS_FRAGMENT_DIALOG);
                         break;
                     }
                 }
             } else {
                 ErrorDialog.newInstance(getString(R.string.permission_request)).show(getFragmentManager(),
-                                                                                     PERMISSIONS_FRAGMENT_DIALOG);
+                        PERMISSIONS_FRAGMENT_DIALOG);
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
+    private class LongPressRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            // initialize video camera
+            if (prepareVideoRecorder()) {
+                startMediaRecorder();
+            } else {
+                // prepare didn't work, release the camera
+                releaseMediaRecorder();
+                // inform user
+            }
+        }
+    }
+
+
 }

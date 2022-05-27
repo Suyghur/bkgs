@@ -3,9 +3,7 @@ package com.pro.maluli.module.home.base.applyForAnchor.presenter;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.ApplyLimitEntity;
-import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 
 import java.io.File;
 import java.util.List;
@@ -18,6 +16,7 @@ public interface IApplyForAnchorContraction extends BaseView {
 
         void setVideoTime(ApplyLimitEntity data);
     }
+
     interface Presenter extends IClear {
 
 

@@ -1,7 +1,8 @@
 package com.netease.nim.uikit.common.ui.recyclerview.adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.common.ui.recyclerview.entity.SectionEntity;
 import com.netease.nim.uikit.common.ui.recyclerview.holder.BaseViewHolder;
@@ -11,8 +12,8 @@ import java.util.List;
 public abstract class BaseSectionQuickAdapter<T extends SectionEntity, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
 
 
-    protected int mSectionHeadResId;
     protected static final int SECTION_HEADER_VIEW = 0x00000444;
+    protected int mSectionHeadResId;
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with

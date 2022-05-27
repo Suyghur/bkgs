@@ -7,8 +7,8 @@
     <include layout="@layout/top_titlebar_layout" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:layout_width="match_parent"
         android:id="@+id/watchSfl"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ScrollView
@@ -22,11 +22,11 @@
 
                 <LinearLayout
                     android:id="@+id/nodataView"
-                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/iv"

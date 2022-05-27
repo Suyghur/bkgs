@@ -18,20 +18,10 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.util.NIMUtil;
 import com.pro.maluli.common.utils.preferences.Preferences;
 import com.pro.maluli.module.chatRoom.ChatRoomSessionHelper;
-import com.pro.maluli.toolkit.Logger;
-import com.pro.maluli.toolkit.MMKVManager;
-import com.shuyu.gsyvideoplayer.cache.CacheFactory;
-import com.shuyu.gsyvideoplayer.player.PlayerFactory;
-import com.tencent.bugly.Bugly;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 import cn.jpush.android.api.JPushInterface;
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
-import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager;
 
 
 public class BKGSApplication extends Application {
@@ -42,14 +32,13 @@ public class BKGSApplication extends Application {
      * SHA256: CC:DD:8D:6D:72:33:C6:61:F2:FA:F9:89:4B:7E:AB:F5:D9:1F:69:9F:9E:9B:A0:00:4D:B1:42:95:B6:A6:BF:37
      */
     public static final int UPLOAD_STEP = 100;//多少步上传一次；
-
-    private static BKGSApplication mApplication;
-
     public static int youthModeStatus = 0;
+    private static BKGSApplication mApplication;
     /**
      * 缓存拍照图片路径
      */
     public File takePhotoCacheDir = null;
+    public boolean socketOnline = false;
 
     /**
      * 获取Application
@@ -58,14 +47,10 @@ public class BKGSApplication extends Application {
         return mApplication;
     }
 
-    public boolean socketOnline = false;
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
-        Logger.initZap(this);
-        MMKVManager.getInstance().init(this);
     }
 
     @Override
@@ -76,75 +61,7 @@ public class BKGSApplication extends Application {
         baseInit();
         //初始化shareSdk
         MobSDK.submitPolicyGrantResult(true, null);
-//        MobSDK.init(this);
-//        initLoadImageView();
-        initBugly();
-
-
     }
-
-    //初始化bug上传
-    private void initBugly() {
-//        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
-//        strategy.setAppChannel("bug");//设置渠道
-//        Context context = getApplicationContext();
-//// 获取当前包名
-//        String packageName = context.getPackageName();
-//// 获取当前进程名
-//        String processName = getProcessName(android.os.Process.myPid());
-//// 设置是否为上报进程
-//        strategy.setUploadProcess(processName == null || processName.equals(packageName));
-//        strategy.setAppVersion(PackageUtils.getVersionName(this));//app的版本
-//        strategy.setAppPackageName("com.pro.maluli");//包名
-//        strategy.setUserInfoActivity(LoginActivity.class);
-//        CrashReport.initCrashReport(getApplicationContext(), "dd30375eac", false, strategy);
-
-        Bugly.init(getApplicationContext(), "dd30375eac", false);
-    }
-
-    /**
-     * 获取进程号对应的进程名
-     *
-     * @param pid 进程号
-     * @return 进程名
-     */
-    private static String getProcessName(int pid) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader("/proc/" + pid + "/cmdline"));
-            String processName = reader.readLine();
-            if (!TextUtils.isEmpty(processName)) {
-                processName = processName.trim();
-            }
-            return processName;
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-        }
-        return null;
-    }
-//    private void initLoadImageView() {
-//        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder() //
-//                .showImageForEmptyUri(R.mipmap.ic_add_img) //
-//                .showImageOnFail(R.mipmap.ic_add_img) //
-//                .cacheInMemory(true) //
-//                .cacheOnDisk(true) //
-//                .build();//
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration//
-//                .Builder(getApplicationContext())//
-//                .defaultDisplayImageOptions(defaultOptions).diskCacheSize(50 * 1024 * 1024).diskCacheFileCount(100)// 缓存一百张图片
-//                .writeDebugLogs()//
-//                .build();//
-//        ImageLoader.getInstance().init(config);
-//    }
-
 
     private void baseInit() {
         Glide.with(this);
@@ -161,8 +78,6 @@ public class BKGSApplication extends Application {
             SessionHelper.init();
             // 聊天室聊天窗口的定制初始化。
             ChatRoomSessionHelper.init();
-            PlayerFactory.setPlayManager(Exo2PlayerManager.class);
-            CacheFactory.setCacheManager(ExoPlayerCacheManager.class);
         }
 
     }

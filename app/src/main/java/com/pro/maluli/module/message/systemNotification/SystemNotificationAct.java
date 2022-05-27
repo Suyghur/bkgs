@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +19,6 @@ import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.SystemMsgEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.popwindow.PopupWindowList;
 import com.pro.maluli.module.message.systemNotification.adapter.SystemNotificationAdapter;
@@ -48,6 +46,8 @@ import butterknife.BindView;
 public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationContraction.View,
         SystemNotificationPresenter> implements ISystemNotificationContraction.View {
 
+    public static int getX;
+    public static int getY;
     SystemNotificationAdapter blackListAdapter;
     @BindView(R.id.nodataTipsTv)
     TextView nodataTipsTv;
@@ -59,6 +59,8 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
     View nodataView;
     private List<SystemMsgEntity.ListBean> listBeans = new ArrayList<>();
     private int deletePosition;
+    private PopupWindowList mPopupWindowList;
+
     @Override
     public SystemNotificationPresenter initPresenter() {
         return new SystemNotificationPresenter(this);
@@ -80,16 +82,12 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 //        if (mPopupWindowList != null) {
-            getX = (int) ev.getX();
-            getY = (int) ev.getY();
+        getX = (int) ev.getX();
+        getY = (int) ev.getY();
 //        }
 
         return super.dispatchTouchEvent(ev);
     }
-
-    public static int getX;
-    public static int getY;
-    private PopupWindowList mPopupWindowList;
 
     @Override
     public void viewInitialization() {
@@ -104,7 +102,7 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
         blackListAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull @NotNull BaseQuickAdapter adapter, @NonNull @NotNull View view, int position) {
-                showPopWindows(view, position,listBeans.get(position).getIs_top());
+                showPopWindows(view, position, listBeans.get(position).getIs_top());
                 return false;
             }
         });
@@ -113,7 +111,7 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
             public void onItemClick(@NonNull @NotNull BaseQuickAdapter<?, ?> adapter, @NonNull @NotNull View view, int position) {
                 Bundle bunde = new Bundle();
                 bunde.putString("SYSTEM_ID", String.valueOf(listBeans.get(position).getId()));
-                gotoActivity(SystemDetailAct.class,false,bunde);
+                gotoActivity(SystemDetailAct.class, false, bunde);
             }
         });
 
@@ -140,11 +138,11 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
         });
     }
 
-    private void showPopWindows(View view, int itemPosition,int topStatus) {
+    private void showPopWindows(View view, int itemPosition, int topStatus) {
         final List<String> dataList = new ArrayList<>();
-        if (topStatus==1){
+        if (topStatus == 1) {
             dataList.add("取消置顶");
-        }else {
+        } else {
             dataList.add("置顶聊天");
         }
         dataList.add("删除聊天");
@@ -164,7 +162,7 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
                         presenter.setSystemTop(listBeans.get(itemPosition).getId());
                         break;
                     case 1:
-                        deletePosition=itemPosition;
+                        deletePosition = itemPosition;
                         presenter.setDeleteSystem(listBeans.get(itemPosition).getId());
                         break;
                 }

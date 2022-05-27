@@ -15,10 +15,10 @@ import android.view.SurfaceView;
  */
 public abstract class SurfaceViewTemplate extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
+    private final Object lock = new Object();
     private SurfaceHolder mHolder;
     private Canvas canvas;
     private boolean isRunning;
-    private final Object lock = new Object();
 
     public SurfaceViewTemplate(Context context) {
         this(context, null);

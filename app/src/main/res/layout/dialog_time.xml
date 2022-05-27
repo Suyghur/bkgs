@@ -139,6 +139,7 @@
                 android:textColor="@color/c_342C33"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
+
         <com.zyyoona7.picker.DatePickerView
             android:id="@+id/dpv_custom_2"
             android:layout_width="match_parent"

@@ -7,10 +7,10 @@ import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.fragment.app.Fragment;
+
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.util.log.LogUtil;
-
-import androidx.fragment.app.Fragment;
 
 public abstract class TFragment extends Fragment {
 
@@ -81,7 +81,7 @@ public abstract class TFragment extends Fragment {
         } else {
             if (activity.getCurrentFocus() != null) {
                 imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
-                                            InputMethodManager.HIDE_NOT_ALWAYS);
+                        InputMethodManager.HIDE_NOT_ALWAYS);
             }
 
         }

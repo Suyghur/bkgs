@@ -22,7 +22,7 @@ public class NimMessageRevokeObserver implements Observer<RevokeMsgNotification>
                 notification.getNotificationType(), notification.getCustomInfo(), notification.getAttach(),
                 notification.getCallbackExt()));
         if (notification.getRevokeType() == RevokeType.P2P_ONE_WAY_DELETE_MSG ||
-            notification.getRevokeType() == RevokeType.TEAM_ONE_WAY_DELETE_MSG) {
+                notification.getRevokeType() == RevokeType.TEAM_ONE_WAY_DELETE_MSG) {
             return;
         }
         MessageHelper.getInstance().onRevokeMessage(notification.getMessage(), notification.getRevokeAccount());

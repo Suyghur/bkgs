@@ -1,30 +1,21 @@
 package com.pro.maluli.module.myself.setting.changeBindMobile;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.StringUtils;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.myself.setting.changeBindMobile.presenter.ChangeBindMobilePresenter;
 import com.pro.maluli.module.myself.setting.changeBindMobile.presenter.IChangeBindMobileContraction;
 
@@ -48,9 +39,45 @@ public class ChangeBindMobileAct extends BaseMvpActivity<IChangeBindMobileContra
     TextView submitPwdTv;
     @BindView(R.id.getCodeTv)
     TextView getCodeTv;
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!TextUtils.isEmpty(inputCodeEt.getText().toString().trim())
+                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
+                submitPwdTv.setSelected(true);
+            } else {
+                submitPwdTv.setSelected(false);
+
+            }
+
+        }
+    };
+    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
+        @Override
+        public void onTick(long l) {
+            getCodeTv.setText(String.valueOf(l / 1000) + "S后重新获取");
+            getCodeTv.setEnabled(false);
+            getCodeTv.setEnabled(false);
+        }
+
+        @Override
+        public void onFinish() {
+            getCodeTv.setText("获取验证码");
+            getCodeTv.setEnabled(true);
+        }
+    };
     private String type = "1";
     private String mobile;
-
 
     @Override
     public void getCodeSuccess() {
@@ -105,30 +132,6 @@ public class ChangeBindMobileAct extends BaseMvpActivity<IChangeBindMobileContra
 
     }
 
-    TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(inputCodeEt.getText().toString().trim())
-                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
-                submitPwdTv.setSelected(true);
-            } else {
-                submitPwdTv.setSelected(false);
-
-            }
-
-        }
-    };
-
     @OnClick({R.id.submitPwdTv, R.id.leftImg_ly, R.id.getCodeTv})
     public void onViewClick(View view) {
 //        if (!ToolUtils.isFastClick()) {
@@ -158,21 +161,6 @@ public class ChangeBindMobileAct extends BaseMvpActivity<IChangeBindMobileContra
         }
 
     }
-
-    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
-        @Override
-        public void onTick(long l) {
-            getCodeTv.setText(String.valueOf(l / 1000) + "S后重新获取");
-            getCodeTv.setEnabled(false);
-            getCodeTv.setEnabled(false);
-        }
-
-        @Override
-        public void onFinish() {
-            getCodeTv.setText("获取验证码");
-            getCodeTv.setEnabled(true);
-        }
-    };
 
     @Override
     public void doBusiness() {

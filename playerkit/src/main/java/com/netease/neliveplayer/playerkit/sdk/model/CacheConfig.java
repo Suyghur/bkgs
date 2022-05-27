@@ -2,6 +2,7 @@ package com.netease.neliveplayer.playerkit.sdk.model;
 
 /**
  * 缓存配置信息
+ *
  * @author netease
  */
 public class CacheConfig {

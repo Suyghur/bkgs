@@ -26,13 +26,13 @@ import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 public class HeadImageView extends CircleImageView {
 
     public static final int DEFAULT_AVATAR_THUMB_SIZE = (int) NimUIKit.getContext().getResources()
-                                                                      .getDimension(
-                                                                              R.dimen.avatar_max_size);
+            .getDimension(
+                    R.dimen.avatar_max_size);
 
     public static final int DEFAULT_AVATAR_NOTIFICATION_ICON_SIZE = (int) NimUIKit.getContext()
-                                                                                  .getResources()
-                                                                                  .getDimension(
-                                                                                          R.dimen.avatar_notification_size);
+            .getResources()
+            .getDimension(
+                    R.dimen.avatar_notification_size);
 
     private static final int DEFAULT_AVATAR_RES_ID = R.drawable.nim_avatar_default;
 
@@ -46,6 +46,22 @@ public class HeadImageView extends CircleImageView {
 
     public HeadImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    /**
+     * 生成头像缩略图NOS URL地址（用作ImageLoader缓存的key）
+     */
+    private static String makeAvatarThumbNosUrl(final String url, final int thumbSize) {
+        if (TextUtils.isEmpty(url)) {
+            return url;
+        }
+        return thumbSize > 0 ? NosThumbImageUtil.makeImageThumbUrl(url,
+                NosThumbParam.ThumbType.Crop,
+                thumbSize, thumbSize) : url;
+    }
+
+    public static String getAvatarCacheKey(final String url) {
+        return makeAvatarThumbNosUrl(url, DEFAULT_AVATAR_THUMB_SIZE);
     }
 
     /**
@@ -74,7 +90,7 @@ public class HeadImageView extends CircleImageView {
     public void loadBuddyAvatar(String account) {
         final UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(account);
         changeUrlBeforeLoad(null, userInfo != null ? userInfo.getAvatar() : null,
-                            DEFAULT_AVATAR_RES_ID, DEFAULT_AVATAR_THUMB_SIZE);
+                DEFAULT_AVATAR_RES_ID, DEFAULT_AVATAR_THUMB_SIZE);
     }
 
     /**
@@ -100,7 +116,7 @@ public class HeadImageView extends CircleImageView {
      */
     public void loadTeamIconByTeam(final Team team) {
         changeUrlBeforeLoad(null, team != null ? team.getIcon() : null, R.drawable.nim_avatar_group,
-                            DEFAULT_AVATAR_THUMB_SIZE);
+                DEFAULT_AVATAR_THUMB_SIZE);
     }
 
     /**
@@ -110,9 +126,8 @@ public class HeadImageView extends CircleImageView {
      */
     public void loadSuperTeamIconByTeam(final SuperTeam team) {
         changeUrlBeforeLoad(null, team != null ? team.getIcon() : null, R.drawable.nim_avatar_group,
-                            DEFAULT_AVATAR_THUMB_SIZE);
+                DEFAULT_AVATAR_THUMB_SIZE);
     }
-
 
     /**
      * 如果图片是上传到云信服务器，并且用户开启了文件安全功能，那么这里可能是短链，需要先换成源链才能下载。
@@ -148,10 +163,10 @@ public class HeadImageView extends CircleImageView {
      */
     private void loadImage(final String url, final int defaultResId, final int thumbSize) {
         RequestOptions requestOptions = new RequestOptions().centerCrop().placeholder(defaultResId)
-                                                            .error(defaultResId).override(thumbSize,
-                                                                                          thumbSize);
+                .error(defaultResId).override(thumbSize,
+                        thumbSize);
         Glide.with(getContext().getApplicationContext()).asBitmap().load(url).apply(requestOptions)
-             .into(this);
+                .into(this);
     }
 
     /**
@@ -159,21 +174,5 @@ public class HeadImageView extends CircleImageView {
      */
     public void resetImageView() {
         setImageBitmap(null);
-    }
-
-    /**
-     * 生成头像缩略图NOS URL地址（用作ImageLoader缓存的key）
-     */
-    private static String makeAvatarThumbNosUrl(final String url, final int thumbSize) {
-        if (TextUtils.isEmpty(url)) {
-            return url;
-        }
-        return thumbSize > 0 ? NosThumbImageUtil.makeImageThumbUrl(url,
-                                                                   NosThumbParam.ThumbType.Crop,
-                                                                   thumbSize, thumbSize) : url;
-    }
-
-    public static String getAvatarCacheKey(final String url) {
-        return makeAvatarThumbNosUrl(url, DEFAULT_AVATAR_THUMB_SIZE);
     }
 }

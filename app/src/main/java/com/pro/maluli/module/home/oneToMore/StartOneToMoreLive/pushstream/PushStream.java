@@ -1,5 +1,8 @@
 package com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.pushstream;
 
+import static com.netease.lava.nertc.sdk.live.NERtcLiveStreamTaskInfo.NERtcLiveStreamMode.kNERtcLsModeVideo;
+import static com.netease.lava.nertc.sdk.live.NERtcLiveStreamUserTranscoding.NERtcLiveStreamVideoScaleMode.kNERtcLsModeVideoScaleCropFill;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.widget.Toast;
@@ -11,13 +14,9 @@ import com.netease.lava.nertc.sdk.live.NERtcLiveStreamImageInfo;
 import com.netease.lava.nertc.sdk.live.NERtcLiveStreamLayout;
 import com.netease.lava.nertc.sdk.live.NERtcLiveStreamTaskInfo;
 import com.netease.lava.nertc.sdk.live.NERtcLiveStreamUserTranscoding;
-import com.pro.maluli.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.netease.lava.nertc.sdk.live.NERtcLiveStreamTaskInfo.NERtcLiveStreamMode.kNERtcLsModeVideo;
-import static com.netease.lava.nertc.sdk.live.NERtcLiveStreamUserTranscoding.NERtcLiveStreamVideoScaleMode.kNERtcLsModeVideoScaleCropFill;
 
 public class PushStream {
     private final Context context;
@@ -34,14 +33,6 @@ public class PushStream {
     private NERtcLiveStreamTaskInfo task;
     private boolean isOneToMore;
 
-    public boolean isOneToMore() {
-        return isOneToMore;
-    }
-
-    public void setOneToMore(boolean oneToMore) {
-        isOneToMore = oneToMore;
-    }
-
     public PushStream(Context context, String taskId, long userId, Runnable callback) {
         this.context = context;
         this.taskId = taskId;
@@ -54,6 +45,38 @@ public class PushStream {
         this.taskId = taskId;
         this.userIds.add(userId);
 
+    }
+
+    private static NERtcLiveStreamTaskInfo createLiveStreamTask(String taskId, String pushUrl) {
+        NERtcLiveStreamTaskInfo task = new NERtcLiveStreamTaskInfo();
+        task.taskId = taskId; // 推流任务ID
+        task.url = pushUrl; // 直播推流地址
+        task.serverRecordEnabled = false; // 关闭服务器录制功能
+        task.liveMode = kNERtcLsModeVideo; // 直播推流视频模式
+        return task;
+    }
+
+    private static NERtcLiveStreamLayout createLiveStreamLayout() {
+        Rect rectLayout = Config.getRectLayout();
+        NERtcLiveStreamImageInfo backgroundImage = Config.getBackgroundImage();
+        int backgroundColor = Config.getBackgroundColor();
+
+        NERtcLiveStreamLayout layout = new NERtcLiveStreamLayout();
+        layout.width = rectLayout.width(); // 视频推流宽度
+        layout.height = rectLayout.height(); // 视频推流高度
+//        layout.width = ScreenUtils.getScreenWidth(); // 在主画面的显示宽度
+//        layout.height = ScreenUtils.getScreenHeight(); // 在主画面的显示高度
+        layout.backgroundImg = backgroundImage; // 视频推流背景图
+        layout.backgroundColor = backgroundColor; // 视频推流背景色
+        return layout;
+    }
+
+    public boolean isOneToMore() {
+        return isOneToMore;
+    }
+
+    public void setOneToMore(boolean oneToMore) {
+        isOneToMore = oneToMore;
     }
 
     public boolean isStarted() {
@@ -161,30 +184,6 @@ public class PushStream {
         if (strId != 0) {
             Toast.makeText(context, strId + "", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private static NERtcLiveStreamTaskInfo createLiveStreamTask(String taskId, String pushUrl) {
-        NERtcLiveStreamTaskInfo task = new NERtcLiveStreamTaskInfo();
-        task.taskId = taskId; // 推流任务ID
-        task.url = pushUrl; // 直播推流地址
-        task.serverRecordEnabled = false; // 关闭服务器录制功能
-        task.liveMode = kNERtcLsModeVideo; // 直播推流视频模式
-        return task;
-    }
-
-    private static NERtcLiveStreamLayout createLiveStreamLayout() {
-        Rect rectLayout = Config.getRectLayout();
-        NERtcLiveStreamImageInfo backgroundImage = Config.getBackgroundImage();
-        int backgroundColor = Config.getBackgroundColor();
-
-        NERtcLiveStreamLayout layout = new NERtcLiveStreamLayout();
-        layout.width = rectLayout.width(); // 视频推流宽度
-        layout.height = rectLayout.height(); // 视频推流高度
-//        layout.width = ScreenUtils.getScreenWidth(); // 在主画面的显示宽度
-//        layout.height = ScreenUtils.getScreenHeight(); // 在主画面的显示高度
-        layout.backgroundImg = backgroundImage; // 视频推流背景图
-        layout.backgroundColor = backgroundColor; // 视频推流背景色
-        return layout;
     }
 
     private ArrayList<NERtcLiveStreamUserTranscoding> createUserTranscodingList(List<Long> userIds, Rect[] rectUsers) {

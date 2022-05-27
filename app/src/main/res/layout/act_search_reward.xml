@@ -33,10 +33,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_3"
-                android:paddingLeft="@dimen/dp_10"
                 android:background="@null"
                 android:hint="搜索主播昵称、赠送类型、礼物类型...."
                 android:imeOptions="actionSearch"
+                android:paddingLeft="@dimen/dp_10"
                 android:singleLine="true"
                 android:textColor="@color/c_b1b1b1"
                 android:textSize="@dimen/sp_12" />
@@ -106,23 +106,24 @@
             app:labelTextPaddingTop="5dp"
             app:lineMargin="@dimen/dp_10"
             app:wordMargin="@dimen/dp_10" />
+
         <TextView
             android:id="@+id/noSearchTv"
-            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_20"
             android:gravity="center"
-            android:textSize="@dimen/sp_18"
             android:text="没有搜索记录"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textSize="@dimen/sp_18"
+            android:visibility="gone" />
     </LinearLayout>
 
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/bkDetailSfl"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

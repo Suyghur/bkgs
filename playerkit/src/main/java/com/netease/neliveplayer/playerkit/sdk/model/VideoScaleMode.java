@@ -3,6 +3,7 @@ package com.netease.neliveplayer.playerkit.sdk.model;
 /**
  * 视频渲染时的缩放/裁减模式
  * <p>
+ *
  * @author netease
  */
 public enum VideoScaleMode {

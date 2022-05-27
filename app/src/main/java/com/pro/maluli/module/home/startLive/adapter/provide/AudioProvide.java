@@ -4,14 +4,12 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseProviderMultiAdapter;
 import com.chad.library.adapter.base.provider.BaseItemProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -34,10 +32,60 @@ import com.pro.maluli.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class AudioProvide extends BaseItemProvider<ChatRoomMessage> {
+    public static final int CLICK_TO_PLAY_AUDIO_DELAY = 500;
+    // data
+    protected ChatRoomMessage message;
+    private TextView durationLabel;
+    private View containerView;
+    private View unreadIndicator;
+    private ImageView animationView;
+    private MessageAudioControl audioControl;
+    private MessageAudioControl.AudioControlListener onPlayListener = new MessageAudioControl.AudioControlListener() {
+
+        @Override
+        public void updatePlayingProgress(Playable playable, long curPosition) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            if (curPosition > playable.getDuration()) {
+                return;
+            }
+            updateTime(curPosition);
+        }
+
+        @Override
+        public void onAudioControllerReady(Playable playable) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            play();
+        }
+
+        @Override
+        public void onEndPlay(Playable playable) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            updateTime(playable.getDuration());
+
+            stop();
+        }
+
+
+    };
+
+    public static int getAudioMaxEdge() {
+        return (int) (0.6 * ScreenUtil.screenMin);
+    }
+
+    public static int getAudioMinEdge() {
+        return (int) (0.1875 * ScreenUtil.screenMin);
+    }
+
     @Override
     public void onClick(@NotNull BaseViewHolder helper, @NotNull View view, ChatRoomMessage data, int position) {
         super.onClick(helper, view, data, position);
@@ -63,16 +111,6 @@ public class AudioProvide extends BaseItemProvider<ChatRoomMessage> {
             audioControl.setPlayNext(!NimUIKitImpl.getOptions().disableAutoPlayNextAudio, null, message);
         }
     }
-
-    public static final int CLICK_TO_PLAY_AUDIO_DELAY = 500;
-
-    private TextView durationLabel;
-    private View containerView;
-    private View unreadIndicator;
-    private ImageView animationView;
-    // data
-    protected ChatRoomMessage message;
-    private MessageAudioControl audioControl;
 
     @Override
     public int getItemViewType() {
@@ -223,14 +261,6 @@ public class AudioProvide extends BaseItemProvider<ChatRoomMessage> {
         }
     }
 
-    public static int getAudioMaxEdge() {
-        return (int) (0.6 * ScreenUtil.screenMin);
-    }
-
-    public static int getAudioMinEdge() {
-        return (int) (0.1875 * ScreenUtil.screenMin);
-    }
-
     private void setAudioBubbleWidth(long milliseconds) {
         long seconds = TimeUtil.getSecondsByMilliseconds(milliseconds);
 
@@ -280,43 +310,6 @@ public class AudioProvide extends BaseItemProvider<ChatRoomMessage> {
             return false;
         }
     }
-
-    private MessageAudioControl.AudioControlListener onPlayListener = new MessageAudioControl.AudioControlListener() {
-
-        @Override
-        public void updatePlayingProgress(Playable playable, long curPosition) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            if (curPosition > playable.getDuration()) {
-                return;
-            }
-            updateTime(curPosition);
-        }
-
-        @Override
-        public void onAudioControllerReady(Playable playable) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            play();
-        }
-
-        @Override
-        public void onEndPlay(Playable playable) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            updateTime(playable.getDuration());
-
-            stop();
-        }
-
-
-    };
 
     private void play() {
         if (animationView.getBackground() instanceof AnimationDrawable) {

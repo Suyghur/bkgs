@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -25,6 +24,7 @@ public class ForgetPwdDialog extends DialogFragment implements View.OnClickListe
     private LinearLayout dismissLL;
     private String findPwdTips;
     private WebView tipsWv;
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,14 +48,8 @@ public class ForgetPwdDialog extends DialogFragment implements View.OnClickListe
         return mDetailDialog;
     }
 
-    private OnFreezeTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -67,5 +61,9 @@ public class ForgetPwdDialog extends DialogFragment implements View.OnClickListe
                 }
                 break;
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 }

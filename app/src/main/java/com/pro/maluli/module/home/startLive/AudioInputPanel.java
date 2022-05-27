@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.netease.nim.uikit.api.model.session.SessionCustomization;
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.myCustom.extension.LianmaiAttachment;
+import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
@@ -29,7 +29,6 @@ import com.netease.nimlib.sdk.media.record.RecordType;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.pro.maluli.R;
-import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
 
 import java.io.File;
 
@@ -67,6 +66,19 @@ public class AudioInputPanel implements IAudioRecordCallback {
         init();
     }
 
+    // 上滑取消录音判断
+    private static boolean isCancelled(View view, MotionEvent event) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
+                || event.getRawY() < location[1] - 40) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void onPause() {
         // 停止录音
         if (audioMessageHelper != null) {
@@ -81,7 +93,6 @@ public class AudioInputPanel implements IAudioRecordCallback {
         }
     }
 
-
     private void init() {
         initAudioRecordButton();
 
@@ -89,7 +100,6 @@ public class AudioInputPanel implements IAudioRecordCallback {
 
     /**
      * 连麦IM
-     *
      */
     public void lianMai(String type) {
         LianmaiAttachment lianmaiAttachment = new LianmaiAttachment();
@@ -124,7 +134,6 @@ public class AudioInputPanel implements IAudioRecordCallback {
     public void resetReplyMessage() {
         setReplyMessage(null);
     }
-
 
     public void reload(Container container, SessionCustomization customization) {
         this.container = container;
@@ -163,19 +172,6 @@ public class AudioInputPanel implements IAudioRecordCallback {
                 return false;
             }
         });
-    }
-
-    // 上滑取消录音判断
-    private static boolean isCancelled(View view, MotionEvent event) {
-        int[] location = new int[2];
-        view.getLocationOnScreen(location);
-
-        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
-                || event.getRawY() < location[1] - 40) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

@@ -3,9 +3,10 @@ package com.netease.nim.uikit.common.media.imagepicker.data;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import android.text.TextUtils;
 
 import com.netease.nim.uikit.common.media.model.GLImage;
 
@@ -13,34 +14,34 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
-
+ *
  */
 
 public class VideoDataSource extends CursorDataSource {
 
-    private final String[] VIDEO_PROJECTION = {     //查询图片需要的数据列
-                                                    MediaStore.MediaColumns.DISPLAY_NAME,
-                                                    //图片的显示名称  aaa.jpg
-                                                    MediaStore.MediaColumns.DATA,
-                                                    //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
-                                                    MediaStore.MediaColumns.SIZE,
-                                                    //图片的大小，long型  132492
-                                                    MediaStore.MediaColumns.WIDTH,
-                                                    //图片的宽度，int型  1920
-                                                    MediaStore.MediaColumns.HEIGHT,
-                                                    //图片的高度，int型  1080
-                                                    MediaStore.MediaColumns.MIME_TYPE,
-                                                    //图片的类型     image/jpeg
-                                                    MediaStore.MediaColumns.DATE_ADDED,
-                                                    //图片被添加的时间，long型  1450518608
-                                                    MediaStore.MediaColumns._ID,
-                                                    MediaStore.Video.VideoColumns.DURATION,};
     private final static String VIDEO_SELECTION = null;
     private final static String[] VIDEO_SELECTION_ARGS = null;
+    private final String[] VIDEO_PROJECTION = {     //查询图片需要的数据列
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            //图片的显示名称  aaa.jpg
+            MediaStore.MediaColumns.DATA,
+            //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
+            MediaStore.MediaColumns.SIZE,
+            //图片的大小，long型  132492
+            MediaStore.MediaColumns.WIDTH,
+            //图片的宽度，int型  1920
+            MediaStore.MediaColumns.HEIGHT,
+            //图片的高度，int型  1080
+            MediaStore.MediaColumns.MIME_TYPE,
+            //图片的类型     image/jpeg
+            MediaStore.MediaColumns.DATE_ADDED,
+            //图片被添加的时间，long型  1450518608
+            MediaStore.MediaColumns._ID,
+            MediaStore.Video.VideoColumns.DURATION,};
 
     /**
-     * @param activity       用于初始化LoaderManager，需要兼容到2.3
-     * @param path           指定扫描的文件夹目录，可以为 null，表示扫描所有图片
+     * @param activity 用于初始化LoaderManager，需要兼容到2.3
+     * @param path     指定扫描的文件夹目录，可以为 null，表示扫描所有图片
      */
     VideoDataSource(FragmentActivity activity, String path) {
         super(activity, path);
@@ -72,7 +73,7 @@ public class VideoDataSource extends CursorDataSource {
         return VIDEO_SELECTION;
     }
 
-    protected void  parserRealData(Cursor data, ArrayList<GLImage> allImages, ArrayList<ImageFolder> imageFolders) {
+    protected void parserRealData(Cursor data, ArrayList<GLImage> allImages, ArrayList<ImageFolder> imageFolders) {
         if (data.moveToFirst()) {
             int keyName = data.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
             int keyData = data.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
@@ -89,7 +90,7 @@ public class VideoDataSource extends CursorDataSource {
                     continue;
                 }
                 String imagePath = data.getString(keyData);
-                if(TextUtils.isEmpty(imagePath)){
+                if (TextUtils.isEmpty(imagePath)) {
                     continue;
                 }
                 long imageSize = data.getLong(keySize);

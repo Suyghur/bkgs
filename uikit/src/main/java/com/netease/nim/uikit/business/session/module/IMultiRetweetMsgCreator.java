@@ -6,5 +6,5 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import java.util.List;
 
 public interface IMultiRetweetMsgCreator {
-    void create(List<IMMessage> msgList, boolean shouldEncrypt,  CreateMessageCallback callback);
+    void create(List<IMMessage> msgList, boolean shouldEncrypt, CreateMessageCallback callback);
 }

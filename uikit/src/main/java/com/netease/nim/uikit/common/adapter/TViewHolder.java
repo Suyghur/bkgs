@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.common.adapter;
 
 import android.content.Context;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.fragment.app.Fragment;
 
 public abstract class TViewHolder implements IScrollStateListener {
     /**
@@ -44,12 +45,12 @@ public abstract class TViewHolder implements IScrollStateListener {
         this.context = context;
     }
 
-    protected void setAdapter(TAdapter adapter) {
-        this.adapter = adapter;
-    }
-
     protected TAdapter getAdapter() {
         return this.adapter;
+    }
+
+    protected void setAdapter(TAdapter adapter) {
+        this.adapter = adapter;
     }
 
     protected void setPosition(int position) {

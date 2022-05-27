@@ -6,11 +6,13 @@ import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.util.Log;
+
 import com.marvhong.videoeffect.FillMode;
 import com.marvhong.videoeffect.FillModeCustomItem;
 import com.marvhong.videoeffect.Resolution;
 import com.marvhong.videoeffect.Rotation;
 import com.marvhong.videoeffect.filter.base.GlFilter;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 
@@ -66,14 +68,14 @@ class Mp4ComposerEngine {
             mediaMetadataRetriever.setDataSource(inputFileDescriptor);
             try {
                 durationUs = Long
-                    .parseLong(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) * 1000;
+                        .parseLong(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) * 1000;
             } catch (NumberFormatException e) {
                 durationUs = -1;
             }
             Log.d(TAG, "Duration (us): " + durationUs);
 
             MediaFormat videoOutputFormat = MediaFormat
-                .createVideoFormat("video/avc", outputResolution.width(), outputResolution.height());
+                    .createVideoFormat("video/avc", outputResolution.width(), outputResolution.height());
 
             videoOutputFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);
             videoOutputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
@@ -171,9 +173,9 @@ class Mp4ComposerEngine {
             loopCount++;
             if (durationUs > 0 && loopCount % PROGRESS_INTERVAL_STEPS == 0) {
                 double videoProgress = videoComposer.isFinished() ? 1.0 : Math
-                    .min(1.0, (double) videoComposer.getWrittenPresentationTimeUs() / durationUs);
+                        .min(1.0, (double) videoComposer.getWrittenPresentationTimeUs() / durationUs);
                 double audioProgress = audioComposer.isFinished() ? 1.0 : Math
-                    .min(1.0, (double) audioComposer.getWrittenPresentationTimeUs() / durationUs);
+                        .min(1.0, (double) audioComposer.getWrittenPresentationTimeUs() / durationUs);
                 double progress = (videoProgress + audioProgress) / 2.0;
                 if (progressCallback != null) {
                     progressCallback.onProgress(progress);
@@ -201,7 +203,7 @@ class Mp4ComposerEngine {
             loopCount++;
             if (durationUs > 0 && loopCount % PROGRESS_INTERVAL_STEPS == 0) {
                 double videoProgress = videoComposer.isFinished() ? 1.0 : Math
-                    .min(1.0, (double) videoComposer.getWrittenPresentationTimeUs() / durationUs);
+                        .min(1.0, (double) videoComposer.getWrittenPresentationTimeUs() / durationUs);
                 if (progressCallback != null) {
                     progressCallback.onProgress(videoProgress);
                 }

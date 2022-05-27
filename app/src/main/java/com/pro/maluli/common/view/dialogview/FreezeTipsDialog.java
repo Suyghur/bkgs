@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,10 +13,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.common.view.myselfView.WheelView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -30,7 +25,8 @@ public class FreezeTipsDialog extends DialogFragment implements View.OnClickList
     private LinearLayout dismissLL;
     private TextView comfirmTv, toAppealTv, contentTv;
     private String showTips;
-    private boolean isgoAppeal=true;
+    private boolean isgoAppeal = true;
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -50,7 +46,7 @@ public class FreezeTipsDialog extends DialogFragment implements View.OnClickList
 
         contentTv = mDetailDialog.findViewById(R.id.contentTv);
         showTips = getArguments().getString("showTips");
-        isgoAppeal = getArguments().getBoolean("goAppeal",true);
+        isgoAppeal = getArguments().getBoolean("goAppeal", true);
 
         if (!isgoAppeal) {
             toAppealTv.setVisibility(View.GONE);
@@ -65,14 +61,8 @@ public class FreezeTipsDialog extends DialogFragment implements View.OnClickList
         return mDetailDialog;
     }
 
-    private OnFreezeTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -103,5 +93,9 @@ public class FreezeTipsDialog extends DialogFragment implements View.OnClickList
                 }
                 break;
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 }

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
@@ -13,7 +12,6 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.myselfView.VerifyEditText;
 import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.other.findPassword.FindPasswordAct;
@@ -29,17 +27,30 @@ import butterknife.OnClick;
  */
 public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContraction.View, VerificationCodePresenter>
         implements IVerificationCodeContraction.View {
-    private String mobile;
-    private String codeType;
-
     @BindView(R.id.countdownTV)
     TextView countdownTV;
     @BindView(R.id.reGetCodeTv)
     TextView reGetCodeTv;
     @BindView(R.id.verifyEditText)
     VerifyEditText verifyEditText;
-    private String openid,getCodeType;
+    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
+        @Override
+        public void onTick(long l) {
+            countdownTV.setText(String.valueOf(l / 1000) + "S后重新获取");
+            reGetCodeTv.setEnabled(false);
+        }
 
+        @Override
+        public void onFinish() {
+            countdownTV.setText("获取验证码");
+            reGetCodeTv.setEnabled(true);
+            countdownTV.setVisibility(View.GONE);
+            reGetCodeTv.setVisibility(View.VISIBLE);
+        }
+    };
+    private String mobile;
+    private String codeType;
+    private String openid, getCodeType;
 
     /**
      * 登录成功
@@ -72,7 +83,6 @@ public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContra
         mTimer.start();
     }
 
-
     @Override
     public VerificationCodePresenter initPresenter() {
         return new VerificationCodePresenter(this);
@@ -97,10 +107,10 @@ public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContra
     public void viewInitialization() {
         if ("3".equalsIgnoreCase(codeType) || "4".equalsIgnoreCase(codeType)) {
             setTitleTx("绑定手机");
-            getCodeType="1";
+            getCodeType = "1";
         } else {
             setTitleTx("登录");
-            getCodeType="1";
+            getCodeType = "1";
         }
 
         setBackPress();
@@ -109,7 +119,7 @@ public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContra
             verifyEditText.clearEd();
             //验证码登录
             if ("2".equalsIgnoreCase(codeType)) {
-                getCodeType="1";
+                getCodeType = "1";
                 presenter.codeLogin(mobile, "2", inputCode);
                 return;
             }
@@ -117,12 +127,12 @@ public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContra
             if ("3".equalsIgnoreCase(codeType) || "4".equalsIgnoreCase(codeType)) {
                 String type = codeType.equalsIgnoreCase("3") ? "1" : "2";
                 presenter.bindMobile(mobile, openid, type, inputCode);
-                getCodeType="1";
+                getCodeType = "1";
                 return;
             }
-            if ("注册".equalsIgnoreCase(codeType)){
-                presenter.register(mobile,inputCode);
-                getCodeType="1";
+            if ("注册".equalsIgnoreCase(codeType)) {
+                presenter.register(mobile, inputCode);
+                getCodeType = "1";
                 return;
             }
             presenter.checkCode(mobile, codeType, inputCode);
@@ -130,22 +140,6 @@ public class VerificationCodeAct extends BaseMvpActivity<IVerificationCodeContra
         });
 //        verifyEditText.clearEd();
     }
-
-    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
-        @Override
-        public void onTick(long l) {
-            countdownTV.setText(String.valueOf(l / 1000) + "S后重新获取");
-            reGetCodeTv.setEnabled(false);
-        }
-
-        @Override
-        public void onFinish() {
-            countdownTV.setText("获取验证码");
-            reGetCodeTv.setEnabled(true);
-            countdownTV.setVisibility(View.GONE);
-            reGetCodeTv.setVisibility(View.VISIBLE);
-        }
-    };
 
     @OnClick({R.id.reGetCodeTv})
     public void onClickView(View view) {

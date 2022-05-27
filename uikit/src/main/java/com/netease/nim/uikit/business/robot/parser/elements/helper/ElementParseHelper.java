@@ -23,24 +23,6 @@ import java.util.List;
  */
 
 public class ElementParseHelper {
-    public static class Value {
-        private int value;
-        private boolean percent;
-
-        Value(int value, boolean percent) {
-            this.value = value;
-            this.percent = percent;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public boolean isPercent() {
-            return percent;
-        }
-    }
-
     public static Value getValue(String number) {
         if (TextUtils.isEmpty(number)) {
             return null;
@@ -124,5 +106,23 @@ public class ElementParseHelper {
         return tag.equals(ElementTag.ELEMENT_LABEL_TEXT) ||
                 tag.equals(ElementTag.ELEMENT_LABEL_IMAGE) ||
                 tag.equals(ElementTag.ELEMENT_LABEL_LINK);
+    }
+
+    public static class Value {
+        private int value;
+        private boolean percent;
+
+        Value(int value, boolean percent) {
+            this.value = value;
+            this.percent = percent;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public boolean isPercent() {
+            return percent;
+        }
     }
 }

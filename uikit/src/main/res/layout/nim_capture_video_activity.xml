@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true">
+
         <SurfaceView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
@@ -28,14 +29,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
         android:layout_marginTop="10dip"
+        android:layout_marginRight="10dip"
         android:background="@color/transparent"
         android:orientation="horizontal"
-        android:paddingBottom="5dip"
         android:paddingLeft="10dip"
+        android:paddingTop="5dip"
         android:paddingRight="10dip"
-        android:paddingTop="5dip" >
+        android:paddingBottom="5dip">
 
         <ImageView
             android:id="@+id/recording_id"

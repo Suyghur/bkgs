@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class LianmaiAttachment extends CustomAttachment {
 
-    private String playingStatus;//  1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
-
     private static final String KEY_STATUS = "playingStatus";
+    private String playingStatus;//  1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
 
     public LianmaiAttachment() {
         super(CustomAttachmentType.lianmai);

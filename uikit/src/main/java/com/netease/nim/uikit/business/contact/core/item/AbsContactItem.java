@@ -5,6 +5,10 @@ package com.netease.nim.uikit.business.contact.core.item;
  * Created by huangjun on 2015/2/10.
  */
 public abstract class AbsContactItem {
+    public static int compareType(int lhs, int rhs) {
+        return lhs - rhs;
+    }
+
     /**
      * 所属的类型
      *
@@ -19,9 +23,5 @@ public abstract class AbsContactItem {
 
     protected final int compareType(AbsContactItem item) {
         return compareType(getItemType(), item.getItemType());
-    }
-
-    public static int compareType(int lhs, int rhs) {
-        return lhs - rhs;
     }
 }

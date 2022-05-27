@@ -1,4 +1,3 @@
-
 package com.netease.nim.uikit.common.ui.ptr2;
 
 import android.annotation.SuppressLint;

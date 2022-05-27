@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.pro.maluli.R;
 import com.pro.maluli.common.constant.AppIdConstants;
@@ -16,13 +15,11 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
-    private IWXAPI api;
     private static final String APP_ID = AppIdConstants.APP_ID_WX;
+    private IWXAPI api;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +32,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         api = WXAPIFactory.createWXAPI(this, APP_ID);
         api.handleIntent(getIntent(), this);
     }
-
 
 
     @Override

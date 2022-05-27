@@ -15,9 +15,9 @@ public class ImageLoaderUtils {
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
             return !isDestroy(activity);
-        } else if (context instanceof ContextWrapper){
+        } else if (context instanceof ContextWrapper) {
             ContextWrapper contextWrapper = (ContextWrapper) context;
-            if (contextWrapper.getBaseContext() instanceof Activity){
+            if (contextWrapper.getBaseContext() instanceof Activity) {
                 Activity activity = (Activity) contextWrapper.getBaseContext();
                 return !isDestroy(activity);
             }

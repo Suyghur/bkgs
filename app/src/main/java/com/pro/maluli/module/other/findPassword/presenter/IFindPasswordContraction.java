@@ -9,6 +9,7 @@ public interface IFindPasswordContraction extends BaseView {
 
         void setPwdSuccess(String msg, int is_first);
     }
+
     interface Presenter extends IClear {
 
         void subMitPwd(String mobile, String code, String pwd);

@@ -4,10 +4,10 @@ import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.chatroom.ChatRoomSessionCustomization;
 import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nim.uikit.business.session.actions.ImageAction;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nim.uikit.business.session.myCustom.extension.CustomAttachParser;
 import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.msg.MsgService;
 import com.pro.maluli.module.chatRoom.viewholder.ChatRoomMsgViewHolderGuess;
 
 import java.util.ArrayList;

@@ -19,14 +19,11 @@ import com.pro.maluli.common.entity.AboutMeEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.common.view.dialogview.ForgetPwdDialog;
 import com.pro.maluli.common.view.dialogview.ShareAppDialog;
 import com.pro.maluli.module.myself.setting.aboutMe.presenter.AboutMePresenter;
 import com.pro.maluli.module.myself.setting.aboutMe.presenter.IAboutMeContraction;
-import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.YouthPasswordAct;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
@@ -48,6 +45,22 @@ public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutM
     ImageView hasMessageImg;
     @BindView(R.id.checkUpdatesTv)
     LinearLayout checkUpdatesTv;
+    //要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 0:
+                    ToastUtils.showShort("分享失败");
+                    break;
+                //微信登录
+                case 1:
+                    ToastUtils.showShort("分享成功");
+                    break;
+            }
+        }
+    };
     private String website, downLoadUrl, imgUrl;
     private boolean isCanUpdate;
 
@@ -62,7 +75,6 @@ public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutM
         BarUtils.setStatusBarLightMode(this, true);
         StatusbarUtils.setStatusBarView(this);
     }
-
 
     @Override
     public int setR_Layout() {
@@ -136,23 +148,6 @@ public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutM
         }
 
     }
-
-    //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 0:
-                    ToastUtils.showShort("分享失败");
-                    break;
-                //微信登录
-                case 1:
-                    ToastUtils.showShort("分享成功");
-                    break;
-            }
-        }
-    };
 
     private void goToWeb(String url) {
         Uri uri = Uri.parse(url);

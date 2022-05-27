@@ -2,11 +2,8 @@ package com.pro.maluli.module.myself.watchlist.presenter;
 
 import android.content.Context;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.LiveListEntity;
 import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 

@@ -24,27 +24,15 @@ public class NIMPopupMenu {
 
     public static int TYPE_BG_WHITE = 0;
     public static int TYPE_BG_BLACK = 1;
-
-    private int typeBg = 0;
-
-    private Context context;
-
-    private List<PopupMenuItem> items;
-
-    private PopupMenuAdapter adapter;
-
-    private MenuItemClickListener listener;
-
     public PopupWindow popWindow;
-
+    private int typeBg = 0;
+    private Context context;
+    private List<PopupMenuItem> items;
+    private PopupMenuAdapter adapter;
+    private MenuItemClickListener listener;
     private View rootView;
 
     private boolean scroll = false;
-
-    private void init() {
-        initListView();
-        initPopupWindow();
-    }
 
     public NIMPopupMenu(Context context, List<PopupMenuItem> items, MenuItemClickListener listener) {
         this.context = context;
@@ -75,6 +63,11 @@ public class NIMPopupMenu {
         this.typeBg = typeBg;
         this.scroll = scroll;
         init();
+    }
+
+    private void init() {
+        initListView();
+        initPopupWindow();
     }
 
     /**

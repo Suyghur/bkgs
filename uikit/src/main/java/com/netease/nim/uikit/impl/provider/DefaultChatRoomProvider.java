@@ -29,6 +29,6 @@ public class DefaultChatRoomProvider implements ChatRoomProvider {
     public void fetchRoomMembers(String roomId, MemberQueryType memberQueryType, long time,
                                  int limit, SimpleCallback<List<ChatRoomMember>> callback) {
         ChatRoomMemberCache.getInstance().fetchRoomMembers(roomId, memberQueryType, time, limit,
-                                                           callback);
+                callback);
     }
 }

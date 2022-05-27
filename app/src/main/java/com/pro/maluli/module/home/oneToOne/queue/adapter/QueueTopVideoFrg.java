@@ -1,7 +1,5 @@
 package com.pro.maluli.module.home.oneToOne.queue.adapter;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,31 +18,30 @@ import com.pro.maluli.common.entity.ReserveEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
+import com.pro.maluli.ktx.ext.BrowserExtKt;
 import com.pro.maluli.module.home.base.adapter.CoustormGsyVideoPlayer;
-import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 
-public class OneTopVideoFrg extends Fragment {
+public class QueueTopVideoFrg extends Fragment {
+    public BannerListener bannerListener;
+    protected boolean isLazyLoaded = false;
     ReserveEntity.BannerBean bannerBean;
     CoustormGsyVideoPlayer jcVideoPlayer;
     View mainView;
-    protected boolean isLazyLoaded = false;
     /**
      * Fragment的View加载完毕的标记
      */
     private boolean isPrepared = false;
 
-    public interface BannerListener {
-        void imgClick(int position);
-
-        void videoIsStart();
-
-        void videoStop();
+    public static Fragment newInstance(ReserveEntity.BannerBean listBean) {
+        QueueTopVideoFrg treasureGameFrag = new QueueTopVideoFrg();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bannerTopVideo", listBean);
+        treasureGameFrag.setArguments(bundle);
+        return treasureGameFrag;
     }
-
-    public BannerListener bannerListener;
 
     public BannerListener getBannerListener() {
         return bannerListener;
@@ -52,14 +49,6 @@ public class OneTopVideoFrg extends Fragment {
 
     public void setBannerListener(BannerListener bannerListener) {
         this.bannerListener = bannerListener;
-    }
-
-    public static Fragment newInstance(ReserveEntity.BannerBean listBean) {
-        OneTopVideoFrg treasureGameFrag = new OneTopVideoFrg();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("bannerTopVideo", listBean);
-        treasureGameFrag.setArguments(bundle);
-        return treasureGameFrag;
     }
 
     @Override
@@ -77,8 +66,7 @@ public class OneTopVideoFrg extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Logger.e("onCreateView");
-        if (!isVideo()) {//ͼƬ
+        if (!isVideo()) {
             if (mainView == null) {
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_img, container, false);
                 RoundedImageView mainTopRiv = mainView.findViewById(R.id.mainTopRiv);
@@ -88,25 +76,14 @@ public class OneTopVideoFrg extends Fragment {
                         if (AntiShake.check(view.getId())) {
                             return;
                         }
-                        //方式一：代码实现跳转
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(bannerBean.getLink());//此处填链接
-                        intent.setData(content_url);
-                        startActivity(intent);
-//                    if (bannerListener != null) {
-//                        bannerListener.imgClick(position);
-//                    }
+                        BrowserExtKt.openBrowser(QueueTopVideoFrg.this, bannerBean.getLink());
                     }
                 });
                 Glide.with(getActivity()).load(bannerBean.getUrl()).into(mainTopRiv);
             }
 
-            return mainView;
         } else {//
             if (mainView == null) {
-
-
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_video, container, false);
                 jcVideoPlayer = mainView.findViewById(R.id.jcVideoPlayer);
 //            jcVideoPlayer.onVideoPause();
@@ -205,7 +182,9 @@ public class OneTopVideoFrg extends Fragment {
 
                     @Override
                     public void onComplete(String url, Object... objects) {
-
+                        if (bannerListener != null) {
+                            bannerListener.videoStop();
+                        }
                     }
 
                     @Override
@@ -255,13 +234,7 @@ public class OneTopVideoFrg extends Fragment {
 
                     @Override
                     public void onClickBlank(String url, Object... objects) {
-                        //方式一：代码实现跳转
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(bannerBean.getLink());//此处填链接
-                        intent.setData(content_url);
-                        startActivity(intent);
-
+                        BrowserExtKt.openBrowser(QueueTopVideoFrg.this, bannerBean.getLink());
                     }
 
                     @Override
@@ -271,17 +244,12 @@ public class OneTopVideoFrg extends Fragment {
                 });
                 lazyLoad();
             }
-            return mainView;
         }
+        return mainView;
     }
 
-
     public boolean isVideo() {
-        if (bannerBean != null && bannerBean.getFile_type() == 1) {
-            return false;
-        } else {
-            return true;
-        }
+        return bannerBean == null || bannerBean.getFile_type() != 1;
     }
 
     @Override
@@ -289,14 +257,10 @@ public class OneTopVideoFrg extends Fragment {
         super.onHiddenChanged(hidden);
     }
 
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        //只有当fragment可见时，才进行加载数据
-//        if (isVisibleToUser) {
         lazyLoad();
-//        }
     }
 
     /**
@@ -304,9 +268,7 @@ public class OneTopVideoFrg extends Fragment {
      * 第三步:在lazyLoad()方法中进行双重标记判断,通过后即可进行数据加载
      */
     private void lazyLoad() {
-        if (getUserVisibleHint() && isPrepared /*&& !isLazyLoaded*/) {
-            //界面可见
-            Logger.e("lazyLoad");
+        if (getUserVisibleHint() && isPrepared) {
             startVideo();
             try {
                 new Handler().postDelayed(new Runnable() {
@@ -317,7 +279,7 @@ public class OneTopVideoFrg extends Fragment {
                 }, 300);
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
             isLazyLoaded = true;
         } else {
@@ -336,22 +298,12 @@ public class OneTopVideoFrg extends Fragment {
         if (isVideo()) {
             GSYVideoManager.releaseAllVideos();
         }
-//        GSYVideoManager.onPause();
-//        if (jcVideoPlayer!=null){
-//            jcVideoPlayer.getCurrentPlayer().onVideoPause();
-//        }
-//        try {
-//            GSYVideoManager.instance().getPlayer().release();
-//        } catch (Exception e) {
-//
-//        }
     }
 
     @Override
     public void onDestroy() {
         isLazyLoaded = false;
         isPrepared = false;
-//        GSYVideoManager.releaseAllVideos();
         if (jcVideoPlayer != null) {
             jcVideoPlayer.getCurrentPlayer().setVideoAllCallBack(null);
             jcVideoPlayer.release();
@@ -364,7 +316,6 @@ public class OneTopVideoFrg extends Fragment {
             if (jcVideoPlayer.getGSYVideoManager().isPlaying()) {
                 return;
             }
-            Logger.e("startPlayLogic");
             GSYVideoManager.releaseAllVideos();
             jcVideoPlayer.setUpLazy(bannerBean.getUrl(), false, null, null, "");
             jcVideoPlayer.startPlayLogic();
@@ -392,7 +343,7 @@ public class OneTopVideoFrg extends Fragment {
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0, 0);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         } else {
             jcVideoPlayer.setMute(false);
@@ -400,8 +351,16 @@ public class OneTopVideoFrg extends Fragment {
             try {
                 PlayerFactory.getPlayManager().getMediaPlayer().setVolume(0.5f, 0.5f);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
+    }
+
+    public interface BannerListener {
+        void imgClick(int position);
+
+        void videoIsStart();
+
+        void videoStop();
     }
 }

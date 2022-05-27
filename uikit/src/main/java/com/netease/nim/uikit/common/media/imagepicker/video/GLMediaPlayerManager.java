@@ -1,13 +1,5 @@
 package com.netease.nim.uikit.common.media.imagepicker.video;
 
-import android.content.Context;
-import android.os.Handler;
-import android.view.Surface;
-
-import com.netease.nim.uikit.R;
-import com.netease.nim.uikit.common.ToastHelper;
-import com.netease.nim.uikit.common.util.log.LogUtil;
-
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_ERROR;
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_IDLE;
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_INIT;
@@ -20,6 +12,14 @@ import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_SEEKING;
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_STARTED;
 import static com.netease.nim.uikit.common.media.imagepicker.video.GLMediaPlayer.PlayerState.PLAYER_STOPPED;
+
+import android.content.Context;
+import android.os.Handler;
+import android.view.Surface;
+
+import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.common.ToastHelper;
+import com.netease.nim.uikit.common.util.log.LogUtil;
 
 /**
  * 负责接收外部变化=>改变model状态=>根据model处理player状态

@@ -34,10 +34,6 @@ public class ListViewUtil {
         }
     }
 
-    public interface ScrollToPositionListener {
-        void onScrollEnd();
-    }
-
     public static void scrollToBottom(ListView listView) {
         scrollToPosition(listView, listView.getAdapter().getCount() - 1, 0);
     }
@@ -64,5 +60,9 @@ public class ListViewUtil {
                 }
             }
         });
+    }
+
+    public interface ScrollToPositionListener {
+        void onScrollEnd();
     }
 }

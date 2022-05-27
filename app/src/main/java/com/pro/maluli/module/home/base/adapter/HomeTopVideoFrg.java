@@ -20,38 +20,21 @@ import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.toolkit.Logger;
+import com.pro.maluli.ktx.utils.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 
 public class HomeTopVideoFrg extends Fragment {
+    public BannerListener bannerListener;
+    protected boolean isLazyLoaded = false;
     HomeInfoEntity.BannerBean bannerBean;
     CoustormGsyVideoPlayer jcVideoPlayer;
     View mainView;
-    protected boolean isLazyLoaded = false;
     /**
      * Fragment的View加载完毕的标记
      */
     private boolean isPrepared = false;
-
-    public interface BannerListener {
-        void imgClick(int position);
-
-        void videoIsStart();
-
-        void videoStop();
-    }
-
-    public BannerListener bannerListener;
-
-    public BannerListener getBannerListener() {
-        return bannerListener;
-    }
-
-    public void setBannerListener(BannerListener bannerListener) {
-        this.bannerListener = bannerListener;
-    }
 
     public static Fragment newInstance(HomeInfoEntity.BannerBean listBean) {
         HomeTopVideoFrg treasureGameFrag = new HomeTopVideoFrg();
@@ -59,6 +42,14 @@ public class HomeTopVideoFrg extends Fragment {
         bundle.putSerializable("bannerTopVideo", listBean);
         treasureGameFrag.setArguments(bundle);
         return treasureGameFrag;
+    }
+
+    public BannerListener getBannerListener() {
+        return bannerListener;
+    }
+
+    public void setBannerListener(BannerListener bannerListener) {
+        this.bannerListener = bannerListener;
     }
 
     @Override
@@ -76,8 +67,7 @@ public class HomeTopVideoFrg extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Logger.e("onCreateView");
-        if (!isVideo()) {//ͼƬ
+        if (!isVideo()) {
             if (mainView == null) {
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_img, container, false);
                 RoundedImageView mainTopRiv = mainView.findViewById(R.id.mainTopRiv);
@@ -97,7 +87,6 @@ public class HomeTopVideoFrg extends Fragment {
                 });
                 Glide.with(requireActivity()).load(bannerBean.getUrl()).into(mainTopRiv);
             }
-            return mainView;
         } else {//
             if (mainView == null) {
                 mainView = LayoutInflater.from(getActivity()).inflate(R.layout.main_top_video, container, false);
@@ -262,10 +251,9 @@ public class HomeTopVideoFrg extends Fragment {
                 });
                 lazyLoad();
             }
-            return mainView;
         }
+        return mainView;
     }
-
 
     public boolean isVideo() {
         return bannerBean == null || bannerBean.getFile_type() != 1;
@@ -275,7 +263,6 @@ public class HomeTopVideoFrg extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
     }
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -377,5 +364,13 @@ public class HomeTopVideoFrg extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    public interface BannerListener {
+        void imgClick(int position);
+
+        void videoIsStart();
+
+        void videoStop();
     }
 }

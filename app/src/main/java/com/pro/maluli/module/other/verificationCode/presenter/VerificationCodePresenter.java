@@ -1,5 +1,7 @@
 package com.pro.maluli.module.other.verificationCode.presenter;
 
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -20,8 +22,6 @@ import java.util.Map;
 import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
 
 public class VerificationCodePresenter extends BasePresenter<IVerificationCodeContraction.View> implements IVerificationCodeContraction.Presenter {
     public VerificationCodePresenter(Context context) {
@@ -53,7 +53,7 @@ public class VerificationCodePresenter extends BasePresenter<IVerificationCodeCo
     @Override
     public void getVerifiCationCode(String mobile) {
         showLoading(mContext);
-        add(mService.getVerificationCode(mobile,"1")
+        add(mService.getVerificationCode(mobile, "1")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

@@ -1,7 +1,7 @@
 package com.netease.nim.uikit.common.adapter;
 
 /**
-
+ *
  */
 
 public abstract class AdvancedDelegate extends BaseDelegate<BaseViewHolderData> {

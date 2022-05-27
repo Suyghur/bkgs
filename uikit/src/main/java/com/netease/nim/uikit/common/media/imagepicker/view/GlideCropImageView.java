@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 /**
+ *
  */
 
 public class GlideCropImageView extends CropImageView {
@@ -21,16 +22,6 @@ public class GlideCropImageView extends CropImageView {
 
     public GlideCropImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-    }
-
-    @Override
-    public Bitmap getBitmap() {
-        Drawable drawable = getDrawable();
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else {
-            return fromDrawable(drawable);
-        }
     }
 
     private static Bitmap fromDrawable(Drawable drawable) {
@@ -49,5 +40,15 @@ public class GlideCropImageView extends CropImageView {
         }
 
         return null;
+    }
+
+    @Override
+    public Bitmap getBitmap() {
+        Drawable drawable = getDrawable();
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            return fromDrawable(drawable);
+        }
     }
 }

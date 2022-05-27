@@ -9,6 +9,7 @@ import com.netease.neliveplayer.playerkit.core.view.BaseSurfaceView;
 /**
  * SurfaceView控件
  * 对SurfaceView做了封装，可直接用于播放器播放
+ *
  * @author netease
  */
 

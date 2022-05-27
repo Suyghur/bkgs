@@ -9,7 +9,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.BlackListEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.base.AnchorVideoAdapter;
 
 import org.jetbrains.annotations.NotNull;
 

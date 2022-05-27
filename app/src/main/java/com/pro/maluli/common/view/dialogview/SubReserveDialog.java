@@ -42,14 +42,15 @@ import java.util.List;
  */
 
 public class SubReserveDialog extends DialogFragment implements View.OnClickListener {
+    AppealAdapter adapter;
+    List<File> files = new ArrayList<>();
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private TextView comfirmTv, toAppealTv, inputMaxTv;
     private EditText personTv;
     private RecyclerView selectImgRv;
-    AppealAdapter adapter;
     private List<ImageEntity> imageEntities = new ArrayList<>();
-    List<File> files = new ArrayList<>();
+    private OnEditPersonListener onEditPersonListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -178,14 +179,8 @@ public class SubReserveDialog extends DialogFragment implements View.OnClickList
                 });
     }
 
-    private OnEditPersonListener onEditPersonListener;
-
     public void setOnConfirmListener(OnEditPersonListener onEditPersonListener) {
         this.onEditPersonListener = onEditPersonListener;
-    }
-
-    public interface OnEditPersonListener {
-        void subNumber(List<File> files, String type);
     }
 
     @Override
@@ -219,5 +214,9 @@ public class SubReserveDialog extends DialogFragment implements View.OnClickList
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnEditPersonListener {
+        void subNumber(List<File> files, String type);
     }
 }

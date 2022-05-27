@@ -160,15 +160,6 @@ public class NimUIKit {
     }
 
     /**
-     * 设置单聊界面定制 SessionCustomization
-     *
-     * @param commonP2PSessionCustomization 聊天界面定制化
-     */
-    public static void setCommonP2PSessionCustomization(SessionCustomization commonP2PSessionCustomization) {
-        NimUIKitImpl.setCommonP2PSessionCustomization(commonP2PSessionCustomization);
-    }
-
-    /**
      * 获取单聊界面定制 SessionCustomization
      *
      * @return 聊天界面定制化
@@ -178,12 +169,12 @@ public class NimUIKit {
     }
 
     /**
-     * 设置群聊界面定制 SessionCustomization
+     * 设置单聊界面定制 SessionCustomization
      *
-     * @param commonTeamSessionCustomization 聊天界面定制化
+     * @param commonP2PSessionCustomization 聊天界面定制化
      */
-    public static void setCommonTeamSessionCustomization(SessionCustomization commonTeamSessionCustomization) {
-        NimUIKitImpl.setCommonTeamSessionCustomization(commonTeamSessionCustomization);
+    public static void setCommonP2PSessionCustomization(SessionCustomization commonP2PSessionCustomization) {
+        NimUIKitImpl.setCommonP2PSessionCustomization(commonP2PSessionCustomization);
     }
 
     /**
@@ -193,6 +184,15 @@ public class NimUIKit {
      */
     public static SessionCustomization getCommonTeamSessionCustomization() {
         return NimUIKitImpl.getCommonTeamSessionCustomization();
+    }
+
+    /**
+     * 设置群聊界面定制 SessionCustomization
+     *
+     * @param commonTeamSessionCustomization 聊天界面定制化
+     */
+    public static void setCommonTeamSessionCustomization(SessionCustomization commonTeamSessionCustomization) {
+        NimUIKitImpl.setCommonTeamSessionCustomization(commonTeamSessionCustomization);
     }
 
     /**
@@ -228,7 +228,7 @@ public class NimUIKit {
      *
      * @param creator 创建器
      */
-    public static void registerMultiRetweetMsgCreator(IMultiRetweetMsgCreator creator){
+    public static void registerMultiRetweetMsgCreator(IMultiRetweetMsgCreator creator) {
         NimUIKitImpl.registerMultiRetweetMsgCreator(creator);
     }
 
@@ -305,16 +305,6 @@ public class NimUIKit {
         return NimUIKitImpl.getContext();
     }
 
-
-    /**
-     * 设置当前登录用户的帐号
-     *
-     * @param account 帐号
-     */
-    public static void setAccount(String account) {
-        NimUIKitImpl.setAccount(account);
-    }
-
     /**
      * 获取当前登录的账号
      *
@@ -323,6 +313,15 @@ public class NimUIKit {
     public static String getAccount() {
         String account = NimUIKitImpl.getAccount();
         return account == null ? "" : account;
+    }
+
+    /**
+     * 设置当前登录用户的帐号
+     *
+     * @param account 帐号
+     */
+    public static void setAccount(String account) {
+        NimUIKitImpl.setAccount(account);
     }
 
     /**
@@ -376,10 +375,10 @@ public class NimUIKit {
     /**
      * 同 {@link NimUIKitImpl#startTeamSession(Context, String)},同时聊天界面打开后，列表跳转至anchor位置
      *
-     * @param context 上下文
-     * @param tid     群id
+     * @param context       上下文
+     * @param tid           群id
      * @param customization 定制化信息。针对不同的聊天对象，可提供不同的定制化。
-     * @param anchor  跳转到指定消息的位置，不需要跳转填null
+     * @param anchor        跳转到指定消息的位置，不需要跳转填null
      */
     public static void startTeamSession(Context context, String tid, SessionCustomization customization, IMMessage anchor) {
         NimUIKitImpl.startTeamSession(context, tid, customization, anchor);
@@ -553,6 +552,15 @@ public class NimUIKit {
     }
 
     /**
+     * 获取聊天室信息提供者
+     *
+     * @return ChatRoomProvider
+     */
+    public static ChatRoomProvider getChatRoomProvider() {
+        return NimUIKitImpl.getChatRoomProvider();
+    }
+
+    /**
      * 设置聊天室信息提供者
      * 不设置将使用 uikit 内置默认
      *
@@ -560,15 +568,6 @@ public class NimUIKit {
      */
     public static void setChatRoomProvider(ChatRoomProvider provider) {
         NimUIKitImpl.setChatRoomProvider(provider);
-    }
-
-    /**
-     * 获取聊天室信息提供者
-     *
-     * @return ChatRoomProvider
-     */
-    public static ChatRoomProvider getChatRoomProvider() {
-        return NimUIKitImpl.getChatRoomProvider();
     }
 
     /**
@@ -590,21 +589,21 @@ public class NimUIKit {
     }
 
     /**
-     * 设置在线状态文案提供者
-     *
-     * @param onlineStateContentProvider 文案内容提供者
-     */
-    public static void setOnlineStateContentProvider(OnlineStateContentProvider onlineStateContentProvider) {
-        NimUIKitImpl.setOnlineStateContentProvider(onlineStateContentProvider);
-    }
-
-    /**
      * 获取配置的用户在线状态文案提供者
      *
      * @return 文案提供者
      */
     public static OnlineStateContentProvider getOnlineStateContentProvider() {
         return NimUIKitImpl.getOnlineStateContentProvider();
+    }
+
+    /**
+     * 设置在线状态文案提供者
+     *
+     * @param onlineStateContentProvider 文案内容提供者
+     */
+    public static void setOnlineStateContentProvider(OnlineStateContentProvider onlineStateContentProvider) {
+        NimUIKitImpl.setOnlineStateContentProvider(onlineStateContentProvider);
     }
 
     /**
@@ -628,10 +627,18 @@ public class NimUIKit {
 
     /**
      * 获取在线状态变更通知接口
+     *
      * @return
      */
     public static OnlineStateChangeObservable getOnlineStateChangeObservable() {
         return NimUIKitImpl.getOnlineStateChangeObservable();
+    }
+
+    /**
+     * 获取是否听筒模式
+     */
+    public static boolean isEarPhoneModeEnable() {
+        return NimUIKitImpl.getEarPhoneModeEnable();
     }
 
     /**
@@ -641,12 +648,5 @@ public class NimUIKit {
      */
     public static void setEarPhoneModeEnable(boolean enable) {
         NimUIKitImpl.setEarPhoneModeEnable(enable);
-    }
-
-    /**
-     * 获取是否听筒模式
-     */
-    public static boolean isEarPhoneModeEnable() {
-        return NimUIKitImpl.getEarPhoneModeEnable();
     }
 }

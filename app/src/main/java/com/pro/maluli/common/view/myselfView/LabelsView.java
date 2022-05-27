@@ -24,8 +24,27 @@ import java.util.List;
  */
 public class LabelsView extends ViewGroup implements View.OnClickListener {
 
+    //用于保存label数据的key
+    private static final int KEY_DATA = R.id.tag_key_data;
+    //用于保存label位置的key
+    private static final int KEY_POSITION = R.id.tag_key_position;
+    /*  用于保存View的信息的key  */
+    private static final String KEY_SUPER_STATE = "key_super_state";
+    private static final String KEY_TEXT_COLOR_STATE = "key_text_color_state";
+    private static final String KEY_TEXT_SIZE_STATE = "key_text_size_state";
+    private static final String KEY_BG_RES_ID_STATE = "key_bg_res_id_state";
+    private static final String KEY_PADDING_STATE = "key_padding_state";
+    private static final String KEY_WORD_MARGIN_STATE = "key_word_margin_state";
+    private static final String KEY_LINE_MARGIN_STATE = "key_line_margin_state";
+    private static final String KEY_SELECT_TYPE_STATE = "key_select_type_state";
+    private static final String KEY_MAX_SELECT_STATE = "key_max_select_state";
+    // 由于新版(1.4.0)的标签列表允许设置任何类型的数据，而不仅仅是String。并且标签显示的内容
+    // 最终由LabelTextProvider提供，所以LabelsView不再在onSaveInstanceState()和onRestoreInstanceState()
+    // 中保存和恢复标签列表的数据。
+    private static final String KEY_LABELS_STATE = "key_labels_state";
+    private static final String KEY_SELECT_LABELS_STATE = "key_select_labels_state";
+    private static final String KEY_COMPULSORY_LABELS_STATE = "key_select_compulsory_state";
     private Context mContext;
-
     private ColorStateList mTextColor;
     private float mTextSize;
     private Drawable mLabelBg;
@@ -37,71 +56,34 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
     private int mLineMargin;
     private SelectType mSelectType;
     private int mMaxSelect;
-
-    //用于保存label数据的key
-    private static final int KEY_DATA = R.id.tag_key_data;
-    //用于保存label位置的key
-    private static final int KEY_POSITION = R.id.tag_key_position;
-
     private ArrayList<Object> mLabels = new ArrayList<>();
     //保存选中的label的位置
     private ArrayList<Integer> mSelectLabels = new ArrayList<>();
-
     //保存必选项。在多选模式下，可以设置必选项，必选项默认选中，不能反选
     private ArrayList<Integer> mCompulsorys = new ArrayList<>();
-
     private OnLabelClickListener mLabelClickListener;
     private OnLabelSelectChangeListener mLabelSelectChangeListener;
-
-    /**
-     * Label的选择类型
-     */
-    public enum SelectType {
-        //不可选中，也不响应选中事件回调。（默认）
-        NONE(1),
-        //单选,可以反选。
-        SINGLE(2),
-        //单选,不可以反选。这种模式下，至少有一个是选中的，默认是第一个
-        SINGLE_IRREVOCABLY(3),
-        //多选
-        MULTI(4);
-
-        int value;
-
-        SelectType(int value) {
-            this.value = value;
-        }
-
-        static SelectType get(int value) {
-            switch (value) {
-                case 1:
-                    return NONE;
-                case 2:
-                    return SINGLE;
-                case 3:
-                    return SINGLE_IRREVOCABLY;
-                case 4:
-                    return MULTI;
-            }
-            return NONE;
-        }
-    }
-
     public LabelsView(Context context) {
         super(context);
         mContext = context;
     }
-
     public LabelsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         getAttrs(context, attrs);
     }
-
     public LabelsView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
         getAttrs(context, attrs);
+    }
+
+    /**
+     * sp转px
+     */
+    public static int sp2px(Context context, float spVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                spVal, context.getResources().getDisplayMetrics());
     }
 
     private void getAttrs(Context context, AttributeSet attrs) {
@@ -232,23 +214,6 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    /*  用于保存View的信息的key  */
-    private static final String KEY_SUPER_STATE = "key_super_state";
-    private static final String KEY_TEXT_COLOR_STATE = "key_text_color_state";
-    private static final String KEY_TEXT_SIZE_STATE = "key_text_size_state";
-    private static final String KEY_BG_RES_ID_STATE = "key_bg_res_id_state";
-    private static final String KEY_PADDING_STATE = "key_padding_state";
-    private static final String KEY_WORD_MARGIN_STATE = "key_word_margin_state";
-    private static final String KEY_LINE_MARGIN_STATE = "key_line_margin_state";
-    private static final String KEY_SELECT_TYPE_STATE = "key_select_type_state";
-    private static final String KEY_MAX_SELECT_STATE = "key_max_select_state";
-    // 由于新版(1.4.0)的标签列表允许设置任何类型的数据，而不仅仅是String。并且标签显示的内容
-    // 最终由LabelTextProvider提供，所以LabelsView不再在onSaveInstanceState()和onRestoreInstanceState()
-    // 中保存和恢复标签列表的数据。
-    private static final String KEY_LABELS_STATE = "key_labels_state";
-    private static final String KEY_SELECT_LABELS_STATE = "key_select_labels_state";
-    private static final String KEY_COMPULSORY_LABELS_STATE = "key_select_compulsory_state";
-
     @Override
     protected Parcelable onSaveInstanceState() {
 
@@ -349,20 +314,6 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
     }
 
     /**
-     * 设置标签列表
-     *
-     * @param labels
-     */
-    public void setLabels(List<String> labels) {
-        setLabels(labels, new LabelTextProvider<String>() {
-            @Override
-            public CharSequence getLabelText(TextView label, int position, String data) {
-                return data.trim();
-            }
-        });
-    }
-
-    /**
      * 设置标签列表，标签列表的数据可以是任何类型的数据，
      * 它最终显示的内容由LabelTextProvider根据标签的数据提供。
      *
@@ -396,6 +347,20 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
      */
     public <T> List<T> getLabels() {
         return (List<T>) mLabels;
+    }
+
+    /**
+     * 设置标签列表
+     *
+     * @param labels
+     */
+    public void setLabels(List<String> labels) {
+        setLabels(labels, new LabelTextProvider<String>() {
+            @Override
+            public CharSequence getLabelText(TextView label, int position, String data) {
+                return data.trim();
+            }
+        });
     }
 
     private <T> void addLabel(T data, int position, LabelTextProvider<T> provider) {
@@ -538,6 +503,15 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
     }
 
     /**
+     * 获取必选项，
+     *
+     * @return
+     */
+    public List<Integer> getCompulsorys() {
+        return mCompulsorys;
+    }
+
+    /**
      * 设置必选项，只有在多项模式下，这个方法才有效
      *
      * @param positions
@@ -565,15 +539,6 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
             }
             setCompulsorys(ps);
         }
-    }
-
-    /**
-     * 获取必选项，
-     *
-     * @return
-     */
-    public List<Integer> getCompulsorys() {
-        return mCompulsorys;
     }
 
     /**
@@ -686,6 +651,10 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         return mTextPaddingBottom;
     }
 
+    public float getLabelTextSize() {
+        return mTextSize;
+    }
+
     /**
      * 设置标签的文字大小（单位是px）
      *
@@ -702,8 +671,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public float getLabelTextSize() {
-        return mTextSize;
+    public ColorStateList getLabelTextColor() {
+        return mTextColor;
     }
 
     /**
@@ -729,8 +698,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public ColorStateList getLabelTextColor() {
-        return mTextColor;
+    public int getLineMargin() {
+        return mLineMargin;
     }
 
     /**
@@ -743,8 +712,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public int getLineMargin() {
-        return mLineMargin;
+    public int getWordMargin() {
+        return mWordMargin;
     }
 
     /**
@@ -757,8 +726,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public int getWordMargin() {
-        return mWordMargin;
+    public SelectType getSelectType() {
+        return mSelectType;
     }
 
     /**
@@ -780,8 +749,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public SelectType getSelectType() {
-        return mSelectType;
+    public int getMaxSelect() {
+        return mMaxSelect;
     }
 
     /**
@@ -797,10 +766,6 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
                 innerClearAllSelect();
             }
         }
-    }
-
-    public int getMaxSelect() {
-        return mMaxSelect;
     }
 
     /**
@@ -822,11 +787,37 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
     }
 
     /**
-     * sp转px
+     * Label的选择类型
      */
-    public static int sp2px(Context context, float spVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                spVal, context.getResources().getDisplayMetrics());
+    public enum SelectType {
+        //不可选中，也不响应选中事件回调。（默认）
+        NONE(1),
+        //单选,可以反选。
+        SINGLE(2),
+        //单选,不可以反选。这种模式下，至少有一个是选中的，默认是第一个
+        SINGLE_IRREVOCABLY(3),
+        //多选
+        MULTI(4);
+
+        int value;
+
+        SelectType(int value) {
+            this.value = value;
+        }
+
+        static SelectType get(int value) {
+            switch (value) {
+                case 1:
+                    return NONE;
+                case 2:
+                    return SINGLE;
+                case 3:
+                    return SINGLE_IRREVOCABLY;
+                case 4:
+                    return MULTI;
+            }
+            return NONE;
+        }
     }
 
     public interface OnLabelClickListener {

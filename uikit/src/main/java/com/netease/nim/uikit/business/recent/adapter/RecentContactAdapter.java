@@ -20,12 +20,6 @@ import java.util.List;
 
 public class RecentContactAdapter extends BaseMultiItemQuickAdapter<RecentContact, BaseViewHolder> {
 
-    interface ViewType {
-        int VIEW_TYPE_COMMON = 1;
-        int VIEW_TYPE_TEAM = 2;
-        int VIEW_TYPE_SUPER_TEAM = 3;
-    }
-
     private RecentContactsCallback callback;
 
     public RecentContactAdapter(RecyclerView recyclerView, List<RecentContact> data) {
@@ -54,5 +48,11 @@ public class RecentContactAdapter extends BaseMultiItemQuickAdapter<RecentContac
 
     public void setCallback(RecentContactsCallback callback) {
         this.callback = callback;
+    }
+
+    interface ViewType {
+        int VIEW_TYPE_COMMON = 1;
+        int VIEW_TYPE_TEAM = 2;
+        int VIEW_TYPE_SUPER_TEAM = 3;
     }
 }

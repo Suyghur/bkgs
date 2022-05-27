@@ -35,7 +35,7 @@ public class SystemProvide extends BaseItemProvider<ChatRoomMessage> {
         String alldata = chatRoomMessage.getAttachment().toJson(false);
         JSONObject jsonObjectTop = JSONObject.parseObject(alldata);
         JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
-        String tips = "系统通知："+jsonObject.getString("tips");
+        String tips = "系统通知：" + jsonObject.getString("tips");
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(tips);
         ssb.setSpan(new ClickableSpan() {

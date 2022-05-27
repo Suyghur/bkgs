@@ -8,6 +8,7 @@ public interface IUserAgreementContraction extends BaseView {
     interface View extends BaseView {
         void setProtocolSuccess(ProtocolEntity data);
     }
+
     interface Presenter extends IClear {
 
         void getProtocoList();

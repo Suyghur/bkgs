@@ -226,11 +226,6 @@ public class CustomAlertDialog extends AlertDialog {
         }
     }
 
-    public interface onSeparateItemClickListener {
-
-        void onClick();
-    }
-
     @Override
     public void show() {
         if (itemSize <= 0) {
@@ -238,6 +233,11 @@ public class CustomAlertDialog extends AlertDialog {
         }
         updateListView();
         super.show();
+    }
+
+    public interface onSeparateItemClickListener {
+
+        void onClick();
     }
 
 }

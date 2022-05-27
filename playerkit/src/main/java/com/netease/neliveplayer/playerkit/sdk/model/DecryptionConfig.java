@@ -5,6 +5,7 @@ import com.netease.neliveplayer.playerkit.sdk.constant.DecryptionConfigCode;
 /**
  * 点播视频解密配置
  * 只适用于点播
+ *
  * @author netease
  */
 public class DecryptionConfig {
@@ -12,7 +13,7 @@ public class DecryptionConfig {
     /**
      * 解密选项
      * 只适用于点播
-     *  {@link DecryptionConfigCode}
+     * {@link DecryptionConfigCode}
      */
     public int decryptionCode;
 
@@ -46,10 +47,11 @@ public class DecryptionConfig {
     /**
      * 解密信息方式
      * 使用解密信息对视频进行解密时需要设置相关的解密信息
+     *
      * @param transferToken 获取密钥所需的令牌
-     * @param accid 视频云用户创建的其子用户id
-     * @param appKey 开发者平台分配的AppKey
-     * @param token 视频云用户子用户的token
+     * @param accid         视频云用户创建的其子用户id
+     * @param appKey        开发者平台分配的AppKey
+     * @param token         视频云用户子用户的token
      */
     public DecryptionConfig(String transferToken, String accid, String appKey, String token) {
         this.transferToken = transferToken;
@@ -63,7 +65,8 @@ public class DecryptionConfig {
      * 解密密钥方式
      * 在已知密钥的情况下直接使用密钥对密钥做相关的校验
      * 使用解密秘钥对视频进行解密时需要设置相关的解密秘钥
-     * @param flvKey 密钥
+     *
+     * @param flvKey    密钥
      * @param flvKeyLen 密钥长度
      */
     public DecryptionConfig(byte[] flvKey, int flvKeyLen) {

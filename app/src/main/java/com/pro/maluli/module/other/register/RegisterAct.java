@@ -26,10 +26,9 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailAct;
-import com.pro.maluli.module.other.register.presenter.RegisterPresenter;
 import com.pro.maluli.module.other.register.presenter.IRegisterContraction;
+import com.pro.maluli.module.other.register.presenter.RegisterPresenter;
 import com.pro.maluli.module.other.verificationCode.VerificationCodeAct;
 
 import butterknife.BindView;
@@ -95,7 +94,7 @@ public class RegisterAct extends BaseMvpActivity<IRegisterContraction.View, Regi
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(str);
-        final int start = str.indexOf("《")+1;//第一个出现的位置
+        final int start = str.indexOf("《") + 1;//第一个出现的位置
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -134,12 +133,12 @@ public class RegisterAct extends BaseMvpActivity<IRegisterContraction.View, Regi
             case R.id.submitMobileTv:
                 KeyboardUtils.hideSoftInput(RegisterAct.this);
                 if (!RegexUtils.isMobileExact(inputMobileEt.getText().toString().trim())) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请输入正确的手机号码");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请输入正确的手机号码");
 
                     return;
                 }
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读协议");
 
                     return;
                 }

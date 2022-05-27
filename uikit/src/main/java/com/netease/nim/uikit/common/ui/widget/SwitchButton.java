@@ -181,9 +181,12 @@ public class SwitchButton extends View implements OnTouchListener {
         onChangedListener = listener;
     }
 
-    public interface OnChangedListener {
+    public boolean isChoose() {
+        return this.isChoose;
+    }
 
-        abstract void OnChanged(View v, boolean checkState);
+    public boolean getCheck() {
+        return this.isChecked;
     }
 
     public void setCheck(boolean isChecked) {
@@ -195,16 +198,13 @@ public class SwitchButton extends View implements OnTouchListener {
         invalidate();
     }
 
-    public boolean isChoose() {
-        return this.isChoose;
-    }
-
-    public boolean getCheck() {
-        return this.isChecked;
-    }
-
     public void setInterceptState(boolean isIntercept) {// 设置监听器,是否在重画钱拦截事件,状态由false变true时 拦截事件
         isInterceptOn = isIntercept;
         // onInterceptListener = listener;
+    }
+
+    public interface OnChangedListener {
+
+        abstract void OnChanged(View v, boolean checkState);
     }
 }

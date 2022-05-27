@@ -130,8 +130,8 @@
             android:layout_width="@dimen/dp_size_13"
             android:layout_height="@dimen/dp_size_13"
             android:layout_below="@id/tv_nickname"
-            android:layout_marginTop="6dp"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="6dp"
             android:layout_marginRight="45dip"
             android:layout_toLeftOf="@+id/unread_number_tip"
             android:src="@drawable/ic_quite" />

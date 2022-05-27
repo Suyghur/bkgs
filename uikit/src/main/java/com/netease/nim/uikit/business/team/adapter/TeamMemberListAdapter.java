@@ -1,10 +1,11 @@
 package com.netease.nim.uikit.business.team.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.team.viewholder.TeamMemberListHolder;
@@ -19,14 +20,8 @@ import java.util.List;
 public class TeamMemberListAdapter extends RecyclerView.Adapter<TeamMemberListHolder>
         implements View.OnClickListener {
 
-    public interface ItemClickListener {
-        void onItemClick(TeamMember member);
-    }
-
     private Context context;
-
     private List<TeamMember> members;
-
     private ItemClickListener listener;
 
     public TeamMemberListAdapter(Context context) {
@@ -75,5 +70,9 @@ public class TeamMemberListAdapter extends RecyclerView.Adapter<TeamMemberListHo
         if (listener != null) {
             listener.onItemClick(member);
         }
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(TeamMember member);
     }
 }

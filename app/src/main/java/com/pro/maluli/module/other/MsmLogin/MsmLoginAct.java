@@ -39,7 +39,6 @@ import com.pro.maluli.module.other.getCode.GetCodeAct;
 import com.pro.maluli.module.other.verificationCode.VerificationCodeAct;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -59,6 +58,24 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
     LinearLayout loginQQLL;
     @BindView(R.id.loginWechatLL)
     LinearLayout loginWechatLL;
+    //要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 1:
+                    String weChatData = (String) msg.obj;
+                    QQWeChatBind("3", weChatData);
+                    break;
+                //微信登录
+                case 2:
+                    String weChatData1 = (String) msg.obj;
+                    QQWeChatBind("4", weChatData1);
+                    break;
+            }
+        }
+    };
     private String codeType;
 
     @Override
@@ -108,7 +125,7 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(str);
-        final int start = str.indexOf("《")+1;//第一个出现的位置
+        final int start = str.indexOf("《") + 1;//第一个出现的位置
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -132,14 +149,13 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
         xieyiTv.setText(ssb, TextView.BufferType.SPANNABLE);
     }
 
-
     @Override
     public void doBusiness() {
 
     }
 
     @OnClick({R.id.submitMobileTv, R.id.actFinishImg,
-            R.id.loginQQLL,R.id.loginWechatLL,R.id.helpTv, R.id.successImg, R.id.pwdLoginTv})
+            R.id.loginQQLL, R.id.loginWechatLL, R.id.helpTv, R.id.successImg, R.id.pwdLoginTv})
     public void onClick(View v) {
 //        if (!ToolUtils.isFastClick()) {
 //            return;
@@ -147,11 +163,11 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
         switch (v.getId()) {
             case R.id.submitMobileTv:
                 if (!RegexUtils.isMobileExact(inputMobileEt.getText().toString().trim())) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请输入正确的手机号码");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请输入正确的手机号码");
                     return;
                 }
-                if (!successImg.isSelected()){
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                if (!successImg.isSelected()) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 presenter.getVerifiCationCode(inputMobileEt.getText().toString().trim());
@@ -162,14 +178,14 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
             case R.id.loginQQLL://qq登录
 
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 ToolUtils.loginQQ(handler, this);
                 break;
             case R.id.loginWechatLL://微信登录
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 ToolUtils.loginWeChat(handler, this);
@@ -194,25 +210,6 @@ public class MsmLoginAct extends BaseMvpActivity<IMsmLoginContraction.View, MsmL
         }
 
     }
-
-    //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 1:
-                    String weChatData = (String) msg.obj;
-                    QQWeChatBind("3", weChatData);
-                    break;
-                //微信登录
-                case 2:
-                    String weChatData1 = (String) msg.obj;
-                    QQWeChatBind("4", weChatData1);
-                    break;
-            }
-        }
-    };
 
     private void QQWeChatBind(String weixin, String weChatData) {
         presenter.login("", weixin, "", weChatData);

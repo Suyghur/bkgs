@@ -27,10 +27,6 @@ public class EasyAlertDialogHelper {
         dialog.show();
     }
 
-    public interface OnClearMessageListener {
-        void clearAllMessage();
-    }
-
     public static void showOneButtonDiolag(Context mContext, int titleResId, int msgResId, int btnResId,
                                            boolean cancelable, final OnClickListener positiveListener) {
         showOneButtonDiolag(mContext, getString(mContext, titleResId), getString(mContext, msgResId),
@@ -111,16 +107,20 @@ public class EasyAlertDialogHelper {
         return dialog;
     }
 
-    public interface OnDialogActionListener {
-        void doCancelAction();
-
-        void doOkAction();
-    }
-
     private static String getString(Context context, int id) {
         if (id == 0) {
             return null;
         }
         return context.getString(id);
+    }
+
+    public interface OnClearMessageListener {
+        void clearAllMessage();
+    }
+
+    public interface OnDialogActionListener {
+        void doCancelAction();
+
+        void doOkAction();
     }
 }

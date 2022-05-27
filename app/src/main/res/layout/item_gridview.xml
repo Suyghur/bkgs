@@ -25,24 +25,25 @@
         android:textSize="@dimen/sp_14" />
 
     <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv"
-            android:src="@mipmap/ic_bk"
             android:layout_width="@dimen/dp_11"
-            android:layout_height="@dimen/dp_11" />
-          <TextView
-              android:id="@+id/moneyTv"
-                  android:textSize="@dimen/sp_14"
-                  android:textColor="@color/c_ebebeb"
-                  android:text="设置"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content" />
+            android:layout_height="@dimen/dp_11"
+            android:src="@mipmap/ic_bk" />
+
+        <TextView
+            android:id="@+id/moneyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置"
+            android:textColor="@color/c_ebebeb"
+            android:textSize="@dimen/sp_14" />
     </LinearLayout>
 </RelativeLayout>

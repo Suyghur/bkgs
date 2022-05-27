@@ -3,44 +3,45 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/dp_15"
-    >
- <LinearLayout
-     android:gravity="center_vertical"
-     android:layout_height="@dimen/dp_60"
-         android:layout_width="match_parent"
-         android:orientation="horizontal">
+    android:paddingHorizontal="@dimen/dp_15">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_60"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/watchCiv"
-        android:layout_width="@dimen/dp_32"
-        android:layout_height="@dimen/dp_32" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/watchCiv"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32" />
 
 
         <TextView
             android:id="@+id/userNameTv"
-            android:layout_marginLeft="@dimen/dp_7"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_7"
+            android:layout_weight="1"
             android:text="时间萨达"
             android:textColor="@color/c_342C33"
             android:textSize="@dimen/dp_14" />
 
 
-    <TextView
-        android:id="@+id/likeTv"
-        android:gravity="center"
-        android:background="@drawable/shape_8e1d77_26_line"
-        android:layout_width="@dimen/dp_64"
-        android:layout_height="@dimen/dp_33"
-        android:text="取消关注"
-        android:textColor="@color/c_8e1d77"
-        android:textSize="@dimen/dp_12" />
- </LinearLayout>
+        <TextView
+            android:id="@+id/likeTv"
+            android:layout_width="@dimen/dp_64"
+            android:layout_height="@dimen/dp_33"
+            android:background="@drawable/shape_8e1d77_26_line"
+            android:gravity="center"
+            android:text="取消关注"
+            android:textColor="@color/c_8e1d77"
+            android:textSize="@dimen/dp_12" />
+    </LinearLayout>
+
     <View
-        android:background="@color/c_dcdcdc"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_0_5"/>
+        android:layout_height="@dimen/dp_0_5"
+        android:background="@color/c_dcdcdc" />
 </LinearLayout>

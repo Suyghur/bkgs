@@ -10,20 +10,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.activityManager.ActivityTaskManager;
 import com.pro.maluli.common.utils.ToolUtils;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 
 
 public abstract class BaseActivity extends AppCompatActivity implements BaseView {
-    private Toast mToast;
     protected Context mContext;
-
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

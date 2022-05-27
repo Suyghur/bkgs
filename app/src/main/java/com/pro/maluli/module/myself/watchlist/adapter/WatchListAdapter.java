@@ -16,21 +16,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WatchListAdapter extends BaseQuickAdapter<WatchListEntity.ListBean, WatchListAdapter.ViewHolder> {
     private Context context;
 
+    public WatchListAdapter(List<WatchListEntity.ListBean> data, Context context) {
+        super(R.layout.item_watch_list, data);
+        this.context = context;
+    }
+
     @NotNull
     @Override
     protected WatchListAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public WatchListAdapter(List<WatchListEntity.ListBean> data, Context context) {
-        super(R.layout.item_watch_list, data);
-        this.context = context;
     }
 
     @Override

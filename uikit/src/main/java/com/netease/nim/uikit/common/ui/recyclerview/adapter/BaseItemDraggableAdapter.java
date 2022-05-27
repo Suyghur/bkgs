@@ -1,12 +1,13 @@
 package com.netease.nim.uikit.common.ui.recyclerview.adapter;
 
 import android.graphics.Canvas;
-import androidx.annotation.NonNull;
-import androidx.core.view.MotionEventCompat;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ui.recyclerview.callback.ItemDragAndSwipeCallback;
@@ -20,6 +21,7 @@ import java.util.List;
 public abstract class BaseItemDraggableAdapter<T, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
 
     private static final int NO_TOGGLE_VIEW = 0;
+    private static final String ERROR_NOT_SAME_ITEMTOUCHHELPER = "Item drag and item swipe should pass the same ItemTouchHelper";
     protected int mToggleViewId = NO_TOGGLE_VIEW;
     protected ItemTouchHelper mItemTouchHelper;
     protected boolean itemDragEnabled = false;
@@ -27,11 +29,8 @@ public abstract class BaseItemDraggableAdapter<T, K extends BaseViewHolder> exte
     protected OnItemDragListener mOnItemDragListener;
     protected OnItemSwipeListener mOnItemSwipeListener;
     protected boolean mDragOnLongPress = true;
-
     protected View.OnTouchListener mOnToggleViewTouchListener;
     protected View.OnLongClickListener mOnToggleViewLongClickListener;
-
-    private static final String ERROR_NOT_SAME_ITEMTOUCHHELPER = "Item drag and item swipe should pass the same ItemTouchHelper";
 
 
     public BaseItemDraggableAdapter(RecyclerView recyclerView, List<T> data) {

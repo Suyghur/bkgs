@@ -16,37 +16,21 @@ import java.util.List;
 
 public class AutoRefreshListView extends ListView {
 
-    public enum State {
-        REFRESHING,
-        RESET,
-    }
-
-    public enum Mode {
-        START,
-        END,
-        BOTH,
-    }
-
-    public interface OnRefreshListener {
-        public void onRefreshFromStart();
-
-        public void onRefreshFromEnd();
-    }
-
     private OnRefreshListener refreshListener;
     private List<OnScrollListener> scrollListeners = new ArrayList<OnScrollListener>();
-
     private State state = State.RESET;
     private Mode mode = Mode.START;
     private Mode currentMode = Mode.START;
-
     private boolean refreshableStart = true;
     private boolean refreshableEnd = true;
-
     private ViewGroup refreshHeader;
     private ViewGroup refreshFooter;
-
     private int offsetY;
+    /**
+     * handle over scroll when no more data
+     */
+    private boolean isBeingDragged = false;
+    private int startY = 0;
 
     public AutoRefreshListView(Context context) {
         super(context);
@@ -226,12 +210,6 @@ public class AutoRefreshListView extends ListView {
         updateRefreshView();
     }
 
-    /**
-     * handle over scroll when no more data
-     */
-    private boolean isBeingDragged = false;
-    private int startY = 0;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (Build.VERSION.SDK_INT < 11) {
@@ -289,5 +267,22 @@ public class AutoRefreshListView extends ListView {
         }
 
         isBeingDragged = false;
+    }
+
+    public enum State {
+        REFRESHING,
+        RESET,
+    }
+
+    public enum Mode {
+        START,
+        END,
+        BOTH,
+    }
+
+    public interface OnRefreshListener {
+        public void onRefreshFromStart();
+
+        public void onRefreshFromEnd();
     }
 }

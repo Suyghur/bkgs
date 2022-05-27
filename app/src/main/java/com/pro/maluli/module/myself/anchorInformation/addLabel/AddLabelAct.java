@@ -1,12 +1,9 @@
 package com.pro.maluli.module.myself.anchorInformation.addLabel;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
@@ -14,12 +11,10 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.myself.anchorInformation.addLabel.presenter.AddLabelPresenter;
 import com.pro.maluli.module.myself.anchorInformation.addLabel.presenter.IAddLabelContraction;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**

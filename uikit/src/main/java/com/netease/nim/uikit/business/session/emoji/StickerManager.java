@@ -19,12 +19,10 @@ import java.util.Map;
  */
 public class StickerManager {
     private static final String TAG = "StickerManager";
-
-    private static StickerManager instance;
     private static final String CATEGORY_AJMD = "ajmd";
     private static final String CATEGORY_XXY = "xxy";
     private static final String CATEGORY_LT = "lt";
-
+    private static StickerManager instance;
     /**
      * 数据源
      */
@@ -32,17 +30,17 @@ public class StickerManager {
     private Map<String, StickerCategory> stickerCategoryMap = new HashMap<>();
     private Map<String, Integer> stickerOrder = new HashMap<>(3);
 
+    public StickerManager() {
+        initStickerOrder();
+        loadStickerCategory();
+    }
+
     public static StickerManager getInstance() {
         if (instance == null) {
             instance = new StickerManager();
         }
 
         return instance;
-    }
-
-    public StickerManager() {
-        initStickerOrder();
-        loadStickerCategory();
     }
 
     public void init() {

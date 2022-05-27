@@ -19,8 +19,10 @@ package com.marvhong.videoeffect.filter.base;
 
 import android.annotation.SuppressLint;
 import android.opengl.GLES20;
+
 import com.marvhong.videoeffect.Rotation;
 import com.marvhong.videoeffect.utils.TextureRotationUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -34,14 +36,13 @@ import java.util.List;
  */
 public class GPUVideoFilterGroup extends GPUVideoFilter {
 
+    private final FloatBuffer mGLCubeBuffer;
+    private final FloatBuffer mGLTextureBuffer;
+    private final FloatBuffer mGLTextureFlipBuffer;
     protected List<GPUVideoFilter> mFilters;
     protected List<GPUVideoFilter> mMergedFilters;
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
-
-    private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLTextureBuffer;
-    private final FloatBuffer mGLTextureFlipBuffer;
 
     /**
      * Instantiates a new GPUImageFilterGroup with no filters.
@@ -210,7 +211,7 @@ public class GPUVideoFilterGroup extends GPUVideoFilter {
                 }
             }
         }
-     }
+    }
 
     /**
      * Gets the filters.

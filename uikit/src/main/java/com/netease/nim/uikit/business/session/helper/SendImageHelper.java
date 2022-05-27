@@ -22,10 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class SendImageHelper {
-    public interface Callback {
-        void sendImage(File file, boolean isOrig);
-    }
-
     public static void sendImageAfterPreviewPhotoActivityResult(Intent data, Callback callback) {
         final ArrayList<String> selectedImageFileList = data.getStringArrayListExtra(Extras.EXTRA_SCALED_IMAGE_LIST);
         final ArrayList<String> origSelectedImageFileList = data.getStringArrayListExtra(Extras.EXTRA_ORIG_IMAGE_LIST);
@@ -83,6 +79,10 @@ public class SendImageHelper {
                 }
             }).execute();
         }
+    }
+
+    public interface Callback {
+        void sendImage(File file, boolean isOrig);
     }
 
     // 从相册选择图片进行发送(Added by NYB)

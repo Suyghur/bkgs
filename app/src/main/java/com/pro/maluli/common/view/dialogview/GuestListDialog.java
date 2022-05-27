@@ -22,25 +22,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.chatroom.ChatRoomService;
-import com.netease.nimlib.sdk.chatroom.constant.MemberQueryType;
-import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
-import com.netease.nimlib.sdk.chatroom.model.MemberOption;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.dialogAdapter.GuestAdapter;
-import com.pro.maluli.common.view.dialogview.dialogAdapter.OnlineMemberAdapter;
 import com.pro.maluli.common.view.myselfView.MaxHeightRecyclerView;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -49,6 +40,9 @@ import java.util.Set;
  */
 
 public class GuestListDialog extends DialogFragment implements View.OnClickListener {
+    GuestAdapter adapter;
+    List<OnTwoOneStartEntity.SpecialListBean> specialListBeans = new ArrayList<>();
+    List<OnTwoOneStartEntity.SpecialListBean> memberSearch = new ArrayList<>();
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private TextView nodataTv;
@@ -56,9 +50,7 @@ public class GuestListDialog extends DialogFragment implements View.OnClickListe
     private RelativeLayout dismissTopRl;
     private MaxHeightRecyclerView onlineMemberRl;
     private boolean idSeeCancel;//是否显示取消按钮
-    GuestAdapter adapter;
-    List<OnTwoOneStartEntity.SpecialListBean> specialListBeans = new ArrayList<>();
-    List<OnTwoOneStartEntity.SpecialListBean> memberSearch = new ArrayList<>();
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -159,8 +151,6 @@ public class GuestListDialog extends DialogFragment implements View.OnClickListe
         }
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
@@ -173,11 +163,6 @@ public class GuestListDialog extends DialogFragment implements View.OnClickListe
         }
     }
 
-    public interface OnBaseTipsListener {
-        void comfirm(String accid, String nickName);//0去申述，2去绑定
-    }
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -189,5 +174,10 @@ public class GuestListDialog extends DialogFragment implements View.OnClickListe
                 }
                 break;
         }
+    }
+
+
+    public interface OnBaseTipsListener {
+        void comfirm(String accid, String nickName);//0去申述，2去绑定
     }
 }

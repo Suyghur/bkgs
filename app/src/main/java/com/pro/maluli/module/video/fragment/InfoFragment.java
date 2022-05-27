@@ -40,6 +40,7 @@ public class InfoFragment extends Fragment {
     private int mCurrentPosition;
 
     private VideoEntity.AdvertBean advertBean;
+    private boolean isCanStart;
 
     public static InfoFragment getNewInstance(@NotNull VideoEntity.AdvertBean advertBean) {
         InfoFragment fragment = new InfoFragment();
@@ -134,18 +135,19 @@ public class InfoFragment extends Fragment {
             mCurrentPosition = 0;
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClearPosition(CanStartEvent canStartEvent) {
         isCanStart = canStartEvent.isCanStart();
     }
-    private boolean isCanStart;
+
     @Override
     public void onResume() {
         super.onResume();
         if (isCanStart) {
             return;
         }
-        if (advertBean.getFile_type()==1){
+        if (advertBean.getFile_type() == 1) {
             return;
         }
         GSYVideoManager.releaseAllVideos();
@@ -162,11 +164,12 @@ public class InfoFragment extends Fragment {
         }
 
     }
+
     @Override
     public void onPause() {
         super.onPause();
 //        videoPlayer.onVideoPause();
-        if (advertBean.getFile_type()==1){
+        if (advertBean.getFile_type() == 1) {
             return;
         }
         GSYVideoManager.onPause();

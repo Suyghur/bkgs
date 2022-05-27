@@ -18,6 +18,7 @@ import com.netease.lava.nertc.sdk.NERtcEx;
 import com.netease.lava.nertc.sdk.video.NERtcRemoteVideoStreamType;
 import com.netease.lava.nertc.sdk.video.NERtcVideoView;
 import com.pro.maluli.R;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewListener;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewManager;
@@ -36,6 +37,7 @@ public class FloatingViewService extends Service implements FloatingViewListener
 
     private NERtcVideoView vv_local_user;
     private Long uid;
+    private CallBack callback;
 
     @Override
     public void onCreate() {
@@ -44,9 +46,9 @@ public class FloatingViewService extends Service implements FloatingViewListener
         init();
     }
 
-    private int init() {
+    private void init() {
         if (this.mFloatingViewManager != null) {
-            return START_STICKY;
+            return;
         }
 
         Log.e(TAG, "悬浮窗Service已启动");
@@ -81,7 +83,6 @@ public class FloatingViewService extends Service implements FloatingViewListener
         configs.animateInitialMove = false;
         this.mFloatingViewManager.addFloatingView(floatView, configs);
 
-        return START_REDELIVER_INTENT;
     }
 
     /**
@@ -92,7 +93,6 @@ public class FloatingViewService extends Service implements FloatingViewListener
         Log.e(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
-
 
     /**
      * {@inheritDoc}
@@ -114,22 +114,6 @@ public class FloatingViewService extends Service implements FloatingViewListener
         return new MyBinder();
     }
 
-
-    public class MyBinder extends Binder {
-        public FloatingViewService getService() {
-            return FloatingViewService.this;
-        }
-
-
-        public void setData(long data) {//写一个公共方法，用来对data数据赋值。
-            Log.e("123123", "setData=" + data);
-            NERtcEx.getInstance().subscribeRemoteVideoStream(data, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true);
-            vv_local_user.setScalingType(NERtcConstants.VideoScalingType.SCALE_ASPECT_FIT);
-            NERtcEx.getInstance().setupRemoteVideoCanvas(vv_local_user, data);
-        }
-    }
-
-
     /**
      * {@inheritDoc}
      */
@@ -146,10 +130,8 @@ public class FloatingViewService extends Service implements FloatingViewListener
             this.mFloatingViewManager.removeAllFloatingView();
             this.mFloatingViewManager = null;
         }
-        Log.d(TAG, "悬浮窗已销毁");
+        Logger.d("悬浮窗已销毁");
     }
-
-    private CallBack callback;
 
     public void setCallback(CallBack callback) {
         this.callback = callback;
@@ -157,5 +139,19 @@ public class FloatingViewService extends Service implements FloatingViewListener
 
     public static interface CallBack {
         void onDataChanged(String data);
+    }
+
+    public class MyBinder extends Binder {
+        public FloatingViewService getService() {
+            return FloatingViewService.this;
+        }
+
+
+        public void setData(long data) {//写一个公共方法，用来对data数据赋值。
+            Logger.d("setData=" + data);
+            NERtcEx.getInstance().subscribeRemoteVideoStream(data, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true);
+            vv_local_user.setScalingType(NERtcConstants.VideoScalingType.SCALE_ASPECT_FIT);
+            NERtcEx.getInstance().setupRemoteVideoCanvas(vv_local_user, data);
+        }
     }
 }

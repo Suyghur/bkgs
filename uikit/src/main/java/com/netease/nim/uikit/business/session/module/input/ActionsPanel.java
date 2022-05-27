@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.business.session.module.input;
 
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.actions.BaseAction;

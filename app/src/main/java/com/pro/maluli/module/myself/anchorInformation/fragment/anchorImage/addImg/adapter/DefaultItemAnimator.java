@@ -42,63 +42,17 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
     private static final boolean DEBUG = false;
 
     private static TimeInterpolator sDefaultInterpolator;
-
-    private ArrayList<RecyclerView.ViewHolder> mPendingRemovals = new ArrayList<>();
-    private ArrayList<RecyclerView.ViewHolder> mPendingAdditions = new ArrayList<>();
-    private ArrayList<DefaultItemAnimator.MoveInfo> mPendingMoves = new ArrayList<>();
-    private ArrayList<DefaultItemAnimator.ChangeInfo> mPendingChanges = new ArrayList<>();
-
     ArrayList<ArrayList<RecyclerView.ViewHolder>> mAdditionsList = new ArrayList<>();
     ArrayList<ArrayList<DefaultItemAnimator.MoveInfo>> mMovesList = new ArrayList<>();
     ArrayList<ArrayList<DefaultItemAnimator.ChangeInfo>> mChangesList = new ArrayList<>();
-
     ArrayList<RecyclerView.ViewHolder> mAddAnimations = new ArrayList<>();
     ArrayList<RecyclerView.ViewHolder> mMoveAnimations = new ArrayList<>();
     ArrayList<RecyclerView.ViewHolder> mRemoveAnimations = new ArrayList<>();
     ArrayList<RecyclerView.ViewHolder> mChangeAnimations = new ArrayList<>();
-
-    private static class MoveInfo {
-        public RecyclerView.ViewHolder holder;
-        public int fromX, fromY, toX, toY;
-
-        MoveInfo(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-            this.holder = holder;
-            this.fromX = fromX;
-            this.fromY = fromY;
-            this.toX = toX;
-            this.toY = toY;
-        }
-    }
-
-    private static class ChangeInfo {
-        public RecyclerView.ViewHolder oldHolder, newHolder;
-        public int fromX, fromY, toX, toY;
-        private ChangeInfo(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder) {
-            this.oldHolder = oldHolder;
-            this.newHolder = newHolder;
-        }
-
-        ChangeInfo(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
-                   int fromX, int fromY, int toX, int toY) {
-            this(oldHolder, newHolder);
-            this.fromX = fromX;
-            this.fromY = fromY;
-            this.toX = toX;
-            this.toY = toY;
-        }
-
-        @Override
-        public String toString() {
-            return "ChangeInfo{"
-                    + "oldHolder=" + oldHolder
-                    + ", newHolder=" + newHolder
-                    + ", fromX=" + fromX
-                    + ", fromY=" + fromY
-                    + ", toX=" + toX
-                    + ", toY=" + toY
-                    + '}';
-        }
-    }
+    private ArrayList<RecyclerView.ViewHolder> mPendingRemovals = new ArrayList<>();
+    private ArrayList<RecyclerView.ViewHolder> mPendingAdditions = new ArrayList<>();
+    private ArrayList<DefaultItemAnimator.MoveInfo> mPendingMoves = new ArrayList<>();
+    private ArrayList<DefaultItemAnimator.ChangeInfo> mPendingChanges = new ArrayList<>();
 
     @Override
     public void runPendingAnimations() {
@@ -381,21 +335,22 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
             mChangeAnimations.add(changeInfo.newHolder);
             newViewAnimation.translationX(0).translationY(0).setDuration(getChangeDuration())
                     .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-                    dispatchChangeStarting(changeInfo.newHolder, false);
-                }
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    newViewAnimation.setListener(null);
-                    newView.setAlpha(1);
-                    newView.setTranslationX(0);
-                    newView.setTranslationY(0);
-                    dispatchChangeFinished(changeInfo.newHolder, false);
-                    mChangeAnimations.remove(changeInfo.newHolder);
-                    dispatchFinishedWhenDone();
-                }
-            }).start();
+                        @Override
+                        public void onAnimationStart(Animator animator) {
+                            dispatchChangeStarting(changeInfo.newHolder, false);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animator) {
+                            newViewAnimation.setListener(null);
+                            newView.setAlpha(1);
+                            newView.setTranslationX(0);
+                            newView.setTranslationY(0);
+                            dispatchChangeFinished(changeInfo.newHolder, false);
+                            mChangeAnimations.remove(changeInfo.newHolder);
+                            dispatchFinishedWhenDone();
+                        }
+                    }).start();
         }
     }
 
@@ -418,6 +373,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
             endChangeAnimationIfNecessary(changeInfo, changeInfo.newHolder);
         }
     }
+
     private boolean endChangeAnimationIfNecessary(DefaultItemAnimator.ChangeInfo changeInfo, RecyclerView.ViewHolder item) {
         boolean oldItem = false;
         if (changeInfo.newHolder == item) {
@@ -666,5 +622,49 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
     public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder,
                                              @NonNull List<Object> payloads) {
         return !payloads.isEmpty() || super.canReuseUpdatedViewHolder(viewHolder, payloads);
+    }
+
+    private static class MoveInfo {
+        public RecyclerView.ViewHolder holder;
+        public int fromX, fromY, toX, toY;
+
+        MoveInfo(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+            this.holder = holder;
+            this.fromX = fromX;
+            this.fromY = fromY;
+            this.toX = toX;
+            this.toY = toY;
+        }
+    }
+
+    private static class ChangeInfo {
+        public RecyclerView.ViewHolder oldHolder, newHolder;
+        public int fromX, fromY, toX, toY;
+
+        private ChangeInfo(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder) {
+            this.oldHolder = oldHolder;
+            this.newHolder = newHolder;
+        }
+
+        ChangeInfo(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
+                   int fromX, int fromY, int toX, int toY) {
+            this(oldHolder, newHolder);
+            this.fromX = fromX;
+            this.fromY = fromY;
+            this.toX = toX;
+            this.toY = toY;
+        }
+
+        @Override
+        public String toString() {
+            return "ChangeInfo{"
+                    + "oldHolder=" + oldHolder
+                    + ", newHolder=" + newHolder
+                    + ", fromX=" + fromX
+                    + ", fromY=" + fromY
+                    + ", toX=" + toX
+                    + ", toY=" + toY
+                    + '}';
+        }
     }
 }

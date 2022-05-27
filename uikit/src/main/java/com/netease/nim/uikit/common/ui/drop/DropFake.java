@@ -2,7 +2,6 @@ package com.netease.nim.uikit.common.ui.drop;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -13,6 +12,8 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * 未读数红点View（自绘红色的圆和数字）
  * 触摸之产生DOWN/MOVE/UP事件（不允许父容器处理TouchEvent），回调给浮在上层的DropCover进行拖拽过程绘制。
@@ -22,24 +23,12 @@ import android.widget.ScrollView;
  */
 public class DropFake extends View {
 
-    /**
-     * 未读数红点检测触摸事件产生DOWN/MOVE/UP
-     */
-    public interface ITouchListener {
-        void onDown();
-
-        void onMove(float curX, float curY);
-
-        void onUp();
-    }
-
     private int radius; // 圆形半径
     private float circleX; // 圆心x坐标
     private float circleY; // 圆心y坐标
     private String text; // 要显示的文本（数字）
     private boolean firstInit = true; // params init once
     private ITouchListener touchListener;
-
     public DropFake(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -108,13 +97,13 @@ public class DropFake extends View {
         return super.onTouchEvent(event);
     }
 
+    public String getText() {
+        return text;
+    }
+
     public void setText(String text) {
         this.text = text;
         invalidate();
-    }
-
-    public String getText() {
-        return text;
     }
 
     public void setTouchListener(ITouchListener listener) {
@@ -143,5 +132,16 @@ public class DropFake extends View {
                 return; // DecorView
             }
         }
+    }
+
+    /**
+     * 未读数红点检测触摸事件产生DOWN/MOVE/UP
+     */
+    public interface ITouchListener {
+        void onDown();
+
+        void onMove(float curX, float curY);
+
+        void onUp();
     }
 }

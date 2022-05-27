@@ -10,10 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.internal.BaselineLayout;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
-import com.netease.nim.uikit.business.session.viewholder.media.MediaViewHolder;
 import com.netease.nim.uikit.common.ui.imageview.CircleImageView;
 
 
@@ -40,7 +38,7 @@ public class GiftForMeListAdapter extends RecyclerView.Adapter<GiftForMeListAdap
         holder.userNameTv.setText(listBean.getMember().getNickname());
         holder.tiemTv.setText(listBean.getCreated_at());
         holder.giftType.setText(listBean.getGift().getTitle());
-        holder.moneyTv.setText(listBean.getGift().getMoney()+"金额");
+        holder.moneyTv.setText(listBean.getGift().getMoney() + "金额");
 
     }
 

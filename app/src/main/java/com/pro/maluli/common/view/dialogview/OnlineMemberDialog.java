@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -35,7 +34,6 @@ import com.pro.maluli.common.view.myselfView.MaxHeightRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,18 +46,19 @@ import java.util.Set;
  */
 
 public class OnlineMemberDialog extends DialogFragment implements View.OnClickListener {
+    OnlineMemberAdapter adapter;
+    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+    List<ChatRoomMember> memberAll = new ArrayList<>();
+    List<ChatRoomMember> memberSearch = new ArrayList<>();
+    List<ChatRoomMember> memberAllnoChange = new ArrayList<>();
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private TextView onlineNumberTv, nodataTv;
     private EditText inputOnlineEt;
     private MaxHeightRecyclerView onlineMemberRl;
     private boolean idSeeCancel;//是否显示取消按钮
-    OnlineMemberAdapter adapter;
-    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
-    List<ChatRoomMember> memberAll = new ArrayList<>();
-    List<ChatRoomMember> memberSearch = new ArrayList<>();
-    List<ChatRoomMember> memberAllnoChange= new ArrayList<>();
     private String roomId, anchorAccid;
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -187,8 +186,6 @@ public class OnlineMemberDialog extends DialogFragment implements View.OnClickLi
                 });
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
@@ -199,10 +196,6 @@ public class OnlineMemberDialog extends DialogFragment implements View.OnClickLi
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
     }
 
     public void getMembers() {
@@ -274,5 +267,9 @@ public class OnlineMemberDialog extends DialogFragment implements View.OnClickLi
                 }
                 break;
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
     }
 }

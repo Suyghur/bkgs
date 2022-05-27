@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.RequestOptions;
@@ -17,9 +19,14 @@ import com.netease.nim.uikit.common.util.media.ImageUtil;
 
 import java.io.File;
 
-import androidx.appcompat.widget.AppCompatImageView;
-
 public class MsgThumbImageView extends AppCompatImageView {
+
+    private static final Paint paintMask = createMaskPaint();
+    /**
+     * *************************** 自定义绘制 **********************************
+     */
+
+    private Drawable mask; // blend mask drawable
 
     public MsgThumbImageView(Context context) {
         super(context);
@@ -32,14 +39,6 @@ public class MsgThumbImageView extends AppCompatImageView {
     public MsgThumbImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-
-    /**
-     * *************************** 自定义绘制 **********************************
-     */
-
-    private Drawable mask; // blend mask drawable
-
-    private static final Paint paintMask = createMaskPaint();
 
     private static Paint createMaskPaint() {
         Paint paint = new Paint();

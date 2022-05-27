@@ -4,15 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 
 public class RedPacketAttachment extends CustomAttachment {
 
-    private String gift_name;//  礼物名称
-    private String gift_id;//  礼物id
-    private String gift_logo;// 礼物logo
-    private String gift_number;// 红包名称
-
     private static final String KEY_NAME = "gift_name";
     private static final String KEY_ID = "gift_id";
     private static final String KEY_LOGO = "gift_logo";
     private static final String KEY_NUMBER = "gift_number";
+    private String gift_name;//  礼物名称
+    private String gift_id;//  礼物id
+    private String gift_logo;// 礼物logo
+    private String gift_number;// 红包名称
 
     public RedPacketAttachment() {
         super(CustomAttachmentType.RedPacket);

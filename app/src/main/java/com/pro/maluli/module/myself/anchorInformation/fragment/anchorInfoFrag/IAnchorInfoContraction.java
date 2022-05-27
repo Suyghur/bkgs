@@ -8,6 +8,7 @@ public interface IAnchorInfoContraction extends BaseView {
     interface View extends BaseView {
         void setAnchorInfo(AnchorInfoEntity data);
     }
+
     interface Presenter extends IClear {
         void getAnchorInfo();
 

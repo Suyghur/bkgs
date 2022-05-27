@@ -32,9 +32,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 
-import com.netease.nim.uikit.R;
-
 import androidx.appcompat.widget.AppCompatImageView;
+
+import com.netease.nim.uikit.R;
 
 public class CircleImageView extends AppCompatImageView {
 

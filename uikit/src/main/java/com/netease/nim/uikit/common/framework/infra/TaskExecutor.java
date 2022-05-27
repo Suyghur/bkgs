@@ -15,44 +15,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class TaskExecutor implements Executor {
-    private final static int QUEUE_INIT_CAPACITY = 11;
-
-    private static final int CORE = 3;
-
-    private static final int MAX = 5;
-
-    private static final int TIMEOUT = 30 * 1000;
-
     public static final Executor IMMEDIATE_EXECUTOR = new Executor() {
         @Override
         public void execute(Runnable command) {
             command.run();
         }
     };
-
-    public static class Config {
-        public int core;
-
-        public int max;
-
-        public int timeout;
-
-        public boolean allowCoreTimeOut;
-
-        public Config(int core, int max, int timeout, boolean allowCoreTimeOut) {
-            this.core = core;
-            this.max = max;
-            this.timeout = timeout;
-            this.allowCoreTimeOut = allowCoreTimeOut;
-        }
-    }
-
+    private final static int QUEUE_INIT_CAPACITY = 11;
+    private static final int CORE = 3;
+    private static final int MAX = 5;
+    private static final int TIMEOUT = 30 * 1000;
     public static Config defaultConfig = new Config(CORE, MAX, TIMEOUT, true);
-
     private final String name;
-
     private final Config config;
+    Comparator<Runnable> mQueueComparator = new Comparator<Runnable>() {
 
+        @Override
+        public int compare(Runnable lhs, Runnable rhs) {
+            PRunnable r1 = (PRunnable) lhs;
+            PRunnable r2 = (PRunnable) rhs;
+
+            return PRunnable.compare(r1, r2);
+        }
+    };
     private ExecutorService service;
 
     public TaskExecutor(String name) {
@@ -70,6 +55,17 @@ public class TaskExecutor implements Executor {
         if (startup) {
             startup();
         }
+    }
+
+    private static final void allowCoreThreadTimeOut(ThreadPoolExecutor service, boolean value) {
+        if (Build.VERSION.SDK_INT >= 9) {
+            allowCoreThreadTimeOut9(service, value);
+        }
+    }
+
+    @TargetApi(9)
+    private static final void allowCoreThreadTimeOut9(ThreadPoolExecutor service, boolean value) {
+        service.allowCoreThreadTimeOut(value);
     }
 
     public void startup() {
@@ -148,6 +144,23 @@ public class TaskExecutor implements Executor {
         return service;
     }
 
+    public static class Config {
+        public int core;
+
+        public int max;
+
+        public int timeout;
+
+        public boolean allowCoreTimeOut;
+
+        public Config(int core, int max, int timeout, boolean allowCoreTimeOut) {
+            this.core = core;
+            this.max = max;
+            this.timeout = timeout;
+            this.allowCoreTimeOut = allowCoreTimeOut;
+        }
+    }
+
     private static class PRunnable implements Runnable {
         private static int sSerial = 0;
 
@@ -163,13 +176,6 @@ public class TaskExecutor implements Executor {
             priority = p;
         }
 
-        @Override
-        public void run() {
-            if (runnable != null) {
-                runnable.run();
-            }
-        }
-
         public static final int compare(PRunnable r1, PRunnable r2) {
             if (r1.priority != r2.priority) {
                 return r2.priority - r1.priority;
@@ -177,18 +183,14 @@ public class TaskExecutor implements Executor {
                 return r1.serial - r2.serial;
             }
         }
-    }
-
-    Comparator<Runnable> mQueueComparator = new Comparator<Runnable>() {
 
         @Override
-        public int compare(Runnable lhs, Runnable rhs) {
-            PRunnable r1 = (PRunnable) lhs;
-            PRunnable r2 = (PRunnable) rhs;
-
-            return PRunnable.compare(r1, r2);
+        public void run() {
+            if (runnable != null) {
+                runnable.run();
+            }
         }
-    };
+    }
 
     static class TaskThreadFactory implements ThreadFactory {
         private final ThreadGroup mThreadGroup;
@@ -218,16 +220,5 @@ public class TaskExecutor implements Executor {
 
             return t;
         }
-    }
-
-    private static final void allowCoreThreadTimeOut(ThreadPoolExecutor service, boolean value) {
-        if (Build.VERSION.SDK_INT >= 9) {
-            allowCoreThreadTimeOut9(service, value);
-        }
-    }
-
-    @TargetApi(9)
-    private static final void allowCoreThreadTimeOut9(ThreadPoolExecutor service, boolean value) {
-        service.allowCoreThreadTimeOut(value);
     }
 }

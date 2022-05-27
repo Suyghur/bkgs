@@ -37,7 +37,7 @@ public class MessageRevokeTip {
                 revokeNick = TeamHelper.getTeamMemberDisplayNameYou(item.getSessionId(), item.getFromAccount());
             } else if (item.getSessionType() == SessionTypeEnum.P2P) {
                 revokeNick = item.getFromAccount().equals(NimUIKit.getAccount()) ? "你" : "对方";
-            } else if(item.getSessionType() == SessionTypeEnum.SUPER_TEAM){
+            } else if (item.getSessionType() == SessionTypeEnum.SUPER_TEAM) {
                 revokeNick = SuperTeamHelper.getTeamMemberDisplayNameYou(item.getSessionId(), item.getFromAccount());
             }
             return revokeNick + "撤回了一条消息";

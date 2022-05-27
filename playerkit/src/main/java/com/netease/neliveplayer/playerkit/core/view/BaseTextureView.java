@@ -16,7 +16,6 @@ import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode;
  * @author netease
  * 单一TextureView
  * 适用于播放页面只有一个TextureView时，支持后台播放
- *
  */
 
 public class BaseTextureView extends TextureView implements IRenderView, TextureView.SurfaceTextureListener {
@@ -151,7 +150,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
     }
 
     @Override
-    protected void onDetachedFromWindow(){
+    protected void onDetachedFromWindow() {
         LogUtil.d(TAG, "onDetachedFromWindow");
         super.onDetachedFromWindow();
         releaseSurface();
@@ -166,7 +165,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         LogUtil.d(TAG, "onSurfaceTextureAvailable surfaceTexture=" + surfaceTexture + " this=" + this);
         //api 16 以上才能支持 setSurfaceTexture 接口，才能支持后台播放
-        boolean hasSetsavedSurfaceTexture  = false;
+        boolean hasSetsavedSurfaceTexture = false;
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) && mSavedSurfaceTexture != null) {
             try {
                 setSurfaceTexture(mSavedSurfaceTexture);
@@ -179,7 +178,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
                 LogUtil.e(TAG, "onSurfaceTextureAvailable, setSurfaceTexture ", e);
             }
         }
-        if(!hasSetsavedSurfaceTexture) {
+        if (!hasSetsavedSurfaceTexture) {
             releaseSurfaceInternal();
             mSavedSurfaceTexture = surfaceTexture;
             mSurface = new Surface(surfaceTexture);

@@ -8,17 +8,10 @@ public enum StorageType {
     TYPE_IMAGE(DirectoryName.IMAGE_DIRECTORY_NAME),
     TYPE_VIDEO(DirectoryName.VIDEO_DIRECTORY_NAME),
     TYPE_THUMB_IMAGE(DirectoryName.THUMB_DIRECTORY_NAME),
-    TYPE_THUMB_VIDEO(DirectoryName.THUMB_DIRECTORY_NAME),;
+    TYPE_THUMB_VIDEO(DirectoryName.THUMB_DIRECTORY_NAME),
+    ;
     private DirectoryName storageDirectoryName;
     private long storageMinSize;
-
-    public String getStoragePath() {
-        return storageDirectoryName.getPath();
-    }
-
-    public long getStorageMinSize() {
-        return storageMinSize;
-    }
 
     StorageType(DirectoryName dirName) {
         this(dirName, StorageUtil.THRESHOLD_MIN_SPCAE);
@@ -29,6 +22,14 @@ public enum StorageType {
         this.storageMinSize = storageMinSize;
     }
 
+    public String getStoragePath() {
+        return storageDirectoryName.getPath();
+    }
+
+    public long getStorageMinSize() {
+        return storageMinSize;
+    }
+
     enum DirectoryName {
         AUDIO_DIRECTORY_NAME("audio/"),
         DATA_DIRECTORY_NAME("data/"),
@@ -37,16 +38,17 @@ public enum StorageType {
         TEMP_DIRECTORY_NAME("temp/"),
         IMAGE_DIRECTORY_NAME("image/"),
         THUMB_DIRECTORY_NAME("thumb/"),
-        VIDEO_DIRECTORY_NAME("video/"),;
+        VIDEO_DIRECTORY_NAME("video/"),
+        ;
 
         private String path;
 
-        public String getPath() {
-            return path;
-        }
-
         private DirectoryName(String path) {
             this.path = path;
+        }
+
+        public String getPath() {
+            return path;
         }
     }
 }

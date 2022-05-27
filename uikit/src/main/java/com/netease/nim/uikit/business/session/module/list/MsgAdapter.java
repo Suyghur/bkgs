@@ -35,6 +35,12 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
     private Map<String, Float> progresses; // 有文件传输，需要显示进度条的消息ID map
     private String messageId;
     private Container container;
+    /**
+     * *********************** 时间显示处理 ***********************
+     */
+
+    private Set<String> timedItems; // 需要显示消息时间的消息ID
+    private IMMessage lastShowTimeItem; // 用于消息时间显示,判断和上条消息间的时间间隔
 
     public MsgAdapter(RecyclerView recyclerView, List<IMMessage> data, Container container) {
         super(recyclerView, data);
@@ -71,12 +77,12 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
         return item.getUuid();
     }
 
-    public void setEventListener(ViewHolderEventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
     public ViewHolderEventListener getEventListener() {
         return eventListener;
+    }
+
+    public void setEventListener(ViewHolderEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public void deleteItem(IMMessage message, boolean isRelocateTime) {
@@ -144,7 +150,7 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
         IMMessage item;
         long itemTime;
         ListIterator<IMMessage> itemIterator = items.listIterator(items.size());
-        while (itemIterator.hasPrevious()){
+        while (itemIterator.hasPrevious()) {
             try {
                 index = itemIterator.previousIndex();
                 item = itemIterator.previous();
@@ -172,13 +178,6 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
     public void putProgress(IMMessage message, float progress) {
         progresses.put(message.getUuid(), progress);
     }
-
-    /**
-     * *********************** 时间显示处理 ***********************
-     */
-
-    private Set<String> timedItems; // 需要显示消息时间的消息ID
-    private IMMessage lastShowTimeItem; // 用于消息时间显示,判断和上条消息间的时间间隔
 
     public boolean needShowTime(IMMessage message) {
         return timedItems.contains(message.getUuid());
@@ -294,6 +293,18 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
         }
     }
 
+    public String getUuid() {
+        return messageId;
+    }
+
+    public void setUuid(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public Container getContainer() {
+        return container;
+    }
+
     public interface ViewHolderEventListener {
         // 长按事件响应处理
         boolean onViewHolderLongClick(View clickView, View viewHolderView, IMMessage item);
@@ -336,17 +347,5 @@ public class MsgAdapter extends BaseMultiItemFetchLoadAdapter<IMMessage, BaseVie
         public void onCheckStateChanged(int index, Boolean newState) {
 
         }
-    }
-
-    public void setUuid(String messageId) {
-        this.messageId = messageId;
-    }
-
-    public String getUuid() {
-        return messageId;
-    }
-
-    public Container getContainer() {
-        return container;
     }
 }

@@ -5,11 +5,11 @@ import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.VideoView;
-    /**
-        *
-        *  @author Kingsley
-        *  @date 2021/6/15
-        */
+
+/**
+ * @author Kingsley
+ * @date 2021/6/15
+ */
 public class CustomVideoView extends VideoView {
 
     public CustomVideoView(Context context) {

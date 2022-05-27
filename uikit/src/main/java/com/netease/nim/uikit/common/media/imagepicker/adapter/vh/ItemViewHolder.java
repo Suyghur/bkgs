@@ -1,13 +1,14 @@
 package com.netease.nim.uikit.common.media.imagepicker.adapter.vh;
 
 import android.content.Context;
-import androidx.annotation.CallSuper;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.CallSuper;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.adapter.AdvancedAdapter;
@@ -16,6 +17,7 @@ import com.netease.nim.uikit.common.media.imagepicker.ImagePicker;
 
 
 /**
+ *
  */
 
 public abstract class ItemViewHolder extends BaseViewHolder<SectionModel> {
@@ -24,11 +26,10 @@ public abstract class ItemViewHolder extends BaseViewHolder<SectionModel> {
     private final AdvancedAdapter adapter;
     protected ImageView ivThumb;
     protected View mask;
-    private TextView cbCheck;
     protected TextView timeMask;
-    private SectionModel model;
     protected ImageView videoIcon;
-
+    private TextView cbCheck;
+    private SectionModel model;
     private SectionModel.Listener listener = new SectionModel.Listener() {
         @Override
         public void onChanged() {

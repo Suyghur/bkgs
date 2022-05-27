@@ -8,7 +8,7 @@ package com.netease.nim.uikit.common.ui.imageview;
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ package com.netease.nim.uikit.common.ui.imageview;
 /*
  * This class is based upon the file ImageViewTouchBase.java which can be found at:
  * https://dl-ssl.google.com/dl/googlesource/git-repo/repo
- *  
+ *
  * Copyright (C) 2009 The Android Open Source Project
  */
 
@@ -33,28 +33,32 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.SystemClock;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.netease.nim.uikit.common.util.media.SampleSizeUtil;
 
 public abstract class BaseZoomableImageView extends View {
+    public static final int MIN_SDK_ENABLE_LAYER_TYPE_HARDWARE = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
     // Statics
     static final float sPanRate = 7;
     static final float sScaleRate = 1.25F;
     static final int sPaintDelay = 250;
     static final int sAnimationDelay = 500;
-    public static final int MIN_SDK_ENABLE_LAYER_TYPE_HARDWARE = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-
     // 横屏时特殊处理,但高大于宽的2倍时，就以宽充满
     private static final float MAX_IMAGE_RATIO_WIDTH_LARGE_LANDSCAPE = 2F;
 
     private static final float MAX_IMAGE_RATIO_LARGE = 5F;
-
+    // The current bitmap being displayed.
+    protected Bitmap mBitmap;
+    // Single tap listener
+    protected ImageGestureListener mImageGestureListener;
+    protected ViewPager mViewPager;
     // This is the base transformation which is used to show the image
     // initially.  The current computation for this shows the image in
     // it's entirety, letterboxing as needed.  One could chose to
@@ -63,55 +67,36 @@ public abstract class BaseZoomableImageView extends View {
     // This matrix is recomputed when we go from the thumbnail image to
     // the full size image.
     private Matrix mBaseMatrix = new Matrix();
-
     // This is the supplementary transformation which reflects what
     // the user has done in terms of zooming and panning.
     //
     // This matrix remains the same when we go from the thumbnail image
     // to the full size image.
     private Matrix mSuppMatrix = new Matrix();
-
     // This is the final matrix which is computed as the concatentation
     // of the base matrix and the supplementary matrix.
     private Matrix mDisplayMatrix = new Matrix();
-
     // A replacement ImageView matrix
     private Matrix mMatrix = new Matrix();
-
     // Used to filter the bitmaps when hardware acceleration is not enabled
     private Paint mPaint;
-
     // Temporary buffer used for getting the values out of a matrix.
     private float[] mMatrixValues = new float[9];
-
     // Dimensions for the view
     private int mThisWidth = -1, mThisHeight = -1;
-
     // The max zoom for the view, determined programatically
     private float mMaxZoom;
-
     // If not null, calls setImageBitmap when onLayout is triggered
     private Runnable mOnLayoutRunnable = null;
-
     // Stacked to the internal queue to invalidate the view
     private Runnable mRefresh = null;
-
     // The time of the last draw operation
     private double mLastDraw = 0;
-
-    // The current bitmap being displayed.
-    protected Bitmap mBitmap;
-
     // Stacked to the internal queue to scroll the view
     private Runnable mFling = null;
     private boolean fling = false;
-
-    // Single tap listener
-    protected ImageGestureListener mImageGestureListener;
-
-    protected ViewPager mViewPager;
-
     private boolean landscape = false;
+    private boolean adjustLongImageEnable = true;
 
     // Programatic entry point
     public BaseZoomableImageView(Context context) {
@@ -123,6 +108,11 @@ public abstract class BaseZoomableImageView extends View {
     public BaseZoomableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initBaseZoomableImageView(context);
+    }
+
+    // Translate a given point through a given matrix.
+    static protected void translatePoint(Matrix matrix, float[] xy) {
+        matrix.mapPoints(xy);
     }
 
     // Setup the view
@@ -160,6 +150,11 @@ public abstract class BaseZoomableImageView extends View {
         return mBitmap;
     }
 
+    // Sets the bitmap for the image and resets the base
+    public void setImageBitmap(final Bitmap bitmap) {
+        setImageBitmap(bitmap, true);
+    }
+
     // Free the bitmaps and matrices
     public void clear() {
         if (mBitmap != null && !mBitmap.isRecycled()) {
@@ -185,11 +180,6 @@ public abstract class BaseZoomableImageView extends View {
         //		}
     }
 
-    // Translate a given point through a given matrix.
-    static protected void translatePoint(Matrix matrix, float[] xy) {
-        matrix.mapPoints(xy);
-    }
-
     // Identical to the setImageMatrix method in ImageView
     public void setImageMatrix(Matrix m) {
         if (m != null && m.isIdentity()) {
@@ -201,11 +191,6 @@ public abstract class BaseZoomableImageView extends View {
             this.mMatrix.set(m);
             invalidate();
         }
-    }
-
-    // Sets the bitmap for the image and resets the base
-    public void setImageBitmap(final Bitmap bitmap) {
-        setImageBitmap(bitmap, true);
     }
 
     // Sets the bitmap for the image and resets the base
@@ -292,7 +277,6 @@ public abstract class BaseZoomableImageView extends View {
 
 
     }
-
 
     // Unchanged from ImageViewTouchBase
     // Center as much as possible in one or both axis.  Centering is
@@ -391,7 +375,6 @@ public abstract class BaseZoomableImageView extends View {
                 (viewHeight - ((float) bitmap.getHeight() * scale)) / 2F);
     }
 
-
     /**
      * Setup the base matrix so that the image is centered and scaled properly.
      * 根据Bitmap和Rect，设置初始的显示矩阵Matrix
@@ -431,7 +414,6 @@ public abstract class BaseZoomableImageView extends View {
                 ((getWidth() - (float) bitmap.getWidth() * scale)) / 2F,
                 ((getHeight() - (float) bitmap.getHeight() * scale)) / 2F);
     }
-
 
     // Combine the base matrix and the supp matrix to make the final matrix.
     protected Matrix getImageViewMatrix() {
@@ -506,8 +488,6 @@ public abstract class BaseZoomableImageView extends View {
             }
         });
     }
-
-    private boolean adjustLongImageEnable = true;
 
     public void setAdjustLongImageEnable(boolean enable) {
         this.adjustLongImageEnable = enable;

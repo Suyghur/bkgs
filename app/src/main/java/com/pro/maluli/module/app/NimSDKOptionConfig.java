@@ -2,7 +2,6 @@ package com.pro.maluli.module.app;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -31,6 +30,24 @@ import java.io.IOException;
  */
 
 class NimSDKOptionConfig {
+    public static final String TEST_NOS_SCENE_KEY = "test_nos_scene_key";
+    private static MessageNotifierCustomization messageNotifierCustomization = new MessageNotifierCustomization() {
+
+        @Override
+        public String makeNotifyContent(String nick, IMMessage message) {
+            return null; // 采用SDK默认文案
+        }
+
+        @Override
+        public String makeTicker(String nick, IMMessage message) {
+            return null; // 采用SDK默认文案
+        }
+
+        @Override
+        public String makeRevokeMsgTip(String revokeAccount, IMMessage item) {
+            return MessageRevokeTip.getRevokeTipContent(item, revokeAccount);
+        }
+    };
 
     static SDKOptions getSDKOptions(Context context) {
         SDKOptions options = new SDKOptions();
@@ -78,8 +95,6 @@ class NimSDKOptionConfig {
 
         return options;
     }
-
-    public static final String TEST_NOS_SCENE_KEY = "test_nos_scene_key";
 
     /**
      * nos 场景配置
@@ -165,31 +180,13 @@ class NimSDKOptionConfig {
         config.ledARGB = Color.GREEN;
         config.ledOnMs = 1000;
         config.ledOffMs = 1500;
-        config.ring=true;
+        config.ring = true;
         // 是否APP ICON显示未读数红点(Android O有效)
         config.showBadge = true;
         // save cache，留做切换账号备用
         DemoCache.setNotificationConfig(config);
         return config;
     }
-
-    private static MessageNotifierCustomization messageNotifierCustomization = new MessageNotifierCustomization() {
-
-        @Override
-        public String makeNotifyContent(String nick, IMMessage message) {
-            return null; // 采用SDK默认文案
-        }
-
-        @Override
-        public String makeTicker(String nick, IMMessage message) {
-            return null; // 采用SDK默认文案
-        }
-
-        @Override
-        public String makeRevokeMsgTip(String revokeAccount, IMMessage item) {
-            return MessageRevokeTip.getRevokeTipContent(item, revokeAccount);
-        }
-    };
 
     private static MixPushConfig buildMixPushConfig() {
         // 第三方推送配置

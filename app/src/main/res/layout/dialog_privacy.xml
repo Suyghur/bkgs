@@ -33,7 +33,6 @@
                 android:textSize="@dimen/sp_16" />
 
             <LinearLayout
-                android:visibility="invisible"
                 android:id="@+id/dismissLL"
                 android:layout_width="@dimen/dp_40"
                 android:layout_height="@dimen/dp_40"
@@ -41,7 +40,8 @@
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingLeft="@dimen/dp_10">
+                android:paddingLeft="@dimen/dp_10"
+                android:visibility="invisible">
 
                 <ImageView
                     android:layout_width="@dimen/dp_13"
@@ -55,9 +55,10 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <com.pro.maluli.common.view.myselfView.ProgressWebView
                 android:id="@+id/tipsWv"
                 android:layout_width="match_parent"
@@ -66,6 +67,7 @@
                 android:paddingHorizontal="@dimen/dp_20"
                 android:scrollbars="none"
                 tools:ignore="WebViewLayout" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

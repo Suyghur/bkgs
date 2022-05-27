@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/nim_message_view_bottom"
-    android:paddingBottom="@dimen/bottom_component_margin_vertical"
-    android:paddingTop="@dimen/bottom_component_margin_vertical">
+    android:paddingTop="@dimen/bottom_component_margin_vertical"
+    android:paddingBottom="@dimen/bottom_component_margin_vertical">
 
     <FrameLayout
         android:id="@+id/switchLayout"
@@ -56,8 +56,6 @@
 
     <EditText
         android:id="@+id/editTextMessage"
-        android:textCursorDrawable="@null"
-        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/bottom_component_margin_horizontal"
@@ -67,6 +65,8 @@
         android:background="@drawable/nim_message_input_edittext_box"
         android:maxHeight="72dip"
         android:maxLines="4"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@null"
         android:textSize="16sp" />
 
     <ImageView

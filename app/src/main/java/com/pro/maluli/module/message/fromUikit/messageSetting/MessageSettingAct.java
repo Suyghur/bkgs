@@ -1,6 +1,5 @@
 package com.pro.maluli.module.message.fromUikit.messageSetting;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -27,16 +26,13 @@ import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.module.message.fromUikit.messageSetting.presenter.IMessageSettingContraction;
 import com.pro.maluli.module.message.fromUikit.messageSetting.presenter.MessageSettingPresenter;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
-import com.pro.maluli.module.other.login.LoginAct;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -63,11 +59,11 @@ public class MessageSettingAct extends BaseMvpActivity<IMessageSettingContractio
     CircleImageView userAvaterCiv;
     @BindView(R.id.usernameTv)
     TextView usernameTv;
-
-    private String accid;
     NimUserInfo user;
     MessageCanScoreEntity messageCanScoreEntity;
+    private String accid;
     private UserInfoEntity userInfoEntity;
+
     @Override
     public MessageSettingPresenter initPresenter() {
         return new MessageSettingPresenter(this);
@@ -165,7 +161,7 @@ public class MessageSettingAct extends BaseMvpActivity<IMessageSettingContractio
                 if (setBlackListTv.isSelected()) {
                     presenter.removeBlack(accid);
                 } else {
-                    BaseTipsDialog baseTipsDialog =new BaseTipsDialog();
+                    BaseTipsDialog baseTipsDialog = new BaseTipsDialog();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString("showContent", "加入黑名单后将不可进入主播直播间、预约一对一及私信聊天");
                     bundle2.putString("TITLE_DIO", "温馨提示");
@@ -190,14 +186,14 @@ public class MessageSettingAct extends BaseMvpActivity<IMessageSettingContractio
                 }
                 break;
             case R.id.reportLL:
-                if (userInfoEntity!=null&&userInfoEntity.getIs_teenager()==1){
+                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
                     ToastUtils.showShort("青少年模式不能使用该功能");
                     return;
                 }
-                Bundle bundle2 =new Bundle();
-                bundle2.putString("SUB_TYPE","5");
-                bundle2.putString("reportUserid",accid);
-                gotoActivity(AppealAct.class,false,bundle2);
+                Bundle bundle2 = new Bundle();
+                bundle2.putString("SUB_TYPE", "5");
+                bundle2.putString("reportUserid", accid);
+                gotoActivity(AppealAct.class, false, bundle2);
                 break;
         }
     }

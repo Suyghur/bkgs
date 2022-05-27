@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <com.flyco.tablayout.SlidingTabLayout
-        android:background="@color/c_ffffff"
         android:id="@+id/childSPL"
-        android:paddingLeft="@dimen/dp_15"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_44"
+        android:background="@color/c_ffffff"
+        android:paddingLeft="@dimen/dp_15"
         app:tl_indicator_color="#00000000"
         app:tl_indicator_corner_radius="@dimen/dp_4"
         app:tl_indicator_height="@dimen/dp_2"
@@ -22,7 +23,7 @@
 
     <com.pro.maluli.common.view.myselfView.CustomViewpager
         android:id="@+id/childVP"
-        android:background="@color/c_f9f9f9"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/c_f9f9f9" />
 </LinearLayout>

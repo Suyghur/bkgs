@@ -1,4 +1,4 @@
- package com.pro.maluli.common.view.dialogview.gift;
+package com.pro.maluli.common.view.dialogview.gift;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
@@ -38,8 +38,8 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
     private LinearLayout idotLayout;//知识圆点
     private List<View> mPagerList;//页面集合
     private LayoutInflater mInflater;
-    private RelativeLayout topClickRl,contentRl;
-    private TextView gotRechargeTv,myBlanceTv;
+    private RelativeLayout topClickRl, contentRl;
+    private TextView gotRechargeTv, myBlanceTv;
     private List<GiftEntity.ListBean> mDataList = new ArrayList<>();
 
     private int currPage;
@@ -51,6 +51,7 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
     /*当前显示的是第几页*/
     private int curIndex = 0;
     private GridViewAdapter[] arr = new GridViewAdapter[3];
+    private OnSelectGiftListener onSelectGiftListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
         myBlanceTv = mDetailDialog.findViewById(R.id.myBlanceTv);
         contentRl = mDetailDialog.findViewById(R.id.contentRl);
         GiftEntity entity = (GiftEntity) getArguments().getSerializable("GIFT_INFO");
-        myBlanceTv.setText(entity.getMoney()+"");
+        myBlanceTv.setText(entity.getMoney() + "");
         mDataList.addAll(entity.getList());
         topClickRl.setOnClickListener(this::onClick);
         gotRechargeTv.setOnClickListener(this::onClick);
@@ -150,14 +151,8 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
         });
     }
 
-    private OnSelectGiftListener onSelectGiftListener;
-
     public void setSelectGiftListener(OnSelectGiftListener onFreezeTipsListener) {
         this.onSelectGiftListener = onFreezeTipsListener;
-    }
-
-    public interface OnSelectGiftListener {
-        void comfirm(GiftEntity.ListBean id);//0去申述，2去绑定
     }
 
     @Override
@@ -168,10 +163,14 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
                 break;
             case R.id.gotRechargeTv:
                 Intent intent = new Intent(getActivity(), RechargeAct.class);
-                intent.putExtra("isJump",true);
+                intent.putExtra("isJump", true);
                 startActivity(intent);
                 dismiss();
                 break;
         }
+    }
+
+    public interface OnSelectGiftListener {
+        void comfirm(GiftEntity.ListBean id);//0去申述，2去绑定
     }
 }

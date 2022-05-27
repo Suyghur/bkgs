@@ -57,6 +57,14 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
     LabelsView labeleLV;
     @BindView(R.id.noSearchTv)
     TextView noSearchTv;
+    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
+        @Override
+        public void onSoftInputChanged(int height) {
+            if (height != 0) {
+                isSHowHistory(true);
+            }
+        }
+    };
     private List<RewardDetailEntity.ListBean> entities = new ArrayList<>();
     private List<SearchEntity.ListBean> lableList = new ArrayList<>();
 
@@ -188,15 +196,6 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
                 break;
         }
     }
-
-    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
-        @Override
-        public void onSoftInputChanged(int height) {
-            if (height != 0) {
-                isSHowHistory(true);
-            }
-        }
-    };
 
     @Override
     public void doBusiness() {

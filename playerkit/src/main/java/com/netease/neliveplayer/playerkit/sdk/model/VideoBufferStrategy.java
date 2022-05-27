@@ -5,6 +5,7 @@ import com.netease.neliveplayer.sdk.constant.NEBufferStrategy;
 
 /**
  * 视频缓冲策略
+ *
  * @author netease
  */
 
@@ -40,10 +41,6 @@ public enum VideoBufferStrategy {
         this.value = value;
     }
 
-    public final int getValue() {
-        return value;
-    }
-
     public static VideoBufferStrategy typeOfValue(int value) {
         for (VideoBufferStrategy e : values()) {
             if (e.getValue() == value) {
@@ -51,5 +48,9 @@ public enum VideoBufferStrategy {
             }
         }
         return LOW_LATENCY;
+    }
+
+    public final int getValue() {
+        return value;
     }
 }

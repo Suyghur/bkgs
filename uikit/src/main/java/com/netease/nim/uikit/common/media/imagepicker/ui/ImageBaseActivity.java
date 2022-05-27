@@ -2,10 +2,11 @@ package com.netease.nim.uikit.common.media.imagepicker.ui;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import android.view.Window;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.netease.nim.uikit.common.activity.UI;
 

@@ -69,6 +69,11 @@ public class CommentVideoEntity implements Serializable {
         private int member_id;
         private int type;
         private int is_self;
+        private String comment;
+        private String created_at;
+        private String updated_at;
+        private Object deleted_at;
+        private MemberBean member;
 
         public int getIs_self() {
             return is_self;
@@ -77,13 +82,6 @@ public class CommentVideoEntity implements Serializable {
         public void setIs_self(int is_self) {
             this.is_self = is_self;
         }
-
-        private String comment;
-        private String created_at;
-        private String updated_at;
-        private Object deleted_at;
-        private MemberBean member;
-
 
         public int getId() {
             return id;

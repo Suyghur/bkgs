@@ -1,9 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +23,6 @@
             android:textSize="@dimen/sp_28" />
 
         <EditText
-            android:inputType="number"
             android:id="@+id/inputMobileEt"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_42"
@@ -33,6 +30,7 @@
             android:layout_marginTop="@dimen/dp_20"
             android:background="@drawable/shape_f9f9f9_30"
             android:hint="请输入手机号码"
+            android:inputType="number"
             android:paddingLeft="@dimen/dp_20"
             android:text=""
             android:textSize="@dimen/sp_16" />

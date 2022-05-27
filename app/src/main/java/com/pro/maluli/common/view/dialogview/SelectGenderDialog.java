@@ -2,7 +2,6 @@ package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.myselfView.WheelView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -30,7 +28,8 @@ public class SelectGenderDialog extends DialogFragment implements View.OnClickLi
     private WheelView sexWlv;
     private TextView submitTv;
     private ImageView dismissImg;
-    private int genderType=1;
+    private int genderType = 1;
+    private OnSelectGenderListener onSelectGenderListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -63,14 +62,8 @@ public class SelectGenderDialog extends DialogFragment implements View.OnClickLi
         return mDetailDialog;
     }
 
-    private OnSelectGenderListener onSelectGenderListener;
-
     public void setOnConfirmListener(OnSelectGenderListener onSelectGenderListener) {
         this.onSelectGenderListener = onSelectGenderListener;
-    }
-
-    public interface OnSelectGenderListener {
-        void confirmSuccess(int genderType);
     }
 
     @Override
@@ -90,5 +83,9 @@ public class SelectGenderDialog extends DialogFragment implements View.OnClickLi
 
                 break;
         }
+    }
+
+    public interface OnSelectGenderListener {
+        void confirmSuccess(int genderType);
     }
 }

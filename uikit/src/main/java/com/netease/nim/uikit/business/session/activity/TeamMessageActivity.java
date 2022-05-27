@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import com.netease.nim.uikit.common.ToastHelper;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -44,7 +43,68 @@ public class TeamMessageActivity extends BaseMessageActivity {
     private TextView invalidTeamTipText;
 
     private TeamMessageFragment fragment;
+    /**
+     * 群资料变动通知和移除群的通知（包括自己退群和群被解散）
+     */
+    TeamDataChangedObserver teamDataChangedObserver = new TeamDataChangedObserver() {
+        @Override
+        public void onUpdateTeams(List<Team> teams) {
+            if (team == null) {
+                return;
+            }
+            for (Team t : teams) {
+                if (t.getId().equals(team.getId())) {
+                    updateTeamInfo(t);
+                    break;
+                }
+            }
+        }
 
+        @Override
+        public void onRemoveTeam(Team team) {
+            if (team == null) {
+                return;
+            }
+            if (team.getId().equals(TeamMessageActivity.this.team.getId())) {
+                updateTeamInfo(team);
+            }
+        }
+    };
+    /**
+     * 群成员资料变动通知和移除群成员通知
+     */
+    TeamMemberDataChangedObserver teamMemberDataChangedObserver = new TeamMemberDataChangedObserver() {
+
+        @Override
+        public void onUpdateTeamMember(List<TeamMember> members) {
+            fragment.refreshMessageList();
+        }
+
+        @Override
+        public void onRemoveTeamMember(List<TeamMember> member) {
+        }
+    };
+    ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
+        @Override
+        public void onAddedOrUpdatedFriends(List<String> accounts) {
+            fragment.refreshMessageList();
+        }
+
+        @Override
+        public void onDeletedFriends(List<String> accounts) {
+            fragment.refreshMessageList();
+        }
+
+        @Override
+        public void onAddUserToBlackList(List<String> account) {
+            fragment.refreshMessageList();
+        }
+
+        @Override
+        public void onRemoveUserFromBlackList(List<String> account) {
+            fragment.refreshMessageList();
+        }
+    };
     private Class<? extends Activity> backToClass;
 
     public static void start(Context context, String tid, SessionCustomization customization,
@@ -117,7 +177,8 @@ public class TeamMessageActivity extends BaseMessageActivity {
         finish();
     }
 
-    /**R
+    /**
+     * R
      * 更新群信息
      *
      * @param d
@@ -146,71 +207,6 @@ public class TeamMessageActivity extends BaseMessageActivity {
         NimUIKit.getTeamChangedObservable().registerTeamMemberDataChangedObserver(teamMemberDataChangedObserver, register);
         NimUIKit.getContactChangedObservable().registerObserver(friendDataChangedObserver, register);
     }
-
-    /**
-     * 群资料变动通知和移除群的通知（包括自己退群和群被解散）
-     */
-    TeamDataChangedObserver teamDataChangedObserver = new TeamDataChangedObserver() {
-        @Override
-        public void onUpdateTeams(List<Team> teams) {
-            if (team == null) {
-                return;
-            }
-            for (Team t : teams) {
-                if (t.getId().equals(team.getId())) {
-                    updateTeamInfo(t);
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onRemoveTeam(Team team) {
-            if (team == null) {
-                return;
-            }
-            if (team.getId().equals(TeamMessageActivity.this.team.getId())) {
-                updateTeamInfo(team);
-            }
-        }
-    };
-
-    /**
-     * 群成员资料变动通知和移除群成员通知
-     */
-    TeamMemberDataChangedObserver teamMemberDataChangedObserver = new TeamMemberDataChangedObserver() {
-
-        @Override
-        public void onUpdateTeamMember(List<TeamMember> members) {
-            fragment.refreshMessageList();
-        }
-
-        @Override
-        public void onRemoveTeamMember(List<TeamMember> member) {
-        }
-    };
-
-    ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
-        @Override
-        public void onAddedOrUpdatedFriends(List<String> accounts) {
-            fragment.refreshMessageList();
-        }
-
-        @Override
-        public void onDeletedFriends(List<String> accounts) {
-            fragment.refreshMessageList();
-        }
-
-        @Override
-        public void onAddUserToBlackList(List<String> account) {
-            fragment.refreshMessageList();
-        }
-
-        @Override
-        public void onRemoveUserFromBlackList(List<String> account) {
-            fragment.refreshMessageList();
-        }
-    };
 
     @Override
     protected MessageFragment fragment() {

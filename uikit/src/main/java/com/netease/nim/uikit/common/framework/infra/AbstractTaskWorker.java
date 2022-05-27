@@ -3,14 +3,14 @@ package com.netease.nim.uikit.common.framework.infra;
 import java.util.concurrent.Executor;
 
 public abstract class AbstractTaskWorker {
-    public interface ExecuteCallback {
-        public void onExecuted(Task task, boolean unschedule);
-    }
-
     /**
      * execute callback
      */
     private ExecuteCallback executeCallback;
+
+    public AbstractTaskWorker() {
+
+    }
 
     /**
      * dispatch
@@ -19,10 +19,6 @@ public abstract class AbstractTaskWorker {
      * @return Executor
      */
     protected abstract Executor getTaskHost(Task task);
-
-    public AbstractTaskWorker() {
-
-    }
 
     public void setExecuteCallback(ExecuteCallback executeCallback) {
         this.executeCallback = executeCallback;
@@ -56,5 +52,9 @@ public abstract class AbstractTaskWorker {
                 }
             }
         };
+    }
+
+    public interface ExecuteCallback {
+        public void onExecuted(Task task, boolean unschedule);
     }
 }

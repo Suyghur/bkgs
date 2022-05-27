@@ -27,6 +27,7 @@ public class CanFinishDialog extends DialogFragment implements View.OnClickListe
     private LinearLayout dismissLL;
     private TextView cancelTv, comfirmTv, contentTv, titleTv;
     private String showContent;
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -67,14 +68,8 @@ public class CanFinishDialog extends DialogFragment implements View.OnClickListe
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
     }
 
     @Override
@@ -89,5 +84,9 @@ public class CanFinishDialog extends DialogFragment implements View.OnClickListe
                 }
                 break;
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
     }
 }

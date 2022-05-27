@@ -1,5 +1,7 @@
 package com.pro.maluli.module.other.MsmLogin.presenter;
 
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -13,8 +15,6 @@ import com.pro.maluli.common.utils.AcacheUtil;
 
 import io.reactivex.functions.Consumer;
 
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
-
 public class MsmLoginPresenter extends BasePresenter<IMsmLoginContraction.View> implements IMsmLoginContraction.Presenter {
     public MsmLoginPresenter(Context context) {
         super(context);
@@ -23,7 +23,7 @@ public class MsmLoginPresenter extends BasePresenter<IMsmLoginContraction.View> 
     @Override
     public void getVerifiCationCode(String mobile) {
         showLoading(mContext);
-        add(mService.getVerificationCode(mobile,"1")
+        add(mService.getVerificationCode(mobile, "1")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
@@ -41,6 +41,7 @@ public class MsmLoginPresenter extends BasePresenter<IMsmLoginContraction.View> 
                     }
                 }));
     }
+
     @Override
     public void login(String mobile, String type, String pwd, String openid) {
         add(mService.login(mobile, "", type, pwd, openid)

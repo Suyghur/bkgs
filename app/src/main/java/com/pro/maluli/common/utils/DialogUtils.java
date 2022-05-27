@@ -4,9 +4,6 @@ package com.pro.maluli.common.utils;
 
 
 import android.app.Activity;
-import android.os.Bundle;
-
-import com.pro.maluli.common.view.dialogview.LoginHelpDialogFragment;
 
 public class DialogUtils {
     /**
@@ -26,6 +23,7 @@ public class DialogUtils {
 
     /**
      * 登录弹出帮助框
+     *
      * @param activity
      */
     public static void showLoginHelpDialogFragment(Activity activity) {

@@ -9,8 +9,9 @@ import com.marvhong.videoeffect.FillMode;
 import com.marvhong.videoeffect.FillModeCustomItem;
 import com.marvhong.videoeffect.Resolution;
 import com.marvhong.videoeffect.Rotation;
-import com.marvhong.videoeffect.filter.base.GlFilter;
 import com.marvhong.videoeffect.filter.IResolutionFilter;
+import com.marvhong.videoeffect.filter.base.GlFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -232,29 +233,6 @@ public class Mp4Composer {
         getExecutorService().shutdownNow();
     }
 
-
-    public interface Listener {
-        /**
-         * Called to notify progress.
-         *
-         * @param progress Progress in [0.0, 1.0] range, or negative value if progress is unknown.
-         */
-        void onProgress(double progress);
-
-        /**
-         * Called when transcode completed.
-         */
-        void onCompleted();
-
-        /**
-         * Called when transcode canceled.
-         */
-        void onCanceled();
-
-
-        void onFailed(Exception exception);
-    }
-
     private int getVideoRotation(String videoFilePath) {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         try {
@@ -282,6 +260,28 @@ public class Mp4Composer {
         retriever.release();
 
         return new Resolution(width, height);
+    }
+
+    public interface Listener {
+        /**
+         * Called to notify progress.
+         *
+         * @param progress Progress in [0.0, 1.0] range, or negative value if progress is unknown.
+         */
+        void onProgress(double progress);
+
+        /**
+         * Called when transcode completed.
+         */
+        void onCompleted();
+
+        /**
+         * Called when transcode canceled.
+         */
+        void onCanceled();
+
+
+        void onFailed(Exception exception);
     }
 
 }

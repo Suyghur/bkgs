@@ -2,24 +2,14 @@ package com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.module.LoadMoreModule;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.LiveListEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.view.myselfView.StarBar;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +17,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AnchorImgAdapter extends BaseQuickAdapter<AnchorInfoEntity.PictureBean,
         AnchorImgAdapter.ViewHolder> implements LoadMoreModule {

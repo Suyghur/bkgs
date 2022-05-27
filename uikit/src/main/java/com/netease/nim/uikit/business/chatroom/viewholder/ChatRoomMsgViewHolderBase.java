@@ -1,7 +1,6 @@
 package com.netease.nim.uikit.business.chatroom.viewholder;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -35,11 +34,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 public abstract class ChatRoomMsgViewHolderBase extends
         RecyclerViewHolder<BaseMultiItemFetchLoadAdapter, BaseViewHolder, ChatRoomMessage> {
 
-    public ChatRoomMsgViewHolderBase(BaseMultiItemFetchLoadAdapter adapter) {
-        super(adapter);
-        this.adapter = adapter;
-    }
-
+    public ImageView nameIconView;
     // basic
     protected View view;
 
@@ -66,16 +61,16 @@ public abstract class ChatRoomMsgViewHolderBase extends
     protected LinearLayout nameContainer;
 
     protected TextView readReceiptTextView;
-
-    private HeadImageView avatarLeft;
-
-    private HeadImageView avatarRight;
-
-    public ImageView nameIconView;
-
     // contentContainerView的默认长按事件。如果子类需要不同的处理，可覆盖onItemLongClick方法
     // 但如果某些子控件会拦截触摸消息，导致contentContainer收不到长按事件，子控件也可在inflate时重新设置
     protected View.OnLongClickListener longClickListener;
+    private HeadImageView avatarLeft;
+    private HeadImageView avatarRight;
+
+    public ChatRoomMsgViewHolderBase(BaseMultiItemFetchLoadAdapter adapter) {
+        super(adapter);
+        this.adapter = adapter;
+    }
 
     /// -- 以下接口可由子类覆盖或实现
     // 返回具体消息类型内容展示区域的layout res id

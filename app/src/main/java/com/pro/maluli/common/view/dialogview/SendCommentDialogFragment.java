@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SendCommentDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
+    public OnSendMsgListener onSelectGoldenListener;
     private Dialog mDetailDialog;
     private int mLastDiff = 0;//键盘弹出过程中最后的高度值
 
@@ -55,14 +56,8 @@ public class SendCommentDialogFragment extends BottomSheetDialogFragment impleme
         return mDetailDialog;
     }
 
-    public OnSendMsgListener onSelectGoldenListener;
-
     public void setOnConfirmListener(OnSendMsgListener onSelectGoldenListener) {
         this.onSelectGoldenListener = onSelectGoldenListener;
-    }
-
-    public interface OnSendMsgListener {
-        void sendMsg(String s);
     }
 
     @Nullable
@@ -141,6 +136,10 @@ public class SendCommentDialogFragment extends BottomSheetDialogFragment impleme
 
                 break;
         }
+    }
+
+    public interface OnSendMsgListener {
+        void sendMsg(String s);
     }
 }
 

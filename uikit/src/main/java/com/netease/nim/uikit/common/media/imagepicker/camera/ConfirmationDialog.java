@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
 import androidx.core.app.ActivityCompat;
 
 import com.netease.nim.uikit.R;
@@ -19,7 +20,7 @@ public class ConfirmationDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ActivityCompat.requestPermissions(getActivity(), CaptureActivity.VIDEO_PERMISSIONS,
-                                                          CaptureActivity.VIDEO_PERMISSIONS_REQUEST_CODE);
+                                CaptureActivity.VIDEO_PERMISSIONS_REQUEST_CODE);
                     }
                 }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override

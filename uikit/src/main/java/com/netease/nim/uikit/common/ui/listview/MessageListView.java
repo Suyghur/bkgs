@@ -26,6 +26,7 @@ public class MessageListView extends AutoRefreshListView {
             }
         }
     };
+    private boolean isScroll = false;
 
     public MessageListView(Context context) {
         super(context);
@@ -48,8 +49,6 @@ public class MessageListView extends AutoRefreshListView {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
-    private boolean isScroll = false;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
@@ -63,6 +62,22 @@ public class MessageListView extends AutoRefreshListView {
 
     public void setListViewEventListener(OnListViewEventListener listener) {
         this.listener = listener;
+    }
+
+    public void setAdapter(BaseAdapter adapter) {
+        // view reclaimer
+        viewReclaimer = adapter != null && adapter instanceof IViewReclaimer ? (IViewReclaimer) adapter : null;
+
+        super.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+    }
+
+    public interface OnListViewEventListener {
+        public void onListViewStartScroll();
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -88,21 +103,5 @@ public class MessageListView extends AutoRefreshListView {
 
             return true;
         }
-    }
-
-    public void setAdapter(BaseAdapter adapter) {
-        // view reclaimer
-        viewReclaimer = adapter != null && adapter instanceof IViewReclaimer ? (IViewReclaimer) adapter : null;
-
-        super.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
-    public interface OnListViewEventListener {
-        public void onListViewStartScroll();
     }
 }

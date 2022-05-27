@@ -1,16 +1,10 @@
 package com.netease.nim.uikit.business.session.viewholder;
 
-import android.app.Activity;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.netease.nim.uikit.R;
-import com.netease.nim.uikit.business.chatroom.adapter.ChatRoomMsgAdapter;
-import com.netease.nim.uikit.business.session.module.ModuleProxy;
-import com.netease.nim.uikit.business.session.module.list.MsgAdapter;
 import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 

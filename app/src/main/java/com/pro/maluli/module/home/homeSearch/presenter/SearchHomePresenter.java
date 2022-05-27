@@ -7,20 +7,17 @@ import com.google.gson.Gson;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.LiveListEntity;
-import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;
 
 public class SearchHomePresenter extends BasePresenter<ISearchHomeContraction.View> implements ISearchHomeContraction.Presenter {
+    public int page;
+    public String keyword;
     public SearchHomePresenter(Context context) {
         super(context);
     }
-
-    public int page;
-    public String  keyword;
-
 
     @Override
     public void getBkDetail() {

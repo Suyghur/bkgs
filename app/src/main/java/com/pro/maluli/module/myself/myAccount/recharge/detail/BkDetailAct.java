@@ -17,7 +17,6 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.SelectTimeDialog;
 import com.pro.maluli.common.view.popwindow.PayTypeAllPopupWindow;
 import com.pro.maluli.module.myself.myAccount.recharge.detail.adapter.BkDetailAdapter;

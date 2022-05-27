@@ -41,6 +41,10 @@ public class TaskFrequencyController {
         taskTime.clear();
     }
 
+    private static String makeKey(IControllableTask task) {
+        return task.getClass().getName() + "#" + task.tag();
+    }
+
     private static interface IControllableTask {
         public String tag();
     }
@@ -59,9 +63,5 @@ public class TaskFrequencyController {
         }
 
         public abstract void run();
-    }
-
-    private static String makeKey(IControllableTask task) {
-        return task.getClass().getName() + "#" + task.tag();
     }
 }

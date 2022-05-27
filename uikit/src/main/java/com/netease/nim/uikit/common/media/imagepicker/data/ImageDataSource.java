@@ -4,9 +4,10 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import android.text.TextUtils;
 
 import com.netease.nim.uikit.common.media.model.GLImage;
 
@@ -15,33 +16,31 @@ import java.util.ArrayList;
 
 
 /**
-
+ *
  */
 
 public class ImageDataSource extends CursorDataSource {
 
-    private final String[] IMAGE_PROJECTION = {     //查询图片需要的数据列
-                                                    MediaStore.MediaColumns.DISPLAY_NAME,
-                                                    //图片的显示名称  aaa.jpg
-                                                    MediaStore.MediaColumns.DATA,
-                                                    //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
-                                                    MediaStore.MediaColumns.SIZE,
-                                                    //图片的大小，long型  132492
-                                                    MediaStore.MediaColumns.WIDTH,
-                                                    //图片的宽度，int型  1920
-                                                    MediaStore.MediaColumns.HEIGHT,
-                                                    //图片的高度，int型  1080
-                                                    MediaStore.MediaColumns.MIME_TYPE,
-                                                    //图片的类型     image/jpeg
-                                                    MediaStore.MediaColumns.DATE_ADDED,
-                                                    //图片被添加的时间，long型  1450518608
-                                                    MediaStore.Images.ImageColumns.ORIENTATION,
-                                                    };
-
     private final static String IMAGE_SELECTION =
             MediaStore.Images.Media.MIME_TYPE + "!=? and " + MediaStore.Images.Media.MIME_TYPE + "!=?";
-
     private final static String[] IMAGE_SELECTION_ARGS = {"image/gif", "image/webp"};
+    private final String[] IMAGE_PROJECTION = {     //查询图片需要的数据列
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            //图片的显示名称  aaa.jpg
+            MediaStore.MediaColumns.DATA,
+            //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
+            MediaStore.MediaColumns.SIZE,
+            //图片的大小，long型  132492
+            MediaStore.MediaColumns.WIDTH,
+            //图片的宽度，int型  1920
+            MediaStore.MediaColumns.HEIGHT,
+            //图片的高度，int型  1080
+            MediaStore.MediaColumns.MIME_TYPE,
+            //图片的类型     image/jpeg
+            MediaStore.MediaColumns.DATE_ADDED,
+            //图片被添加的时间，long型  1450518608
+            MediaStore.Images.ImageColumns.ORIENTATION,
+    };
 
     //    private final static String IMAGE_SELECTION = MediaStore.Images.Media.MIME_TYPE + "!=?";
     //    private final static String[] IMAGE_SELECTION_ARGS = {"image/webp"};
@@ -63,10 +62,11 @@ public class ImageDataSource extends CursorDataSource {
     protected Uri getMediaStoreUri() {
         return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     }
-/* 解决小米手机上获取图片路径为null的情况
-* @param intent
-* @return
-        */
+
+    /* 解决小米手机上获取图片路径为null的情况
+     * @param intent
+     * @return
+     */
     public Uri getPictureUri(android.content.Intent intent) {
         Uri uri = intent.getData();
         String type = intent.getType();
@@ -79,7 +79,7 @@ public class ImageDataSource extends CursorDataSource {
                 buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=")
                         .append("'" + path + "'").append(")");
                 Cursor cur = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        new String[] { MediaStore.Images.ImageColumns._ID },
+                        new String[]{MediaStore.Images.ImageColumns._ID},
                         buff.toString(), null, null);
                 int index = 0;
                 for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
@@ -101,6 +101,7 @@ public class ImageDataSource extends CursorDataSource {
         }
         return uri;
     }
+
     @Override
     protected String[] getProjection() {
         return IMAGE_PROJECTION;
@@ -141,7 +142,7 @@ public class ImageDataSource extends CursorDataSource {
                 long imageSize = data.getLong(keySize);
                 File imageFile = new File(imagePath);
                 if (imageSize == 0) {
-                    imageSize = imageFile!=null? imageFile.length(): 0;
+                    imageSize = imageFile != null ? imageFile.length() : 0;
                 }
 
                 int imageWidth = data.getInt(keyWidth);

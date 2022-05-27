@@ -25,6 +25,7 @@ public class LiveMoreDialog extends DialogFragment implements View.OnClickListen
     private LinearLayout fenxiangLL, jvbaoLL, toupingLL, qingpingLL;
     private String imgurl;
     private boolean isAnchor;
+    private OnLiveControlListener onLiveControlListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class LiveMoreDialog extends DialogFragment implements View.OnClickListen
         isAnchor = getArguments().getBoolean("ISANCHOR", false);
         if (isAnchor) {
             jvbaoLL.setVisibility(View.GONE);
-        }else {
+        } else {
             jvbaoLL.setVisibility(View.VISIBLE);
 
         }
@@ -58,14 +59,8 @@ public class LiveMoreDialog extends DialogFragment implements View.OnClickListen
         return mDetailDialog;
     }
 
-    private OnLiveControlListener onLiveControlListener;
-
     public void setOnLiveControlListener(OnLiveControlListener onLiveControlListener) {
         this.onLiveControlListener = onLiveControlListener;
-    }
-
-    public interface OnLiveControlListener {
-        void operation(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -101,5 +96,9 @@ public class LiveMoreDialog extends DialogFragment implements View.OnClickListen
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnLiveControlListener {
+        void operation(int type);//0去申述，2去绑定
     }
 }

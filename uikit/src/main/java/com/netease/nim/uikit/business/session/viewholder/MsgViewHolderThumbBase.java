@@ -26,13 +26,20 @@ import java.io.File;
  */
 public abstract class MsgViewHolderThumbBase extends MsgViewHolderBase {
 
+    protected MsgThumbImageView thumbnail;
+    protected View progressCover;
+    protected TextView progressLabel;
     public MsgViewHolderThumbBase(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }
 
-    protected MsgThumbImageView thumbnail;
-    protected View progressCover;
-    protected TextView progressLabel;
+    public static int getImageMaxEdge() {
+        return (int) (165.0 / 320.0 * ScreenUtil.screenWidth);
+    }
+
+    public static int getImageMinEdge() {
+        return (int) (76.0 / 320.0 * ScreenUtil.screenWidth);
+    }
 
     @Override
     public void inflateContentView() {
@@ -134,14 +141,6 @@ public abstract class MsgViewHolderThumbBase extends MsgViewHolderBase {
 
     private int maskBg() {
         return R.drawable.nim_message_item_round_bg;
-    }
-
-    public static int getImageMaxEdge() {
-        return (int) (165.0 / 320.0 * ScreenUtil.screenWidth);
-    }
-
-    public static int getImageMinEdge() {
-        return (int) (76.0 / 320.0 * ScreenUtil.screenWidth);
     }
 
     protected abstract String thumbFromSourceFile(String path);

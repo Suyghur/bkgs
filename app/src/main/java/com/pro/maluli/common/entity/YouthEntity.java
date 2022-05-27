@@ -38,6 +38,15 @@ public class YouthEntity implements Serializable {
         this.bottom = bottom;
     }
 
+    @Override
+    public String toString() {
+        return "YouthEntity{" +
+                "member=" + member +
+                ", top=" + top +
+                ", bottom=" + bottom +
+                '}';
+    }
+
     public static class MemberBean implements Serializable {
 
         /**
@@ -203,14 +212,5 @@ public class YouthEntity implements Serializable {
                     ", image='" + image + '\'' +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "YouthEntity{" +
-                "member=" + member +
-                ", top=" + top +
-                ", bottom=" + bottom +
-                '}';
     }
 }

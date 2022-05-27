@@ -11,10 +11,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.netease.nim.uikit.common.ToastHelper;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.util.string.StringTextWatcher;
@@ -30,8 +30,8 @@ import com.netease.nimlib.sdk.team.constant.TeamFieldEnum;
  */
 public class TeamPropertySettingActivity extends UI implements View.OnClickListener {
 
-    private static final String EXTRA_TID = "EXTRA_TID";
     public static final String EXTRA_DATA = "EXTRA_DATA";
+    private static final String EXTRA_TID = "EXTRA_TID";
     private static final String EXTRA_FIELD = "EXTRA_FIELD";
 
     // view

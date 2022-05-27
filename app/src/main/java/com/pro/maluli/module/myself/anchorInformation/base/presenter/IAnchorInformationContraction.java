@@ -14,6 +14,7 @@ public interface IAnchorInformationContraction extends BaseView {
 
         void setAboutMeInfo(AboutMeEntity data);
     }
+
     interface Presenter extends IClear {
 
         void getAnchorInfo(String anchorID);

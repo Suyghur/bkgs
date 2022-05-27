@@ -28,7 +28,7 @@ public class ExtractFrameWorkThread extends Thread {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.thumbnailsCount = thumbnailsCount;
-        this.mVideoExtractFrameAsyncUtils = new VideoExtractFrameAsyncUtils(extractW,extractH,mHandler);
+        this.mVideoExtractFrameAsyncUtils = new VideoExtractFrameAsyncUtils(extractW, extractH, mHandler);
     }
 
     @Override

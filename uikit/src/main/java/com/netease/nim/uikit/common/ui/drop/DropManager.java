@@ -15,47 +15,21 @@ import com.netease.nim.uikit.common.util.sys.ScreenUtil;
  */
 public class DropManager {
 
+    static final int TEXT_SIZE = ScreenUtil.sp2px(12); // 12sp
+    static final int CIRCLE_RADIUS = ScreenUtil.dip2px(10); // 10dip
     // constant
     private static final String TAG = "DropManager";
-
-    static final int TEXT_SIZE = ScreenUtil.sp2px(12); // 12sp
-
-    static final int CIRCLE_RADIUS = ScreenUtil.dip2px(10); // 10dip
-
-    public interface IDropListener {
-        void onDropBegin();
-
-        void onDropEnd();
-    }
-
     // single instance
     private static DropManager instance;
-
-    public static synchronized DropManager getInstance() {
-        if (instance == null) {
-            instance = new DropManager();
-        }
-
-        return instance;
-    }
-
     // field
     private boolean isTouchable; // 是否响应按键事件，如果一个红点已经在响应，其它红点就不响应，同一界面始终最多只有一个红点响应触摸
-
     private int statusBarHeight; // 状态栏(通知栏)高度
-
     private DropCover dropCover; // Drop全屏动画
-
     private Object currentId; // 当前正在执行动画的业务节点
-
     private TextPaint textPaint; // 文本画笔共享
-
     private float textYOffset; // 文本y轴居中需要的offset
-
     private Paint circlePaint; // 圆形画笔共享
-
     private IDropListener innerListener; // 红点拖拽动画监听器
-
     private boolean enable;
     private int[] explosionResIds = new int[]{
             R.drawable.nim_explosion_one,
@@ -64,6 +38,14 @@ public class DropManager {
             R.drawable.nim_explosion_four,
             R.drawable.nim_explosion_five
     };
+
+    public static synchronized DropManager getInstance() {
+        if (instance == null) {
+            instance = new DropManager();
+        }
+
+        return instance;
+    }
 
     // interface
     public void init(Context context, DropCover dropCover, DropCover.IDropCompletedListener listener) {
@@ -162,12 +144,12 @@ public class DropManager {
         }
     }
 
-    public void setCurrentId(Object currentId) {
-        this.currentId = currentId;
-    }
-
     public Object getCurrentId() {
         return currentId;
+    }
+
+    public void setCurrentId(Object currentId) {
+        this.currentId = currentId;
     }
 
     public Paint getCirclePaint() {
@@ -211,5 +193,11 @@ public class DropManager {
 
     public void setDropListener(IDropListener listener) {
         this.innerListener = listener;
+    }
+
+    public interface IDropListener {
+        void onDropBegin();
+
+        void onDropEnd();
     }
 }

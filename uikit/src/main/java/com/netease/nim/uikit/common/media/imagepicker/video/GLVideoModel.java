@@ -7,36 +7,28 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
-
+ *
  */
 
 public class GLVideoModel implements GLVideoView.Callback {
-    private int userStatus = sUserStop;
-    private int physicalStatus = sPhysicalDestroy;
-
     private static final int sUserPaused = 1;
     private static final int sUserPlaying = 2;
     private static final int sUserStop = 3;
-
     private static final int sPhysicalDestroy = 1;
     private static final int sPhysicalAvailable = 2;
-
-    // 播放状态
-    private int playerStatus = sPlayerStop;
-
     private static final int sPlayerStop = 1;
     private static final int sPlayerPlay = 2;
     private static final int sPlayerPaused = 3;
     private static final int sPlayerError = 4;
     private static final int sPlayerLoading = 5; // seek or prepare
     private static final int sPlayerComplete = 6;
-
-    private GLVideoModel.Callback callback;
-
-    private List<ModelObserver> observers = new LinkedList<>();
-
     private final Uri uri;
-
+    private int userStatus = sUserStop;
+    private int physicalStatus = sPhysicalDestroy;
+    // 播放状态
+    private int playerStatus = sPlayerStop;
+    private GLVideoModel.Callback callback;
+    private List<ModelObserver> observers = new LinkedList<>();
     private GLVideoView attachedVideoView;
 
     private int current;
@@ -51,12 +43,12 @@ public class GLVideoModel implements GLVideoView.Callback {
         this.feedDuration = duration;
     }
 
-    public void attachVideoView(GLVideoView videoView){
-        if (videoView == attachedVideoView){
+    public void attachVideoView(GLVideoView videoView) {
+        if (videoView == attachedVideoView) {
             return;
         }
 
-        if (attachedVideoView != null){
+        if (attachedVideoView != null) {
             attachedVideoView.setCallback(null);
             attachedVideoView = null;
         }
@@ -64,29 +56,29 @@ public class GLVideoModel implements GLVideoView.Callback {
         attachedVideoView = videoView;
     }
 
-    public void fireAttachSurface(){
-        if (attachedVideoView != null){
+    public void fireAttachSurface() {
+        if (attachedVideoView != null) {
             attachedVideoView.setCallback(this);
         }
     }
 
-    public boolean isSurfaceAvailable(){
+    public boolean isSurfaceAvailable() {
         return sPhysicalAvailable == physicalStatus;
     }
 
-    public boolean isPlayerPlay(){
+    public boolean isPlayerPlay() {
         return playerStatus == sPlayerPlay;
     }
 
-    public boolean isPlayerPaused(){
+    public boolean isPlayerPaused() {
         return playerStatus == sPlayerPaused;
     }
 
-    public boolean isPlayerStopped(){
+    public boolean isPlayerStopped() {
         return playerStatus == sPlayerStop;
     }
 
-    public boolean isPlayerError(){
+    public boolean isPlayerError() {
         return playerStatus == sPlayerError;
     }
 
@@ -98,8 +90,8 @@ public class GLVideoModel implements GLVideoView.Callback {
         return playerStatus == sPlayerComplete;
     }
 
-    private boolean setPlayerStatus(int status){
-        if (playerStatus != status){
+    private boolean setPlayerStatus(int status) {
+        if (playerStatus != status) {
             playerStatus = status;
             notifyModelChanged();
             return true;
@@ -107,115 +99,115 @@ public class GLVideoModel implements GLVideoView.Callback {
         return false;
     }
 
-    public void setPlayerStop(){
+    public void setPlayerStop() {
         setPlayerStatus(sPlayerStop);
     }
 
-    public void setPlayerPlay(){
+    public void setPlayerPlay() {
         setPlayerStatus(sPlayerPlay);
     }
 
-    public void setPlayerLoading(){
+    public void setPlayerLoading() {
         setPlayerStatus(sPlayerLoading);
     }
 
-    public void setPlayerComplete(){
+    public void setPlayerComplete() {
         boolean success = setPlayerStatus(sPlayerComplete);
 
-        if (success){
+        if (success) {
             userPause();
         }
     }
 
-    public void setPlayerError(){
+    public void setPlayerError() {
         boolean success = setPlayerStatus(sPlayerError);
 
-        if (success){
+        if (success) {
             userStop();
         }
     }
 
-    public void setPlayerPaused(){
+    public void setPlayerPaused() {
         setPlayerStatus(sPlayerPaused);
     }
 
-    public void userPlay(){
+    public void userPlay() {
         int current = userStatus;
-        if (current != sUserPlaying){
+        if (current != sUserPlaying) {
             userStatus = sUserPlaying;
         }
         userChanged();
     }
 
-    public void userPause(){
+    public void userPause() {
         int current = userStatus;
-        if (current != sUserPaused){
+        if (current != sUserPaused) {
             userStatus = sUserPaused;
             userChanged();
         }
     }
 
-    public void userStop(){
+    public void userStop() {
         int current = userStatus;
-        if (current != sUserStop){
+        if (current != sUserStop) {
             userStatus = sUserStop;
         }
         userChanged();
     }
 
-    public void physicalPlay(){
+    public void physicalPlay() {
         int current = physicalStatus;
-        if (current == sPhysicalDestroy){
+        if (current == sPhysicalDestroy) {
             physicalStatus = sPhysicalAvailable;
             physicalChanged();
         }
     }
 
-    public void physicalPause(){
+    public void physicalPause() {
         int current = physicalStatus;
-        if (current == sPhysicalAvailable){
+        if (current == sPhysicalAvailable) {
             physicalStatus = sPhysicalDestroy;
             physicalChanged();
         }
     }
 
-    private void physicalChanged(){
+    private void physicalChanged() {
         mergePlayerStatus();
     }
 
-    private void userChanged(){
+    private void userChanged() {
         mergePlayerStatus();
     }
 
-    private void mergePlayerStatus(){
-        if (playerStatus == sPlayerError || playerStatus == sPlayerLoading){
-            if (userStatus == sUserStop || physicalStatus == sPhysicalDestroy){
-                if (callback != null){
+    private void mergePlayerStatus() {
+        if (playerStatus == sPlayerError || playerStatus == sPlayerLoading) {
+            if (userStatus == sUserStop || physicalStatus == sPhysicalDestroy) {
+                if (callback != null) {
                     callback.onNeedStop();
                 }
                 return;
             }
         }
 
-        if (playerStatus == sPlayerPaused){
-            if (userStatus == sUserStop){
-                if (callback != null){
+        if (playerStatus == sPlayerPaused) {
+            if (userStatus == sUserStop) {
+                if (callback != null) {
                     callback.onNeedStop();
                 }
                 return;
             }
         }
 
-        if (playerStatus == sPlayerPlay){
-            if (userStatus == sUserPaused || physicalStatus == sPhysicalDestroy){
-                if (callback != null){
+        if (playerStatus == sPlayerPlay) {
+            if (userStatus == sUserPaused || physicalStatus == sPhysicalDestroy) {
+                if (callback != null) {
                     callback.onNeedPause();
                 }
                 return;
             }
 
-            if (userStatus == sUserStop){
-                if (callback != null){
+            if (userStatus == sUserStop) {
+                if (callback != null) {
                     callback.onNeedPause();
                     callback.onNeedStop();
                 }
@@ -223,18 +215,18 @@ public class GLVideoModel implements GLVideoView.Callback {
             }
         }
 
-        if (playerStatus == sPlayerPaused || playerStatus == sPlayerComplete){
-            if (userStatus == sUserPlaying && physicalStatus == sPhysicalAvailable){
-                if (callback != null){
+        if (playerStatus == sPlayerPaused || playerStatus == sPlayerComplete) {
+            if (userStatus == sUserPlaying && physicalStatus == sPhysicalAvailable) {
+                if (callback != null) {
                     callback.onNeedStart();
                     return;
                 }
             }
         }
 
-        if (playerStatus == sPlayerError || playerStatus == sPlayerStop){
-            if (userStatus == sUserPlaying && physicalStatus == sPhysicalAvailable){
-                if (callback != null){
+        if (playerStatus == sPlayerError || playerStatus == sPlayerStop) {
+            if (userStatus == sUserPlaying && physicalStatus == sPhysicalAvailable) {
+                if (callback != null) {
                     callback.onNeedPlay(current);
                     return;
                 }
@@ -242,8 +234,8 @@ public class GLVideoModel implements GLVideoView.Callback {
         }
     }
 
-    public void notifyModelChanged(){
-        for (ModelObserver observer : observers){
+    public void notifyModelChanged() {
+        for (ModelObserver observer : observers) {
             observer.onModelChanged(this);
         }
     }
@@ -252,21 +244,21 @@ public class GLVideoModel implements GLVideoView.Callback {
         this.callback = callback;
     }
 
-    public void addObserver(ModelObserver observer){
+    public void addObserver(ModelObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(ModelObserver observer){
+    public void removeObserver(ModelObserver observer) {
         observers.remove(observer);
     }
 
-    public void removeObservers(){
+    public void removeObservers() {
         observers.clear();
     }
 
     @Override
     public void onSurfaceAvailable(Surface surface) {
-        if (callback != null){
+        if (callback != null) {
             callback.onModelTextureAvailable(this, surface);
         }
 
@@ -275,7 +267,7 @@ public class GLVideoModel implements GLVideoView.Callback {
 
     @Override
     public void onSurfaceDestroyed() {
-        if (callback != null){
+        if (callback != null) {
             callback.onModelTextureDestroy(this);
         }
 
@@ -291,7 +283,7 @@ public class GLVideoModel implements GLVideoView.Callback {
         this.current = current;
     }
 
-    public void setPlayDuration(int duration){
+    public void setPlayDuration(int duration) {
         this.duration = duration;
     }
 
@@ -302,7 +294,7 @@ public class GLVideoModel implements GLVideoView.Callback {
 
     // ms
     public long getDuration() {
-        if (feedDuration != 0){
+        if (feedDuration != 0) {
             return feedDuration;
         }
 
@@ -315,7 +307,7 @@ public class GLVideoModel implements GLVideoView.Callback {
     }
 
     public void setVideoSize(int width, int height) {
-        if (width != this.videoWidth || height != this.viewHeight){
+        if (width != this.videoWidth || height != this.viewHeight) {
             this.videoWidth = width;
             this.viewHeight = height;
             notifyModelChanged();
@@ -332,10 +324,15 @@ public class GLVideoModel implements GLVideoView.Callback {
 
     public interface Callback {
         void onModelTextureAvailable(GLVideoModel model, Surface surface);
+
         void onModelTextureDestroy(GLVideoModel model);
+
         void onNeedPlay(int position);
+
         void onNeedStop();
+
         void onNeedPause();
+
         void onNeedStart();
     }
 

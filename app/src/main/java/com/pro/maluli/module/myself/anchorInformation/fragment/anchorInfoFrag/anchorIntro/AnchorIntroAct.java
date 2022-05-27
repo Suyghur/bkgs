@@ -1,26 +1,20 @@
 package com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.anchorIntro;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.netease.nim.uikit.common.ToastHelper;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.anchorIntro.presenter.IAnchorIntroContraction;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.anchorIntro.presenter.AnchorIntroPresenter;
-import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.YouthPasswordAct;
+import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.anchorIntro.presenter.IAnchorIntroContraction;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,7 +32,7 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
     @BindView(R.id.subMitTv)
     TextView subMitTv;
     String desc;
-    int maxDesc =200;
+    int maxDesc = 200;
 
     @Override
     public AnchorIntroPresenter initPresenter() {

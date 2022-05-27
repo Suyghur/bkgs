@@ -13,7 +13,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.LiveListEntity;
-import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.myselfView.StarBar;
 
@@ -54,14 +53,14 @@ public class SearchHomeAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.
 //        baseViewHolder.abilityStar.setStarMark(bean.getStart());
         baseViewHolder.abilityStar.setStarCount(bean.getStart() == 0 ? 1 : bean.getStart());
 
-        GlideUtils.loadImage(context,bean.getImage(),baseViewHolder.CoverRiv);
-        GlideUtils.loadImage(context,bean.getAvatar(),baseViewHolder.anchorAvatarCiv);
-        GlideUtils.loadImage(context,bean.getLevel(),baseViewHolder.levelImg);
+        GlideUtils.loadImage(context, bean.getImage(), baseViewHolder.CoverRiv);
+        GlideUtils.loadImage(context, bean.getAvatar(), baseViewHolder.anchorAvatarCiv);
+        GlideUtils.loadImage(context, bean.getLevel(), baseViewHolder.levelImg);
         baseViewHolder.anchorNameTv.setText(bean.getNickname());
 
 
 //       type 直播间类型 (1:一对一, 2:一对多,3:接受预约,4:闲置中)
-        switch (bean.getType()){
+        switch (bean.getType()) {
             case 0:
                 baseViewHolder.statusLL.setVisibility(View.GONE);
                 break;
@@ -82,6 +81,7 @@ public class SearchHomeAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.
         }
 
     }
+
     static class ViewHolder extends BaseViewHolder {
         @BindView(R.id.CoverRiv)
         RoundedImageView CoverRiv;

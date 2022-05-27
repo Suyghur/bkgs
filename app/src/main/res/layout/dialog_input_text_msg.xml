@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical"
     android:elevation="5dp"
+    android:orientation="vertical"
+    android:outlineAmbientShadowColor="#595151"
+    android:outlineSpotShadowColor="#595151"
     android:transformPivotY="-5dp"
     android:translationY="5dp"
-    android:outlineSpotShadowColor="#595151"
-    android:outlineAmbientShadowColor="#595151"
     android:visibility="visible">
 
     <RelativeLayout
@@ -26,11 +26,12 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="45dp"
             android:background="@null"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="top|left"
             android:hint="留下你的精彩评论吧~~"
             android:imeActionLabel="发送"
-            android:cursorVisible="true"
-            android:textCursorDrawable="@drawable/shape_edit_cursor"
             android:imeOptions="actionDone"
             android:lineSpacingMultiplier="1.1"
             android:maxHeight="120dp"
@@ -42,9 +43,8 @@
             android:paddingBottom="10dp"
             android:textColor="@color/black_21"
             android:textColorHint="#6f6f6f"
+            android:textCursorDrawable="@drawable/shape_edit_cursor"
             android:textSize="@dimen/text_size_15"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             tools:ignore="InvalidImeActionId" />
 
 

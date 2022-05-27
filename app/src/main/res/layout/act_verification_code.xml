@@ -1,6 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,19 +7,19 @@
     <include layout="@layout/top_titlebar_layout" />
 
     <TextView
-        android:layout_marginLeft="@dimen/dp_25"
-        android:layout_marginTop="@dimen/dp_21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_25"
+        android:layout_marginTop="@dimen/dp_21"
         android:text="请输入验证码"
         android:textColor="@color/c_000000"
         android:textSize="@dimen/sp_28" />
 
     <TextView
-        android:layout_marginTop="@dimen/dp_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_25"
+        android:layout_marginTop="@dimen/dp_10"
         android:text="请输入您收取到的验证码"
         android:textColor="@color/c_95928e"
         android:textSize="@dimen/sp_14" />
@@ -28,26 +27,26 @@
 
     <com.pro.maluli.common.view.myselfView.VerifyEditText
         android:id="@+id/verifyEditText"
-        android:focusable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_25"
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_25"
+        android:focusable="true"
         android:inputType="number"
         app:totalCount="6" />
+
     <TextView
         android:id="@+id/countdownTV"
-        android:layout_marginTop="@dimen/dp_25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_25"
+        android:layout_marginTop="@dimen/dp_25"
         android:text="60秒后重新获取"
         android:textColor="@color/c_95928e"
         android:textSize="@dimen/sp_14" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/reGetCodeTv"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_42"
@@ -57,5 +56,6 @@
         android:gravity="center"
         android:text="重新获取"
         android:textColor="@color/white"
-        android:textSize="@dimen/dp_16" />
+        android:textSize="@dimen/dp_16"
+        android:visibility="gone" />
 </LinearLayout>

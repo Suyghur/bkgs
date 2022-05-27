@@ -9,6 +9,7 @@ public interface IAboutMeContraction extends BaseView {
 
         void setAboutMeInfo(AboutMeEntity data);
     }
+
     interface Presenter extends IClear {
 
         void getAboutInfo();

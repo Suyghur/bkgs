@@ -54,8 +54,8 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
     @BindView(R.id.inputMaxTv)
     TextView inputMaxTv;
     String videoUrl, videoUrlOnUpdate;
-    private int maxVideoTime;
     ActivityResultLauncher<Intent> intentActivityResultLauncher;
+    private int maxVideoTime;
 
     @Override
     public AddVideoPresenter initPresenter() {

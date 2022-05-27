@@ -60,7 +60,7 @@ public class ImageLoaderKit {
         try {
             cachedBitmap = Glide.with(context).asBitmap().load(url).apply(
                     new RequestOptions().centerCrop().override(imageSize, imageSize)).submit().get(200,
-                                                                                                   TimeUnit.MILLISECONDS)// 最大等待200ms
+                    TimeUnit.MILLISECONDS)// 最大等待200ms
             ;
         } catch (Exception e) {
             e.printStackTrace();

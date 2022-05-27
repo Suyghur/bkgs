@@ -1,11 +1,10 @@
 package com.pro.maluli.common.utils;
 
-import okhttp3.*;
-
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
+import okhttp3.ConnectionPool;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 
 /**
  * HttpUtil封装，异步连接池模式
@@ -36,15 +35,11 @@ public class HttpUtil {
 //     */
 //    private static OkHttpClient client=null;
     /**
-     * 静态连接池对象
-     */
-    private static ConnectionPool mConnectionPool = new ConnectionPool(connectionPoolSize, 30, TimeUnit.MINUTES);
-    //executor = new ThreadPoolExecutor(0, 2147483647, ...这个是静态的，21亿连接数量
-//    private static RealConnectionPool mConnectionPool=new RealConnectionPool(connectionPoolSize, 30, TimeUnit.MINUTES);
-    /**
      * ContentType
      */
     private static final String ContentType = "application/json;charset=utf-8";
+    //executor = new ThreadPoolExecutor(0, 2147483647, ...这个是静态的，21亿连接数量
+//    private static RealConnectionPool mConnectionPool=new RealConnectionPool(connectionPoolSize, 30, TimeUnit.MINUTES);
     /**
      * AcceptType
      */
@@ -53,6 +48,10 @@ public class HttpUtil {
      * Content-Type
      */
     private static final MediaType MediaType_ContentType = MediaType.parse(ContentType);
+    /**
+     * 静态连接池对象
+     */
+    private static ConnectionPool mConnectionPool = new ConnectionPool(connectionPoolSize, 30, TimeUnit.MINUTES);
 
     /**
      * 获取Http Client对象

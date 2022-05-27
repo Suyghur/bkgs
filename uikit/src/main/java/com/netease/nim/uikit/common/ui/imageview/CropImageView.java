@@ -21,13 +21,10 @@ import java.io.IOException;
 public class CropImageView extends MultiTouchZoomableImageView {
 
     private static final int MARGIN = 50;
-
-    private int outputX;
-    private int outputY;
-
     Paint shadowPaint;
     Paint linePaint;
-
+    private int outputX;
+    private int outputY;
     private Rect drawRect;
     private Rect selection;
 

@@ -37,6 +37,6 @@ public class GiftProvide extends BaseItemProvider<ChatRoomMessage> {
         CustomizeInfoEntity entity = new CustomizeInfoEntity();
         CustomizeInfoEntity entity1 = entity.goJsonYes(alldata);
         baseViewHolder.setText(R.id.msgTv, "送出" + entity1.getGift_name());
-        GlideUtils.loadImage(getContext(),entity1.getGift_logo(),giftImg);
+        GlideUtils.loadImage(getContext(), entity1.getGift_logo(), giftImg);
     }
 }

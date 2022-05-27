@@ -45,106 +45,6 @@ public class MessageHelper {
         return InstanceHolder.instance;
     }
 
-    static class InstanceHolder {
-        final static MessageHelper instance = new MessageHelper();
-    }
-
-    // 消息撤回
-    public void onRevokeMessage(IMMessage item, String revokeAccount) {
-        onRevokeMessage(item, revokeAccount, null, null);
-    }
-
-    public void onRevokeMessage(IMMessage item, String revokeAccount, String attach, String callbackExt) {
-        if (item == null) {
-            return;
-        }
-        IMMessage message = MessageBuilder.createTipMessage(item.getSessionId(), item.getSessionType());
-        message.setContent(MessageRevokeTip.getRevokeTipContent(item, revokeAccount));
-        message.setStatus(MsgStatusEnum.success);
-        CustomMessageConfig config = new CustomMessageConfig();
-        config.enableUnreadCount = false;
-        message.setConfig(config);
-        if (!TextUtils.isEmpty(attach) || !TextUtils.isEmpty(callbackExt)) {
-            Map<String, Object> localExt = new HashMap<>();
-            if (!TextUtils.isEmpty(attach)) {
-                localExt.put("attach", attach);
-            }
-            if (!TextUtils.isEmpty(callbackExt)) {
-                localExt.put("callbackExt", callbackExt);
-            }
-            message.setLocalExtension(localExt);
-        }
-        NIMClient.getService(MsgService.class).saveMessageToLocalEx(message, true, item.getTime());
-    }
-
-    /**
-     * 从 mItems 按顺序取出被勾选的消息
-     *
-     * @return 被勾选的消息
-     */
-    public LinkedList<IMMessage> getCheckedItems(List<IMMessage> items) {
-        LinkedList<IMMessage> checkedList = new LinkedList<>();
-        for (IMMessage msg : items) {
-            if (msg.isChecked()) {
-                checkedList.add(msg);
-            }
-        }
-        return checkedList;
-    }
-
-    /**
-     * 通过id和type，从本地存储中查询对应的群名或用户名
-     *
-     * @param id          群或用户的id
-     * @param sessionType 会话类型
-     * @return id对应的昵称
-     */
-    public String getStoredNameFromSessionId(final String id, final SessionTypeEnum sessionType) {
-        switch (sessionType) {
-            case P2P:
-                //读取对方用户名称
-                NimUserInfo userInfo = NIMClient.getService(UserService.class).getUserInfo(id);
-                if (userInfo == null) {
-                    return null;
-                }
-                return userInfo.getName();
-            case Team:
-                //获取群信息
-                Team team = NimUIKit.getTeamProvider().getTeamById(id);
-                if (team == null) {
-                    return null;
-                }
-                return team.getName();
-            case SUPER_TEAM:
-                //获取群信息
-                SuperTeam superTeam = NimUIKit.getSuperTeamProvider().getTeamById(id);
-                if (superTeam == null) {
-                    return null;
-                }
-                return superTeam.getName();
-            default:
-                return null;
-        }
-    }
-
-
-
-    /**
-     * 判断消息是否被加入合并转发
-     *
-     * @param message 待测消息
-     * @return true: 可以; false: 不能
-     */
-    public boolean isAvailableInMultiRetweet(IMMessage message) {
-        if (message == null) {
-            return false;
-        }
-        MsgTypeEnum msgType = message.getMsgType();
-        //过滤掉不能单条转发的消息、null、未知类型消息、音视频通话、通知消息和提醒类消息
-        return !NimUIKitImpl.getMsgForwardFilter().shouldIgnore(message) && msgType != null && !MsgTypeEnum.undef.equals(msgType) && !MsgTypeEnum.avchat.equals(msgType) && !MsgTypeEnum.notification.equals(msgType) && !MsgTypeEnum.tip.equals(msgType);
-    }
-
-
     /**
      * 根据ids字段设置P2P AVChat消息的发送方向和发送者
      *
@@ -267,7 +167,7 @@ public class MessageHelper {
             return new Pair<>(null, "");
         }
         String[] sessionIdArr = idStr.split("\\|");
-        if (sessionIdArr.length < 2){
+        if (sessionIdArr.length < 2) {
             //不能为None否则可能成为加载更多项，而且因为不在最后而不稳定
             return new Pair<>(null, "");
         }
@@ -292,7 +192,7 @@ public class MessageHelper {
      * 将会话类型和会话ID组合成具有唯一性的会话ID字符串
      *
      * @param sessionType 会话类型，可以填P2P/Team/SUPER_TEAM，否则返回""
-     * @param sessionId 会话ID，如果为空，返回""
+     * @param sessionId   会话ID，如果为空，返回""
      * @return 拆解结果，first: 会话类型; second: 会话ID
      */
     public static String combineSessionKey(SessionTypeEnum sessionType, String sessionId) {
@@ -315,5 +215,102 @@ public class MessageHelper {
         }
 
         return typeStr + "|" + sessionId;
+    }
+
+    // 消息撤回
+    public void onRevokeMessage(IMMessage item, String revokeAccount) {
+        onRevokeMessage(item, revokeAccount, null, null);
+    }
+
+    public void onRevokeMessage(IMMessage item, String revokeAccount, String attach, String callbackExt) {
+        if (item == null) {
+            return;
+        }
+        IMMessage message = MessageBuilder.createTipMessage(item.getSessionId(), item.getSessionType());
+        message.setContent(MessageRevokeTip.getRevokeTipContent(item, revokeAccount));
+        message.setStatus(MsgStatusEnum.success);
+        CustomMessageConfig config = new CustomMessageConfig();
+        config.enableUnreadCount = false;
+        message.setConfig(config);
+        if (!TextUtils.isEmpty(attach) || !TextUtils.isEmpty(callbackExt)) {
+            Map<String, Object> localExt = new HashMap<>();
+            if (!TextUtils.isEmpty(attach)) {
+                localExt.put("attach", attach);
+            }
+            if (!TextUtils.isEmpty(callbackExt)) {
+                localExt.put("callbackExt", callbackExt);
+            }
+            message.setLocalExtension(localExt);
+        }
+        NIMClient.getService(MsgService.class).saveMessageToLocalEx(message, true, item.getTime());
+    }
+
+    /**
+     * 从 mItems 按顺序取出被勾选的消息
+     *
+     * @return 被勾选的消息
+     */
+    public LinkedList<IMMessage> getCheckedItems(List<IMMessage> items) {
+        LinkedList<IMMessage> checkedList = new LinkedList<>();
+        for (IMMessage msg : items) {
+            if (msg.isChecked()) {
+                checkedList.add(msg);
+            }
+        }
+        return checkedList;
+    }
+
+    /**
+     * 通过id和type，从本地存储中查询对应的群名或用户名
+     *
+     * @param id          群或用户的id
+     * @param sessionType 会话类型
+     * @return id对应的昵称
+     */
+    public String getStoredNameFromSessionId(final String id, final SessionTypeEnum sessionType) {
+        switch (sessionType) {
+            case P2P:
+                //读取对方用户名称
+                NimUserInfo userInfo = NIMClient.getService(UserService.class).getUserInfo(id);
+                if (userInfo == null) {
+                    return null;
+                }
+                return userInfo.getName();
+            case Team:
+                //获取群信息
+                Team team = NimUIKit.getTeamProvider().getTeamById(id);
+                if (team == null) {
+                    return null;
+                }
+                return team.getName();
+            case SUPER_TEAM:
+                //获取群信息
+                SuperTeam superTeam = NimUIKit.getSuperTeamProvider().getTeamById(id);
+                if (superTeam == null) {
+                    return null;
+                }
+                return superTeam.getName();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * 判断消息是否被加入合并转发
+     *
+     * @param message 待测消息
+     * @return true: 可以; false: 不能
+     */
+    public boolean isAvailableInMultiRetweet(IMMessage message) {
+        if (message == null) {
+            return false;
+        }
+        MsgTypeEnum msgType = message.getMsgType();
+        //过滤掉不能单条转发的消息、null、未知类型消息、音视频通话、通知消息和提醒类消息
+        return !NimUIKitImpl.getMsgForwardFilter().shouldIgnore(message) && msgType != null && !MsgTypeEnum.undef.equals(msgType) && !MsgTypeEnum.avchat.equals(msgType) && !MsgTypeEnum.notification.equals(msgType) && !MsgTypeEnum.tip.equals(msgType);
+    }
+
+    static class InstanceHolder {
+        final static MessageHelper instance = new MessageHelper();
     }
 }

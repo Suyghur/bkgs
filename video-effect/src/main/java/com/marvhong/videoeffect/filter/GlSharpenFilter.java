@@ -1,6 +1,7 @@
 package com.marvhong.videoeffect.filter;
 
 import android.opengl.GLES20;
+
 import com.marvhong.videoeffect.Resolution;
 import com.marvhong.videoeffect.filter.base.GlFilter;
 

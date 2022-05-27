@@ -74,7 +74,8 @@ public class NimApplication extends Application {
 
 > 除了 `NimUIKit.init(this)` 是必须的以外，其他均为可选配置项。可参考[Uikit全局配置项介绍](./documents/Uikit全局配置项介绍.md)
 
-`UIKit` 中用到的 `Activity` 已经在 `UIKit` 工程的 `AndroidManifest.xml` 文件中注册好，上层 APP 无需再去添加注册。除观看视频的 `WatchVideoActivity` 需要用到黑色主题，因此单独定义 `style` 外，其他 `Activity` 均使用项目默认主题。
+`UIKit` 中用到的 `Activity` 已经在 `UIKit` 工程的 `AndroidManifest.xml` 文件中注册好，上层 APP 无需再去添加注册。除观看视频的 `WatchVideoActivity` 需要用到黑色主题，因此单独定义 `style` 外，其他 `Activity`
+均使用项目默认主题。
 
 同只使用 nimlib SDK 一样，需要参考接入云信 SDK 指南文档，在 `AndroidManifest.xml` 文件中声明云信 SDK 所用到的 `Service` 和 `BroadcastReceiver` 组件。
 
@@ -170,7 +171,6 @@ NimUIKit.startTeamSession(context, teamId, anchor);
 UIKit 中 RecentContactsFragment 以 fragment 方式实现了最近联系人列表的功能，开发者只需要将该 fragment 集成到自身的 fragment 或者 Activity 中即可。
 
 `RecentContactsFragment` 实现了默认的列表点击事件处理，点击列表项将会直接跳转至默认的单聊或者群聊界面。
-
 
 #### <span id="静态集成">静态集成</span>
 
@@ -270,7 +270,6 @@ public class ContactListFragment extends MainTabFragment {
 | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
 | ![image](https://github.com/netease-im/NIM_Resources/blob/master/Android/Images/snapchat.gif) | ![image](https://github.com/netease-im/NIM_Resources/blob/master/Android/Images/selector.gif) | ![image](https://github.com/netease-im/NIM_Resources/blob/master/Android/Images/recent_delete.gif) |
 
-
 ## <span id="深度定制">深度定制</span>
 
 对于一般场景，`UIKit` 已经完全够用，使用当 `UIKit` 默认实现不足以满足需求，那么该如何进行定制化和扩展，这就需要开发者对其整体架构和构建思路有所了解。按照以下步骤，逐步掌握深度定制：
@@ -294,4 +293,5 @@ public class ContactListFragment extends MainTabFragment {
 9\. [机器人消息](./documents/机器人消息排版.md)
 
 ## <span id="版本变更说明">版本变更说明</span>
+
 详见 [升级指南](./documents/升级指南.md)

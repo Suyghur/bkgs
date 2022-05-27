@@ -14,8 +14,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
-import com.pro.maluli.toolkit.Logger;
 
 
 /**
@@ -27,6 +27,8 @@ public class TeenagerNoSeeDialog extends DialogFragment implements View.OnClickL
 
     private Dialog mDetailDialog;
     private TextView comfirmTv;
+    private long exitTime = 0;
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -55,8 +57,6 @@ public class TeenagerNoSeeDialog extends DialogFragment implements View.OnClickL
         return mDetailDialog;
     }
 
-    private long exitTime = 0;
-
     private void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(getActivity(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
@@ -68,16 +68,8 @@ public class TeenagerNoSeeDialog extends DialogFragment implements View.OnClickL
         }
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm();
-
-        void finishAll();
     }
 
     @Override
@@ -104,5 +96,11 @@ public class TeenagerNoSeeDialog extends DialogFragment implements View.OnClickL
         if (BKGSApplication.youthModeStatus == 0) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();
+
+        void finishAll();
     }
 }

@@ -9,6 +9,7 @@ import com.netease.neliveplayer.playerkit.core.view.BaseTextureView;
 /**
  * TextureView控件
  * 对TextureView做了封装，可直接用于播放器播放，支持后台播放
+ *
  * @author netease
  */
 

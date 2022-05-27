@@ -19,16 +19,16 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 public class OneToMorePresenter extends BasePresenter<IOneToMoreContraction.View> implements IOneToMoreContraction.Presenter {
-    public int model=0;
+    public int model = 0;
+
     public OneToMorePresenter(Context context) {
         super(context);
     }
 
 
-
     @Override
     public void startLive(String type, String title, String imgUrl, String money) {
-        add(mService.startLive(type, title, imgUrl, String.valueOf(model), money,"")
+        add(mService.startLive(type, title, imgUrl, String.valueOf(model), money, "")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<OneToOneEntity>>(mView) {
                     @Override

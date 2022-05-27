@@ -4,11 +4,8 @@ import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-import com.pro.maluli.common.utils.ACache;
-import com.pro.maluli.common.utils.AcacheUtil;
 
 import io.reactivex.functions.Consumer;
 

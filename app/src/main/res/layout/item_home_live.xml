@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainLiveItemLl"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/mainLiveItemLl"
     android:layout_marginHorizontal="@dimen/dp_15"
     android:layout_marginTop="@dimen/dp_10"
     android:background="@drawable/shape_ffffff_10"
@@ -15,9 +15,9 @@
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/CoverRiv"
-            android:scaleType="fitXY"
             android:layout_width="@dimen/dp_94"
             android:layout_height="@dimen/dp_140"
+            android:scaleType="fitXY"
             app:riv_corner_radius="@dimen/dp_6" />
 
         <LinearLayout
@@ -72,19 +72,19 @@
                 android:layout_height="@dimen/dp_22" />
 
             <TextView
-                android:layout_marginLeft="@dimen/dp_5"
                 android:id="@+id/anchorNameTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_5"
                 android:text="林师金"
                 android:textColor="@color/c_37383d"
                 android:textSize="@dimen/sp_16" />
 
             <ImageView
-                android:layout_marginLeft="@dimen/dp_5"
                 android:id="@+id/levelImg"
                 android:layout_width="@dimen/dp_20"
-                android:layout_height="@dimen/dp_13" />
+                android:layout_height="@dimen/dp_13"
+                android:layout_marginLeft="@dimen/dp_5" />
         </LinearLayout>
 
         <LinearLayout
@@ -157,11 +157,11 @@
         </LinearLayout>
 
         <HorizontalScrollView
-            android:scrollbars="none"
             android:id="@+id/horizaotalscrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_7">
+            android:layout_marginTop="@dimen/dp_7"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/linearlayout"

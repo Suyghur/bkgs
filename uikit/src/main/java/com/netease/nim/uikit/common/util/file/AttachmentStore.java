@@ -1,4 +1,3 @@
-
 package com.netease.nim.uikit.common.util.file;
 
 import android.graphics.Bitmap;

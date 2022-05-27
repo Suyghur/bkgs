@@ -11,6 +11,12 @@ public final class Handlers {
     public static final String DEFAULT_TAG = "Default";
 
     private static Handlers instance;
+    private static Handler sharedHandler;
+    private final HashMap<String, HandlerThread> threads = new HashMap<String, HandlerThread>();
+
+    private Handlers() {
+
+    }
 
     public static synchronized Handlers sharedInstance() {
         if (instance == null) {
@@ -19,8 +25,6 @@ public final class Handlers {
 
         return instance;
     }
-
-    private static Handler sharedHandler;
 
     /**
      * get shared handler for main looper
@@ -50,8 +54,8 @@ public final class Handlers {
         return new Handler(context.getMainLooper());
     }
 
-    private Handlers() {
-
+    private final static String nameOfTag(String tag) {
+        return "HT-" + (TextUtils.isEmpty(tag) ? DEFAULT_TAG : tag);
     }
 
     /**
@@ -73,8 +77,6 @@ public final class Handlers {
         return new Handler(getHandlerThread(tag).getLooper());
     }
 
-    private final HashMap<String, HandlerThread> threads = new HashMap<String, HandlerThread>();
-
     private final HandlerThread getHandlerThread(String tag) {
         HandlerThread handlerThread = null;
 
@@ -91,9 +93,5 @@ public final class Handlers {
         }
 
         return handlerThread;
-    }
-
-    private final static String nameOfTag(String tag) {
-        return "HT-" + (TextUtils.isEmpty(tag) ? DEFAULT_TAG : tag);
     }
 }

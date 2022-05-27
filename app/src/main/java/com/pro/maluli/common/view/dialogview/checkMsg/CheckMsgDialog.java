@@ -2,11 +2,7 @@ package com.pro.maluli.common.view.dialogview.checkMsg;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,20 +11,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.listener.OnResultCallbackListener;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.ImageEntity;
 import com.pro.maluli.common.entity.SeeLiveUserEntity;
-import com.pro.maluli.common.utils.glideImg.GlideEngine;
 import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
-import com.pro.maluli.module.myself.myAccount.appeal.adapter.AppealAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,12 +30,13 @@ import java.util.List;
  */
 
 public class CheckMsgDialog extends DialogFragment implements View.OnClickListener {
+    CheckMsgAdapter adapter;
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private RecyclerView selectImgRv;
-    CheckMsgAdapter adapter;
     private TextView titleTv, msgContentTv;
     private SeeLiveUserEntity.AppointBean seeLiveUserEntity;
+    private OnEditPersonListener onEditPersonListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -105,14 +93,8 @@ public class CheckMsgDialog extends DialogFragment implements View.OnClickListen
         return mDetailDialog;
     }
 
-    private OnEditPersonListener onEditPersonListener;
-
     public void setOnConfirmListener(OnEditPersonListener onEditPersonListener) {
         this.onEditPersonListener = onEditPersonListener;
-    }
-
-    public interface OnEditPersonListener {
-        void subNumber(List<File> files, String type);
     }
 
     @Override
@@ -132,5 +114,9 @@ public class CheckMsgDialog extends DialogFragment implements View.OnClickListen
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnEditPersonListener {
+        void subNumber(List<File> files, String type);
     }
 }

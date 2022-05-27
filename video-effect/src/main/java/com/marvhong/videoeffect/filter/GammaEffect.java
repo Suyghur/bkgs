@@ -9,19 +9,19 @@ import com.marvhong.videoeffect.utils.OpenGlUtils;
 public class GammaEffect extends GlFilter {
 
     private static final String FRAGMENT_SHADER =
-        "#extension GL_OES_EGL_image_external : require\n"
-        + "precision mediump float;\n"
+            "#extension GL_OES_EGL_image_external : require\n"
+                    + "precision mediump float;\n"
 
-        + "varying vec2 vTextureCoord;\n"
-        + "uniform samplerExternalOES sTexture;\n"
-        + "float gamma=" + 0.8f + ";\n"
+                    + "varying vec2 vTextureCoord;\n"
+                    + "uniform samplerExternalOES sTexture;\n"
+                    + "float gamma=" + 0.8f + ";\n"
 
-        + "void main() {\n"
+                    + "void main() {\n"
 
-        + "vec4 textureColor = texture2D(sTexture, vTextureCoord);\n"
-        + "gl_FragColor = vec4(pow(textureColor.rgb, vec3(gamma)), textureColor.w);\n"
+                    + "vec4 textureColor = texture2D(sTexture, vTextureCoord);\n"
+                    + "gl_FragColor = vec4(pow(textureColor.rgb, vec3(gamma)), textureColor.w);\n"
 
-        + "}\n";
+                    + "}\n";
 
     private float gammaValue;
 

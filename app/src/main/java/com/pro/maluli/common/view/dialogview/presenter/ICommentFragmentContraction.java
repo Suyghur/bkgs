@@ -7,8 +7,10 @@ import com.pro.maluli.common.entity.VideoEntity;
 public interface ICommentFragmentContraction extends BaseView {
     interface View extends BaseView {
         void setVideoInfo(VideoEntity data);
+
         void commentSuccess();
     }
+
     interface Presenter extends IClear {
 
 

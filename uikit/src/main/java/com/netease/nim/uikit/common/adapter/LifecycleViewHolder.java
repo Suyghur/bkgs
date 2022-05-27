@@ -1,14 +1,17 @@
 package com.netease.nim.uikit.common.adapter;
 
+import android.view.ViewGroup;
+
 import androidx.lifecycle.GenericLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.ViewGroup;
 
 public abstract class LifecycleViewHolder<T> extends BaseViewHolder<T>
         implements RecyclerView.RecyclerListener, LifecycleOwner {
+
+    protected LifecycleRegistry mLifecycle;
 
     public LifecycleViewHolder(ViewGroup parent, int layoutId, LifecycleOwner outerLifecycleOwner) {
         super(parent, layoutId);
@@ -35,8 +38,6 @@ public abstract class LifecycleViewHolder<T> extends BaseViewHolder<T>
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         mLifecycle.markState(Lifecycle.State.DESTROYED);
     }
-
-    protected LifecycleRegistry mLifecycle;
 
     @Override
     public Lifecycle getLifecycle() {

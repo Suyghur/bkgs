@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -30,13 +31,11 @@ import java.util.List;
  */
 
 public class AitContactSelectorActivity extends UI {
-    private static final String EXTRA_ID = "EXTRA_ID";
-    private static final String EXTRA_ROBOT = "EXTRA_ROBOT";
-
     public static final int REQUEST_CODE = 0x10;
     public static final String RESULT_TYPE = "type";
     public static final String RESULT_DATA = "data";
-
+    private static final String EXTRA_ID = "EXTRA_ID";
+    private static final String EXTRA_ROBOT = "EXTRA_ROBOT";
     private AitContactAdapter adapter;
 
     private String teamId;

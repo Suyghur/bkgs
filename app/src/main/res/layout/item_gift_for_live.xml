@@ -13,9 +13,9 @@
 
         <com.netease.nim.uikit.common.ui.imageview.HeadImageView
             android:id="@+id/cv_send_gift_userIcon"
-            android:layout_centerVertical="true"
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30" />
+            android:layout_height="@dimen/dp_30"
+            android:layout_centerVertical="true" />
 
         <LinearLayout
             android:id="@+id/ll_left"
@@ -54,8 +54,7 @@
             <ImageView
                 android:id="@+id/iv_gift"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
-                 />
+                android:layout_height="40dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -71,7 +70,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:StrokeWidth="2"
         app:strokeColor="@android:color/white"
-        app:strokeJoinStyle="miter"
-        app:StrokeWidth="2" />
+        app:strokeJoinStyle="miter" />
 </RelativeLayout>

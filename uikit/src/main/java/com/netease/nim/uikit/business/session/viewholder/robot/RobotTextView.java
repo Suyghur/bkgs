@@ -15,6 +15,7 @@ import com.netease.nim.uikit.business.robot.parser.elements.element.TextElement;
 public class RobotTextView extends RobotViewBase<TextElement> {
 
     private TextView textView;
+    private int color = -1;
 
     public RobotTextView(Context context, TextElement element, String content) {
         super(context, element, content);
@@ -29,8 +30,6 @@ public class RobotTextView extends RobotViewBase<TextElement> {
     public void onInflate() {
         textView = (TextView) findViewById(R.id.tv_robot_text);
     }
-
-    private int color = -1;
 
     public void setTextColor(int colorRes) {
         this.color = colorRes;

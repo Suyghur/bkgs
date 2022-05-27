@@ -47,11 +47,7 @@ import java.util.List;
  */
 public abstract class MsgViewHolderBase extends RecyclerViewHolder<BaseMultiItemFetchLoadAdapter, BaseViewHolder, IMMessage> {
 
-    public MsgViewHolderBase(BaseMultiItemFetchLoadAdapter adapter) {
-        super(adapter);
-        this.adapter = adapter;
-    }
-
+    public ImageView nameIconView;
     // basic
     protected View view;
     protected Context context;
@@ -74,18 +70,20 @@ public abstract class MsgViewHolderBase extends RecyclerViewHolder<BaseMultiItem
     protected TextView ackMsgTextView;
     protected TextView replyTipTextView; //回复消息时，显示在回复框上方的回复提示
     protected ImageView pinTipImg;
-
-    private HeadImageView avatarLeft;
-    private HeadImageView avatarRight;
-
-    /** 合并转发用多选框 */
-    private CheckBox multiCheckBox;
-
-    public ImageView nameIconView;
-
     // contentContainerView的默认长按事件。如果子类需要不同的处理，可覆盖onItemLongClick方法
     // 但如果某些子控件会拦截触摸消息，导致contentContainer收不到长按事件，子控件也可在inflate时重新设置
     protected View.OnLongClickListener longClickListener;
+    private HeadImageView avatarLeft;
+    private HeadImageView avatarRight;
+    /**
+     * 合并转发用多选框
+     */
+    private CheckBox multiCheckBox;
+
+    public MsgViewHolderBase(BaseMultiItemFetchLoadAdapter adapter) {
+        super(adapter);
+        this.adapter = adapter;
+    }
 
     /// -- 以下接口可由子类覆盖或实现
     // 返回具体消息类型内容展示区域的layout res id
@@ -152,7 +150,7 @@ public abstract class MsgViewHolderBase extends RecyclerViewHolder<BaseMultiItem
     protected String getReplyTip() {
         //thread消息没有回复对象
         if (message.isThread()) {
-           return "";
+            return "";
         }
         MsgThreadOption threadOption = message.getThreadOption();
         String replyFrom = threadOption.getReplyMsgFromAccount();

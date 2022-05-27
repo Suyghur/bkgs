@@ -33,6 +33,7 @@ public class StatusbarUtils {
         view.setBackgroundColor(Color.TRANSPARENT);
         return view;
     }
+
     //获取状态栏高度
     public static int getStatusBarHeight(Context context) {
         int result = 0;

@@ -25,11 +25,15 @@ import com.netease.nimlib.sdk.msg.attachment.ImageAttachment;
  */
 public class WatchMultiRetweetPictureActivity extends UI {
 
-    /** 图片地址 */
+    /**
+     * 图片地址
+     */
     @Nullable
     private ImageAttachment attachment;
 
-    /** 展示图 */
+    /**
+     * 展示图
+     */
     private ImageView detailsIV;
 
     public static void start(Activity activity, ImageAttachment attachment) {

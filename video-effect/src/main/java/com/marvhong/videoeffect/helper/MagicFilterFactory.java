@@ -11,8 +11,6 @@ import com.marvhong.videoeffect.filter.GlBilateralFilter;
 import com.marvhong.videoeffect.filter.GlBoxBlurFilter;
 import com.marvhong.videoeffect.filter.GlBulgeDistortionFilter;
 import com.marvhong.videoeffect.filter.GlCGAColorspaceFilter;
-import com.marvhong.videoeffect.filter.SketchEffect;
-import com.marvhong.videoeffect.filter.base.GlFilter;
 import com.marvhong.videoeffect.filter.GlGaussianBlurFilter;
 import com.marvhong.videoeffect.filter.GlGrayScaleFilter;
 import com.marvhong.videoeffect.filter.GlHazeFilter;
@@ -26,13 +24,16 @@ import com.marvhong.videoeffect.filter.HueEffect;
 import com.marvhong.videoeffect.filter.OverlayEffect;
 import com.marvhong.videoeffect.filter.PosterizeEffect;
 import com.marvhong.videoeffect.filter.SepiaEffect;
+import com.marvhong.videoeffect.filter.SketchEffect;
 import com.marvhong.videoeffect.filter.TemperatureEffect;
+import com.marvhong.videoeffect.filter.base.GlFilter;
 import com.marvhong.videoeffect.utils.ConfigUtils;
 
 public class MagicFilterFactory {
 
     /**
      * 视频滤镜效果
+     *
      * @return
      */
     public static GlFilter getFilter() {

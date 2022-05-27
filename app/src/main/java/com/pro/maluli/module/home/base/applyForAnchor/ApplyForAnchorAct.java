@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.view.InputDevice;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,38 +32,29 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
-import com.netease.nim.uikit.common.util.string.StringUtil;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.ApplyLimitEntity;
-import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.entity.ImageEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.StringUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
-import com.pro.maluli.common.view.dialogview.SelectTimeDialog;
 import com.pro.maluli.module.home.base.applyForAnchor.presenter.ApplyForAnchorPresenter;
 import com.pro.maluli.module.home.base.applyForAnchor.presenter.IApplyForAnchorContraction;
-import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.myAccount.appeal.adapter.AppealAdapter;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailAct;
 import com.yalantis.ucrop.view.OverlayView;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Optional;
 
 /**
  * @author Kingsley
@@ -114,8 +104,8 @@ public class ApplyForAnchorAct extends BaseMvpActivity<IApplyForAnchorContractio
     @BindView(R.id.AuditContentTv)
     TextView AuditContentTv;
     AppealAdapter adapter;
-    private List<ImageEntity> imageEntities = new ArrayList<>();
     List<File> files = new ArrayList<>();
+    private List<ImageEntity> imageEntities = new ArrayList<>();
     private List<HomeInfoEntity.CategoryBean.ListBean> categorylist = new ArrayList<>();
     private List<List<HomeInfoEntity.CategoryBean.ListBean.ChildBean>> cardItem = new ArrayList<>();
     private int classificationId = -1;
@@ -126,6 +116,7 @@ public class ApplyForAnchorAct extends BaseMvpActivity<IApplyForAnchorContractio
     private String reason;
     private int maxText = 200;
     private int maxImg = 3;
+    private OptionsPickerView pvCustomOptions;
 
     @Override
     public ApplyForAnchorPresenter initPresenter() {
@@ -265,7 +256,7 @@ public class ApplyForAnchorAct extends BaseMvpActivity<IApplyForAnchorContractio
         if (imageEntities.get(position).getType() == 1) {
             return;
         }
-        int max = maxImg+1 - imageEntities.size();
+        int max = maxImg + 1 - imageEntities.size();
         PictureSelector.create(ApplyForAnchorAct.this)
                 .openGallery(PictureMimeType.ofImage())
                 .isEnableCrop(true)
@@ -323,8 +314,6 @@ public class ApplyForAnchorAct extends BaseMvpActivity<IApplyForAnchorContractio
     @Override
     public void doBusiness() {
     }
-
-    private OptionsPickerView pvCustomOptions;
 
     private void initCustomOptionPicker() {//条件选择器初始化，自定义布局
         /**

@@ -18,10 +18,9 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
-import com.pro.maluli.common.utils.ToolUtils;
+import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.SelectGenderDialog;
 import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.myself.personalCenter.presenter.IPersonalCenterContraction;
@@ -109,7 +108,7 @@ public class PersonalCenterAct extends BaseMvpActivity<IPersonalCenterContractio
                         .openGallery(PictureMimeType.ofImage())
                         .isEnableCrop(true)
                         .freeStyleCropMode(OverlayView.FREESTYLE_CROP_MODE_DISABLE)
-                        .withAspectRatio(1,1)
+                        .withAspectRatio(1, 1)
                         .imageEngine(GlideEngine.createGlideEngine())
                         .maxSelectNum(1)
                         .forResult(new OnResultCallbackListener<LocalMedia>() {

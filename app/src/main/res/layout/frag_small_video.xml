@@ -20,15 +20,15 @@
     </include>
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/tipsVideoTv"
-        android:layout_gravity="center"
         android:layout_width="@dimen/dp_200"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/dp_25"
+        android:layout_gravity="center"
         android:background="@drawable/shape_ffffff_10"
         android:gravity="center"
+        android:paddingVertical="@dimen/dp_25"
         android:text="游客限制观看,请登录"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp_16" />
+        android:textSize="@dimen/sp_16"
+        android:visibility="gone" />
 </FrameLayout>

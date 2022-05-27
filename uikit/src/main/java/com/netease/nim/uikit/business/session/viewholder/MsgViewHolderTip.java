@@ -1,14 +1,11 @@
 package com.netease.nim.uikit.business.session.viewholder;
 
 import android.graphics.Color;
-import android.icu.util.TimeUnit;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
-
-import androidx.core.util.TimeUtils;
 
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
 import com.netease.nim.uikit.business.session.emoji.MoonUtil;
@@ -21,7 +18,6 @@ import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 /**

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.media.imagepicker.Constants;
 import com.netease.nim.uikit.common.media.imagepicker.ImagePicker;
@@ -13,7 +14,6 @@ import com.netease.nim.uikit.common.media.imagepicker.view.ViewPagerFixed;
 import com.netease.nim.uikit.common.media.model.GLImage;
 
 import java.util.ArrayList;
-import com.github.chrisbanes.photoview.PhotoView;
 
 
 public abstract class ImagePreviewBaseActivity extends ImageBaseActivity {

@@ -4,55 +4,11 @@ import android.text.TextUtils;
 
 public final class TextSearcher {
     /**
-     * T9
-     */
-    private boolean mT9;
-
-    /**
-     * string
-     */
-    private String mStr;
-
-    //
-    // string state
-    //
-
-    /**
-     * string index
-     */
-    private int mIndex;
-
-    /**
-     * eaten state
-     */
-    private boolean mEaten;
-
-    //
-    // PinYin state
-    //
-
-    /**
-     * PinYin
-     */
-    private String mPinyin;
-
-    /**
-     * string index after PinYin
-     */
-    private int mIndexP;
-
-    /**
-     * PinYin sub index
-     */
-    private int mIndexSub;
-
-    /**
      * T9 characters
      */
     private static final char[] T9 = {'2', '2', '2', '3', '3', '3', '4', '4',
             '4', '5', '5', '5', '6', '6', '6', '7', '7', '7', '7', '8', '8',
             '8', '9', '9', '9', '9'};
-
     /**
      * searcher
      */
@@ -61,6 +17,42 @@ public final class TextSearcher {
             return new TextSearcher();
         }
     };
+
+    //
+    // string state
+    //
+    /**
+     * T9
+     */
+    private boolean mT9;
+    /**
+     * string
+     */
+    private String mStr;
+
+    //
+    // PinYin state
+    //
+    /**
+     * string index
+     */
+    private int mIndex;
+    /**
+     * eaten state
+     */
+    private boolean mEaten;
+    /**
+     * PinYin
+     */
+    private String mPinyin;
+    /**
+     * string index after PinYin
+     */
+    private int mIndexP;
+    /**
+     * PinYin sub index
+     */
+    private int mIndexSub;
 
     /**
      * @param t9
@@ -72,6 +64,95 @@ public final class TextSearcher {
         searcher.mT9 = t9;
 
         return searcher;
+    }
+
+    /**
+     * @param t9
+     * @param str
+     * @param query assuming in lower case or [0-9]
+     * @return range array or NULL
+     */
+    public static final int[] indexOf(boolean t9, String str, String query) {
+        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
+            return null;
+        }
+
+        TextSearcher searcher = TextSearcher.obtain(t9);
+
+        // move
+        EAT:
+        for (int index = 0; index < str.length(); index++) {
+            searcher.initialize(str, index);
+
+            for (int subIndex = 0; subIndex < query.length(); subIndex++) {
+                if (!searcher.eat(query.charAt(subIndex))) {
+                    // next
+                    continue EAT;
+                }
+            }
+
+            // eaten
+            return new int[]{index, searcher.index()};
+        }
+
+        return null;
+    }
+
+    /**
+     * @param t9
+     * @param str
+     * @param query assuming in lower case or [0-9]
+     * @return contains
+     */
+    public static final boolean contains(boolean t9, String str, String query) {
+        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
+            return false;
+        }
+
+        TextSearcher searcher = TextSearcher.obtain(t9);
+
+        // move
+        EAT:
+        for (int index = 0; index < str.length(); index++) {
+            searcher.initialize(str, index);
+
+            for (int subIndex = 0; subIndex < query.length(); subIndex++) {
+                if (!searcher.eat(query.charAt(subIndex))) {
+                    // next
+                    continue EAT;
+                }
+            }
+
+            // eaten
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param t9
+     * @param str
+     * @param query assuming in lower case or [0-9]
+     * @return last index or -1
+     */
+    public static final int startsWith(boolean t9, String str, String query) {
+        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
+            return -1;
+        }
+
+        TextSearcher searcher = TextSearcher.obtain(t9);
+
+        searcher.initialize(str, 0);
+
+        for (int subIndex = 0; subIndex < query.length(); subIndex++) {
+            if (!searcher.eat(query.charAt(subIndex))) {
+                // fail
+                return -1;
+            }
+        }
+
+        return searcher.index();
     }
 
     /**
@@ -207,94 +288,5 @@ public final class TextSearcher {
         mEaten = eaten;
 
         return true;
-    }
-
-    /**
-     * @param t9
-     * @param str
-     * @param query assuming in lower case or [0-9]
-     * @return range array or NULL
-     */
-    public static final int[] indexOf(boolean t9, String str, String query) {
-        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
-            return null;
-        }
-
-        TextSearcher searcher = TextSearcher.obtain(t9);
-
-        // move
-        EAT:
-        for (int index = 0; index < str.length(); index++) {
-            searcher.initialize(str, index);
-
-            for (int subIndex = 0; subIndex < query.length(); subIndex++) {
-                if (!searcher.eat(query.charAt(subIndex))) {
-                    // next
-                    continue EAT;
-                }
-            }
-
-            // eaten
-            return new int[]{index, searcher.index()};
-        }
-
-        return null;
-    }
-
-    /**
-     * @param t9
-     * @param str
-     * @param query assuming in lower case or [0-9]
-     * @return contains
-     */
-    public static final boolean contains(boolean t9, String str, String query) {
-        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
-            return false;
-        }
-
-        TextSearcher searcher = TextSearcher.obtain(t9);
-
-        // move
-        EAT:
-        for (int index = 0; index < str.length(); index++) {
-            searcher.initialize(str, index);
-
-            for (int subIndex = 0; subIndex < query.length(); subIndex++) {
-                if (!searcher.eat(query.charAt(subIndex))) {
-                    // next
-                    continue EAT;
-                }
-            }
-
-            // eaten
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param t9
-     * @param str
-     * @param query assuming in lower case or [0-9]
-     * @return last index or -1
-     */
-    public static final int startsWith(boolean t9, String str, String query) {
-        if (TextUtils.isEmpty(str) || TextUtils.isEmpty(query)) {
-            return -1;
-        }
-
-        TextSearcher searcher = TextSearcher.obtain(t9);
-
-        searcher.initialize(str, 0);
-
-        for (int subIndex = 0; subIndex < query.length(); subIndex++) {
-            if (!searcher.eat(query.charAt(subIndex))) {
-                // fail
-                return -1;
-            }
-        }
-
-        return searcher.index();
     }
 }

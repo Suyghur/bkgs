@@ -16,7 +16,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.R;
-import com.pro.maluli.common.utils.StringUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 
 
@@ -31,6 +30,7 @@ public class EditPersonDialog extends DialogFragment implements View.OnClickList
     private TextView comfirmTv, toAppealTv;
     private int reserve_number;
     private EditText contentTv;
+    private OnEditPersonListener onEditPersonListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -77,14 +77,8 @@ public class EditPersonDialog extends DialogFragment implements View.OnClickList
         return mDetailDialog;
     }
 
-    private OnEditPersonListener onEditPersonListener;
-
     public void setOnConfirmListener(OnEditPersonListener onEditPersonListener) {
         this.onEditPersonListener = onEditPersonListener;
-    }
-
-    public interface OnEditPersonListener {
-        void subNumber(String type);
     }
 
     @Override
@@ -112,5 +106,9 @@ public class EditPersonDialog extends DialogFragment implements View.OnClickList
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnEditPersonListener {
+        void subNumber(String type);
     }
 }

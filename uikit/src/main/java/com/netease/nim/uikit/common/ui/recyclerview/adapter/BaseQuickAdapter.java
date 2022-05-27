@@ -15,15 +15,11 @@
  */
 package com.netease.nim.uikit.common.ui.recyclerview.adapter;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import android.animation.Animator;
 import android.content.Context;
-import androidx.annotation.IntDef;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.LayoutParams;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +27,14 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.LayoutParams;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.netease.nim.uikit.common.ui.recyclerview.animation.AlphaInAnimation;
 import com.netease.nim.uikit.common.ui.recyclerview.animation.BaseAnimation;
@@ -49,47 +53,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-
 public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends RecyclerView.Adapter<K> implements IRecyclerView {
-
-    private boolean isScrolling = false;
-
-    //load more
-    private boolean mNextLoadEnable = false;
-    private boolean mLoadMoreEnable = false;
-    private RequestLoadMoreListener mRequestLoadMoreListener;
-    private boolean mLoading = false;
-    private LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
-
-    private boolean mFirstOnlyEnable = true;
-    private boolean mOpenAnimationEnable = false;
-    private Interpolator mInterpolator = new LinearInterpolator();
-    private int mDuration = 300;
-    private int mLastPosition = -1;
-    //@AnimationType
-    private BaseAnimation mCustomAnimation;
-    private BaseAnimation mSelectAnimation = new AlphaInAnimation();
-    //header footer
-    private LinearLayout mHeaderLayout;
-    private LinearLayout mFooterLayout;
-    //empty
-    private FrameLayout mEmptyView;
-    private boolean mIsUseEmpty = true;
-    private boolean mHeadAndEmptyEnable;
-    private boolean mFootAndEmptyEnable;
-
-    protected static final String TAG = BaseQuickAdapter.class.getSimpleName();
-    protected Context mContext;
-    protected int mLayoutResId;
-    protected LayoutInflater mLayoutInflater;
-    protected List<T> mData;
-
-    @IntDef({ALPHAIN, SCALEIN, SLIDEIN_BOTTOM, SLIDEIN_LEFT, SLIDEIN_RIGHT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface AnimationType {
-    }
 
     /**
      * Use with {@link #openLoadAnimation}
@@ -111,6 +75,73 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * Use with {@link #openLoadAnimation}
      */
     public static final int SLIDEIN_RIGHT = 0x00000005;
+    protected static final String TAG = BaseQuickAdapter.class.getSimpleName();
+    protected Context mContext;
+    protected int mLayoutResId;
+    protected LayoutInflater mLayoutInflater;
+    protected List<T> mData;
+    private boolean isScrolling = false;
+    //load more
+    private boolean mNextLoadEnable = false;
+    private boolean mLoadMoreEnable = false;
+    private RequestLoadMoreListener mRequestLoadMoreListener;
+    private boolean mLoading = false;
+    private LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
+    private boolean mFirstOnlyEnable = true;
+    private boolean mOpenAnimationEnable = false;
+    private Interpolator mInterpolator = new LinearInterpolator();
+    private int mDuration = 300;
+    private int mLastPosition = -1;
+    //@AnimationType
+    private BaseAnimation mCustomAnimation;
+    private BaseAnimation mSelectAnimation = new AlphaInAnimation();
+    //header footer
+    private LinearLayout mHeaderLayout;
+    private LinearLayout mFooterLayout;
+    //empty
+    private FrameLayout mEmptyView;
+    private boolean mIsUseEmpty = true;
+    private boolean mHeadAndEmptyEnable;
+    private boolean mFootAndEmptyEnable;
+    private boolean flag = true;
+    private SpanSizeLookup mSpanSizeLookup;
+    private int mAutoLoadMoreSize = 1;
+
+    /**
+     * Same as QuickAdapter#QuickAdapter(Context,int) but with
+     * some initialization data.
+     *
+     * @param recyclerView RecyclerView which use this adapter
+     * @param layoutResId  The layout resource id of each item.
+     * @param data         A new list is created out of this one to avoid mutable list
+     */
+    public BaseQuickAdapter(RecyclerView recyclerView, int layoutResId, List<T> data) {
+        this.mData = data == null ? new ArrayList<T>() : data;
+        if (layoutResId != 0) {
+            this.mLayoutResId = layoutResId;
+        }
+
+        /**
+         * 在适配器中声明一个全局的boolean变量用来保存此刻是否在滚动，然后通过给RecyclerView设置滚动监听，然后在滚动监听器的onScrollStateChanged()方法中给boolean值赋值，看是否在滚动。
+         * 在使用这个适配器的时候，可以根据滚动状态的不同来判断：比如正在滚动的时候就只显示内存缓存的图片，如果内存缓存中没有就显示一张默认图片；而如果没有在滚动就采用正常的图片加载方案去加载网络或者缓存中的图片。
+         */
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE;
+            }
+        });
+
+        /**
+         * 关闭默认viewholder item动画
+         */
+        RecyclerViewUtil.changeItemAnimation(recyclerView, false);
+    }
+
+    public BaseQuickAdapter(RecyclerView recyclerView, List<T> data) {
+        this(recyclerView, 0, data);
+    }
 
     public void setOnLoadMoreListener(RequestLoadMoreListener requestLoadMoreListener) {
         this.mRequestLoadMoreListener = requestLoadMoreListener;
@@ -153,7 +184,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
     public boolean isLoading() {
         return mLoading;
     }
-
 
     /**
      * Refresh end, no more data
@@ -244,43 +274,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      */
     public void setDuration(int duration) {
         mDuration = duration;
-    }
-
-
-    /**
-     * Same as QuickAdapter#QuickAdapter(Context,int) but with
-     * some initialization data.
-     *
-     * @param recyclerView RecyclerView which use this adapter
-     * @param layoutResId  The layout resource id of each item.
-     * @param data         A new list is created out of this one to avoid mutable list
-     */
-    public BaseQuickAdapter(RecyclerView recyclerView, int layoutResId, List<T> data) {
-        this.mData = data == null ? new ArrayList<T>() : data;
-        if (layoutResId != 0) {
-            this.mLayoutResId = layoutResId;
-        }
-
-        /**
-         * 在适配器中声明一个全局的boolean变量用来保存此刻是否在滚动，然后通过给RecyclerView设置滚动监听，然后在滚动监听器的onScrollStateChanged()方法中给boolean值赋值，看是否在滚动。
-         * 在使用这个适配器的时候，可以根据滚动状态的不同来判断：比如正在滚动的时候就只显示内存缓存的图片，如果内存缓存中没有就显示一张默认图片；而如果没有在滚动就采用正常的图片加载方案去加载网络或者缓存中的图片。
-         */
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE;
-            }
-        });
-
-        /**
-         * 关闭默认viewholder item动画
-         */
-        RecyclerViewUtil.changeItemAnimation(recyclerView, false);
-    }
-
-    public BaseQuickAdapter(RecyclerView recyclerView, List<T> data) {
-        this(recyclerView, 0, data);
     }
 
     /**
@@ -557,7 +550,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
 
     }
 
-
     private K getLoadingView(ViewGroup parent) {
         View view = getItemView(mLoadMoreView.getLayoutId(), parent);
         K holder = createBaseViewHolder(view);
@@ -623,13 +615,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
                 }
             });
         }
-    }
-
-    private boolean flag = true;
-    private SpanSizeLookup mSpanSizeLookup;
-
-    public interface SpanSizeLookup {
-        int getSpanSize(GridLayoutManager gridLayoutManager, int position);
     }
 
     /**
@@ -874,27 +859,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
         return -1;
     }
 
-    public void setEmptyView(View emptyView) {
-        boolean insert = false;
-        if (mEmptyView == null) {
-            mEmptyView = new FrameLayout(emptyView.getContext());
-            mEmptyView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
-            insert = true;
-        }
-        mEmptyView.removeAllViews();
-        mEmptyView.addView(emptyView);
-        mIsUseEmpty = true;
-        if (insert) {
-            if (getEmptyViewCount() == 1) {
-                int position = 0;
-                if (mHeadAndEmptyEnable && getHeaderLayoutCount() != 0) {
-                    position++;
-                }
-                notifyItemInserted(position);
-            }
-        }
-    }
-
     /**
      * Call before {@link RecyclerView#setAdapter(RecyclerView.Adapter)}
      *
@@ -936,7 +900,26 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
         return mEmptyView;
     }
 
-    private int mAutoLoadMoreSize = 1;
+    public void setEmptyView(View emptyView) {
+        boolean insert = false;
+        if (mEmptyView == null) {
+            mEmptyView = new FrameLayout(emptyView.getContext());
+            mEmptyView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
+            insert = true;
+        }
+        mEmptyView.removeAllViews();
+        mEmptyView.addView(emptyView);
+        mIsUseEmpty = true;
+        if (insert) {
+            if (getEmptyViewCount() == 1) {
+                int position = 0;
+                if (mHeadAndEmptyEnable && getHeaderLayoutCount() != 0) {
+                    position++;
+                }
+                notifyItemInserted(position);
+            }
+        }
+    }
 
     public void setAutoLoadMoreSize(int autoLoadMoreSize) {
         if (autoLoadMoreSize > 1) {
@@ -960,7 +943,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
             mRequestLoadMoreListener.onLoadMoreRequested();
         }
     }
-
 
     /**
      * add animation when you want to show time
@@ -1005,14 +987,6 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
     protected View getItemView(int layoutResId, ViewGroup parent) {
         return mLayoutInflater.inflate(layoutResId, parent, false);
     }
-
-
-    public interface RequestLoadMoreListener {
-
-        void onLoadMoreRequested();
-
-    }
-
 
     /**
      * Set the view animation type.
@@ -1376,5 +1350,20 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
 
     public int getBottomDataPosition() {
         return getHeaderLayoutCount() + mData.size() - 1;
+    }
+
+    @IntDef({ALPHAIN, SCALEIN, SLIDEIN_BOTTOM, SLIDEIN_LEFT, SLIDEIN_RIGHT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AnimationType {
+    }
+
+    public interface SpanSizeLookup {
+        int getSpanSize(GridLayoutManager gridLayoutManager, int position);
+    }
+
+    public interface RequestLoadMoreListener {
+
+        void onLoadMoreRequested();
+
     }
 }

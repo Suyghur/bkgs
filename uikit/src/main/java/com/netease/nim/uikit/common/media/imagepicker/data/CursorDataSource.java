@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
@@ -20,19 +21,9 @@ public abstract class CursorDataSource extends AbsDataSource implements LoaderMa
 
     private static final int LOADER_ALL = 0;         //加载所有图片
     private static final int LOADER_CATEGORY = 1;    //分类加载图片
-
-    private FragmentActivity activity;
-
-    public FragmentActivity getActivity() {
-        return activity;
-    }
-
-    public void setActivity(FragmentActivity activity) {
-        this.activity = activity;
-    }
-
-    private ArrayList<ImageFolder> imageFolders = new ArrayList<>();   //所有的图片文件夹
     private final Loader loader;
+    private FragmentActivity activity;
+    private ArrayList<ImageFolder> imageFolders = new ArrayList<>();   //所有的图片文件夹
 
     /**
      * @param activity 用于初始化LoaderManager，需要兼容到2.3
@@ -51,6 +42,14 @@ public abstract class CursorDataSource extends AbsDataSource implements LoaderMa
             bundle.putString("path", path);
             loader = loaderManager.initLoader(getId(LOADER_CATEGORY), bundle, this);
         }
+    }
+
+    public FragmentActivity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(FragmentActivity activity) {
+        this.activity = activity;
     }
 
     protected abstract int getBaseId();

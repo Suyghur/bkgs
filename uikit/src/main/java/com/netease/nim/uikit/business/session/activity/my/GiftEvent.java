@@ -13,6 +13,9 @@ public class GiftEvent {
     private boolean isSHowScore;//是否提示评价弹框
     private boolean isGOtoRecharge;//是否没钱跳转到充值
 
+    public GiftEvent() {
+    }
+
     public boolean isGOtoRecharge() {
         return isGOtoRecharge;
     }
@@ -69,8 +72,6 @@ public class GiftEvent {
         this.reOrder = reOrder;
     }
 
-
-
     public GiftForMeEntity getGiftForMeEntity() {
         return giftForMeEntity;
     }
@@ -87,8 +88,6 @@ public class GiftEvent {
         this.giftBean = giftBean;
     }
 
-
-
     public boolean isSendGift() {
         return isSendGift;
     }
@@ -103,9 +102,6 @@ public class GiftEvent {
 
     public void setGiftEntity(GiftEntity giftEntity) {
         this.giftEntity = giftEntity;
-    }
-
-    public GiftEvent() {
     }
 
 }

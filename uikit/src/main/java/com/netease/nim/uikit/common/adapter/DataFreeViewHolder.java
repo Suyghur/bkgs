@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
+ *
  */
 
 public abstract class DataFreeViewHolder<T> extends BaseViewHolder<T> {

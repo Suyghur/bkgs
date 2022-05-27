@@ -9,8 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.SystemMsgEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,20 +17,19 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SystemNotificationAdapter extends BaseQuickAdapter<SystemMsgEntity.ListBean, SystemNotificationAdapter.ViewHolder> {
     private Context context;
+
+    public SystemNotificationAdapter(List<SystemMsgEntity.ListBean> data, Context context) {
+        super(R.layout.item_system_notic, data);
+        this.context = context;
+    }
 
     @NotNull
     @Override
     protected SystemNotificationAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public SystemNotificationAdapter(List<SystemMsgEntity.ListBean> data, Context context) {
-        super(R.layout.item_system_notic, data);
-        this.context = context;
     }
 
     @Override

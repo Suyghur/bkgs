@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.FileDataSourceImpl;
 import com.googlecode.mp4parser.authoring.Movie;
@@ -53,238 +52,243 @@ import io.reactivex.schedulers.Schedulers;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class VideoUtil {
 
-    private static final String TAG = VideoUtil.class.getSimpleName();
     public static final int VIDEO_MAX_DURATION = 10;// 15秒
     public static final int MIN_TIME_FRAME = 3;
+    public static final String POSTFIX = ".jpeg";
+    private static final String TAG = VideoUtil.class.getSimpleName();
     private static final int thumb_Width = (UIUtils.getScreenWidth() - UIUtils.dp2Px(16)) / VIDEO_MAX_DURATION;
     private static final int thumb_Height = UIUtils.dp2Px(62);
     private static final long one_frame_time = 1000000;
-    public static final String POSTFIX = ".jpeg";
     private static final String TRIM_PATH = "small_video";
     private static final String THUMB_PATH = "thumb";
+    private static List<Movie> moviesList = new ArrayList<>();
+    private static List<Track> videoTracks = new ArrayList<>();
+    private static List<Track> audioTracks = new ArrayList<>();
 
     /**
      * 获取视频的帧图片
+     *
      * @param context
      * @param videoUri
      */
     public static Observable<ArrayList<Bitmap>> backgroundShootVideoThumb(final Context context, final Uri videoUri) {
 
         return Observable.create(new ObservableOnSubscribe<ArrayList<Bitmap>>() {
-            @Override
-            public void subscribe(ObservableEmitter<ArrayList<Bitmap>> emitter) {
-                ArrayList<Bitmap> thumbnailList = new ArrayList<>();
-                try {
-                    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                    mediaMetadataRetriever.setDataSource(context, videoUri);
-                    // Retrieve media data use microsecond
-                    long videoLengthInMs = Long.parseLong(mediaMetadataRetriever
-                        .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) * 1000;
-                    long numThumbs =
-                        videoLengthInMs < one_frame_time ? 1 : (videoLengthInMs / one_frame_time);
-                    final long interval = videoLengthInMs / numThumbs;
-
-                    //每次截取到3帧之后上报
-                    for (long i = 0; i < numThumbs; ++i) {
-                        Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(i * interval,
-                            MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                    @Override
+                    public void subscribe(ObservableEmitter<ArrayList<Bitmap>> emitter) {
+                        ArrayList<Bitmap> thumbnailList = new ArrayList<>();
                         try {
-                            bitmap = Bitmap
-                                .createScaledBitmap(bitmap, thumb_Width, thumb_Height, false);
-                        } catch (Exception e) {
+                            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                            mediaMetadataRetriever.setDataSource(context, videoUri);
+                            // Retrieve media data use microsecond
+                            long videoLengthInMs = Long.parseLong(mediaMetadataRetriever
+                                    .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) * 1000;
+                            long numThumbs =
+                                    videoLengthInMs < one_frame_time ? 1 : (videoLengthInMs / one_frame_time);
+                            final long interval = videoLengthInMs / numThumbs;
+
+                            //每次截取到3帧之后上报
+                            for (long i = 0; i < numThumbs; ++i) {
+                                Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(i * interval,
+                                        MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                                try {
+                                    bitmap = Bitmap
+                                            .createScaledBitmap(bitmap, thumb_Width, thumb_Height, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    emitter.onError(e);
+                                }
+                                thumbnailList.add(bitmap);
+                                if (thumbnailList.size() == 3) {
+                                    emitter.onNext((ArrayList<Bitmap>) thumbnailList.clone());
+                                    thumbnailList.clear();
+                                }
+                            }
+                            if (thumbnailList.size() > 0) {
+                                emitter.onNext((ArrayList<Bitmap>) thumbnailList.clone());
+                                thumbnailList.clear();
+                            }
+                            mediaMetadataRetriever.release();
+                        } catch (final Throwable e) {
                             e.printStackTrace();
                             emitter.onError(e);
                         }
-                        thumbnailList.add(bitmap);
-                        if (thumbnailList.size() == 3) {
-                            emitter.onNext((ArrayList<Bitmap>) thumbnailList.clone());
-                            thumbnailList.clear();
-                        }
+                        emitter.onComplete();
                     }
-                    if (thumbnailList.size() > 0) {
-                        emitter.onNext((ArrayList<Bitmap>) thumbnailList.clone());
-                        thumbnailList.clear();
-                    }
-                    mediaMetadataRetriever.release();
-                } catch (final Throwable e) {
-                    e.printStackTrace();
-                    emitter.onError(e);
-                }
-                emitter.onComplete();
-            }
-        })
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread());
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
      * 获取本地相册中所有视频文件
+     *
      * @param context
      * @return
      */
     public static Observable<ArrayList<LocalVideoModel>> getLocalVideoFiles(final Context context) {
 
         return Observable.create(new ObservableOnSubscribe<ArrayList<LocalVideoModel>>() {
-            @Override
-            public void subscribe(ObservableEmitter<ArrayList<LocalVideoModel>> emitter) {
-                ArrayList<LocalVideoModel> videoModels = new ArrayList<>();
-                ContentResolver resolver = context.getContentResolver();
-                try {
-                    Cursor cursor = resolver
-                        .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null,
-                            null, null, MediaStore.Video.Media.DATE_MODIFIED + " desc");
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-                            LocalVideoModel video = new LocalVideoModel();
-                            if (cursor
-                                .getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION))
-                                != 0) {
-                                video.setDuration(
-                                    cursor.getLong(
-                                        cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
-                                video.setVideoPath(
-                                    cursor.getString(
-                                        cursor.getColumnIndex(MediaStore.Video.Media.DATA)));
-                                video.setCreateTime(cursor
-                                    .getString(
-                                        cursor.getColumnIndex(MediaStore.Video.Media.DATE_ADDED)));
-                                video.setVideoName(cursor
-                                    .getString(cursor
-                                        .getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)));
-                                videoModels.add(video);
+                    @Override
+                    public void subscribe(ObservableEmitter<ArrayList<LocalVideoModel>> emitter) {
+                        ArrayList<LocalVideoModel> videoModels = new ArrayList<>();
+                        ContentResolver resolver = context.getContentResolver();
+                        try {
+                            Cursor cursor = resolver
+                                    .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null,
+                                            null, null, MediaStore.Video.Media.DATE_MODIFIED + " desc");
+                            if (cursor != null) {
+                                while (cursor.moveToNext()) {
+                                    LocalVideoModel video = new LocalVideoModel();
+                                    if (cursor
+                                            .getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION))
+                                            != 0) {
+                                        video.setDuration(
+                                                cursor.getLong(
+                                                        cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
+                                        video.setVideoPath(
+                                                cursor.getString(
+                                                        cursor.getColumnIndex(MediaStore.Video.Media.DATA)));
+                                        video.setCreateTime(cursor
+                                                .getString(
+                                                        cursor.getColumnIndex(MediaStore.Video.Media.DATE_ADDED)));
+                                        video.setVideoName(cursor
+                                                .getString(cursor
+                                                        .getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)));
+                                        videoModels.add(video);
+                                    }
+                                }
+                                emitter.onNext(videoModels);
+                                cursor.close();
                             }
+                        } catch (Exception e) {
+                            emitter.onError(e);
                         }
-                        emitter.onNext(videoModels);
-                        cursor.close();
+                        emitter.onComplete();
                     }
-                } catch (Exception e) {
-                    emitter.onError(e);
-                }
-                emitter.onComplete();
-            }
-        })
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread());
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
      * 裁剪视频(异步操作)
      *
-     * @param src 源文件
-     * @param dest 输出地址
+     * @param src      源文件
+     * @param dest     输出地址
      * @param startSec 开始时间
-     * @param endSec 结束时间
+     * @param endSec   结束时间
      */
     public static Observable<String> cutVideo(final String src, final String dest, final double startSec, final double endSec) {
 
         return Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> emitter) {
-                try {
-                    double startSecond = startSec;
-                    double endSecond = endSec;
-                    //构造一个movie对象
-                    Movie movie = MovieCreator.build(src);
-                    List<Track> tracks = movie.getTracks();
-                    movie.setTracks(new ArrayList<Track>());
+                    @Override
+                    public void subscribe(ObservableEmitter<String> emitter) {
+                        try {
+                            double startSecond = startSec;
+                            double endSecond = endSec;
+                            //构造一个movie对象
+                            Movie movie = MovieCreator.build(src);
+                            List<Track> tracks = movie.getTracks();
+                            movie.setTracks(new ArrayList<Track>());
 
-                    boolean timeCorrected = false;
-                    // Here we try to find a track that has sync samples. Since we can only start decoding
-                    // at such a sample we SHOULD make sure that the start of the new fragment is exactly
-                    // such a frame
-                    for (Track track : tracks) {
-                        if (track.getSyncSamples() != null && track.getSyncSamples().length > 0) {
-                            if (timeCorrected) {
-                                // This exception here could be a false positive in case we have multiple tracks
-                                // with sync samples at exactly the same positions. E.g. a single movie containing
-                                // multiple qualities of the same video (Microsoft Smooth Streaming file)
+                            boolean timeCorrected = false;
+                            // Here we try to find a track that has sync samples. Since we can only start decoding
+                            // at such a sample we SHOULD make sure that the start of the new fragment is exactly
+                            // such a frame
+                            for (Track track : tracks) {
+                                if (track.getSyncSamples() != null && track.getSyncSamples().length > 0) {
+                                    if (timeCorrected) {
+                                        // This exception here could be a false positive in case we have multiple tracks
+                                        // with sync samples at exactly the same positions. E.g. a single movie containing
+                                        // multiple qualities of the same video (Microsoft Smooth Streaming file)
 
-                                throw new RuntimeException(
-                                    "The startTime has already been corrected by another track with SyncSample. Not Supported.");
+                                        throw new RuntimeException(
+                                                "The startTime has already been corrected by another track with SyncSample. Not Supported.");
+                                    }
+                                    //矫正开始时间
+                                    startSecond = correctTimeToSyncSample(track, startSecond, false);
+                                    //矫正结束时间
+                                    endSecond = correctTimeToSyncSample(track, endSecond, true);
+
+                                    timeCorrected = true;
+                                }
                             }
-                            //矫正开始时间
-                            startSecond = correctTimeToSyncSample(track, startSecond, false);
-                            //矫正结束时间
-                            endSecond = correctTimeToSyncSample(track, endSecond, true);
 
-                            timeCorrected = true;
+                            //裁剪后的位置   startSecond:299400, endSecond:309390
+                            //矫正后的位置   startSecond:291.3327083333511, endSecond:313.18787500003214
+                            Log.e(TAG, "startSecond:" + startSecond + ", endSecond:" + endSecond);
+
+                            //fix bug: 部分视频矫正过后会超出10s,这里进行强制限制在10s内
+                            if (endSecond - startSecond > 10) {
+                                int duration = (int) (endSec - startSec);
+                                endSecond = startSecond + duration;
+                            }
+                            //fix bug: 部分视频裁剪后endSecond=0.0,导致播放失败
+                            if (endSecond == 0.0) {
+                                int duration = (int) (endSec - startSec);
+                                endSecond = startSecond + duration;
+                            }
+
+                            for (Track track : tracks) {
+                                long currentSample = 0;
+                                double currentTime = 0;
+                                double lastTime = -1;
+                                long startSample = -1;
+                                long endSample = -1;
+
+                                for (int i = 0; i < track.getSampleDurations().length; i++) {
+                                    long delta = track.getSampleDurations()[i];
+
+                                    if (currentTime > lastTime && currentTime <= startSecond) {
+                                        // current sample is still before the new starttime
+                                        startSample = currentSample;
+                                    }
+                                    if (currentTime > lastTime && currentTime <= endSecond) {
+                                        // current sample is after the new start time and still before the new endtime
+                                        endSample = currentSample;
+                                    }
+
+                                    lastTime = currentTime;
+                                    //计算出某一帧的时长 = 采样时长 / 时间长度
+                                    currentTime +=
+                                            (double) delta / (double) track.getTrackMetaData().getTimescale();
+                                    //这里就是帧数（采样）加一
+                                    currentSample++;
+                                }
+                                //在这里，裁剪是根据关键帧进行裁剪的，而不是指定的开始时间和结束时间
+                                //startSample:2453, endSample:2846   393
+                                //startSample:4795, endSample:5564   769
+                                Log.e(TAG, "startSample:" + startSample + ", endSample:" + endSample);
+                                movie.addTrack(new CroppedTrack(track, startSample, endSample));
+
+                                Container out = new DefaultMp4Builder().build(movie);
+                                FileOutputStream fos = new FileOutputStream(String.format(dest));
+                                FileChannel fc = fos.getChannel();
+                                out.writeContainer(fc);
+
+                                fc.close();
+                                fos.close();
+                            }
+
+                            emitter.onNext(dest);
+
+                        } catch (Exception e) {
+                            emitter.onError(e);
                         }
+                        emitter.onComplete();
                     }
-
-                    //裁剪后的位置   startSecond:299400, endSecond:309390
-                    //矫正后的位置   startSecond:291.3327083333511, endSecond:313.18787500003214
-                    Log.e(TAG, "startSecond:" + startSecond + ", endSecond:" + endSecond);
-
-                    //fix bug: 部分视频矫正过后会超出10s,这里进行强制限制在10s内
-                    if (endSecond - startSecond > 10) {
-                        int duration = (int) (endSec - startSec);
-                        endSecond = startSecond + duration;
-                    }
-                    //fix bug: 部分视频裁剪后endSecond=0.0,导致播放失败
-                    if (endSecond == 0.0) {
-                        int duration = (int) (endSec - startSec);
-                        endSecond = startSecond + duration;
-                    }
-
-                    for (Track track : tracks) {
-                        long currentSample = 0;
-                        double currentTime = 0;
-                        double lastTime = -1;
-                        long startSample = -1;
-                        long endSample = -1;
-
-                        for (int i = 0; i < track.getSampleDurations().length; i++) {
-                            long delta = track.getSampleDurations()[i];
-
-                            if (currentTime > lastTime && currentTime <= startSecond) {
-                                // current sample is still before the new starttime
-                                startSample = currentSample;
-                            }
-                            if (currentTime > lastTime && currentTime <= endSecond) {
-                                // current sample is after the new start time and still before the new endtime
-                                endSample = currentSample;
-                            }
-
-                            lastTime = currentTime;
-                            //计算出某一帧的时长 = 采样时长 / 时间长度
-                            currentTime +=
-                                (double) delta / (double) track.getTrackMetaData().getTimescale();
-                            //这里就是帧数（采样）加一
-                            currentSample++;
-                        }
-                        //在这里，裁剪是根据关键帧进行裁剪的，而不是指定的开始时间和结束时间
-                        //startSample:2453, endSample:2846   393
-                        //startSample:4795, endSample:5564   769
-                        Log.e(TAG, "startSample:" + startSample + ", endSample:" + endSample);
-                        movie.addTrack(new CroppedTrack(track, startSample, endSample));
-
-                        Container out = new DefaultMp4Builder().build(movie);
-                        FileOutputStream fos = new FileOutputStream(String.format(dest));
-                        FileChannel fc = fos.getChannel();
-                        out.writeContainer(fc);
-
-                        fc.close();
-                        fos.close();
-                    }
-
-                    emitter.onNext(dest);
-
-                } catch (Exception e) {
-                    emitter.onError(e);
-                }
-                emitter.onComplete();
-            }
-        })
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread());
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
      * 矫正裁剪的sample位置
      *
-     * @param track 视频轨道
+     * @param track   视频轨道
      * @param cutHere 裁剪位置
-     * @param next 是否还继续裁剪
+     * @param next    是否还继续裁剪
      */
     private static double correctTimeToSyncSample(Track track, double cutHere, boolean next) {
         double[] timeOfSyncSamples = new double[track.getSyncSamples().length];
@@ -296,7 +300,7 @@ public class VideoUtil {
             if (Arrays.binarySearch(track.getSyncSamples(), currentSample + 1) >= 0) {
                 // samples always start with 1 but we start with zero therefore +1（采样的下标从1开始而不是0开始，所以要+1 ）
                 timeOfSyncSamples[Arrays
-                    .binarySearch(track.getSyncSamples(), currentSample + 1)] = currentTime;
+                        .binarySearch(track.getSyncSamples(), currentSample + 1)] = currentTime;
             }
             currentTime += (double) delta / (double) track.getTrackMetaData().getTimescale();
             currentSample++;
@@ -347,12 +351,12 @@ public class VideoUtil {
     /**
      * 视频拼接
      *
-     * @param srcFile 源文件
+     * @param srcFile    源文件
      * @param appendFile 待插入的文件
-     * @param finalFile 最终生成的文件
+     * @param finalFile  最终生成的文件
      */
     public static void append(final String srcFile, final String appendFile, final String finalFile)
-        throws IOException {
+            throws IOException {
 
         final FileOutputStream fos = new FileOutputStream(new File(finalFile));
         final FileChannel fc = fos.getChannel();
@@ -417,7 +421,7 @@ public class VideoUtil {
      * 对Mp4文件集合进行追加合并(按照顺序一个一个拼接起来)
      *
      * @param mp4PathList [输入]Mp4文件路径的集合(支持m4a)(不支持wav)
-     * @param outPutPath [输出]结果文件全部名称包含后缀(比如.mp4)
+     * @param outPutPath  [输出]结果文件全部名称包含后缀(比如.mp4)
      * @throws IOException 格式不支持等情况抛出异常
      */
     public static void appendMp4List(List<String> mp4PathList, String outPutPath) {
@@ -445,17 +449,17 @@ public class VideoUtil {
             Movie resultMovie = new Movie();// 结果Movie对象[输出]
             if (!audioTracks.isEmpty()) {// 将所有音频通道追加合并
                 resultMovie
-                    .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
+                        .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
             }
 
             if (!videoTracks.isEmpty()) {// 将所有视频通道追加合并
                 resultMovie
-                    .addTrack(new AppendTrack(videoTracks.toArray(new Track[videoTracks.size()])));
+                        .addTrack(new AppendTrack(videoTracks.toArray(new Track[videoTracks.size()])));
             }
 
             Container outContainer = new DefaultMp4Builder().build(resultMovie);// 将结果Movie对象封装进容器
             FileChannel fileChannel = new RandomAccessFile(String.format(outPutPath), "rw")
-                .getChannel();
+                    .getChannel();
             outContainer.writeContainer(fileChannel);// 将容器内容写入磁盘
             fileChannel.close();
 
@@ -468,7 +472,7 @@ public class VideoUtil {
      * 对AAC文件集合进行追加合并(按照顺序一个一个拼接起来)
      *
      * @param aacPathList [输入]AAC文件路径的集合(不支持wav)
-     * @param outPutPath [输出]结果文件全部名称包含后缀(比如.aac)
+     * @param outPutPath  [输出]结果文件全部名称包含后缀(比如.aac)
      * @throws IOException 格式不支持等情况抛出异常
      */
     public static void appendAacList(List<String> aacPathList, String outPutPath) {
@@ -483,12 +487,12 @@ public class VideoUtil {
             Movie resultMovie = new Movie();// 结果Movie对象[输出]
             if (!audioTracks.isEmpty()) {// 将所有音频通道追加合并
                 resultMovie
-                    .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
+                        .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
             }
 
             Container outContainer = new DefaultMp4Builder().build(resultMovie);// 将结果Movie对象封装进容器
             FileChannel fileChannel = new RandomAccessFile(String.format(outPutPath), "rw")
-                .getChannel();
+                    .getChannel();
             outContainer.writeContainer(fileChannel);// 将容器内容写入磁盘
             fileChannel.close();
 
@@ -497,11 +501,6 @@ public class VideoUtil {
         }
 
     }
-
-
-    private static List<Movie> moviesList = new ArrayList<>();
-    private static List<Track> videoTracks = new ArrayList<>();
-    private static List<Track> audioTracks = new ArrayList<>();
 
     //将两个mp4视频进行拼接
     public static void appendMp4(List<String> mMp4List, String outputpath) {
@@ -531,11 +530,11 @@ public class VideoUtil {
         try {
             if (audioTracks.size() > 0) {
                 result
-                    .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
+                        .addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
             }
             if (videoTracks.size() > 0) {
                 result
-                    .addTrack(new AppendTrack(videoTracks.toArray(new Track[videoTracks.size()])));
+                        .addTrack(new AppendTrack(videoTracks.toArray(new Track[videoTracks.size()])));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -599,7 +598,7 @@ public class VideoUtil {
      * @param outPath .mp4
      */
     public static void muxM4AMp4(String m4aPath, String mp4Path, String outPath)
-        throws IOException {
+            throws IOException {
         Movie audioMovie = MovieCreator.build(m4aPath);
         Track audioTracks = null;// 获取视频的单纯音频部分
         for (Track audioMovieTrack : audioMovie.getTracks()) {
@@ -690,7 +689,7 @@ public class VideoUtil {
     /**
      * 分离mp4视频的音频部分，只保留视频部分
      *
-     * @param mp4Path .mp4
+     * @param mp4Path    .mp4
      * @param mp4OutPath mp4视频输出路径
      * @param aacOutPath aac视频输出路径
      */
@@ -762,13 +761,13 @@ public class VideoUtil {
     /**
      * 将 MP4 切割
      *
-     * @param mp4Path .mp4
+     * @param mp4Path    .mp4
      * @param fromSample 起始位置
-     * @param toSample 结束位置
-     * @param outPath .mp4
+     * @param toSample   结束位置
+     * @param outPath    .mp4
      */
     public static void cropMp4(String mp4Path, long fromSample, long toSample, String outPath)
-        throws IOException {
+            throws IOException {
         Movie mp4Movie = MovieCreator.build(mp4Path);
         Track videoTracks = null;// 获取视频的单纯视频部分
         for (Track videoMovieTrack : mp4Movie.getTracks()) {
@@ -785,9 +784,9 @@ public class VideoUtil {
 
         Movie resultMovie = new Movie();
         resultMovie
-            .addTrack(new AppendTrack(new CroppedTrack(videoTracks, fromSample, toSample)));// 视频部分
+                .addTrack(new AppendTrack(new CroppedTrack(videoTracks, fromSample, toSample)));// 视频部分
         resultMovie
-            .addTrack(new AppendTrack(new CroppedTrack(audioTracks, fromSample, toSample)));// 音频部分
+                .addTrack(new AppendTrack(new CroppedTrack(audioTracks, fromSample, toSample)));// 音频部分
 
         Container out = new DefaultMp4Builder().build(resultMovie);
         FileOutputStream fos = new FileOutputStream(new File(outPath));
@@ -842,6 +841,7 @@ public class VideoUtil {
 
     /**
      * 裁剪视频本地路径
+     *
      * @param context
      * @param dirName
      * @param fileNamePrefix
@@ -861,7 +861,7 @@ public class VideoUtil {
         }
         finalPath = file.getAbsolutePath();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-            .format(new Date());
+                .format(new Date());
         String outputName = fileNamePrefix + timeStamp + ".mp4";
         finalPath = finalPath + "/" + outputName;
         return finalPath;
@@ -874,10 +874,10 @@ public class VideoUtil {
         String dirPath = "";
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             dirPath = context.getExternalCacheDir() + File.separator
-                + dirName; // /mnt/sdcard/Android/data/<package name>/files/...
+                    + dirName; // /mnt/sdcard/Android/data/<package name>/files/...
         } else {
             dirPath = context.getCacheDir() + File.separator
-                + dirName; // /data/data/<package name>/files/...
+                    + dirName; // /data/data/<package name>/files/...
         }
         File file = new File(dirPath);
         if (!file.exists()) {
@@ -943,12 +943,12 @@ public class VideoUtil {
     public static String getSaveEditThumbnailDir(Context context) {
         String state = Environment.getExternalStorageState();
         File rootDir =
-            state.equals(Environment.MEDIA_MOUNTED) ? context.getExternalCacheDir()
-                : context.getCacheDir();
+                state.equals(Environment.MEDIA_MOUNTED) ? context.getExternalCacheDir()
+                        : context.getCacheDir();
         File folderDir = new File(rootDir.getAbsolutePath() + File.separator + TRIM_PATH + File.separator + THUMB_PATH);
         if (folderDir == null) {
             folderDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + File.separator + "videoeditor" + File.separator + "picture");
+                    + File.separator + "videoeditor" + File.separator + "picture");
         }
         if (!folderDir.exists() && folderDir.mkdirs()) {
 

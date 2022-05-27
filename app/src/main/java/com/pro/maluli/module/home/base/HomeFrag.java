@@ -42,6 +42,7 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.home.announcement.AnnouncementAct;
 import com.pro.maluli.module.home.base.adapter.HomeTopVideoFrg;
@@ -57,7 +58,6 @@ import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
-import com.pro.maluli.toolkit.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -76,7 +76,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-//import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 
 /**
  * 首页信息
@@ -84,6 +83,7 @@ import butterknife.OnClick;
  * @author 23203
  */
 public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresenter> implements IHomeContraction.View {
+    private static final int UPTATE_VIEWPAGER = 0;
     @BindView(R.id.mine_mian_ll)
     CoordinatorLayout mine_mian_ll;
     @BindView(R.id.marqueeView)
@@ -102,11 +102,18 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     ImageView gotoLiveIv;
     @BindView(R.id.exitTeenagerTv)
     TextView exitTeenagerTv;
-    private List<HomeInfoEntity.NoticeBean> noticeBeans = new ArrayList<>();
     List<Fragment> fragments;
     List<Fragment> topVideoFragment;
     MyPagerAdapter mAdapter;
     TopVideoAdapter topVideoAdapter;
+    SimpleTextAdapter simpleTextAdapter;
+    // 判断视频是否在播放，如果在播放，则不主动滑动viewpager
+    boolean isStartVideo = true;
+    ActivityResultLauncher<Intent> intentActivityResultLauncher;
+    boolean isHidden;
+    boolean isFirstResume = true;
+    CountDownTimer countDownTimer;
+    private List<HomeInfoEntity.NoticeBean> noticeBeans = new ArrayList<>();
     //    private BannerViewAdapter bannerViewAdapter;
     private int autoCurrIndex = 0;
     //    private Timer timer;
@@ -114,13 +121,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     private ImageView[] tips;
     private long period = 5000;
     private HomeInfoEntity homeInfoEntity;
-    private static final int UPTATE_VIEWPAGER = 0;
-    SimpleTextAdapter simpleTextAdapter;
     private UserInfoEntity userInfoEntity;
     private LastTimeLiveEntity lastTimeLiveEntity;
-    boolean isStartVideo = true;//判断视频是否在播放，如果在播放，则不主动滑动viewpager
-    ActivityResultLauncher<Intent> intentActivityResultLauncher;
     private boolean isRefresh = true;//是否下拉刷新了
+    private int positionLive = 0;
+    private int one, two;
 
     @Override
     public HomePresenter initPresenter() {
@@ -150,15 +155,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     }
 
-    boolean isHidden;
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         isHidden = hidden;
         if (hidden) {
-//            不可见
-//            GSYVideoManager.instance().setNeedMute(false);
             if (mHandler != null) {
                 isStartVideo = false;
                 mHandler.removeCallbacksAndMessages(null);
@@ -200,7 +201,20 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         return R.layout.frag_home1;
     }
 
-    private int positionLive = 0;
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 110 && resultCode == Activity.RESULT_OK) {
+//            if (data != null) {
+//                one = data.getIntExtra("ClassiftOne", 0);
+//                two = data.getIntExtra("ClassiftTwo", 0);
+//                isFristResume = false;
+//            }
+//            homeViewPager.setCurrentItem(one + 1);   //һ��ʼ��ѡ��
+//            HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
+//            frag.searchDuoBaoGoods(two);
+//        }
+//    }
 
     @Override
     public void viewInitialization() {
@@ -278,7 +292,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                         two = data.getIntExtra("ClassiftTwo", 0);
                         isFirstResume = false;
                     }
-                    homeViewPager.setCurrentItem(one + 1);   //һ��ʼ��ѡ��
+                    homeViewPager.setCurrentItem(one + 1);
                     HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
                     frag.searchDuoBaoGoods(two);
 
@@ -313,25 +327,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 break;
         }
     }
-
-    private int one, two;
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 110 && resultCode == Activity.RESULT_OK) {
-//            if (data != null) {
-//                one = data.getIntExtra("ClassiftOne", 0);
-//                two = data.getIntExtra("ClassiftTwo", 0);
-//                isFristResume = false;
-//            }
-//            homeViewPager.setCurrentItem(one + 1);   //һ��ʼ��ѡ��
-//            HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
-//            frag.searchDuoBaoGoods(two);
-//        }
-//    }
-
-    boolean isFirstResume = true;
 
     @Override
     public void onResume() {
@@ -371,7 +366,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     public void doBusiness() {
 
     }
-
 
     @Override
     public void setHomeInfo(HomeInfoEntity data) {
@@ -536,6 +530,173 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         });
     }
 
+    private void autoBanner() {
+        topVideoFragment.clear();
+        for (int i = 0; i < homeInfoEntity.getBanner().size(); i++) {
+            HomeTopVideoFrg fragment = (HomeTopVideoFrg) HomeTopVideoFrg.newInstance(homeInfoEntity.getBanner().get(i));
+            topVideoFragment.add(fragment);
+            fragment.setBannerListener(new HomeTopVideoFrg.BannerListener() {
+                @Override
+                public void imgClick(int position) {
+
+                }
+
+                @Override
+                public void videoIsStart() {
+                    isStartVideo = false;
+                    if (countDownTimer != null) {
+                        countDownTimer.cancel();
+                        mHandler.removeCallbacksAndMessages(null);
+                    }
+                }
+
+                @Override
+                public void videoStop() {
+                    if (isHidden) {
+                        return;
+                    }
+                    isStartVideo = true;
+                    startTime();
+                }
+            });
+        }
+//        //new一个适配器
+        topVideoAdapter = new TopVideoAdapter(getChildFragmentManager());
+        //设置ViewPager与适配器关联
+        bannerViewPager.setAdapter(topVideoAdapter);
+        bannerViewPager.setCurrentItem(0);   //
+//
+//        bannerViewPager.setOffscreenPageLimit(0);
+//        bannerViewAdapter = new BannerViewAdapter(getActivity(), homeInfoEntity.getBanner());
+//        bannerViewPager.setAdapter(bannerViewAdapter);
+        bannerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                HomeInfoEntity.BannerBean banner = homeInfoEntity.getBanner().get(position);
+                setImageBackground(position);
+                autoCurrIndex = position;
+                if (banner.getFile_type() != 1) {
+                    if (!isHidden) {
+                        isStartVideo = false;
+                    }
+                }
+
+                if (isHidden) {
+                    return;
+                }
+                startTime();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        isHidden = false;
+        startTime();
+    }
+
+    private void startTime() {
+        if (isHidden) {
+            return;
+        }
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(3000, 1000) {
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                Message message = new Message();
+                message.what = UPTATE_VIEWPAGER;
+                if (homeInfoEntity == null) {
+                    return;
+                }
+                if (!isStartVideo) {
+                    return;
+                }
+                if (autoCurrIndex == homeInfoEntity.getBanner().size() - 1) {
+                    autoCurrIndex = -1;
+                }
+                message.arg1 = autoCurrIndex + 1;
+                mHandler.sendMessage(message);
+            }
+        };
+        countDownTimer.start();
+    }
+
+    /**
+     * @param selectItems
+     */
+    private void setImageBackground(int selectItems) {
+        for (int i = 0; i < tips.length; i++) {
+            if (i == selectItems) {
+                tips[i].setBackgroundResource(R.drawable.shape_yuan_000000);
+            } else {
+                tips[i].setBackgroundResource(R.drawable.shape_yuan_000000_2);
+            }
+        }
+    }    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (msg.what == UPTATE_VIEWPAGER) {
+                if (isHidden) {
+                    return;
+                }
+                Logger.e("setCurrentItem");
+                if (msg.arg1 != 0) {
+                    bannerViewPager.setCurrentItem(msg.arg1);
+                } else {
+                    bannerViewPager.setCurrentItem(msg.arg1, false);
+                }
+                startTime();
+            }
+        }
+    };
+
+    private void setDianDian(int a) {
+        tips = new ImageView[a];
+        pointLL.removeAllViews();
+        for (int i = 0; i < tips.length; i++) {
+            ImageView imageView = new ImageView(getActivity());
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(10, 10));
+            if (i == 0) {
+                imageView.setBackgroundResource(R.drawable.shape_yuan_000000);
+            } else {
+                imageView.setBackgroundResource(R.drawable.shape_yuan_000000_2);
+            }
+            tips[i] = imageView;
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            layoutParams.leftMargin = 15;
+            layoutParams.rightMargin = 15;
+            layoutParams.bottomMargin = 40;
+            pointLL.addView(imageView, layoutParams);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        GSYVideoManager.releaseAllVideos();
+        try {
+            GSYVideoManager.instance().getPlayer().release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
     private class MyPagerAdapter extends FragmentPagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -589,187 +750,5 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         }
     }
 
-    private void autoBanner() {
-        topVideoFragment.clear();
-        for (int i = 0; i < homeInfoEntity.getBanner().size(); i++) {
-            HomeTopVideoFrg fragment = (HomeTopVideoFrg) HomeTopVideoFrg.newInstance(homeInfoEntity.getBanner().get(i));
-            topVideoFragment.add(fragment);
-            fragment.setBannerListener(new HomeTopVideoFrg.BannerListener() {
-                @Override
-                public void imgClick(int position) {
 
-                }
-
-                @Override
-                public void videoIsStart() {
-
-                    isStartVideo = false;
-                    if (countDownTimer != null) {
-                        countDownTimer.cancel();
-                        mHandler.removeCallbacksAndMessages(null);
-                    }
-                }
-
-                @Override
-                public void videoStop() {
-                    if (isHidden) {
-                        return;
-                    }
-                    isStartVideo = true;
-                    startTime();
-                }
-            });
-        }
-//        //new一个适配器
-        topVideoAdapter = new TopVideoAdapter(getChildFragmentManager());
-        //设置ViewPager与适配器关联
-        bannerViewPager.setAdapter(topVideoAdapter);
-        bannerViewPager.setCurrentItem(0);   //
-//
-//        bannerViewPager.setOffscreenPageLimit(0);
-//        bannerViewAdapter = new BannerViewAdapter(getActivity(), homeInfoEntity.getBanner());
-//        bannerViewPager.setAdapter(bannerViewAdapter);
-        bannerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                HomeInfoEntity.BannerBean banner = homeInfoEntity.getBanner().get(position);
-                setImageBackground(position);
-                autoCurrIndex = position;
-//                try {
-//                    GSYVideoManager.instance().getPlayer().release();
-//                }catch (Exception e){
-//
-//                }
-                if (banner.getFile_type() != 1) {
-                    HomeTopVideoFrg frg = (HomeTopVideoFrg) topVideoFragment.get(position);
-                    if (!isHidden) {
-//                        frg.startVideo();
-                        Logger.e("frg.startVideo()");
-                        isStartVideo = false;
-                    }
-
-                } else {
-//                    isStartVideo = true;
-                }
-                if (isHidden) {
-                    return;
-                }
-                startTime();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        isHidden = false;
-        startTime();
-    }
-
-    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if (msg.what == UPTATE_VIEWPAGER) {
-                if (isHidden) {
-                    return;
-                }
-                Logger.e("setCurrentItem");
-                if (msg.arg1 != 0) {
-                    bannerViewPager.setCurrentItem(msg.arg1);
-                } else {
-                    bannerViewPager.setCurrentItem(msg.arg1, false);
-                }
-                startTime();
-            }
-        }
-    };
-    CountDownTimer countDownTimer;
-
-    private void startTime() {
-        if (isHidden) {
-            return;
-        }
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-        countDownTimer = new CountDownTimer(3000, 1000) {
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-                Message message = new Message();
-                message.what = UPTATE_VIEWPAGER;
-                if (homeInfoEntity == null) {
-                    return;
-                }
-                if (!isStartVideo) {
-                    return;
-                }
-                if (autoCurrIndex == homeInfoEntity.getBanner().size() - 1) {
-                    autoCurrIndex = -1;
-                }
-                Logger.e("sendMessage");
-//                if (GSYVideoManager.i)
-                message.arg1 = autoCurrIndex + 1;
-                mHandler.sendMessage(message);
-            }
-        };
-        countDownTimer.start();
-    }
-
-
-    /**
-     * @param selectItems
-     */
-    private void setImageBackground(int selectItems) {
-        for (int i = 0; i < tips.length; i++) {
-            if (i == selectItems) {
-                tips[i].setBackgroundResource(R.drawable.shape_yuan_000000);
-            } else {
-                tips[i].setBackgroundResource(R.drawable.shape_yuan_000000_2);
-            }
-        }
-    }
-
-    private void setDianDian(int a) {
-        tips = new ImageView[a];
-        pointLL.removeAllViews();
-        for (int i = 0; i < tips.length; i++) {
-            ImageView imageView = new ImageView(getActivity());
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(10, 10));
-            if (i == 0) {
-                imageView.setBackgroundResource(R.drawable.shape_yuan_000000);
-            } else {
-                imageView.setBackgroundResource(R.drawable.shape_yuan_000000_2);
-            }
-            tips[i] = imageView;
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            layoutParams.leftMargin = 15;
-            layoutParams.rightMargin = 15;
-            layoutParams.bottomMargin = 40;
-            pointLL.addView(imageView, layoutParams);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        GSYVideoManager.releaseAllVideos();
-        try {
-            GSYVideoManager.instance().getPlayer().release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
-    }
 }

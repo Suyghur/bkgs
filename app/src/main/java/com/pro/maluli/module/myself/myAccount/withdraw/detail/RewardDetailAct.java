@@ -15,16 +15,13 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.SelectTimeDialog;
 import com.pro.maluli.common.view.popwindow.PayTypeAllPopupWindow;
 import com.pro.maluli.module.myself.myAccount.withdraw.detail.adapter.RewardDetailAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.detail.presenter.IRewardDetailContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.detail.presenter.RewardDetailPresenter;
-import com.pro.maluli.module.myself.myAccount.withdraw.search.SearchBkDetailAct;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.SearchRewardAct;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -166,7 +163,7 @@ public class RewardDetailAct extends BaseMvpActivity<IRewardDetailContraction.Vi
                 break;
             case R.id.allLL:
                 PayTypeAllPopupWindow payTypeAllPopupWindow =
-                        new PayTypeAllPopupWindow(this,true, topSelectLL, new PayTypeAllPopupWindow.PayTypeAllListener() {
+                        new PayTypeAllPopupWindow(this, true, topSelectLL, new PayTypeAllPopupWindow.PayTypeAllListener() {
                             @Override
                             public void onSelectItem(int position, String type) {
                                 presenter.flow_type = String.valueOf(position);

@@ -10,15 +10,40 @@ import android.util.Log;
 
 public class ConnectivityWatcher {
 
-    public interface Callback {
-        void onNetworkEvent(NetworkEnums.Event event);
-    }
-
     private Callback mCallback;
     private Context mContext;
-
     private boolean mAvailable;
     private String mTypeName;
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm != null) {
+                String action = intent.getAction();
+                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+                    NetworkInfo info = cm.getActiveNetworkInfo();
+                    boolean available = info != null && info.isAvailable();
+                    String typeName = available ? info.getTypeName() : null;
+                    if (mAvailable != available) {
+                        // update
+                        mAvailable = available;
+                        mTypeName = typeName;
+
+                        // notify
+                        onAvailable(available);
+                    } else if (mAvailable) {
+                        if (!typeName.equals(mTypeName)) {
+                            // update
+                            mTypeName = typeName;
+
+                            // notify
+                            notifyEvent(NetworkEnums.Event.NETWORK_CHANGE);
+                        }
+                    }
+                }
+            }
+        }
+    };
 
     public ConnectivityWatcher(Context context, Callback callback) {
         mContext = context;
@@ -51,37 +76,6 @@ public class ConnectivityWatcher {
         mContext.unregisterReceiver(mReceiver);
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (cm != null) {
-                String action = intent.getAction();
-                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
-                    NetworkInfo info = cm.getActiveNetworkInfo();
-                    boolean available = info != null && info.isAvailable();
-                    String typeName = available ? info.getTypeName() : null;
-                    if (mAvailable != available) {
-                        // update
-                        mAvailable = available;
-                        mTypeName = typeName;
-
-                        // notify
-                        onAvailable(available);
-                    } else if (mAvailable) {
-                        if (!typeName.equals(mTypeName)) {
-                            // update
-                            mTypeName = typeName;
-
-                            // notify
-                            notifyEvent(NetworkEnums.Event.NETWORK_CHANGE);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
     private void onAvailable(boolean available) {
         if (available) {
             notifyEvent(NetworkEnums.Event.NETWORK_AVAILABLE);
@@ -98,5 +92,9 @@ public class ConnectivityWatcher {
         if (mCallback != null) {
             mCallback.onNetworkEvent(event);
         }
+    }
+
+    public interface Callback {
+        void onNetworkEvent(NetworkEnums.Event event);
     }
 }

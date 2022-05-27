@@ -18,49 +18,48 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-    public class MsgAdapter extends BaseQuickAdapter<IMMessage, MsgAdapter.ViewHolder> {
-        List<IMMessage> datas;
-        private Context context;
+public class MsgAdapter extends BaseQuickAdapter<IMMessage, MsgAdapter.ViewHolder> {
+    List<IMMessage> datas;
+    private Context context;
 
-        public MsgAdapter(List<IMMessage> data, Context context1) {
-            super(R.layout.item_msg_search, data);
-            datas = data;
-            context = context1;
-        }
+    public MsgAdapter(List<IMMessage> data, Context context1) {
+        super(R.layout.item_msg_search, data);
+        datas = data;
+        context = context1;
+    }
 
-        @Override
-        protected void convert(@NotNull MsgAdapter.ViewHolder baseViewHolder, IMMessage bean) {
+    @Override
+    protected void convert(@NotNull MsgAdapter.ViewHolder baseViewHolder, IMMessage bean) {
 
-            HeadImageView circleImageView = baseViewHolder.getView(R.id.img_head);
-            circleImageView.loadBuddyAvatar(bean);
-            baseViewHolder.tv_nickname.setText(bean.getFromNick());
-            baseViewHolder.tv_message.setText(bean.getContent());
-            baseViewHolder.tv_date_time.setText(TimeUtils.millis2String(bean.getTime()));
+        HeadImageView circleImageView = baseViewHolder.getView(R.id.img_head);
+        circleImageView.loadBuddyAvatar(bean);
+        baseViewHolder.tv_nickname.setText(bean.getFromNick());
+        baseViewHolder.tv_message.setText(bean.getContent());
+        baseViewHolder.tv_date_time.setText(TimeUtils.millis2String(bean.getTime()));
 
-
-        }
-        static class ViewHolder extends BaseViewHolder {
-            @BindView(R.id.img_head)
-            HeadImageView img_head;
-
-
-            @BindView(R.id.tv_nickname)
-            TextView tv_nickname;
-
-            @BindView(R.id.tv_message)
-            TextView tv_message;
-
-
-            @BindView(R.id.tv_date_time)
-            TextView tv_date_time;
-
-
-
-
-            ViewHolder(View view) {
-                super(view);
-                ButterKnife.bind(this, view);
-            }
-        }
 
     }
+
+    static class ViewHolder extends BaseViewHolder {
+        @BindView(R.id.img_head)
+        HeadImageView img_head;
+
+
+        @BindView(R.id.tv_nickname)
+        TextView tv_nickname;
+
+        @BindView(R.id.tv_message)
+        TextView tv_message;
+
+
+        @BindView(R.id.tv_date_time)
+        TextView tv_date_time;
+
+
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+}

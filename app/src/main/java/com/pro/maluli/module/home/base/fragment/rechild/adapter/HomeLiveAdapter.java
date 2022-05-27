@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeLiveAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.ListBean, HomeLiveAdapter.ViewHolder> implements LoadMoreModule {
@@ -89,42 +87,42 @@ public class HomeLiveAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.Li
     }
 
     static class ViewHolder extends BaseViewHolder {
-//        @BindView(R.id.CoverRiv)
+        //        @BindView(R.id.CoverRiv)
         RoundedImageView CoverRiv;
 
-//        @BindView(R.id.liveTypeImg)
+        //        @BindView(R.id.liveTypeImg)
         ImageView liveTypeImg;
 
-//        @BindView(R.id.liveTypeTv)
+        //        @BindView(R.id.liveTypeTv)
         TextView liveTypeTv;
 
-//        @BindView(R.id.liveTitleTv)
+        //        @BindView(R.id.liveTitleTv)
         TextView liveTitleTv;
 
-//        @BindView(R.id.anchorAvatarCiv)
+        //        @BindView(R.id.anchorAvatarCiv)
         CircleImageView anchorAvatarCiv;
 
-//        @BindView(R.id.anchorNameTv)
+        //        @BindView(R.id.anchorNameTv)
         TextView anchorNameTv;
 
-//        @BindView(R.id.cumulativeServiceTv)
+        //        @BindView(R.id.cumulativeServiceTv)
         TextView cumulativeServiceTv;
 
-//        @BindView(R.id.likenumberTv)
+        //        @BindView(R.id.likenumberTv)
         TextView likenumberTv;
 
-//        @BindView(R.id.levelImg)
+        //        @BindView(R.id.levelImg)
         ImageView levelImg;
 
-//        @BindView(R.id.linearlayout)
+        //        @BindView(R.id.linearlayout)
         LinearLayout linearlayout;
-//        @BindView(R.id.statusLL)
+        //        @BindView(R.id.statusLL)
         LinearLayout statusLL;
-//        @BindView(R.id.abilityStar)
+        //        @BindView(R.id.abilityStar)
         StarBar abilityStar;
 
 
-//        @BindView(R.id.horizaotalscrollview)
+        //        @BindView(R.id.horizaotalscrollview)
         HorizontalScrollView horizaotalscrollview;
 
         ViewHolder(View view) {
@@ -132,17 +130,17 @@ public class HomeLiveAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.Li
 //            ButterKnife.bind(this, view);
             CoverRiv = (RoundedImageView) view.findViewById(R.id.CoverRiv);
             liveTypeImg = view.findViewById(R.id.liveTypeImg);
-            liveTypeTv =  view.findViewById(R.id.liveTypeTv);
-            liveTitleTv =  view.findViewById(R.id.liveTitleTv);
-            anchorAvatarCiv =  view.findViewById(R.id.anchorAvatarCiv);
-            anchorNameTv =  view.findViewById(R.id.anchorNameTv);
-            cumulativeServiceTv =  view.findViewById(R.id.cumulativeServiceTv);
+            liveTypeTv = view.findViewById(R.id.liveTypeTv);
+            liveTitleTv = view.findViewById(R.id.liveTitleTv);
+            anchorAvatarCiv = view.findViewById(R.id.anchorAvatarCiv);
+            anchorNameTv = view.findViewById(R.id.anchorNameTv);
+            cumulativeServiceTv = view.findViewById(R.id.cumulativeServiceTv);
             likenumberTv = view.findViewById(R.id.likenumberTv);
-            levelImg =  view.findViewById(R.id.levelImg);
+            levelImg = view.findViewById(R.id.levelImg);
             linearlayout = view.findViewById(R.id.linearlayout);
             statusLL = view.findViewById(R.id.statusLL);
-            abilityStar =  view.findViewById(R.id.abilityStar);
-            horizaotalscrollview =  view.findViewById(R.id.horizaotalscrollview);
+            abilityStar = view.findViewById(R.id.abilityStar);
+            horizaotalscrollview = view.findViewById(R.id.horizaotalscrollview);
 
         }
     }

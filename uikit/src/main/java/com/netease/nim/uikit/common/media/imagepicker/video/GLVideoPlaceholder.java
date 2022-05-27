@@ -16,52 +16,34 @@ import com.netease.nim.uikit.common.util.sys.TimeUtil;
 
 
 /**
+ *
  */
 
 public class GLVideoPlaceholder extends FrameLayout {
 
-    private GLVideoView videoView;
-
-    private ImageView cover;
-
-    private View icon;
-
-    private View indicator;
-
-    private View pause;
-
-    private View full;
-
-    private TextView time;
-
-    private View mask;
-
-    private float ratioWidth;
-
-    private float ratioHeight;
-
-    private int layout;
-
-    private boolean fullScreenEnabled;
-
-    private GLVideoModel model;
-
-    private int videoWidth = -1;
-
-    private int videoHeight = -1;
-
-    private int placeholderWidth = -1;
-
-    private int placeholderHeight = -1;
-
-    // 0 for width
-    // 1 for height
-    private int standard;
-
     private static final int sEnumNop = -1;
     private static final int sEnumWidth = 0;
     private static final int sEnumHeight = 1;
-
+    private GLVideoView videoView;
+    private ImageView cover;
+    private View icon;
+    private View indicator;
+    private View pause;
+    private View full;
+    private TextView time;
+    private View mask;
+    private float ratioWidth;
+    private float ratioHeight;
+    private int layout;
+    private boolean fullScreenEnabled;
+    private GLVideoModel model;
+    private int videoWidth = -1;
+    private int videoHeight = -1;
+    private int placeholderWidth = -1;
+    private int placeholderHeight = -1;
+    // 0 for width
+    // 1 for height
+    private int standard;
     private OnClickListener onPlayClicked;
 
     private OnClickListener onPlayClickedListener = new OnClickListener() {
@@ -138,7 +120,7 @@ public class GLVideoPlaceholder extends FrameLayout {
 
             setMeasuredDimension(width, height);
             measureChildren(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         }
 
         resize();
@@ -196,7 +178,7 @@ public class GLVideoPlaceholder extends FrameLayout {
         }
 
         time.setText(String.format("%s/%s", TimeUtil.secToTime(model.getCurrent() / 1000),
-                                   TimeUtil.secToTime((int) (model.getDuration() / 1000))));
+                TimeUtil.secToTime((int) (model.getDuration() / 1000))));
 
         if (force) {
             GlideImageLoader.displayVideo(cover, model.getUri());
@@ -211,7 +193,7 @@ public class GLVideoPlaceholder extends FrameLayout {
         }
 
         if (model.getVideoWidth() != videoWidth || model.getViewHeight() != videoHeight ||
-            placeholderWidth != getMeasuredWidth() || placeholderWidth != getMeasuredHeight()) {
+                placeholderWidth != getMeasuredWidth() || placeholderWidth != getMeasuredHeight()) {
 
             videoWidth = model.getVideoWidth();
             videoHeight = model.getViewHeight();

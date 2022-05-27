@@ -12,6 +12,7 @@ public interface IHomeContraction extends BaseView {
 
         void setLastLive(LastTimeLiveEntity data);
     }
+
     interface Presenter extends IClear {
         void getUserInfo();
 

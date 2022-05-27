@@ -17,49 +17,52 @@
 package com.marvhong.videoeffect.utils;
 
 import android.opengl.Matrix;
+
 import com.marvhong.videoeffect.Rotation;
+
 import java.nio.FloatBuffer;
 
 public class TextureRotationUtil {
 
     public static final float TEXTURE_NO_ROTATION[] = {
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
     };
 
     public static final float TEXTURE_ROTATED_90[] = {
-        1.0f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 1.0f,
-        0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
     };
     public static final float TEXTURE_ROTATED_180[] = {
-        1.0f, 0.0f,
-        0.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
     };
     public static final float TEXTURE_ROTATED_270[] = {
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
     };
 
     public static final float CUBE[] = {
-        -1.0f, -1.0f,
-        1.0f, -1.0f,
-        -1.0f, 1.0f,
-        1.0f, 1.0f,
+            -1.0f, -1.0f,
+            1.0f, -1.0f,
+            -1.0f, 1.0f,
+            1.0f, 1.0f,
     };
+    private static int STANDARD_SIZE = 1080;
 
     private TextureRotationUtil() {
     }
 
     public static float[] getRotation(final Rotation rotation, final boolean flipHorizontal,
-        final boolean flipVertical) {
+                                      final boolean flipVertical) {
         float[] rotatedTex;
         switch (rotation) {
             case ROTATION_90:
@@ -78,29 +81,28 @@ public class TextureRotationUtil {
         }
         if (flipHorizontal) {
             rotatedTex = new float[]{
-                flip(rotatedTex[0]), rotatedTex[1],
-                flip(rotatedTex[2]), rotatedTex[3],
-                flip(rotatedTex[4]), rotatedTex[5],
-                flip(rotatedTex[6]), rotatedTex[7],
+                    flip(rotatedTex[0]), rotatedTex[1],
+                    flip(rotatedTex[2]), rotatedTex[3],
+                    flip(rotatedTex[4]), rotatedTex[5],
+                    flip(rotatedTex[6]), rotatedTex[7],
             };
         }
         if (flipVertical) {
             rotatedTex = new float[]{
-                rotatedTex[0], flip(rotatedTex[1]),
-                rotatedTex[2], flip(rotatedTex[3]),
-                rotatedTex[4], flip(rotatedTex[5]),
-                rotatedTex[6], flip(rotatedTex[7]),
+                    rotatedTex[0], flip(rotatedTex[1]),
+                    rotatedTex[2], flip(rotatedTex[3]),
+                    rotatedTex[4], flip(rotatedTex[5]),
+                    rotatedTex[6], flip(rotatedTex[7]),
             };
         }
         return rotatedTex;
     }
 
-
     public static void adjustSize(ScaleType scaleType, int imageWidth, int imageHeight,
-        int outputWidth, int outputHeight, int rotation, boolean flipHorizontal,
-        boolean flipVertical, FloatBuffer gLCubeBuffer, FloatBuffer gLTextureBuffer) {
+                                  int outputWidth, int outputHeight, int rotation, boolean flipHorizontal,
+                                  boolean flipVertical, FloatBuffer gLCubeBuffer, FloatBuffer gLTextureBuffer) {
         float[] textureCords = TextureRotationUtil.getRotation(Rotation.fromInt(rotation),
-            flipHorizontal, flipVertical);
+                flipHorizontal, flipVertical);
         float[] cube = TextureRotationUtil.CUBE;
         float ratio1 = (float) outputWidth / imageWidth;
         float ratio2 = (float) outputHeight / imageHeight;
@@ -113,17 +115,17 @@ public class TextureRotationUtil {
 
         if (scaleType == ScaleType.CENTER_INSIDE) {
             cube = new float[]{
-                TextureRotationUtil.CUBE[0] / ratioHeight, TextureRotationUtil.CUBE[1] / ratioWidth,
-                TextureRotationUtil.CUBE[2] / ratioHeight, TextureRotationUtil.CUBE[3] / ratioWidth,
-                TextureRotationUtil.CUBE[4] / ratioHeight, TextureRotationUtil.CUBE[5] / ratioWidth,
-                TextureRotationUtil.CUBE[6] / ratioHeight, TextureRotationUtil.CUBE[7] / ratioWidth,
+                    TextureRotationUtil.CUBE[0] / ratioHeight, TextureRotationUtil.CUBE[1] / ratioWidth,
+                    TextureRotationUtil.CUBE[2] / ratioHeight, TextureRotationUtil.CUBE[3] / ratioWidth,
+                    TextureRotationUtil.CUBE[4] / ratioHeight, TextureRotationUtil.CUBE[5] / ratioWidth,
+                    TextureRotationUtil.CUBE[6] / ratioHeight, TextureRotationUtil.CUBE[7] / ratioWidth,
             };
         } else if (scaleType == ScaleType.FIT_XY) {
 
         } else if (scaleType == ScaleType.CENTER_CROP) {
             float distVertical, distHorizontal;
             if (Rotation.fromInt(rotation) != Rotation.ROTATION_90
-                && Rotation.fromInt(rotation) != Rotation.ROTATION_270) {
+                    && Rotation.fromInt(rotation) != Rotation.ROTATION_270) {
                 distVertical = (1 - 1 / ratioWidth) / 2;
                 distHorizontal = (1 - 1 / ratioHeight) / 2;
             } else {
@@ -131,14 +133,14 @@ public class TextureRotationUtil {
                 distVertical = (1 - 1 / ratioHeight) / 2;
             }
             textureCords = new float[]{
-                addDistance(textureCords[0], distVertical),
-                addDistance(textureCords[1], distHorizontal),
-                addDistance(textureCords[2], distVertical),
-                addDistance(textureCords[3], distHorizontal),
-                addDistance(textureCords[4], distVertical),
-                addDistance(textureCords[5], distHorizontal),
-                addDistance(textureCords[6], distVertical),
-                addDistance(textureCords[7], distHorizontal),
+                    addDistance(textureCords[0], distVertical),
+                    addDistance(textureCords[1], distHorizontal),
+                    addDistance(textureCords[2], distVertical),
+                    addDistance(textureCords[3], distHorizontal),
+                    addDistance(textureCords[4], distVertical),
+                    addDistance(textureCords[5], distHorizontal),
+                    addDistance(textureCords[6], distVertical),
+                    addDistance(textureCords[7], distHorizontal),
             };
         }
         gLCubeBuffer.clear();
@@ -151,7 +153,6 @@ public class TextureRotationUtil {
         return coordinate == 0.0f ? distance : 1 - distance;
     }
 
-
     private static float flip(final float i) {
         if (i == 0.0f) {
             return 1.0f;
@@ -159,17 +160,8 @@ public class TextureRotationUtil {
         return 0.0f;
     }
 
-    public enum ScaleType {
-        CENTER_INSIDE,
-        CENTER_CROP,
-        FIT_XY
-    }
-
-
-    private static int STANDARD_SIZE = 1080;
-
     public static void getMatrixByPosition(float[] matrix, int imageWidth, int imageHeight,
-        int offsetX, int offsetY) {
+                                           int offsetX, int offsetY) {
         float[] projection = new float[16];
 
         Matrix.orthoM(projection, 0, -1, 1, -1, 1, 1, 3);
@@ -178,17 +170,23 @@ public class TextureRotationUtil {
         Matrix.setLookAtM(camera, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
 
         float[] mMatrixCurrent =     //原始矩阵
-            {1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1};
+                {1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1};
 
         Matrix.scaleM(mMatrixCurrent, 0, 1f * STANDARD_SIZE / imageWidth,
-            1f * STANDARD_SIZE / imageHeight, 1);
+                1f * STANDARD_SIZE / imageHeight, 1);
         Matrix.translateM(mMatrixCurrent, 0, -(offsetX - (float) imageWidth / 2) / STANDARD_SIZE,
-            -(offsetY - (float) imageHeight / 2) / STANDARD_SIZE, 0);
+                -(offsetY - (float) imageHeight / 2) / STANDARD_SIZE, 0);
 
         Matrix.multiplyMM(matrix, 0, camera, 0, mMatrixCurrent, 0);
         Matrix.multiplyMM(matrix, 0, projection, 0, matrix, 0);
+    }
+
+    public enum ScaleType {
+        CENTER_INSIDE,
+        CENTER_CROP,
+        FIT_XY
     }
 }

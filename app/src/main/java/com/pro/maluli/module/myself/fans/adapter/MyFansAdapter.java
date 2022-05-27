@@ -22,15 +22,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyFansAdapter extends BaseQuickAdapter<WatchListEntity.ListBean, MyFansAdapter.ViewHolder> {
     private Context context;
 
+    public MyFansAdapter(List<WatchListEntity.ListBean> data, Context context) {
+        super(R.layout.item_fans_list, data);
+        this.context = context;
+    }
+
     @NotNull
     @Override
     protected MyFansAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public MyFansAdapter(List<WatchListEntity.ListBean> data, Context context) {
-        super(R.layout.item_fans_list, data);
-        this.context = context;
     }
 
     @Override

@@ -24,24 +24,24 @@ public class SDKOptions {
     public long refreshPreLoadDuration = 30 * 60 * 1000;
 
     /**
-     *  是否对预处理和缓冲进行超时保护
-     *  默认false开启对预处理和缓冲进行超时保护，如果应用层需要自己处理预处理和缓冲的超时逻辑可以设置为true关掉该功能。
+     * 是否对预处理和缓冲进行超时保护
+     * 默认false开启对预处理和缓冲进行超时保护，如果应用层需要自己处理预处理和缓冲的超时逻辑可以设置为true关掉该功能。
      */
     public boolean isCloseTimeOutProtect;
 
     /**
-     *  so库动态加载配置信息
+     * so库动态加载配置信息
      */
     public NEDynamicLoadingConfig dynamicLoadingConfig;
 
     /**
-     *  数据上报回调
-     *  目前SDK内部会将统计数据上报到网易云统计平台，如果上层注册了该回调，那么SDK不再进行数据上传而是由上层进行网络请求上传数据。
+     * 数据上报回调
+     * 目前SDK内部会将统计数据上报到网易云统计平台，如果上层注册了该回调，那么SDK不再进行数据上传而是由上层进行网络请求上传数据。
      */
     public NELivePlayer.OnDataUploadListener dataUploadListener;
 
     /**
-     *  播放器日志回调
+     * 播放器日志回调
      */
     public NELivePlayer.OnLogListener logListener;
 

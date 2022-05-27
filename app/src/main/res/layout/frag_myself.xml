@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     android:id="@+id/myselfSrl"
-    android:background="@color/c_f9f9f9"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c_f9f9f9">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -56,8 +56,7 @@
                         android:layout_width="@dimen/dp_15"
                         android:layout_height="@dimen/dp_15"
                         android:layout_marginLeft="@dimen/dp_5"
-                        android:src="@drawable/selector_gender"
-                         />
+                        android:src="@drawable/selector_gender" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -69,25 +68,25 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:visibility="visible"
                         android:id="@+id/userIdTips"
-                        android:layout_marginLeft="@dimen/dp_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_3"
                         android:text="ID:"
                         android:textColor="@color/c_95928e"
-                        android:textSize="@dimen/sp_16" />
+                        android:textSize="@dimen/sp_16"
+                        android:visibility="visible" />
 
                     <TextView
-                        android:visibility="visible"
-                        android:layout_marginLeft="@dimen/dp_5"
                         android:id="@+id/userIdTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="---"
+                        android:layout_marginLeft="@dimen/dp_5"
                         android:layout_marginRight="@dimen/dp_5"
+                        android:text="---"
                         android:textColor="@color/c_95928e"
-                        android:textSize="@dimen/sp_16" />
+                        android:textSize="@dimen/sp_16"
+                        android:visibility="visible" />
 
                     <ImageView
                         android:id="@+id/levelImg"
@@ -281,11 +280,11 @@
                         android:textSize="@dimen/dp_14" />
 
                     <ImageView
-                        android:visibility="gone"
                         android:id="@+id/hasMessageImg"
                         android:layout_width="@dimen/dp_8"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/shape_yuan_fc595e" />
+                        android:background="@drawable/shape_yuan_fc595e"
+                        android:visibility="gone" />
 
                     <ImageView
                         android:layout_width="@dimen/dp_20"

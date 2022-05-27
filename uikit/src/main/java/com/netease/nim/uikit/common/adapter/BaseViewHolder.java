@@ -1,12 +1,14 @@
 package com.netease.nim.uikit.common.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
+ *
  */
 public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
     protected final Context context;

@@ -3,6 +3,7 @@ package com.netease.neliveplayer.playerkit.sdk.model;
 /**
  * 播放数据源配置项
  * 在设置播放地址和切换播放地址时如果有需要可以配置该信息
+ *
  * @author netease
  */
 public class DataSourceConfig {

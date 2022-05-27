@@ -1,22 +1,15 @@
 package com.netease.nim.uikit.business.session.viewholder;
 
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
-import com.netease.nim.uikit.business.session.myCustom.extension.PhoneAttachment;
 import com.netease.nim.uikit.business.session.myCustom.extension.ScoreAttachment;
-import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 
 import org.greenrobot.eventbus.EventBus;

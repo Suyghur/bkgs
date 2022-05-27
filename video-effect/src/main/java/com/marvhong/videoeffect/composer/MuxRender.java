@@ -4,6 +4,7 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.util.Log;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -15,12 +16,12 @@ class MuxRender {
     private static final String TAG = "MuxRender";
     private static final int BUFFER_SIZE = 64 * 1024; // I have no idea whether this value is appropriate or not...
     private final MediaMuxer muxer;
+    private final List<SampleInfo> sampleInfoList;
     private MediaFormat videoFormat;
     private MediaFormat audioFormat;
     private int videoTrackIndex;
     private int audioTrackIndex;
     private ByteBuffer byteBuffer;
-    private final List<SampleInfo> sampleInfoList;
     private boolean started;
 
     MuxRender(MediaMuxer muxer) {
@@ -47,16 +48,16 @@ class MuxRender {
 
             videoTrackIndex = muxer.addTrack(videoFormat);
             Log.v(TAG, "Added track #" + videoTrackIndex + " with " + videoFormat.getString(
-                MediaFormat.KEY_MIME) + " to muxer");
+                    MediaFormat.KEY_MIME) + " to muxer");
             audioTrackIndex = muxer.addTrack(audioFormat);
             Log.v(TAG, "Added track #" + audioTrackIndex + " with " + audioFormat.getString(
-                MediaFormat.KEY_MIME) + " to muxer");
+                    MediaFormat.KEY_MIME) + " to muxer");
 
         } else if (videoFormat != null) {
 
             videoTrackIndex = muxer.addTrack(videoFormat);
             Log.v(TAG, "Added track #" + videoTrackIndex + " with " + videoFormat.getString(
-                MediaFormat.KEY_MIME) + " to muxer");
+                    MediaFormat.KEY_MIME) + " to muxer");
 
         }
 

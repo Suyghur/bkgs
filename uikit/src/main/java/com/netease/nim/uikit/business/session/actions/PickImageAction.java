@@ -17,18 +17,16 @@ import java.io.File;
  */
 public abstract class PickImageAction extends BaseAction {
 
-    private static final int PICK_IMAGE_COUNT = 9;
-
     public static final String MIME_JPEG = "image/jpeg";
-
+    private static final int PICK_IMAGE_COUNT = 9;
     private boolean multiSelect;
-
-    protected abstract void onPicked(File file);
 
     protected PickImageAction(int iconResId, int titleId, boolean multiSelect) {
         super(iconResId, titleId);
         this.multiSelect = multiSelect;
     }
+
+    protected abstract void onPicked(File file);
 
     @Override
     public void onClick() {

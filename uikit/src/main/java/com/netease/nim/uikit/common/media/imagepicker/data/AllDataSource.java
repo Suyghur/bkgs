@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
-
+ *
  */
 
 public class AllDataSource extends AbsDataSource {
 
+    private final Result result;
     private CursorDataSource image;
     private CursorDataSource video;
-    private final Result result;
 
     /**
-     * @param activity       用于初始化LoaderManager，需要兼容到2.3
-     * @param path           指定扫描的文件夹目录，可以为 null，表示扫描所有图片
+     * @param activity 用于初始化LoaderManager，需要兼容到2.3
+     * @param path     指定扫描的文件夹目录，可以为 null，表示扫描所有图片
      */
     AllDataSource(FragmentActivity activity, String path) {
         image = new ImageDataSource(activity, path);

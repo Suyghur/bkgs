@@ -15,6 +15,13 @@ public class AnchorsPperation extends CustomAttachment {
     private String status;
     private String value;
     private String data;
+    private String command;
+    private String title;
+    private String prize_draw_id;
+
+    public AnchorsPperation() {
+        super(CustomAttachmentType.operation);
+    }
 
     public String getData() {
         return data;
@@ -32,9 +39,6 @@ public class AnchorsPperation extends CustomAttachment {
         this.title = title;
     }
 
-    private String command;
-    private String title;
-
     public String getCommand() {
         return command;
     }
@@ -51,18 +55,12 @@ public class AnchorsPperation extends CustomAttachment {
         this.prize_draw_id = prize_draw_id;
     }
 
-    private String prize_draw_id;
-
     public String getValue() {
         return value;
     }
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public AnchorsPperation() {
-        super(CustomAttachmentType.operation);
     }
 
     public String getStatus() {
@@ -82,8 +80,8 @@ public class AnchorsPperation extends CustomAttachment {
         value = data1.getString(KEY_VALUE);
         command = data1.getString(KEY_COMMAND);
         prize_draw_id = data1.getString(KEY_PRIXE);
-        title=data1.getString(KEY_TITLE);
-        data=data1.getString(KEY_DATA);
+        title = data1.getString(KEY_TITLE);
+        data = data1.getString(KEY_DATA);
 
     }
 

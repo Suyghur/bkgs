@@ -1,28 +1,16 @@
 package com.pro.maluli.module.myself.userAgreement.protocolDetail;
 
 import android.graphics.Color;
-import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.blankj.utilcode.util.BarUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.ProtocolDetailEntity;
-import com.pro.maluli.common.entity.ProtocolEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.module.myself.userAgreement.base.adapter.UserAgreementAdapter;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.presenter.IProtocolDetailContraction;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.presenter.ProtocolDetailPresenter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 

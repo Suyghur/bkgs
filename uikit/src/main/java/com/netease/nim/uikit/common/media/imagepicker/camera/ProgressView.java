@@ -5,16 +5,18 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
 import com.netease.nim.uikit.R;
 
 
 /**
+ *
  */
 
 public class ProgressView extends View {
@@ -53,6 +55,9 @@ public class ProgressView extends View {
     private float currentAngle = 0f;
     //  透明度
     private int alpha = 25;
+    private long initTime = -1;//上一次刷新完成后的时间
+    private boolean isStart = false;
+    private float countWidth = 0;//进度条进度的进程，每次调用invalidate（）都刷新一次
 
     public ProgressView(Context context) {
         this(context, null);
@@ -102,10 +107,6 @@ public class ProgressView extends View {
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         txtHeight = fm.descent + Math.abs(fm.ascent);
     }
-
-    private long initTime = -1;//上一次刷新完成后的时间
-    private boolean isStart = false;
-    private float countWidth = 0;//进度条进度的进程，每次调用invalidate（）都刷新一次
 
     @Override
     protected void onDraw(Canvas canvas) {

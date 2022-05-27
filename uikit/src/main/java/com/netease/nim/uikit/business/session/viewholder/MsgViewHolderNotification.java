@@ -16,12 +16,11 @@ import java.util.Map;
 public class MsgViewHolderNotification extends MsgViewHolderBase {
 
     private static final String TAG = "MsgViewHolderNotification";
+    protected TextView notificationTextView;
 
     public MsgViewHolderNotification(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }
-
-    protected TextView notificationTextView;
 
     @Override
     public int getContentResId() {

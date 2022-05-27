@@ -1,11 +1,12 @@
 package com.netease.nim.uikit.business.session.viewholder.robot;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
 
 import com.netease.nim.uikit.business.robot.model.RobotBotContent;
 import com.netease.nim.uikit.business.robot.model.RobotResponseContent;
@@ -40,11 +41,6 @@ public class RobotContentLinearLayout extends LinearLayout {
 
     public void setLinkStyle(RobotLinkViewStyle style) {
         linkViewStyle = style;
-    }
-
-    // 添加点击view 的id
-    public interface ClickableChildView {
-        void addClickableChildView(Class<? extends View> clazz, int id);
     }
 
     @Override
@@ -128,6 +124,11 @@ public class RobotContentLinearLayout extends LinearLayout {
             addView(child, params);
             child.onBindContentView();
         }
+    }
+
+    // 添加点击view 的id
+    public interface ClickableChildView {
+        void addClickableChildView(Class<? extends View> clazz, int id);
     }
 
     private static class GenerateViewID {

@@ -79,6 +79,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class TrimVideoActivity extends BaseActivity1 {
 
+    private static final String TAG = TrimVideoActivity.class.getSimpleName();
+    private static final long MIN_CUT_DURATION = 3 * 1000L;// 最小剪辑时间3s
+    private static final int MAX_COUNT_RANGE = 10;//seekBar的区域内一共有多少张图片
+    private static final int MARGIN = UIUtils.dp2Px(56); //左右两边间距
+    private static long MAX_CUT_DURATION = 10 * 1000L;//视频最多剪切多长时间
+    private final MainHandler mUIHandler = new MainHandler(this);
     @BindView(R.id.glsurfaceview)
     GlVideoView mSurfaceView;
     @BindView(R.id.video_shoot_tip)
@@ -104,12 +110,6 @@ public class TrimVideoActivity extends BaseActivity1 {
     @BindView(R.id.ll_effect_container)
     LinearLayout mLlEffectContainer;
     private RangeSeekBar seekBar;
-
-    private static final String TAG = TrimVideoActivity.class.getSimpleName();
-    private static final long MIN_CUT_DURATION = 3 * 1000L;// 最小剪辑时间3s
-    private static long MAX_CUT_DURATION = 10 * 1000L;//视频最多剪切多长时间
-    private static final int MAX_COUNT_RANGE = 10;//seekBar的区域内一共有多少张图片
-    private static final int MARGIN = UIUtils.dp2Px(56); //左右两边间距
     private ExtractVideoInfoUtil mExtractVideoInfoUtil;
     private int mMaxWidth; //可裁剪区域的最大宽度
     private long duration; //视频总时长
@@ -133,6 +133,17 @@ public class TrimVideoActivity extends BaseActivity1 {
     private MediaPlayer mMediaPlayer;
     private Mp4Composer mMp4Composer;
     private int maxVideoTime;
+    private boolean isOverScaledTouchSlop;
+    private ValueAnimator animator;
+
+//    @Override
+//    protected void initToolbar(ToolbarHelper toolbarHelper) {
+//        toolbarHelper.setTitle("裁剪");
+//        toolbarHelper.setMenuTitle("发布", v -> {
+//            trimmerVideo();
+//        });
+//    }
+    private Handler handler = new Handler();
 
     public static void startActivity(Context context, String videoPath, int maxVideoTime) {
         Intent intent = new Intent(context, TrimVideoActivity.class);
@@ -157,12 +168,12 @@ public class TrimVideoActivity extends BaseActivity1 {
         mScaledTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
 
         Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) {
-                e.onNext(mExtractVideoInfoUtil.getVideoLength());
-                e.onComplete();
-            }
-        })
+                    @Override
+                    public void subscribe(ObservableEmitter<String> e) {
+                        e.onNext(mExtractVideoInfoUtil.getVideoLength());
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
@@ -192,14 +203,6 @@ public class TrimVideoActivity extends BaseActivity1 {
                     }
                 });
     }
-
-//    @Override
-//    protected void initToolbar(ToolbarHelper toolbarHelper) {
-//        toolbarHelper.setTitle("裁剪");
-//        toolbarHelper.setMenuTitle("发布", v -> {
-//            trimmerVideo();
-//        });
-//    }
 
     @Override
     protected void initView() {
@@ -236,7 +239,7 @@ public class TrimVideoActivity extends BaseActivity1 {
         addEffectView();
     }
 
-    @OnClick({R.id.ll_trim_tab, R.id.ll_effect_tab, R.id.canelTv,R.id.leftImg_ly})
+    @OnClick({R.id.ll_trim_tab, R.id.ll_effect_tab, R.id.canelTv, R.id.leftImg_ly})
     public void onClick(View v) {
 //        if (!ToolUtils.isFastClick()) {
 //            return;
@@ -302,6 +305,53 @@ public class TrimVideoActivity extends BaseActivity1 {
             mLlEffectContainer.addView(itemView);
         }
     }
+
+//    /**
+//     * 视频添加滤镜效果
+//     */
+//    private void startMediaCodec(String srcPath) {
+//        final String outputPath = VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo",
+//            "filterVideo_");
+//
+//        mMp4Composer = new Mp4Composer(srcPath, outputPath)
+//            // .rotation(Rotation.ROTATION_270)
+//            //.size(720, 1280)
+//            .fillMode(FillMode.PRESERVE_ASPECT_FIT)
+//            .filter(MagicFilterFactory.getFilter())
+//            .mute(false)
+//            .flipHorizontal(false)
+//            .flipVertical(false)
+//            .listener(new Listener() {
+//                @Override
+//                public void onProgress(double progress) {
+//                    Log.d(TAG, "filterVideo---onProgress: " + (int) (progress * 100));
+//                    runOnUiThread(() -> {
+//                        //show progress
+//                    });
+//                }
+//
+//                @Override
+//                public void onCompleted() {
+//                    Log.d(TAG, "filterVideo---onCompleted");
+//                    runOnUiThread(() -> {
+//                        compressVideo(outputPath);
+//                    });
+//                }
+//
+//                @Override
+//                public void onCanceled() {
+//                    NormalProgressDialog.stopLoading();
+//                }
+//
+//                @Override
+//                public void onFailed(Exception exception) {
+//                    Log.e(TAG, "filterVideo---onFailed()");
+//                    NormalProgressDialog.stopLoading();
+//                    Toast.makeText(TrimVideoActivity.this, "视频处理失败", Toast.LENGTH_SHORT).show();
+//                }
+//            })
+//            .start();
+//    }
 
     private void openEffectAnimation(TextView tv, FilterModel model, boolean isExpand) {
         model.setChecked(isExpand);
@@ -438,186 +488,7 @@ public class TrimVideoActivity extends BaseActivity1 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 视频裁剪
-     */
-    private void trimmerVideo() {
-        NormalProgressDialog
-                .showLoading(this, getResources().getString(R.string.in_process), false);
-        videoPause();
-        Log.e(TAG, "trimVideo...startSecond:" + leftProgress + ", endSecond:"
-                + rightProgress); //start:44228, end:48217
-        //裁剪后的小视频第一帧图片
-        // /storage/emulated/0/haodiaoyu/small_video/picture_1524055390067.jpg
-//        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame(leftProgress);
-//        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
-//        if (bitmap != null && !bitmap.isRecycled()) {
-//            bitmap.recycle();
-//            bitmap = null;
-//        }
-        VideoUtil
-                .cutVideo(mVideoPath, VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo",
-                        "trimmedVideo_"), leftProgress / 1000,
-                        rightProgress / 1000)
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        subscribe(d);
-                    }
-
-                    @Override
-                    public void onNext(String outputPath) {
-                        // /storage/emulated/0/Android/data/com.kangoo.diaoyur/files/small_video/trimmedVideo_20180416_153217.mp4
-                        Log.e(TAG, "cutVideo---onSuccess");
-                        try {
-//                        startMediaCodec(outputPath);
-                            compressVideo(outputPath);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "cutVideo---onError:" + e.toString());
-                        NormalProgressDialog.stopLoading();
-                        Toast.makeText(TrimVideoActivity.this, "视频裁剪失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-    }
-
-//    /**
-//     * 视频添加滤镜效果
-//     */
-//    private void startMediaCodec(String srcPath) {
-//        final String outputPath = VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo",
-//            "filterVideo_");
-//
-//        mMp4Composer = new Mp4Composer(srcPath, outputPath)
-//            // .rotation(Rotation.ROTATION_270)
-//            //.size(720, 1280)
-//            .fillMode(FillMode.PRESERVE_ASPECT_FIT)
-//            .filter(MagicFilterFactory.getFilter())
-//            .mute(false)
-//            .flipHorizontal(false)
-//            .flipVertical(false)
-//            .listener(new Listener() {
-//                @Override
-//                public void onProgress(double progress) {
-//                    Log.d(TAG, "filterVideo---onProgress: " + (int) (progress * 100));
-//                    runOnUiThread(() -> {
-//                        //show progress
-//                    });
-//                }
-//
-//                @Override
-//                public void onCompleted() {
-//                    Log.d(TAG, "filterVideo---onCompleted");
-//                    runOnUiThread(() -> {
-//                        compressVideo(outputPath);
-//                    });
-//                }
-//
-//                @Override
-//                public void onCanceled() {
-//                    NormalProgressDialog.stopLoading();
-//                }
-//
-//                @Override
-//                public void onFailed(Exception exception) {
-//                    Log.e(TAG, "filterVideo---onFailed()");
-//                    NormalProgressDialog.stopLoading();
-//                    Toast.makeText(TrimVideoActivity.this, "视频处理失败", Toast.LENGTH_SHORT).show();
-//                }
-//            })
-//            .start();
-//    }
-
-    /**
-     * 视频压缩
-     */
-    private void compressVideo(String srcPath) {
-        String destDirPath = VideoUtil.getTrimmedVideoDir(this, "small_video");
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> emitter) {
-                try {
-                    int outWidth = 0;
-                    int outHeight = 0;
-                    if (mOriginalWidth > mOriginalHeight) {
-                        //横屏
-                        outWidth = 720;
-                        outHeight = 480;
-                    } else {
-                        //竖屏
-                        outWidth = 480;
-                        outHeight = 720;
-                    }
-                    String compressedFilePath = SiliCompressor.with(TrimVideoActivity.this)
-                            .compressVideo(srcPath, destDirPath, mOriginalWidth, mOriginalHeight, 0);
-                    emitter.onNext(compressedFilePath);
-                } catch (Exception e) {
-                    emitter.onError(e);
-                }
-                emitter.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        subscribe(d);
-                    }
-
-                    @Override
-                    public void onNext(String outputPath) {
-                        //源路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/trimmedVideo_20180514_163858.mp4
-                        //压缩路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/VIDEO_20180514_163859.mp4
-                        Log.e(TAG, "compressVideo---onSuccess");
-                        //获取视频第一帧图片
-                        mExtractVideoInfoUtil = new ExtractVideoInfoUtil(outputPath);
-                        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame();
-                        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
-                        if (bitmap != null && !bitmap.isRecycled()) {
-                            bitmap.recycle();
-                            bitmap = null;
-                        }
-                        NormalProgressDialog.stopLoading();
-                        Intent intent = new Intent();
-                        intent.putExtra("Url", outputPath);
-                        intent.putExtra("firstFrame", outputPath);
-                        setResult(Activity.RESULT_OK, intent);
-
-
-//                    VideoPreviewActivity.startActivity(TrimVideoActivity.this, outputPath, firstFrame);
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "compressVideo---onError:" + e.toString());
-                        NormalProgressDialog.stopLoading();
-                        Toast.makeText(TrimVideoActivity.this, "视频压缩失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-    }
-
-    private boolean isOverScaledTouchSlop;
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    }    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -664,6 +535,134 @@ public class TrimVideoActivity extends BaseActivity1 {
     };
 
     /**
+     * 视频裁剪
+     */
+    private void trimmerVideo() {
+        NormalProgressDialog
+                .showLoading(this, getResources().getString(R.string.in_process), false);
+        videoPause();
+        Log.e(TAG, "trimVideo...startSecond:" + leftProgress + ", endSecond:"
+                + rightProgress); //start:44228, end:48217
+        //裁剪后的小视频第一帧图片
+        // /storage/emulated/0/haodiaoyu/small_video/picture_1524055390067.jpg
+//        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame(leftProgress);
+//        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
+//        if (bitmap != null && !bitmap.isRecycled()) {
+//            bitmap.recycle();
+//            bitmap = null;
+//        }
+        VideoUtil
+                .cutVideo(mVideoPath, VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo",
+                                "trimmedVideo_"), leftProgress / 1000,
+                        rightProgress / 1000)
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        subscribe(d);
+                    }
+
+                    @Override
+                    public void onNext(String outputPath) {
+                        // /storage/emulated/0/Android/data/com.kangoo.diaoyur/files/small_video/trimmedVideo_20180416_153217.mp4
+                        Log.e(TAG, "cutVideo---onSuccess");
+                        try {
+//                        startMediaCodec(outputPath);
+                            compressVideo(outputPath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "cutVideo---onError:" + e.toString());
+                        NormalProgressDialog.stopLoading();
+                        Toast.makeText(TrimVideoActivity.this, "视频裁剪失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    /**
+     * 视频压缩
+     */
+    private void compressVideo(String srcPath) {
+        String destDirPath = VideoUtil.getTrimmedVideoDir(this, "small_video");
+        Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<String> emitter) {
+                        try {
+                            int outWidth = 0;
+                            int outHeight = 0;
+                            if (mOriginalWidth > mOriginalHeight) {
+                                //横屏
+                                outWidth = 720;
+                                outHeight = 480;
+                            } else {
+                                //竖屏
+                                outWidth = 480;
+                                outHeight = 720;
+                            }
+                            String compressedFilePath = SiliCompressor.with(TrimVideoActivity.this)
+                                    .compressVideo(srcPath, destDirPath, mOriginalWidth, mOriginalHeight, 0);
+                            emitter.onNext(compressedFilePath);
+                        } catch (Exception e) {
+                            emitter.onError(e);
+                        }
+                        emitter.onComplete();
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        subscribe(d);
+                    }
+
+                    @Override
+                    public void onNext(String outputPath) {
+                        //源路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/trimmedVideo_20180514_163858.mp4
+                        //压缩路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/VIDEO_20180514_163859.mp4
+                        Log.e(TAG, "compressVideo---onSuccess");
+                        //获取视频第一帧图片
+                        mExtractVideoInfoUtil = new ExtractVideoInfoUtil(outputPath);
+                        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame();
+                        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
+                        if (bitmap != null && !bitmap.isRecycled()) {
+                            bitmap.recycle();
+                            bitmap = null;
+                        }
+                        NormalProgressDialog.stopLoading();
+                        Intent intent = new Intent();
+                        intent.putExtra("Url", outputPath);
+                        intent.putExtra("firstFrame", outputPath);
+                        setResult(Activity.RESULT_OK, intent);
+
+
+//                    VideoPreviewActivity.startActivity(TrimVideoActivity.this, outputPath, firstFrame);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "compressVideo---onError:" + e.toString());
+                        NormalProgressDialog.stopLoading();
+                        Toast.makeText(TrimVideoActivity.this, "视频压缩失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    /**
      * 水平滑动了多少px
      *
      * @return int px
@@ -675,8 +674,6 @@ public class TrimVideoActivity extends BaseActivity1 {
         int itemWidth = firstVisibleChildView.getWidth();
         return (position) * itemWidth - firstVisibleChildView.getLeft();
     }
-
-    private ValueAnimator animator;
 
     private void anim() {
         Log.d(TAG, "--anim--onProgressUpdate---->>>>>>>" + mMediaPlayer.getCurrentPosition());
@@ -704,31 +701,30 @@ public class TrimVideoActivity extends BaseActivity1 {
         animator.start();
     }
 
-    private final MainHandler mUIHandler = new MainHandler(this);
-
-    private static class MainHandler extends Handler {
-
-        private final WeakReference<TrimVideoActivity> mActivity;
-
-        MainHandler(TrimVideoActivity activity) {
-            mActivity = new WeakReference<>(activity);
+    private void videoStart() {
+        Log.d(TAG, "----videoStart----->>>>>>>");
+        mMediaPlayer.start();
+        mIvPosition.clearAnimation();
+        if (animator != null && animator.isRunning()) {
+            animator.cancel();
         }
-
-        @Override
-        public void handleMessage(Message msg) {
-            TrimVideoActivity activity = mActivity.get();
-            if (activity != null) {
-                if (msg.what == ExtractFrameWorkThread.MSG_SAVE_SUCCESS) {
-                    if (activity.videoEditAdapter != null) {
-                        VideoEditInfo info = (VideoEditInfo) msg.obj;
-                        activity.videoEditAdapter.addItemVideoInfo(info);
-                    }
-                }
-            }
-        }
+        anim();
+        handler.removeCallbacks(run);
+        handler.post(run);
     }
 
-    private final RangeSeekBar.OnRangeSeekBarChangeListener mOnRangeSeekBarChangeListener = new RangeSeekBar.OnRangeSeekBarChangeListener() {
+    private void videoProgressUpdate() {
+        long currentPosition = mMediaPlayer.getCurrentPosition();
+        Log.d(TAG, "----onProgressUpdate-cp---->>>>>>>" + currentPosition);
+        if (currentPosition >= (rightProgress)) {
+            mMediaPlayer.seekTo((int) leftProgress);
+            mIvPosition.clearAnimation();
+            if (animator != null && animator.isRunning()) {
+                animator.cancel();
+            }
+            anim();
+        }
+    }    private final RangeSeekBar.OnRangeSeekBarChangeListener mOnRangeSeekBarChangeListener = new RangeSeekBar.OnRangeSeekBarChangeListener() {
         @Override
         public void onRangeSeekBarValuesChanged(RangeSeekBar bar, long minValue, long maxValue,
                                                 int action, boolean isMin, RangeSeekBar.Thumb pressedThumb) {
@@ -765,31 +761,6 @@ public class TrimVideoActivity extends BaseActivity1 {
         }
     };
 
-    private void videoStart() {
-        Log.d(TAG, "----videoStart----->>>>>>>");
-        mMediaPlayer.start();
-        mIvPosition.clearAnimation();
-        if (animator != null && animator.isRunning()) {
-            animator.cancel();
-        }
-        anim();
-        handler.removeCallbacks(run);
-        handler.post(run);
-    }
-
-    private void videoProgressUpdate() {
-        long currentPosition = mMediaPlayer.getCurrentPosition();
-        Log.d(TAG, "----onProgressUpdate-cp---->>>>>>>" + currentPosition);
-        if (currentPosition >= (rightProgress)) {
-            mMediaPlayer.seekTo((int) leftProgress);
-            mIvPosition.clearAnimation();
-            if (animator != null && animator.isRunning()) {
-                animator.cancel();
-            }
-            anim();
-        }
-    }
-
     private void videoPause() {
         isSeeking = false;
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
@@ -806,7 +777,6 @@ public class TrimVideoActivity extends BaseActivity1 {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -821,16 +791,6 @@ public class TrimVideoActivity extends BaseActivity1 {
         super.onPause();
         videoPause();
     }
-
-    private Handler handler = new Handler();
-    private Runnable run = new Runnable() {
-
-        @Override
-        public void run() {
-            videoProgressUpdate();
-            handler.postDelayed(run, 1000);
-        }
-    };
 
     @Override
     protected void onDestroy() {
@@ -868,4 +828,38 @@ public class TrimVideoActivity extends BaseActivity1 {
         }
         super.onDestroy();
     }
+
+    private static class MainHandler extends Handler {
+
+        private final WeakReference<TrimVideoActivity> mActivity;
+
+        MainHandler(TrimVideoActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            TrimVideoActivity activity = mActivity.get();
+            if (activity != null) {
+                if (msg.what == ExtractFrameWorkThread.MSG_SAVE_SUCCESS) {
+                    if (activity.videoEditAdapter != null) {
+                        VideoEditInfo info = (VideoEditInfo) msg.obj;
+                        activity.videoEditAdapter.addItemVideoInfo(info);
+                    }
+                }
+            }
+        }
+    }
+
+
+    private Runnable run = new Runnable() {
+
+        @Override
+        public void run() {
+            videoProgressUpdate();
+            handler.postDelayed(run, 1000);
+        }
+    };
+
+
 }

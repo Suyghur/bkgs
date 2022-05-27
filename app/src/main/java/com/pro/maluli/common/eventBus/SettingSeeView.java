@@ -2,6 +2,7 @@ package com.pro.maluli.common.eventBus;
 
 public class SettingSeeView {
     boolean isSee;
+    int hasNewsNumber;
 
     public SettingSeeView(int hasNewsNumber) {
         this.hasNewsNumber = hasNewsNumber;
@@ -14,8 +15,6 @@ public class SettingSeeView {
     public void setHasNewsNumber(int hasNewsNumber) {
         this.hasNewsNumber = hasNewsNumber;
     }
-
-    int hasNewsNumber;
 
     public boolean isSee() {
         return isSee;

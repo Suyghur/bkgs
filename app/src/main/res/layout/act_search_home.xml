@@ -56,11 +56,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:background="@color/c_ffffff"
         android:id="@+id/searchHistoryLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dp_15"
+        android:background="@color/c_ffffff"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/dp_15">
 
@@ -142,8 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:layout_marginBottom="@dimen/dp_20"
-                    />
+                    android:layout_marginBottom="@dimen/dp_20" />
 
                 <include
                     android:id="@+id/nodataView"

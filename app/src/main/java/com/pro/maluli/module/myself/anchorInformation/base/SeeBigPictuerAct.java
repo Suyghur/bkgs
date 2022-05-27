@@ -1,10 +1,10 @@
 package com.pro.maluli.module.myself.anchorInformation.base;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.luck.picture.lib.photoview.PhotoView;
 import com.luck.picture.lib.photoview.PhotoViewAttacher;

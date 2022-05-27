@@ -11,14 +11,9 @@ import android.widget.FrameLayout;
  * Created by  kingsley on 2020/1/3 0003.
  */
 public class WindowSoftModeAdjustResizeExecutor {
-    public static void assistActivity(Activity activity) {
-        new WindowSoftModeAdjustResizeExecutor(activity);
-    }
-
     private View mChildOfContent;
     private int usableHeightPrevious;
     private FrameLayout.LayoutParams frameLayoutParams;
-
     private WindowSoftModeAdjustResizeExecutor(Activity activity) {
         FrameLayout content = (FrameLayout) activity.findViewById(android.R.id.content);
         mChildOfContent = content.getChildAt(0);
@@ -28,6 +23,10 @@ public class WindowSoftModeAdjustResizeExecutor {
             }
         });
         frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();
+    }
+
+    public static void assistActivity(Activity activity) {
+        new WindowSoftModeAdjustResizeExecutor(activity);
     }
 
     private void possiblyResizeChildOfContent() {

@@ -23,12 +23,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PayTypeAllPopupWindow {
+    public PayTypeAllListener payTypeAllListener;
     private View inView;
     private Context context;
     private PopupWindow popupWindow;
     private List<String> popData = new ArrayList<>();
     private int checkType = 999;
-    private Boolean isReward=false;
+    private Boolean isReward = false;
+
+    public PayTypeAllPopupWindow(Context context, View view, PayTypeAllListener listener) {
+        this.inView = view;
+        this.context = context;
+        this.payTypeAllListener = listener;
+        initData();
+        initPopup();
+    }
+
+    public PayTypeAllPopupWindow(Context context, boolean isReward, View view, PayTypeAllListener listener) {
+        this.inView = view;
+        this.isReward = isReward;
+        this.context = context;
+        this.payTypeAllListener = listener;
+        initData();
+        initPopup();
+    }
 
     public Boolean getReward() {
         return isReward;
@@ -38,12 +56,6 @@ public class PayTypeAllPopupWindow {
         isReward = reward;
     }
 
-    public interface PayTypeAllListener {
-        void onSelectItem(int position, String type);
-    }
-
-    public PayTypeAllListener payTypeAllListener;
-
     public PayTypeAllListener getPayTypeAllListener() {
         return payTypeAllListener;
     }
@@ -52,28 +64,12 @@ public class PayTypeAllPopupWindow {
         this.payTypeAllListener = payTypeAllListener;
     }
 
-    public PayTypeAllPopupWindow(Context context, View view, PayTypeAllListener listener) {
-        this.inView = view;
-        this.context = context;
-        this.payTypeAllListener = listener;
-        initData();
-        initPopup();
-    }
-    public PayTypeAllPopupWindow(Context context,boolean isReward, View view, PayTypeAllListener listener) {
-        this.inView = view;
-        this.isReward = isReward;
-        this.context = context;
-        this.payTypeAllListener = listener;
-        initData();
-        initPopup();
-    }
-
     private void initData() {
         popData.add("全部");
-        if (getReward()){
+        if (getReward()) {
             popData.add("提现");
             popData.add("收入");
-        }else {
+        } else {
             popData.add("充值");
             popData.add("支出");
         }
@@ -149,6 +145,10 @@ public class PayTypeAllPopupWindow {
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(true); //点击pop外消失
         popupWindow.showAsDropDown(inView, 0, 0);
+    }
+
+    public interface PayTypeAllListener {
+        void onSelectItem(int position, String type);
     }
 
 }

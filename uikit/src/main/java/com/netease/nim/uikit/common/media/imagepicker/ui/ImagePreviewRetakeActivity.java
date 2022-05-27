@@ -18,6 +18,12 @@ import java.util.List;
 
 public class ImagePreviewRetakeActivity extends ImageBaseActivity implements View.OnClickListener {
 
+    protected ArrayList<GLImage> mGLImages;      //跳转进ImagePreviewFragment的图片文件夹
+    protected ViewPagerFixed mViewPager;
+    protected ImagePageAdapter mAdapter;
+    private ImageView mBtnOk;                         //确认图片的选择
+    private ImageView retake;
+
     public static void start(Activity activity, GLImage GLImage) {
         List<GLImage> GLImages = new ArrayList<>(1);
         GLImages.add(GLImage);
@@ -34,12 +40,6 @@ public class ImagePreviewRetakeActivity extends ImageBaseActivity implements Vie
 
         activity.startActivityForResult(intent, Constants.RESULT_CODE_CONFIRM_IMAGE);
     }
-
-    private ImageView mBtnOk;                         //确认图片的选择
-    private ImageView retake;
-    protected ArrayList<GLImage> mGLImages;      //跳转进ImagePreviewFragment的图片文件夹
-    protected ViewPagerFixed mViewPager;
-    protected ImagePageAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

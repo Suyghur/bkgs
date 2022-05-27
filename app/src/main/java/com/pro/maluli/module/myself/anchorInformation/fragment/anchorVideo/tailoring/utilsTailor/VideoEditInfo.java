@@ -21,8 +21,8 @@ public class VideoEditInfo implements Serializable {
     @Override
     public String toString() {
         return "VideoEditInfo{" +
-            "path='" + path + '\'' +
-            ", time='" + time + '\'' +
-            '}';
+                "path='" + path + '\'' +
+                ", time='" + time + '\'' +
+                '}';
     }
 }

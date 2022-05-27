@@ -68,23 +68,34 @@ public class WatchMessagePictureActivity extends UI {
 
     private static final int MODE_NORMAL = 0;
     private static final int MODE_GIF = 1;
-
+    protected CustomAlertDialog alertDialog;
     private Handler handler;
     private IMMessage message;
     private boolean isShowMenu;
     private List<IMMessage> imageMsgList = new ArrayList<>();
     private int firstDisplayImageIndex = 0;
-
     private boolean newPageSelected = false;
-
     private View loadingLayout;
     private BaseZoomableImageView image;
     private ImageView simpleImageView;
     private int mode;
-    protected CustomAlertDialog alertDialog;
     private ViewPager imageViewPager;
     private PagerAdapter adapter;
     private AbortableFuture downloadFuture;
+    private Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
+        @Override
+        public void onEvent(IMMessage msg) {
+            if (!msg.isTheSame(message) || isDestroyedCompatible()) {
+                return;
+            }
+
+            if (isOriginImageHasDownloaded(msg)) {
+                onDownloadSuccess(msg);
+            } else if (msg.getAttachStatus() == AttachStatusEnum.fail) {
+                onDownloadFailed();
+            }
+        }
+    };
 
     public static void start(Context context, IMMessage message) {
         Intent intent = new Intent();
@@ -207,7 +218,6 @@ public class WatchMessagePictureActivity extends UI {
         }
     }
 
-
     // 查询并显示图片，带viewPager
     private void queryImageMessages() {
         IMMessage anchor = MessageBuilder.createEmptyMessage(message.getSessionId(), message.getSessionType(), 0);
@@ -215,8 +225,8 @@ public class WatchMessagePictureActivity extends UI {
             @Override
             public void onSuccess(List<IMMessage> param) {
                 for (IMMessage imMessage : param) {
-                    MsgAttachment attachment =  imMessage.getAttachment();
-                    if (attachment instanceof ImageAttachment && !ImageUtil.isGif(((ImageAttachment) attachment).getExtension())){
+                    MsgAttachment attachment = imMessage.getAttachment();
+                    if (attachment instanceof ImageAttachment && !ImageUtil.isGif(((ImageAttachment) attachment).getExtension())) {
                         imageMsgList.add(imMessage);
                     }
                 }
@@ -430,21 +440,6 @@ public class WatchMessagePictureActivity extends UI {
     private void registerObservers(boolean register) {
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(statusObserver, register);
     }
-
-    private Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
-        @Override
-        public void onEvent(IMMessage msg) {
-            if (!msg.isTheSame(message) || isDestroyedCompatible()) {
-                return;
-            }
-
-            if (isOriginImageHasDownloaded(msg)) {
-                onDownloadSuccess(msg);
-            } else if (msg.getAttachStatus() == AttachStatusEnum.fail) {
-                onDownloadFailed();
-            }
-        }
-    };
 
     private void onDownloadStart(final IMMessage msg) {
         if (TextUtils.isEmpty(((ImageAttachment) msg.getAttachment()).getPath())) {

@@ -32,6 +32,7 @@ public class EditLiveTimeDialog extends DialogFragment implements View.OnClickLi
     private EditText contentTv;
     private TextView titleTv;
     private String type;//1=设置时常，2增加时间
+    private OnEditPersonListener onEditPersonListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -51,9 +52,9 @@ public class EditLiveTimeDialog extends DialogFragment implements View.OnClickLi
         contentTv = mDetailDialog.findViewById(R.id.contentTv);
         titleTv = mDetailDialog.findViewById(R.id.titleTv);
         type = getArguments().getString("tipsTitle");
-        if (!TextUtils.isEmpty(type)&&type.equalsIgnoreCase("1")) {
+        if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("1")) {
             titleTv.setText("设定本场直播时长");
-        }else {
+        } else {
             titleTv.setText("延长本场直播时长");
         }
         contentTv.addTextChangedListener(new TextWatcher() {
@@ -84,14 +85,8 @@ public class EditLiveTimeDialog extends DialogFragment implements View.OnClickLi
         return mDetailDialog;
     }
 
-    private OnEditPersonListener onEditPersonListener;
-
     public void setOnConfirmListener(OnEditPersonListener onEditPersonListener) {
         this.onEditPersonListener = onEditPersonListener;
-    }
-
-    public interface OnEditPersonListener {
-        void subNumber(String type);
     }
 
     @Override
@@ -119,5 +114,9 @@ public class EditLiveTimeDialog extends DialogFragment implements View.OnClickLi
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnEditPersonListener {
+        void subNumber(String type);
     }
 }

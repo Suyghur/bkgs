@@ -2,21 +2,16 @@ package com.pro.maluli.module.myself.anchorInformation.anchorMore;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.friend.FriendService;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.module.myself.anchorInformation.anchorMore.presenter.AnchorMorePresenter;
 import com.pro.maluli.module.myself.anchorInformation.anchorMore.presenter.IAnchorMoreContraction;
@@ -64,9 +59,9 @@ public class AnchorMoreAct extends BaseMvpActivity<IAnchorMoreContraction.View, 
     public void viewInitialization() {
         setTitleTx("更多");
         setBackPress();
-        if ("1".equalsIgnoreCase(isBlack)){
+        if ("1".equalsIgnoreCase(isBlack)) {
             setBlackListTv.setSelected(true);
-        }else {
+        } else {
             setBlackListTv.setSelected(false);
 
         }
@@ -78,6 +73,7 @@ public class AnchorMoreAct extends BaseMvpActivity<IAnchorMoreContraction.View, 
         setBlackListTv.setSelected(true);
         addBlack();
     }
+
     /**
      * 加入黑名单
      */
@@ -100,11 +96,13 @@ public class AnchorMoreAct extends BaseMvpActivity<IAnchorMoreContraction.View, 
                     }
                 });
     }
+
     @Override
     public void removeBlackSuccess() {
         setBlackListTv.setSelected(false);
         removeBlack();
     }
+
     /**
      * 移除黑名单
      */
@@ -127,6 +125,7 @@ public class AnchorMoreAct extends BaseMvpActivity<IAnchorMoreContraction.View, 
                     }
                 });
     }
+
     @OnClick({R.id.reportLL, R.id.setBlackListTv})
     public void onClickView(View view) {
 //        if (!ToolUtils.isFastClick()) {
@@ -134,16 +133,16 @@ public class AnchorMoreAct extends BaseMvpActivity<IAnchorMoreContraction.View, 
 //        }
         switch (view.getId()) {
             case R.id.reportLL:
-                Bundle bundle2 =new Bundle();
-                bundle2.putString("SUB_TYPE","2");
-                bundle2.putString("liveId",anchorID);
-                gotoActivity(AppealAct.class,false,bundle2);
+                Bundle bundle2 = new Bundle();
+                bundle2.putString("SUB_TYPE", "2");
+                bundle2.putString("liveId", anchorID);
+                gotoActivity(AppealAct.class, false, bundle2);
                 break;
             case R.id.setBlackListTv:
-                if (setBlackListTv.isSelected()){
+                if (setBlackListTv.isSelected()) {
                     presenter.removeBlack(anchorID);
-                }else {
-                    BaseTipsDialog baseTipsDialog =new BaseTipsDialog();
+                } else {
+                    BaseTipsDialog baseTipsDialog = new BaseTipsDialog();
                     Bundle bundleBaseTipsDialog = new Bundle();
                     bundleBaseTipsDialog.putString("showContent", "加入黑名单后将不可进入主播直播间、预约一对一及私信聊天");
                     bundleBaseTipsDialog.putString("TITLE_DIO", "温馨提示");

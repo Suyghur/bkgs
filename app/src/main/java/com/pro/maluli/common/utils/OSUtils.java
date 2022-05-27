@@ -13,8 +13,6 @@ import java.io.InputStreamReader;
  */
 
 public class OSUtils {
-    private static final String TAG = "Rom";
-
     public static final String ROM_MIUI = "MIUI";
     public static final String ROM_EMUI = "EMUI";
     public static final String ROM_FLYME = "FLYME";
@@ -22,7 +20,7 @@ public class OSUtils {
     public static final String ROM_SMARTISAN = "SMARTISAN";
     public static final String ROM_VIVO = "VIVO";
     public static final String ROM_QIKU = "QIKU";
-
+    private static final String TAG = "Rom";
     private static final String KEY_VERSION_MIUI = "ro.miui.ui.version.name";
     private static final String KEY_VERSION_EMUI = "ro.build.version.emui";
     private static final String KEY_VERSION_OPPO = "ro.build.version.opporom";

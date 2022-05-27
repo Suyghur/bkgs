@@ -10,9 +10,11 @@ public interface ILoginContraction extends BaseView {
 
         void gotoBindMobile(String s, String openid);
     }
+
     interface Presenter extends IClear {
         void getWelcomInfo();
-        void login(String mobile, String type, String pwd,String openid);
+
+        void login(String mobile, String type, String pwd, String openid);
 
 
     }

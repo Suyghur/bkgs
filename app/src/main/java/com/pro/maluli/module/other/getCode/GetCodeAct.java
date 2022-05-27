@@ -19,7 +19,6 @@ import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.other.getCode.presenter.GetCodePresenter;
 import com.pro.maluli.module.other.getCode.presenter.IGetCodeContraction;
 import com.pro.maluli.module.other.verificationCode.VerificationCodeAct;

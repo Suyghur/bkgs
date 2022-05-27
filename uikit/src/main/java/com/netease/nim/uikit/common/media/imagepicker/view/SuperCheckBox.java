@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.common.media.imagepicker.view;
 
 import android.content.Context;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 import android.view.SoundEffectConstants;
+
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 public class SuperCheckBox extends AppCompatCheckBox {
 

@@ -1,5 +1,8 @@
 package com.netease.nim.uikit.business.session.activity;
 
+import static com.netease.nimlib.sdk.msg.constant.SessionTypeEnum.P2P;
+import static com.netease.nimlib.sdk.msg.constant.SessionTypeEnum.Team;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -39,9 +42,6 @@ import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 
 import java.util.List;
 
-import static com.netease.nimlib.sdk.msg.constant.SessionTypeEnum.P2P;
-import static com.netease.nimlib.sdk.msg.constant.SessionTypeEnum.Team;
-
 public class MsgSelectActivity extends UI implements ModuleProxy {
     // 用到的EXTRA key
     // Extras.EXTRA_FROM: 被长按的消息在消息列表中所在的index
@@ -49,8 +49,63 @@ public class MsgSelectActivity extends UI implements ModuleProxy {
     // Extras.EXTRA_AMOUNT: 消息总数
 
     private static final String TAG = "MsgSelectActivity";
-    /** 可合并发送的最小消息条数 */
+    /**
+     * 可合并发送的最小消息条数
+     */
     private static final int MIN_MSG_COUNT = 1;
+    /**
+     * 发送按钮
+     */
+    private TextView mSendTV;
+    /**
+     * 返回按钮
+     */
+    private TextView mBackTV;
+    /**
+     * 单向删除按钮
+     */
+    private TextView mDeleteSelfTV;
+    /**
+     * 可选消息的列表
+     */
+    private RecyclerView mMsgSelectorRV;
+    private TextView mSessionNameTV;
+    /**
+     * 在线状态，在P2P会话中显示
+     */
+    private TextView mOnlineStateTV;
+    /**
+     * Intent传入的参数: 最早一条消息
+     */
+    private IMMessage mExtraStart;
+    /**
+     * Intent传入的参数: 过滤前消息总数
+     */
+    private int mExtraMsgAmount;
+    /**
+     * Intent传入的参数: 被长按消息在过滤前的位置
+     */
+    private int mExtraSelectedPosition;
+    /**
+     * 消息列表的适配器，列表的源数据通过adapter.getData获取
+     */
+    private MsgAdapter mMsgAdapter;
+    /**
+     * RecyclerView的初始位置，即被长按的消息的位置
+     */
+    private int mSelectedPosition = 0;
+    /**
+     * 转发内容所处会话的类型
+     */
+    private SessionTypeEnum mSessionType;
+    /**
+     * 会话ID
+     */
+    private String mSessionID;
+    /**
+     * 选中的会话的个数
+     */
+    private int mCheckedCount = 0;
 
     /**
      * 开启MsgSelectActivity，并需要处理Result
@@ -73,48 +128,6 @@ public class MsgSelectActivity extends UI implements ModuleProxy {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivityForResult(intent, reqCode);
     }
-
-
-    /** 发送按钮 */
-    private TextView mSendTV;
-
-    /** 返回按钮 */
-    private TextView mBackTV;
-
-    /** 单向删除按钮 */
-    private TextView mDeleteSelfTV;
-
-    /** 可选消息的列表 */
-    private RecyclerView mMsgSelectorRV;
-
-    private TextView mSessionNameTV;
-
-    /** 在线状态，在P2P会话中显示 */
-    private TextView mOnlineStateTV;
-
-    /** Intent传入的参数: 最早一条消息 */
-    private IMMessage mExtraStart;
-
-    /** Intent传入的参数: 过滤前消息总数 */
-    private int mExtraMsgAmount;
-
-    /** Intent传入的参数: 被长按消息在过滤前的位置 */
-    private int mExtraSelectedPosition;
-
-    /** 消息列表的适配器，列表的源数据通过adapter.getData获取 */
-    private MsgAdapter mMsgAdapter;
-
-    /** RecyclerView的初始位置，即被长按的消息的位置 */
-    private int mSelectedPosition = 0;
-
-    /** 转发内容所处会话的类型 */
-    private SessionTypeEnum mSessionType;
-
-    /** 会话ID */
-    private String mSessionID;
-
-    /** 选中的会话的个数 */
-    private int mCheckedCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,22 +172,6 @@ public class MsgSelectActivity extends UI implements ModuleProxy {
                         finish();
                     }
 
-                    class P2PCallback extends CreateMessageCallbackImpl {
-
-                        @Override
-                        public void onFinished(IMMessage multiRetweetMsg) {
-                            sendMsg(P2P, multiRetweetMsg);
-                        }
-                    }
-
-                    class TeamCallback extends CreateMessageCallbackImpl {
-
-                        @Override
-                        public void onFinished(IMMessage multiRetweetMsg) {
-                            sendMsg(Team, multiRetweetMsg);
-                        }
-                    }
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //获取被勾选的消息
@@ -190,6 +187,22 @@ public class MsgSelectActivity extends UI implements ModuleProxy {
                                 break;
                             default:
                                 break;
+                        }
+                    }
+
+                    class P2PCallback extends CreateMessageCallbackImpl {
+
+                        @Override
+                        public void onFinished(IMMessage multiRetweetMsg) {
+                            sendMsg(P2P, multiRetweetMsg);
+                        }
+                    }
+
+                    class TeamCallback extends CreateMessageCallbackImpl {
+
+                        @Override
+                        public void onFinished(IMMessage multiRetweetMsg) {
+                            sendMsg(Team, multiRetweetMsg);
                         }
                     }
                 })

@@ -3,8 +3,10 @@ package com.marvhong.videoeffect.filter;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLES20;
+
 import com.marvhong.videoeffect.filter.base.GlFilter;
 import com.marvhong.videoeffect.utils.OpenGlUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -36,19 +38,15 @@ public class GlToneCurveFilter extends GlFilter {
                     "\n" +
                     "     gl_FragColor = vec4(redCurveValue, greenCurveValue, blueCurveValue, textureColor.a);\n" +
                     " }";
-
+    private final LinkedList<Runnable> runOnDraw;
     private PointF[] rgbCompositeControlPoints;
     private PointF[] redControlPoints;
     private PointF[] greenControlPoints;
     private PointF[] blueControlPoints;
-
     private ArrayList<Float> rgbCompositeCurve;
     private ArrayList<Float> redCurve;
     private ArrayList<Float> greenCurve;
     private ArrayList<Float> blueCurve;
-
-    private final LinkedList<Runnable> runOnDraw;
-
     private int[] textures = new int[1];
 
     private byte[] toneCurveByteArray;
@@ -98,7 +96,7 @@ public class GlToneCurveFilter extends GlFilter {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
 
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 /*width*/, 1 /*height*/, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer
-            .wrap(toneCurveByteArray));
+                .wrap(toneCurveByteArray));
 
         GLES20.glUniform1i(offsetDepthMapTextureUniform, 3);
     }
@@ -187,16 +185,16 @@ public class GlToneCurveFilter extends GlFilter {
                     for (int currentCurveIndex = 0; currentCurveIndex < 256; currentCurveIndex++) {
                         // BGRA for upload to texture
                         toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(
-                            Math.max(currentCurveIndex + blueCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                                Math.max(currentCurveIndex + blueCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
                         toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(
-                            Math.max(currentCurveIndex + greenCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                                Math.max(currentCurveIndex + greenCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
                         toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(
-                            Math.max(currentCurveIndex + redCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                                Math.max(currentCurveIndex + redCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
                         toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (255 & 0xff);
                     }
 
                     GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 /*width*/, 1 /*height*/, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer
-                        .wrap(toneCurveByteArray));
+                            .wrap(toneCurveByteArray));
                 }
 //        Buffer pixels!
 //        GLES20.glTexImage2D(int target,
@@ -264,7 +262,7 @@ public class GlToneCurveFilter extends GlFilter {
             Point origPoint = new Point(newPoint.x, newPoint.x);
 
             float distance = (float) Math.sqrt(
-                Math.pow((origPoint.x - newPoint.x), 2.0) + Math.pow((origPoint.y - newPoint.y), 2.0));
+                    Math.pow((origPoint.x - newPoint.x), 2.0) + Math.pow((origPoint.y - newPoint.y), 2.0));
 
             if (origPoint.y > newPoint.y) {
                 distance = -distance;

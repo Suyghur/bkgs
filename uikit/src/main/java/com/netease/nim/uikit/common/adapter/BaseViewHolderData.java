@@ -1,6 +1,7 @@
 package com.netease.nim.uikit.common.adapter;
 
 /**
+ *
  */
 
 public class BaseViewHolderData<T> {

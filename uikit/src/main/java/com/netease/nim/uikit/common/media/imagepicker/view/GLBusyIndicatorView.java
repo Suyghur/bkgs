@@ -3,30 +3,28 @@ package com.netease.nim.uikit.common.media.imagepicker.view;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 
 import com.netease.nim.uikit.R;
 
 
 /**
+ *
  */
 
 public class GLBusyIndicatorView extends AppCompatImageView {
 
-    private ValueAnimator animator;
-
-    private boolean attached;
-
-    private boolean animEnabled = true;
-
-    private float startRotation;
-
     private static final TimeInterpolator sInterpolator = new LinearInterpolator();
+    private ValueAnimator animator;
+    private boolean attached;
+    private boolean animEnabled = true;
+    private float startRotation;
 
     public GLBusyIndicatorView(Context context) {
         super(context);
@@ -47,10 +45,14 @@ public class GLBusyIndicatorView extends AppCompatImageView {
         setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_loading));
     }
 
-    public void setAnimEnabled(boolean animEnabled){
-        if (this.animEnabled != animEnabled){
+    public boolean isAnimEnabled() {
+        return animEnabled;
+    }
+
+    public void setAnimEnabled(boolean animEnabled) {
+        if (this.animEnabled != animEnabled) {
             this.animEnabled = animEnabled;
-            if (animEnabled && attached && getVisibility() == View.VISIBLE){
+            if (animEnabled && attached && getVisibility() == View.VISIBLE) {
                 startProgress();
             } else {
                 stopProgress();
@@ -58,17 +60,13 @@ public class GLBusyIndicatorView extends AppCompatImageView {
         }
     }
 
-    public boolean isAnimEnabled() {
-        return animEnabled;
-    }
-
-    private void startProgress(){
-        if (animator != null){
+    private void startProgress() {
+        if (animator != null) {
             animator.cancel();
             animator = null;
         }
 
-        if (!animEnabled){
+        if (!animEnabled) {
             return;
         }
 
@@ -86,8 +84,8 @@ public class GLBusyIndicatorView extends AppCompatImageView {
         animator.start();
     }
 
-    private void stopProgress(){
-        if (animator != null){
+    private void stopProgress() {
+        if (animator != null) {
             animator.cancel();
             animator = null;
         }
@@ -98,12 +96,12 @@ public class GLBusyIndicatorView extends AppCompatImageView {
     /***
      * @param rotation 开始的角度, 360度
      * */
-    public void setStartRotation(float rotation){
+    public void setStartRotation(float rotation) {
         this.startRotation = rotation;
         updateRotation(0);
     }
 
-    private void updateRotation(float percent){
+    private void updateRotation(float percent) {
         setPivotX(getMeasuredWidth() >> 1);
         setPivotY(getMeasuredHeight() >> 1);
         setRotation(360 * percent + startRotation);
@@ -112,7 +110,7 @@ public class GLBusyIndicatorView extends AppCompatImageView {
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
-        if (visibility == View.VISIBLE){
+        if (visibility == View.VISIBLE) {
             startProgress();
         } else {
             stopProgress();

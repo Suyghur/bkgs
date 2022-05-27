@@ -27,6 +27,56 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TeamDataCache {
     private static TeamDataCache instance;
+    /**
+     * *
+     * ******************************************** 群资料缓存 ********************************************
+     */
+
+    private Map<String, Team> id2TeamMap = new ConcurrentHashMap<>();
+    // 群资料变动观察者通知。新建群和群更新的通知都通过该接口传递
+    private Observer<List<Team>> teamUpdateObserver = new Observer<List<Team>>() {
+        @Override
+        public void onEvent(final List<Team> teams) {
+            if (teams == null) {
+                return;
+            }
+            LogUtil.i(UIKitLogTag.TEAM_CACHE, "team update size:" + teams.size());
+            addOrUpdateTeam(teams);
+            NimUIKit.getTeamChangedObservable().notifyTeamDataUpdate(teams);
+        }
+    };
+    // 移除群的观察者通知。自己退群，群被解散，自己被踢出群时，会收到该通知
+    private Observer<Team> teamRemoveObserver = new Observer<Team>() {
+        @Override
+        public void onEvent(Team team) {
+            // team的flag被更新，isMyTeam为false
+            addOrUpdateTeam(team);
+            NimUIKit.getTeamChangedObservable().notifyTeamDataRemove(team);
+        }
+    };
+    /**
+     * *
+     * ************************************** 群成员缓存(由App主动添加缓存) ****************************************
+     */
+
+    private Map<String, Map<String, TeamMember>> teamMemberCache = new ConcurrentHashMap<>();
+    // 群成员资料变化观察者通知。可通过此接口更新缓存。
+    private Observer<List<TeamMember>> memberUpdateObserver = new Observer<List<TeamMember>>() {
+        @Override
+        public void onEvent(List<TeamMember> members) {
+            addOrUpdateTeamMembers(members);
+            NimUIKit.getTeamChangedObservable().notifyTeamMemberDataUpdate(members);
+        }
+    };
+    // 移除群成员的观察者通知，仅仅 member的validFlag被更新，db 仍存在数据
+    private Observer<List<TeamMember>> memberRemoveObserver = new Observer<List<TeamMember>>() {
+        @Override
+        public void onEvent(List<TeamMember> member) {
+            // member的validFlag被更新，isInTeam为false
+            addOrUpdateTeamMembers(member);
+            NimUIKit.getTeamChangedObservable().notifyTeamMemberRemove(member);
+        }
+    };
 
     public static synchronized TeamDataCache getInstance() {
         if (instance == null) {
@@ -64,56 +114,6 @@ public class TeamDataCache {
         NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(memberUpdateObserver, register);
         NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(memberRemoveObserver, register);
     }
-
-    // 群资料变动观察者通知。新建群和群更新的通知都通过该接口传递
-    private Observer<List<Team>> teamUpdateObserver = new Observer<List<Team>>() {
-        @Override
-        public void onEvent(final List<Team> teams) {
-            if (teams == null) {
-                return;
-            }
-            LogUtil.i(UIKitLogTag.TEAM_CACHE, "team update size:" + teams.size());
-            addOrUpdateTeam(teams);
-            NimUIKit.getTeamChangedObservable().notifyTeamDataUpdate(teams);
-        }
-    };
-
-    // 移除群的观察者通知。自己退群，群被解散，自己被踢出群时，会收到该通知
-    private Observer<Team> teamRemoveObserver = new Observer<Team>() {
-        @Override
-        public void onEvent(Team team) {
-            // team的flag被更新，isMyTeam为false
-            addOrUpdateTeam(team);
-            NimUIKit.getTeamChangedObservable().notifyTeamDataRemove(team);
-        }
-    };
-
-    // 群成员资料变化观察者通知。可通过此接口更新缓存。
-    private Observer<List<TeamMember>> memberUpdateObserver = new Observer<List<TeamMember>>() {
-        @Override
-        public void onEvent(List<TeamMember> members) {
-            addOrUpdateTeamMembers(members);
-            NimUIKit.getTeamChangedObservable().notifyTeamMemberDataUpdate(members);
-        }
-    };
-
-    // 移除群成员的观察者通知，仅仅 member的validFlag被更新，db 仍存在数据
-    private Observer<List<TeamMember>> memberRemoveObserver = new Observer<List<TeamMember>>() {
-        @Override
-        public void onEvent(List<TeamMember> member) {
-            // member的validFlag被更新，isInTeam为false
-            addOrUpdateTeamMembers(member);
-            NimUIKit.getTeamChangedObservable().notifyTeamMemberRemove(member);
-        }
-    };
-
-
-    /**
-     * *
-     * ******************************************** 群资料缓存 ********************************************
-     */
-
-    private Map<String, Team> id2TeamMap = new ConcurrentHashMap<>();
 
     public void clearTeamCache() {
         id2TeamMap.clear();
@@ -213,13 +213,6 @@ public class TeamDataCache {
             id2TeamMap.put(t.getId(), t);
         }
     }
-
-    /**
-     * *
-     * ************************************** 群成员缓存(由App主动添加缓存) ****************************************
-     */
-
-    private Map<String, Map<String, TeamMember>> teamMemberCache = new ConcurrentHashMap<>();
 
     public void clearTeamMemberCache() {
         teamMemberCache.clear();

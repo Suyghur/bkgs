@@ -3,9 +3,6 @@ package com.pro.maluli.common.base;
 import android.app.Activity;
 import android.content.Context;
 
-
-import com.pro.maluli.common.base.BaseView;
-import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.networkRequest.Api;
 import com.pro.maluli.common.networkRequest.ApiFactory;
 import com.pro.maluli.common.networkRequest.ErrorConsumer;
@@ -25,13 +22,14 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author 23203
  */
-public  abstract class BasePresenter<V extends BaseView> implements IClear {
-    protected V mView;
-    protected Context mContext;
+public abstract class BasePresenter<V extends BaseView> implements IClear {
     protected final long RETRY_TIMES = 0;
     protected final CompositeDisposable mDisposables = new CompositeDisposable();
+    protected V mView;
+    protected Context mContext;
     protected Api mService;
     protected Api mService1;
+
     public BasePresenter(Context context) {
         mContext = context;
         mService = ApiFactory.create();
@@ -66,6 +64,7 @@ public  abstract class BasePresenter<V extends BaseView> implements IClear {
             }
         };
     }
+
     /**
      * 显示加载框
      */
@@ -73,7 +72,7 @@ public  abstract class BasePresenter<V extends BaseView> implements IClear {
         if (mContext == null) {
             return;
         }
-        ((Activity)mContext).runOnUiThread(new Runnable() {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 LoadingUtils.getLoadingUtils().showLoadingView(mContext);
@@ -112,6 +111,7 @@ public  abstract class BasePresenter<V extends BaseView> implements IClear {
     public void attach(V view) {
         this.mView = view;
     }
+
     public void detach() {
         //this.view = null;
     }

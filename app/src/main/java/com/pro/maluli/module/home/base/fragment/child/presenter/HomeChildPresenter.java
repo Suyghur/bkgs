@@ -3,11 +3,6 @@ package com.pro.maluli.module.home.base.fragment.child.presenter;
 import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
-import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.UserInfoEntity;
-import com.pro.maluli.common.networkRequest.SuccessConsumer;
-
-import io.reactivex.functions.Consumer;
 
 public class HomeChildPresenter extends BasePresenter<IHomeChildContraction.View> implements IHomeChildContraction.Presenter {
     public HomeChildPresenter(Context context) {

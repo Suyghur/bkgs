@@ -1,11 +1,7 @@
 package com.netease.nim.uikit.business.session.actions;
 
 import com.netease.nim.uikit.R;
-import com.netease.nim.uikit.api.model.location.LocationProvider;
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
-import com.netease.nim.uikit.impl.NimUIKitImpl;
-import com.netease.nimlib.sdk.msg.MessageBuilder;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import org.greenrobot.eventbus.EventBus;
 

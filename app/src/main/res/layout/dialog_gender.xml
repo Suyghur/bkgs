@@ -48,9 +48,9 @@
             android:id="@+id/sexWlv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_above="@+id/submitTv"
-            android:layout_below="@+id/titlerl" />
+            android:layout_below="@+id/titlerl"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/submitTv"

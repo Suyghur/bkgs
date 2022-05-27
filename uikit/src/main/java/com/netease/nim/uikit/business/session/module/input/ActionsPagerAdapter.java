@@ -1,13 +1,14 @@
 package com.netease.nim.uikit.business.session.module.input;
 
 import android.content.Context;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.actions.BaseAction;

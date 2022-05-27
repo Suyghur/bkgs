@@ -33,186 +33,145 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreDrawListener {
 
-    private static final String TAG = "FloatingView";
-
-    /**
-     * 不需要移动的最低阈值(dp)
-     */
-    private static final float MOVE_THRESHOLD_DP = 8.0f;
-
-    /**
-     * 画面端移动动画的时长
-     */
-    private static final long MOVE_TO_EDGE_DURATION = 450L;
-
-    /**
-     * 画面端移动动画的系数
-     */
-    private static final float MOVE_TO_EDGE_OVERSHOOT_TENSION = 1.25f;
-
     /**
      * 默认的X坐标值
      */
     public static final int DEFAULT_X = Integer.MIN_VALUE;
-
     /**
      * 默认的Y坐标值
      */
     public static final int DEFAULT_Y = Integer.MIN_VALUE;
-
     /**
      * 默认的宽度
      */
     public static final int DEFAULT_WIDTH = ViewGroup.LayoutParams.WRAP_CONTENT;
-
     /**
      * 默认的高度
      */
     public static final int DEFAULT_HEIGHT = ViewGroup.LayoutParams.WRAP_CONTENT;
-
+    /**
+     * 移动方向 - 默认
+     */
+    public static final int MOVE_DIRECTION_DEFAULT = 0;
+    /**
+     * 移动方向 - 左移动
+     */
+    public static final int MOVE_DIRECTION_LEFT = 1;
+    /**
+     * 移动方向 - 右移动
+     */
+    public static final int MOVE_DIRECTION_RIGHT = 2;
+    /**
+     * 移动方向 - 不移动
+     */
+    public static final int MOVE_DIRECTION_NONE = 3;
+    private static final String TAG = "FloatingView";
+    /**
+     * 不需要移动的最低阈值(dp)
+     */
+    private static final float MOVE_THRESHOLD_DP = 8.0f;
+    /**
+     * 画面端移动动画的时长
+     */
+    private static final long MOVE_TO_EDGE_DURATION = 450L;
+    /**
+     * 画面端移动动画的系数
+     */
+    private static final float MOVE_TO_EDGE_OVERSHOOT_TENSION = 1.25f;
     /**
      * WindowManager
      */
     private WindowManager mWindowManager;
-
     /**
      * LayoutParams
      */
     private WindowManager.LayoutParams mParams;
-
     /**
      * DisplayMetrics
      */
     private DisplayMetrics mMetrics;
-
     /**
      * 悬浮窗的初始坐标
      */
     private int mInitX, mInitY;
-
     /**
      * 悬浮窗的触摸坐标
      */
     private float mViewTouchX, mViewTouchY;
-
     /**
      * 屏幕的触摸坐标
      */
     private float mScreenTouchX, mScreenTouchY;
-
     /**
      * 屏幕的触摸按下坐标（移动量判定用）
      */
     private float mScreenTouchDownX, mScreenTouchDownY;
-
     /**
      * 开始移动的标志
      */
     private boolean mIsMoveAccept;
-
     /**
      * 动画初始移动时的标志
      */
     private boolean mAnimateInitialMove;
-
     /**
      * 状态栏的高度
      */
     private int mBaseStatusBarHeight;
-
     /**
      * 当前状态栏的高度
      */
     private int mStatusBarHeight;
-
     /**
      * 导航条的高度
      */
     private int mBaseNavigationBarHeight;
-
     /**
      * 导航条的高度
      * Placed bottom on the screen(tablet)
      * Or placed vertically on the screen(phone)
      */
     private int mBaseNavigationBarRotatedHeight;
-
     /**
      * 当前导航条的垂直尺寸
      */
     private int mNavigationBarVerticalOffset;
-
     /**
      * 当前导航条的水平尺寸
      */
     private int mNavigationBarHorizontalOffset;
-
     /**
      * 移动动画
      */
     private ValueAnimator mMoveEdgeAnimator;
-
     /**
      * TimeInterpolator
      */
     private TimeInterpolator mMoveEdgeInterpolator;
-
     /**
      * 移动的界限Rect
      */
     private Rect mMoveLimitRect;
-
     /**
      * 显示位置的界限Rect
      */
     private Rect mPositionLimitRect;
-
     /**
      * 悬浮窗边缘的外边距
      */
     private int mOverMargin;
-
     /**
      * OnTouchListener
      */
     private OnTouchListener mOnTouchListener;
-
     /**
      * 移动方向
      */
     private int mMoveDirection;
-
     /**
      * 是否是平板电脑
      */
     private boolean mIsTablet;
-
-    /**
-     * 移动方向 - 默认
-     */
-    public static final int MOVE_DIRECTION_DEFAULT = 0;
-
-    /**
-     * 移动方向 - 左移动
-     */
-    public static final int MOVE_DIRECTION_LEFT = 1;
-
-    /**
-     * 移动方向 - 右移动
-     */
-    public static final int MOVE_DIRECTION_RIGHT = 2;
-
-    /**
-     * 移动方向 - 不移动
-     */
-    public static final int MOVE_DIRECTION_NONE = 3;
-
-    /**
-     * 移动方向
-     */
-    @IntDef({ MOVE_DIRECTION_DEFAULT, MOVE_DIRECTION_LEFT, MOVE_DIRECTION_RIGHT, MOVE_DIRECTION_NONE })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface MoveDirection {}
 
     /**
      * 构造方法
@@ -254,8 +213,7 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
         if (hasMenuKey || hasBackKey) {
             this.mBaseNavigationBarHeight = 0;
             this.mBaseNavigationBarRotatedHeight = 0;
-        }
-        else {
+        } else {
             this.mBaseNavigationBarHeight = getSystemUiDimensionPixelSize(resources, "navigation_bar_height");
             final String resName = mIsTablet ? "navigation_bar_height_landscape" : "navigation_bar_width";
             this.mBaseNavigationBarRotatedHeight = getSystemUiDimensionPixelSize(resources, resName);
@@ -269,7 +227,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
      *
      * @param resources {@link Resources}
      * @param resName   dimension resource name
-     *
      * @return pixel size
      */
     private int getSystemUiDimensionPixelSize(Resources resources, String resName) {
@@ -310,8 +267,7 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
         if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_NONE) {
             moveTo(this.mInitX, this.mInitY, this.mInitX, this.mInitY, false);
-        }
-        else {
+        } else {
             moveToEdge(this.mInitX, this.mInitY, this.mAnimateInitialMove);
         }
 
@@ -358,8 +314,7 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
         if (this.mIsTablet) {
             this.mNavigationBarVerticalOffset = this.mBaseNavigationBarRotatedHeight;
             this.mNavigationBarHorizontalOffset = 0;
-        }
-        else {
+        } else {
             this.mNavigationBarVerticalOffset = 0;
             this.mNavigationBarHorizontalOffset = this.mBaseNavigationBarRotatedHeight;
         }
@@ -393,18 +348,14 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
             if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_DEFAULT) {
                 if (this.mParams.x > (newScreenWidth - width) / 2) {
                     this.mParams.x = this.mPositionLimitRect.right;
-                }
-                else {
+                } else {
                     this.mParams.x = this.mPositionLimitRect.left;
                 }
-            }
-            else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_LEFT) {
+            } else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_LEFT) {
                 this.mParams.x = this.mPositionLimitRect.left;
-            }
-            else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_RIGHT) {
+            } else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_RIGHT) {
                 this.mParams.x = mPositionLimitRect.right;
-            }
-            else {
+            } else {
                 int newX = (int) (this.mParams.x * this.mPositionLimitRect.width() / (float) oldPositionLimitWidth + 0.5f);
                 this.mParams.x = Math.min(Math.max(this.mPositionLimitRect.left, newX), this.mPositionLimitRect.right);
             }
@@ -435,20 +386,17 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
             this.mViewTouchX = event.getX();
             this.mViewTouchY = event.getY();
             this.mIsMoveAccept = false;
-        }
-        else if (action == MotionEvent.ACTION_MOVE) {
+        } else if (action == MotionEvent.ACTION_MOVE) {
             float moveThreshold = MOVE_THRESHOLD_DP * this.mMetrics.density;
             if (!this.mIsMoveAccept && Math.abs(this.mScreenTouchX - this.mScreenTouchDownX) < moveThreshold && Math.abs(this.mScreenTouchY - this.mScreenTouchDownY) < moveThreshold) {
                 return true;
             }
             this.mIsMoveAccept = true;
             this.updateViewPosition(getXByTouch(), getYByTouch());
-        }
-        else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             if (this.mIsMoveAccept) {
                 moveToEdge(true);
-            }
-            else {
+            } else {
                 int size = getChildCount();
                 for (int i = 0; i < size; i++) {
                     getChildAt(i).performClick();
@@ -490,11 +438,9 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
         if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_DEFAULT) {
             boolean isMoveRightEdge = startX > (this.mMetrics.widthPixels - getWidth()) / 2;
             goalPositionX = isMoveRightEdge ? this.mPositionLimitRect.right : this.mPositionLimitRect.left;
-        }
-        else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_LEFT) {
+        } else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_LEFT) {
             goalPositionX = this.mPositionLimitRect.left;
-        }
-        else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_RIGHT) {
+        } else if (this.mMoveDirection == FloatingView.MOVE_DIRECTION_RIGHT) {
             goalPositionX = this.mPositionLimitRect.right;
         }
         moveTo(startX, startY, goalPositionX, goalPositionY, withAnimation);
@@ -525,8 +471,7 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
             this.mMoveEdgeAnimator.setDuration(MOVE_TO_EDGE_DURATION);
             this.mMoveEdgeAnimator.setInterpolator(this.mMoveEdgeInterpolator);
             this.mMoveEdgeAnimator.start();
-        }
-        else {
+        } else {
             if (this.mParams.x != goalPositionX || this.mParams.y != goalPositionY) {
                 this.mParams.x = goalPositionX;
                 this.mParams.y = goalPositionY;
@@ -604,5 +549,13 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
         this.mParams.x = x;
         this.mParams.y = y;
         this.mWindowManager.updateViewLayout(this, this.mParams);
+    }
+
+    /**
+     * 移动方向
+     */
+    @IntDef({MOVE_DIRECTION_DEFAULT, MOVE_DIRECTION_LEFT, MOVE_DIRECTION_RIGHT, MOVE_DIRECTION_NONE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MoveDirection {
     }
 }

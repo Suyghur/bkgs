@@ -2,7 +2,6 @@ package com.pro.maluli.module.video.fragment.recyclerUtils;
 
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
@@ -16,17 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class RecyclerViewUtil {
 
     private RecyclerView recyclerView;
-
-    public RecyclerViewUtil() {
-    }
-
-    public void initScrollListener(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
-        if (mScrollListener != null) {
-            this.recyclerView.addOnScrollListener(mScrollListener);
-        }
-    }
-
     private int currentState = -1;
     private Handler cancelScrollHandler = new Handler();
     private Runnable cancelScrollRunnable = new Runnable() {
@@ -39,7 +27,6 @@ public class RecyclerViewUtil {
             }
         }
     };
-
     private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -59,6 +46,15 @@ public class RecyclerViewUtil {
             }
         }
     };
+    public RecyclerViewUtil() {
+    }
+
+    public void initScrollListener(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+        if (mScrollListener != null) {
+            this.recyclerView.addOnScrollListener(mScrollListener);
+        }
+    }
 
     public void destroy() {
         if (cancelScrollHandler != null && cancelScrollRunnable != null) {

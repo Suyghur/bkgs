@@ -1,9 +1,6 @@
 package com.netease.nim.uikit.business.session.emoji;
 
 import android.content.Context;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -13,6 +10,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.util.log.LogUtil;
@@ -25,19 +26,17 @@ import java.util.List;
  */
 public class EmoticonView {
 
+    /**
+     * 每页显示的数量，Adapter保持一致.
+     */
+    public static final int EMOJI_PER_PAGE = 27; // 最后一个是删除键
+    public static final int STICKER_PER_PAGE = 8;
     private ViewPager emotPager;
     private LinearLayout pageNumberLayout;
     /**
      * 总页数.
      */
     private int pageCount;
-
-    /**
-     * 每页显示的数量，Adapter保持一致.
-     */
-    public static final int EMOJI_PER_PAGE = 27; // 最后一个是删除键
-    public static final int STICKER_PER_PAGE = 8;
-
     private Context context;
     private IEmoticonSelectedListener listener;
     private EmoticonViewPaperAdapter pagerAdapter = new EmoticonViewPaperAdapter();
@@ -50,7 +49,60 @@ public class EmoticonView {
     private List<StickerCategory> categoryDataList;       // 表情贴图数据源
     private List<Integer> categoryPageNumberList;           // 每套表情贴图对应的页数
     private int[] pagerIndexInfo = new int[2];           // 0：category index；1：pager index in category
+    public OnItemClickListener emojiListener = new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            int position = emotPager.getCurrentItem();
+            int pos = position; // 如果只有表情，那么用默认方式计算
+            if (categoryDataList != null && categoryPageNumberList != null) {
+                // 包含贴图
+                getPagerInfo(position);
+                pos = pagerIndexInfo[1];
+            }
+
+            int index = arg2 + pos * EMOJI_PER_PAGE;
+
+            if (listener != null) {
+                int count = EmojiManager.getDisplayCount();
+                if (arg2 == EMOJI_PER_PAGE || index >= count) {
+                    listener.onEmojiSelected("/DEL");
+                } else {
+                    String text = EmojiManager.getDisplayText((int) arg3);
+                    if (!TextUtils.isEmpty(text)) {
+                        listener.onEmojiSelected(text);
+                    }
+                }
+            }
+        }
+    };
     private IEmoticonCategoryChanged categoryChangedCallback; // 横向滑动切换时回调picker
+    private OnItemClickListener stickerListener = new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            int position = emotPager.getCurrentItem();
+            getPagerInfo(position);
+            int cIndex = pagerIndexInfo[0];
+            int pos = pagerIndexInfo[1];
+            StickerCategory c = categoryDataList.get(cIndex);
+            int index = arg2 + pos * STICKER_PER_PAGE; // 在category中贴图的index
+
+            if (index >= c.getStickers().size()) {
+                LogUtil.i("sticker", "index " + index + " larger than size " + c.getStickers().size());
+                return;
+            }
+
+            if (listener != null) {
+                StickerManager manager = StickerManager.getInstance();
+                List<StickerItem> stickers = c.getStickers();
+                StickerItem sticker = stickers.get(index);
+                StickerCategory real = manager.getCategory(sticker.getCategory());
+
+                if (real == null) {
+                    return;
+                }
+
+                listener.onStickerSelected(sticker.getCategory(), sticker.getName());
+            }
+        }
+    };
 
     public EmoticonView(Context context, IEmoticonSelectedListener mlistener,
                         ViewPager mCurPage, LinearLayout pageNumberLayout) {
@@ -168,32 +220,6 @@ public class EmoticonView {
         setCurPage(position, pageCount);
     }
 
-    public OnItemClickListener emojiListener = new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            int position = emotPager.getCurrentItem();
-            int pos = position; // 如果只有表情，那么用默认方式计算
-            if (categoryDataList != null && categoryPageNumberList != null) {
-                // 包含贴图
-                getPagerInfo(position);
-                pos = pagerIndexInfo[1];
-            }
-
-            int index = arg2 + pos * EMOJI_PER_PAGE;
-
-            if (listener != null) {
-                int count = EmojiManager.getDisplayCount();
-                if (arg2 == EMOJI_PER_PAGE || index >= count) {
-                    listener.onEmojiSelected("/DEL");
-                } else {
-                    String text = EmojiManager.getDisplayText((int) arg3);
-                    if (!TextUtils.isEmpty(text)) {
-                        listener.onEmojiSelected(text);
-                    }
-                }
-            }
-        }
-    };
-
     /**
      * ******************************** 贴图  *******************************
      */
@@ -287,36 +313,6 @@ public class EmoticonView {
     public void setCategoryChangCheckedCallback(IEmoticonCategoryChanged callback) {
         this.categoryChangedCallback = callback;
     }
-
-    private OnItemClickListener stickerListener = new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            int position = emotPager.getCurrentItem();
-            getPagerInfo(position);
-            int cIndex = pagerIndexInfo[0];
-            int pos = pagerIndexInfo[1];
-            StickerCategory c = categoryDataList.get(cIndex);
-            int index = arg2 + pos * STICKER_PER_PAGE; // 在category中贴图的index
-
-            if (index >= c.getStickers().size()) {
-                LogUtil.i("sticker", "index " + index + " larger than size " + c.getStickers().size());
-                return;
-            }
-
-            if (listener != null) {
-                StickerManager manager = StickerManager.getInstance();
-                List<StickerItem> stickers = c.getStickers();
-                StickerItem sticker = stickers.get(index);
-                StickerCategory real = manager.getCategory(sticker.getCategory());
-
-                if (real == null) {
-                    return;
-                }
-
-                listener.onStickerSelected(sticker.getCategory(), sticker.getName());
-            }
-        }
-    };
-
 
     /**
      * ***************************** PagerAdapter ****************************

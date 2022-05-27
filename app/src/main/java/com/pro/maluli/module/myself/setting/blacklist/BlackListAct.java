@@ -19,8 +19,8 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.BlackListEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.module.myself.setting.blacklist.adapter.BlackListAdapter;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
 import com.pro.maluli.module.myself.setting.blacklist.presenter.BlackListPresenter;
+import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +84,7 @@ public class BlackListAct extends BaseMvpActivity<IBlackListContraction.View, Bl
         nodataTipsTv.setText("暂无数据");
 
     }
+
     /**
      * 移除黑名单
      */
@@ -134,10 +135,10 @@ public class BlackListAct extends BaseMvpActivity<IBlackListContraction.View, Bl
         listBeans.remove(deletePosition);
         blackListAdapter.notifyItemRemoved(deletePosition);//通知移除该条
         blackListAdapter.notifyItemRangeChanged(deletePosition, listBeans.size() - deletePosition);//更新适配器这条后面列表的变化
-        if (listBeans.size()==0){
+        if (listBeans.size() == 0) {
             nodataView.setVisibility(View.VISIBLE);
             blackListRl.setVisibility(View.GONE);
-        }else {
+        } else {
             nodataView.setVisibility(View.GONE);
             blackListRl.setVisibility(View.VISIBLE);
         }

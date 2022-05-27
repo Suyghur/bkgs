@@ -20,10 +20,10 @@
             android:background="@color/color_background"
             android:gravity="center"
             android:numColumns="4"
-            android:paddingBottom="25dip"
             android:paddingLeft="12dip"
-            android:paddingRight="12dip"
             android:paddingTop="16dip"
+            android:paddingRight="12dip"
+            android:paddingBottom="25dip"
             android:verticalSpacing="16dip"></com.netease.nim.uikit.business.team.ui.TeamInfoGridView>
 
         <LinearLayout

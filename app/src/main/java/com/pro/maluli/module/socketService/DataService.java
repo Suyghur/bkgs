@@ -26,23 +26,22 @@ import java.net.URI;
 public class DataService extends Service {
 
     public static final String TAG = "DataService";
-    public String notificationId = "data_service_id";
-    public String notificationName = "data_name";
     public static final String RES_TRADELIST = "TRADELIST";
-
-    public String defult_deptArea = "";
-
-    private WebSocketClient mWebSocketClient;//唯一
-    private DataServiceBinder mBinder;
-    private int RECONNECT_TIME = 3000;
-    private String socketUrl;
-
     private static final Intent SERVICE_INTENT = new Intent();
 
     static {
         SERVICE_INTENT.setComponent(new ComponentName(BKGSApplication.getApp().getPackageName(),
                 "com.pro.maluli.module.socketService.DataService"));
     }
+
+    public String notificationId = "data_service_id";
+    public String notificationName = "data_name";
+    public String defult_deptArea = "";
+    public boolean isRunning = false;
+    private WebSocketClient mWebSocketClient;//唯一
+    private DataServiceBinder mBinder;
+    private int RECONNECT_TIME = 3000;
+    private String socketUrl;
 
     public static Intent getIntent() {
         return SERVICE_INTENT;
@@ -53,20 +52,6 @@ public class DataService extends Service {
 //        intent.putExtra(LOGIN_UID, uid);
         return intent;
     }
-
-    public boolean isRunning = false;
-    public Handler socketHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            if (!isRunning) {
-//                initSocket();
-            }
-            isRunning = false;
-            socketHandler.sendMessageDelayed(socketHandler.obtainMessage(), 5 * 1000);
-            return false;
-        }
-    });
-
 
     @Override
     public void onCreate() {
@@ -91,7 +76,17 @@ public class DataService extends Service {
         mBinder = new DataServiceBinder();
         socketHandler.sendMessage(socketHandler.obtainMessage());
         Log.i(TAG, " 服务创建");
-    }
+    }    public Handler socketHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            if (!isRunning) {
+//                initSocket();
+            }
+            isRunning = false;
+            socketHandler.sendMessageDelayed(socketHandler.obtainMessage(), 5 * 1000);
+            return false;
+        }
+    });
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -111,22 +106,14 @@ public class DataService extends Service {
         return mBinder;
     }
 
-    // Binder
-    public class DataServiceBinder extends Binder {
-        public DataService getService() {
-            return DataService.this;
-        }
-    }
-
-
     //
     public void initSocket(String url) {
         try {
             URI uri;
 //            String socketurl = URLEncoder.encode(url,"utf-8");
-            String socketurl =url;
-                uri =  URI.create(socketurl);
-            if (mWebSocketClient != null ) {
+            String socketurl = url;
+            uri = URI.create(socketurl);
+            if (mWebSocketClient != null) {
                 return;
             }
             mWebSocketClient = new WebSocketClient(uri) {
@@ -177,7 +164,7 @@ public class DataService extends Service {
 
             //信任所有证书
             try {
-                if(socketurl.contains("wss:")||socketurl.contains("https:")) {
+                if (socketurl.contains("wss:") || socketurl.contains("https:")) {
                     mWebSocketClient.setSocket(SSLSocketClient.getSSLSocketFactory().createSocket());
                 }
             } catch (Exception e) {
@@ -189,8 +176,6 @@ public class DataService extends Service {
         }
     }
 
-
-
     public void sendPing() {
         try {
             if (mWebSocketClient != null) {
@@ -200,6 +185,15 @@ public class DataService extends Service {
 
         }
     }
+
+    // Binder
+    public class DataServiceBinder extends Binder {
+        public DataService getService() {
+            return DataService.this;
+        }
+    }
+
+
 
 
 
@@ -225,12 +219,6 @@ public class DataService extends Service {
 //
 //
 //    }
-
-
-
-
-
-
 
 
 }

@@ -11,8 +11,10 @@ public interface IMsmLoginContraction extends BaseView {
 
         void loginSuccess(String msg);
     }
+
     interface Presenter extends IClear {
         void getVerifiCationCode(String mobile);
-        void login(String mobile, String type, String pwd,String openid);
+
+        void login(String mobile, String type, String pwd, String openid);
     }
 }

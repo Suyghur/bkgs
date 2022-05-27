@@ -4,6 +4,7 @@ import com.netease.neliveplayer.sdk.model.NEMediaInfo;
 
 /**
  * 媒体信息类
+ *
  * @author netease
  */
 

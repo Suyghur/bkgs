@@ -65,6 +65,10 @@ public abstract class BaseAction implements Serializable {
         return container;
     }
 
+    public void setContainer(Container container) {
+        this.containerRef = new WeakReference<>(container);
+    }
+
     public abstract void onClick();
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -80,10 +84,6 @@ public abstract class BaseAction implements Serializable {
             throw new IllegalArgumentException("Can only use lower 8 bits for requestCode");
         }
         return ((index + 1) << 8) + (requestCode & 0xff);
-    }
-
-    public void setContainer(Container container) {
-        this.containerRef = new WeakReference<>(container);
     }
 
     public void setIndex(int index) {

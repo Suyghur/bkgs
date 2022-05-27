@@ -4,83 +4,8 @@ import java.io.IOException;
 import java.io.StringReader;
 
 public class HexDump {
-    class HexTablifier {
-        private int m_row = 8;
-
-        private String m_pre = "";
-
-        private String m_post = "\n";
-
-        public HexTablifier() {
-        }
-
-        public HexTablifier(int row) {
-            this(row, "", "\n");
-        }
-
-        public HexTablifier(int row, String pre) {
-            this(row, pre, "\n");
-        }
-
-        public HexTablifier(int row, String pre, String post) {
-            m_row = row;
-            m_pre = pre;
-            m_post = post;
-        }
-
-        public String format(String hex) {
-            StringReader reader = new StringReader(hex);
-            StringBuilder builder = new StringBuilder(hex.length() * 2);
-
-            try {
-                while (getHexLine(builder, reader)) {
-                }
-            } catch (IOException e) {
-                // 不应该有异常出现。
-            }
-
-            return builder.toString();
-        }
-
-        private boolean getHexLine(StringBuilder builder, StringReader reader)
-                throws IOException {
-            StringBuilder lineBuilder = new StringBuilder();
-            boolean result = true;
-
-            for (int i = 0; i < m_row; i++) {
-                result = getHexByte(lineBuilder, reader);
-
-                if (result == false)
-                    break;
-            }
-
-            if (lineBuilder.length() > 0) {
-                builder.append(m_pre);
-                builder.append(lineBuilder);
-                builder.append(m_post);
-            }
-
-            return result;
-        }
-
-        private boolean getHexByte(StringBuilder builder, StringReader reader)
-                throws IOException {
-            char[] hexByte = new char[4];
-            int bytesRead = reader.read(hexByte);
-
-            if (bytesRead == -1)
-                return false;
-
-            builder.append(hexByte, 0, bytesRead);
-            builder.append(" ");
-
-            return bytesRead == 4;
-        }
-    }
-
     private static final char m_hexCodes[] = {'0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
     private static final int m_shifts[] = {60, 56, 52, 48, 44, 40, 36, 32, 28,
             24, 20, 16, 12, 8, 4, 0};
 
@@ -167,6 +92,80 @@ public class HexDump {
             return c - 'A' + 0xA;
         } else {
             return -1;
+        }
+    }
+
+    class HexTablifier {
+        private int m_row = 8;
+
+        private String m_pre = "";
+
+        private String m_post = "\n";
+
+        public HexTablifier() {
+        }
+
+        public HexTablifier(int row) {
+            this(row, "", "\n");
+        }
+
+        public HexTablifier(int row, String pre) {
+            this(row, pre, "\n");
+        }
+
+        public HexTablifier(int row, String pre, String post) {
+            m_row = row;
+            m_pre = pre;
+            m_post = post;
+        }
+
+        public String format(String hex) {
+            StringReader reader = new StringReader(hex);
+            StringBuilder builder = new StringBuilder(hex.length() * 2);
+
+            try {
+                while (getHexLine(builder, reader)) {
+                }
+            } catch (IOException e) {
+                // 不应该有异常出现。
+            }
+
+            return builder.toString();
+        }
+
+        private boolean getHexLine(StringBuilder builder, StringReader reader)
+                throws IOException {
+            StringBuilder lineBuilder = new StringBuilder();
+            boolean result = true;
+
+            for (int i = 0; i < m_row; i++) {
+                result = getHexByte(lineBuilder, reader);
+
+                if (result == false)
+                    break;
+            }
+
+            if (lineBuilder.length() > 0) {
+                builder.append(m_pre);
+                builder.append(lineBuilder);
+                builder.append(m_post);
+            }
+
+            return result;
+        }
+
+        private boolean getHexByte(StringBuilder builder, StringReader reader)
+                throws IOException {
+            char[] hexByte = new char[4];
+            int bytesRead = reader.read(hexByte);
+
+            if (bytesRead == -1)
+                return false;
+
+            builder.append(hexByte, 0, bytesRead);
+            builder.append(" ");
+
+            return bytesRead == 4;
         }
     }
 }

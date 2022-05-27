@@ -6,7 +6,6 @@ import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.entity.LastTimeLiveEntity;
-import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;

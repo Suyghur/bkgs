@@ -133,7 +133,7 @@
                 android:layout_marginBottom="@dimen/dp_20"
                 android:background="@drawable/shape_b23299_d23db3_34"
                 android:gravity="center"
-                android:text="开启直播间"
+                android:text="下一步"
                 android:textColor="@color/c_ffffff"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>

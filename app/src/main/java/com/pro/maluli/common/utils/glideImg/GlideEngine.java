@@ -30,6 +30,22 @@ import com.pro.maluli.R;
  */
 public class GlideEngine implements ImageEngine {
 
+    private static GlideEngine instance;
+
+    private GlideEngine() {
+    }
+
+    public static GlideEngine createGlideEngine() {
+        if (null == instance) {
+            synchronized (GlideEngine.class) {
+                if (null == instance) {
+                    instance = new GlideEngine();
+                }
+            }
+        }
+        return instance;
+    }
+
     /**
      * 加载图片
      *
@@ -189,7 +205,6 @@ public class GlideEngine implements ImageEngine {
                 });
     }
 
-
     /**
      * 加载gif
      *
@@ -227,22 +242,5 @@ public class GlideEngine implements ImageEngine {
                 .centerCrop()
                 .placeholder(R.drawable.picture_image_placeholder)
                 .into(imageView);
-    }
-
-
-    private GlideEngine() {
-    }
-
-    private static GlideEngine instance;
-
-    public static GlideEngine createGlideEngine() {
-        if (null == instance) {
-            synchronized (GlideEngine.class) {
-                if (null == instance) {
-                    instance = new GlideEngine();
-                }
-            }
-        }
-        return instance;
     }
 }

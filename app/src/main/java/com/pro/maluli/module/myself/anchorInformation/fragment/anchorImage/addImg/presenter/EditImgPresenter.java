@@ -62,8 +62,8 @@ public class EditImgPresenter extends BasePresenter<IEditImgContraction.View> im
     }
 
     @Override
-    public void subMitImg(String url,String mark) {
-        add(mService.addAnchorImg(url,mark)
+    public void subMitImg(String url, String mark) {
+        add(mService.addAnchorImg(url, mark)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorLabelEntity>>(mView) {
                     @Override

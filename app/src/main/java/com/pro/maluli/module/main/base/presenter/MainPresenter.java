@@ -6,11 +6,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
+import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.constant.ACEConstant;
-import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.entity.MessageListEntity;
 import com.pro.maluli.common.entity.ProtocolDetailEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
@@ -77,7 +77,7 @@ public class MainPresenter extends BasePresenter<IMainContraction.View> implemen
                         JSONObject jsonObject = JSONObject.parseObject(myJson);
                         String data = jsonObject.getString("data");
                         JSONObject jsonObject2 = JSONObject.parseObject(data);
-                        String anchorId =jsonObject2.getString("anchor_id");
+                        String anchorId = jsonObject2.getString("anchor_id");
                         mView.setGoAnchorInfo(anchorId);
                     }
                 }, new Consumer<Throwable>() {

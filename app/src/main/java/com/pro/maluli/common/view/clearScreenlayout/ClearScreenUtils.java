@@ -1,13 +1,13 @@
 package com.pro.maluli.common.view.clearScreenlayout;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.WindowManager;
 
 import androidx.annotation.RestrictTo;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * 作者：wangjianxiong 创建时间：2021/4/30 ClearScreen工具类

@@ -36,14 +36,6 @@ public class InputTextLiveDialog extends AppCompatDialog {
     private RelativeLayout rlDlg;
     private int mLastDiff = 0;
     private int maxNumber = 200;
-
-    public interface OnTextSendListener {
-
-        void onTextSend(String msg);
-
-        void dismiss();
-    }
-
     private OnTextSendListener mOnTextSendListener;
 
     public InputTextLiveDialog(@NonNull Context context, int theme) {
@@ -52,7 +44,6 @@ public class InputTextLiveDialog extends AppCompatDialog {
         init();
         setLayout();
     }
-
 
     /**
      * 设置输入提示文字
@@ -192,7 +183,6 @@ public class InputTextLiveDialog extends AppCompatDialog {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
-
     public void setmOnTextSendListener(OnTextSendListener onTextSendListener) {
         this.mOnTextSendListener = onTextSendListener;
     }
@@ -209,5 +199,12 @@ public class InputTextLiveDialog extends AppCompatDialog {
     @Override
     public void show() {
         super.show();
+    }
+
+    public interface OnTextSendListener {
+
+        void onTextSend(String msg);
+
+        void dismiss();
     }
 }

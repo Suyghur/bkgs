@@ -9,6 +9,7 @@ public interface IChildLiveListContraction extends BaseView {
 
         void setHomeLiveListData(LiveListEntity entity);
     }
+
     interface Presenter extends IClear {
         void getHomeLiveList(String id);
 

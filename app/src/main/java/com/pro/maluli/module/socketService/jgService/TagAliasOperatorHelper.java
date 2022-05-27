@@ -3,33 +3,32 @@ package com.pro.maluli.module.socketService.jgService;
 import android.content.Context;
 import android.util.Log;
 
-import com.netease.nim.uikit.common.ToastHelper;
-
 import cn.jpush.android.api.JPushMessage;
 
 /**
  * 处理tagalias相关的逻辑
- * */
+ */
 public class TagAliasOperatorHelper {
     private static final String TAG = "JIGUANG-TagAliasHelper";
-
+    private static TagAliasOperatorHelper mInstance;
     private Context context;
 
-    private static TagAliasOperatorHelper mInstance;
-    private TagAliasOperatorHelper(){
+    private TagAliasOperatorHelper() {
     }
-    public static TagAliasOperatorHelper getInstance(){
-        if(mInstance == null){
-            synchronized (TagAliasOperatorHelper.class){
-                if(mInstance == null){
+
+    public static TagAliasOperatorHelper getInstance() {
+        if (mInstance == null) {
+            synchronized (TagAliasOperatorHelper.class) {
+                if (mInstance == null) {
                     mInstance = new TagAliasOperatorHelper();
                 }
             }
         }
         return mInstance;
     }
-    public void init(Context context){
-        if(context != null) {
+
+    public void init(Context context) {
+        if (context != null) {
             this.context = context.getApplicationContext();
         }
     }
@@ -37,16 +36,16 @@ public class TagAliasOperatorHelper {
 
     public void onTagOperatorResult(Context context, JPushMessage jPushMessage) {
         int sequence = jPushMessage.getSequence();
-        Log.i(TAG,"action - onTagOperatorResult, sequence:"+sequence+",tags:"+jPushMessage.getTags());
-        Log.i(TAG,"tags size:"+jPushMessage.getTags().size());
+        Log.i(TAG, "action - onTagOperatorResult, sequence:" + sequence + ",tags:" + jPushMessage.getTags());
+        Log.i(TAG, "tags size:" + jPushMessage.getTags().size());
         init(context);
 
-        if(jPushMessage.getErrorCode() == 0){
-            Log.i(TAG,"action - modify tag Success,sequence:"+sequence);
+        if (jPushMessage.getErrorCode() == 0) {
+            Log.i(TAG, "action - modify tag Success,sequence:" + sequence);
 //            ToastHelper.showOk(context,"modify success");
-        }else{
+        } else {
             String logs = "Failed to modify tags";
-            if(jPushMessage.getErrorCode() == 6018){
+            if (jPushMessage.getErrorCode() == 6018) {
                 //tag数量超过限制,需要先清除一部分再add
                 logs += ", tags is exceed limit need to clean";
             }
@@ -55,51 +54,53 @@ public class TagAliasOperatorHelper {
 //            ToastHelper.showOther(context,logs);
         }
     }
-    public void onCheckTagOperatorResult(Context context, JPushMessage jPushMessage){
+
+    public void onCheckTagOperatorResult(Context context, JPushMessage jPushMessage) {
         int sequence = jPushMessage.getSequence();
-        Log.i(TAG,"action - onCheckTagOperatorResult, sequence:"+sequence+",checktag:"+jPushMessage.getCheckTag());
+        Log.i(TAG, "action - onCheckTagOperatorResult, sequence:" + sequence + ",checktag:" + jPushMessage.getCheckTag());
         init(context);
-        if(jPushMessage.getErrorCode() == 0){
-            String logs = "modify tag "+jPushMessage.getCheckTag() + " bind state success,state:"+jPushMessage.getTagCheckStateResult();
-            Log.i(TAG,logs);
+        if (jPushMessage.getErrorCode() == 0) {
+            String logs = "modify tag " + jPushMessage.getCheckTag() + " bind state success,state:" + jPushMessage.getTagCheckStateResult();
+            Log.i(TAG, logs);
 //            ToastHelper.showOk(context,"modify success");
-        }else{
+        } else {
             String logs = "Failed to modify tags, errorCode:" + jPushMessage.getErrorCode();
             Log.e(TAG, logs);
 //            ToastHelper.showOther(context,logs);
         }
     }
+
     public void onAliasOperatorResult(Context context, JPushMessage jPushMessage) {
         int sequence = jPushMessage.getSequence();
-        Log.i(TAG,"action - onAliasOperatorResult, sequence:"+sequence+",alias:"+jPushMessage.getAlias());
+        Log.i(TAG, "action - onAliasOperatorResult, sequence:" + sequence + ",alias:" + jPushMessage.getAlias());
         init(context);
 
-        if(jPushMessage.getErrorCode() == 0){
-            Log.i(TAG,"action - modify alias Success,sequence:"+sequence);
+        if (jPushMessage.getErrorCode() == 0) {
+            Log.i(TAG, "action - modify alias Success,sequence:" + sequence);
 //            ToastHelper.showOk(context,"modify success");
-        }else{
+        } else {
             String logs = "Failed to modify alias, errorCode:" + jPushMessage.getErrorCode();
             Log.e(TAG, logs);
 //            ToastHelper.showOther(context,logs);
 //            MMKV.defaultMMKV().putString(AdvActivity.ALIAS_DATA, "");
         }
     }
+
     //设置手机号码回调
     public void onMobileNumberOperatorResult(Context context, JPushMessage jPushMessage) {
         int sequence = jPushMessage.getSequence();
-        Log.i(TAG,"action - onMobileNumberOperatorResult, sequence:"+sequence+",mobileNumber:"+jPushMessage.getMobileNumber());
+        Log.i(TAG, "action - onMobileNumberOperatorResult, sequence:" + sequence + ",mobileNumber:" + jPushMessage.getMobileNumber());
         init(context);
-        if(jPushMessage.getErrorCode() == 0){
-            Log.i(TAG,"action - set mobile number Success,sequence:"+sequence);
+        if (jPushMessage.getErrorCode() == 0) {
+            Log.i(TAG, "action - set mobile number Success,sequence:" + sequence);
 //            ToastHelper.showOk(context,"modify success");
-        }else{
+        } else {
             String logs = "Failed to set mobile number, errorCode:" + jPushMessage.getErrorCode();
             Log.e(TAG, logs);
 //            ToastHelper.showOther(context,logs);
 //            MMKV.defaultMMKV().putString(AdvActivity.MN_DATA, "");
         }
     }
-
 
 
 }

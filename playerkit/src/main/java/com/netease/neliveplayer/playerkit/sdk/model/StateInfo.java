@@ -6,6 +6,7 @@ import com.netease.neliveplayer.playerkit.sdk.constant.CauseCode;
 
 /**
  * 状态信息类
+ *
  * @author netease
  */
 

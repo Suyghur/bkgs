@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,6 +13,11 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ToastHelper;
@@ -144,7 +145,7 @@ public class ImageGridActivity extends ImageBaseActivity implements AbsDataSourc
             loadImageData(imagePicker.getOption());
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                              Constants.REQUEST_PERMISSION_STORAGE);
+                    Constants.REQUEST_PERMISSION_STORAGE);
         }
     }
 

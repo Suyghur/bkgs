@@ -9,11 +9,11 @@ public class MessageCanScoreEntity implements Serializable {
      * "is_comment": 1,今天是否已评分 <number>
      * "send_count": ""今天发生礼物次数 <string>
      */
-        private String notice_str;
-        private int is_anchor;
-        private int is_comment;
-        private int send_count;
-        private int is_back;//是否被拉黑
+    private String notice_str;
+    private int is_anchor;
+    private int is_comment;
+    private int send_count;
+    private int is_back;//是否被拉黑
 
     public int getIs_back() {
         return is_back;
@@ -24,34 +24,34 @@ public class MessageCanScoreEntity implements Serializable {
     }
 
     public String getNotice_str() {
-            return notice_str;
-        }
+        return notice_str;
+    }
 
-        public void setNotice_str(String notice_str) {
-            this.notice_str = notice_str;
-        }
+    public void setNotice_str(String notice_str) {
+        this.notice_str = notice_str;
+    }
 
-        public int getIs_anchor() {
-            return is_anchor;
-        }
+    public int getIs_anchor() {
+        return is_anchor;
+    }
 
-        public void setIs_anchor(int is_anchor) {
-            this.is_anchor = is_anchor;
-        }
+    public void setIs_anchor(int is_anchor) {
+        this.is_anchor = is_anchor;
+    }
 
-        public int getIs_comment() {
-            return is_comment;
-        }
+    public int getIs_comment() {
+        return is_comment;
+    }
 
-        public void setIs_comment(int is_comment) {
-            this.is_comment = is_comment;
-        }
+    public void setIs_comment(int is_comment) {
+        this.is_comment = is_comment;
+    }
 
-        public int getSend_count() {
-            return send_count;
-        }
+    public int getSend_count() {
+        return send_count;
+    }
 
-        public void setSend_count(int send_count) {
-            this.send_count = send_count;
-        }
+    public void setSend_count(int send_count) {
+        this.send_count = send_count;
+    }
 }

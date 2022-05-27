@@ -3,10 +3,8 @@ package com.pro.maluli.module.home.oneToOne.queue;
 import static com.netease.nim.uikit.common.media.imagepicker.camera.CaptureActivity.VIDEO_PERMISSIONS;
 import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -58,15 +56,14 @@ import com.pro.maluli.common.view.dialogview.EditPersonDialog;
 import com.pro.maluli.common.view.dialogview.SubReserveDialog;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.myselfView.QFolderTextView;
-import com.pro.maluli.module.home.oneToOne.queue.adapter.OneTopVideoFrg;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueAdapter;
-import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueBannerAdapter;
+import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueTopVideoFrg;
 import com.pro.maluli.module.home.oneToOne.queue.presenter.IOneToOneQueueContraction;
 import com.pro.maluli.module.home.oneToOne.queue.presenter.OneToOneQueuePresenter;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.socketService.SocketUtils;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
-import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -89,6 +86,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @date 2021/6/15
  */
 public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.View, OneToOneQueuePresenter> implements IOneToOneQueueContraction.View {
+    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
+    public static final String PERMISSIONS_FRAGMENT_DIALOG = "permission_dialog";
+    private static final int UPDATE_VIEWPAGER = 0;
+    private static final int PERMISSION_REQUEST_CODE = 100;
     @BindView(R.id.pointLL)
     LinearLayout pointLL;
     @BindView(R.id.anchorAvaterCiv)
@@ -127,15 +128,17 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     LinearLayout anchorEidtLl;
     @BindView(R.id.nodataView)
     LinearLayout nodataView;
-    private QueueBannerAdapter bannerViewAdapter;
+    @BindView(R.id.viewPager)
+    ViewPager bannerViewPager;
+    boolean isStartVideo = true;
+    CountDownTimer countDownTimer;
+    List<Fragment> topVideoFragment;
+    TopVideoAdapter topVideoAdapter;
     private int autoCurrIndex = 0;
     private Timer timer;
     private TimerTask timerTask;
     private ImageView[] tips;
     private long period = 5000;
-    @BindView(R.id.viewPager)
-    ViewPager bannerViewPager;
-    private static final int UPTATE_VIEWPAGER = 0;
     private String anchor_id = "";
     private ReserveEntity reserveEntity;
     private QueueAdapter queueAdapter;
@@ -146,10 +149,8 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     private boolean mDataServiceBind;
     private String liveBg;
     private String liveTitle;
-    private boolean isFristStart = true;
-    boolean isStartVideo = false;
+    private boolean isFirstStart = true;
     private boolean isStartLive;
-    private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
     private BaseTipsDialog reserveTipsDialog = null;
 
@@ -226,24 +227,22 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         SocketUtils.INSTANCE.closeConnect();
     }
 
-    CountDownTimer countDownTimer;
-
     private void startTime() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-        countDownTimer = new CountDownTimer(5000, 5000) {
+        countDownTimer = new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
 
             }
 
             public void onFinish() {
                 Message message = new Message();
-                message.what = UPTATE_VIEWPAGER;
+                message.what = UPDATE_VIEWPAGER;
                 if (reserveEntity != null && reserveEntity.getBanner() != null && autoCurrIndex == reserveEntity.getBanner().size() - 1) {
                     autoCurrIndex = -1;
                 }
-                if (isStartVideo) {
+                if (!isStartVideo) {
                     return;
                 }
                 message.arg1 = autoCurrIndex + 1;
@@ -305,23 +304,19 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {//
-            case PERMISSION_REQUEST_CODE://如果申请权限回调的参数
-                boolean hasGranted = true;
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        //判断是否勾选禁止后不再询问
-                        boolean showRequestPermission = ActivityCompat.shouldShowRequestPermissionRationale(OneToOneQueueAct.this, permissions[i]);
-                        if (showRequestPermission) {
-                            showToast("权限未申请,请开启权限");
-                        }
-                        hasGranted = false;
+        if (requestCode == PERMISSION_REQUEST_CODE) {//如果申请权限回调的参数
+            boolean hasGranted = true;
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    //判断是否勾选禁止后不再询问
+                    boolean showRequestPermission = ActivityCompat.shouldShowRequestPermissionRationale(OneToOneQueueAct.this, permissions[i]);
+                    if (showRequestPermission) {
+                        showToast("权限未申请,请开启权限");
                     }
+                    hasGranted = false;
                 }
-                isGranted = hasGranted;
-
-                break;
-
+            }
+            isGranted = hasGranted;
         }
     }
 
@@ -333,44 +328,18 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         }
     }
 
-    private class TopVideoAdapter extends FragmentPagerAdapter {
-        public TopVideoAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return topVideoFragment.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return reserveEntity.getBanner().get(position).getTitle();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return topVideoFragment.get(position);
-        }
-    }
-
-    List<Fragment> topVideoFragment;
-    TopVideoAdapter topVideoAdapter;
-
     private void autoBanner() {
         topVideoFragment.clear();
         for (int i = 0; i < reserveEntity.getBanner().size(); i++) {
-            OneTopVideoFrg fragment = (OneTopVideoFrg) OneTopVideoFrg.newInstance(reserveEntity.getBanner().get(i));
+            QueueTopVideoFrg fragment = (QueueTopVideoFrg) QueueTopVideoFrg.newInstance(reserveEntity.getBanner().get(i));
             topVideoFragment.add(fragment);
-            fragment.setBannerListener(new OneTopVideoFrg.BannerListener() {
+            fragment.setBannerListener(new QueueTopVideoFrg.BannerListener() {
                 @Override
                 public void imgClick(int position) {
-
                 }
 
                 @Override
                 public void videoIsStart() {
-
                     isStartVideo = false;
                     if (countDownTimer != null) {
                         countDownTimer.cancel();
@@ -391,9 +360,9 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         bannerViewPager.setAdapter(topVideoAdapter);
         bannerViewPager.setCurrentItem(0);   //
 //        bannerViewPager.setOffscreenPageLimit(0);
-        bannerViewAdapter = new QueueBannerAdapter(this, reserveEntity.getBanner());
+//        bannerViewAdapter = new QueueBannerAdapter(this, reserveEntity.getBanner());
 //        bannerViewPager.setAdapter(bannerViewAdapter);
-        bannerViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        bannerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -409,14 +378,12 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
                 try {
                     GSYVideoManager.instance().getPlayer().release();
                 } catch (Exception e) {
-
+                    e.printStackTrace();
+                }
+                if (banner.getFile_type() != 1) {
+                    isStartVideo = false;
                 }
                 startTime();
-                if (banner.getFile_type() != 1) {
-                    bannerViewAdapter.startVideo();
-                } else {
-
-                }
             }
 
             @Override
@@ -424,33 +391,27 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
             }
         });
-        bannerViewAdapter.setBannerListener(new QueueBannerAdapter.BannerListener() {
-            @Override
-            public void imgClick(int position) {
-                //方式一：代码实现跳转
-                Intent intent = new Intent();
-                intent.setAction("android.intent.action.VIEW");
-                Uri content_url = Uri.parse(reserveEntity.getBanner().get(position).getLink());//此处填链接
-                intent.setData(content_url);
-                startActivity(intent);
-            }
-
-            @Override
-            public void videoIsStart() {
-
-                isStartVideo = true;
-                if (countDownTimer != null) {
-                    countDownTimer.cancel();
-                    mHandler.removeCallbacksAndMessages(null);
-                }
-            }
-
-            @Override
-            public void videoStop() {
-                isStartVideo = false;
-                startTime();
-            }
-        });
+//        bannerViewAdapter.setBannerListener(new QueueBannerAdapter.BannerListener() {
+//            @Override
+//            public void imgClick(int position) {
+//                BrowserExtKt.openBrowser(OneToOneQueueAct.this, reserveEntity.getBanner().get(position).getLink());
+//            }
+//
+//            @Override
+//            public void videoIsStart() {
+//                isStartVideo = true;
+//                if (countDownTimer != null) {
+//                    countDownTimer.cancel();
+//                    mHandler.removeCallbacksAndMessages(null);
+//                }
+//            }
+//
+//            @Override
+//            public void videoStop() {
+//                isStartVideo = false;
+//                startTime();
+//            }
+//        });
     }
 
     /**
@@ -464,13 +425,10 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
                 tips[i].setBackgroundResource(R.drawable.shape_yuan_000000_2);
             }
         }
-    }
-
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
+    }    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == UPTATE_VIEWPAGER) {
+            if (msg.what == UPDATE_VIEWPAGER) {
                 if (msg.arg1 != 0) {
                     bannerViewPager.setCurrentItem(msg.arg1);
                 } else {
@@ -651,7 +609,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
             }
         }
-        if (isFristStart) {
+        if (isFirstStart) {
             setDianDian(reserveEntity.getBanner().size());
             autoBanner();
         }
@@ -667,7 +625,7 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
             appointListBeans.addAll(data.getInfo().getAppoint_list());
             queueAdapter.notifyDataSetChanged();
         }
-        isFristStart = false;
+        isFirstStart = false;
     }
 
     private void setDianDian(int a) {
@@ -747,10 +705,6 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
         }
     }
 
-    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
-
-    public static final String PERMISSIONS_FRAGMENT_DIALOG = "permission_dialog";
-
     private void requestVideoPermissions() {
         if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
             new ConfirmationDialog().show(getFragmentManager(), PERMISSIONS_FRAGMENT_DIALOG);
@@ -803,10 +757,30 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if (mDataServiceBind) {
-//            unbindService(coreServiceConnection);
-//        }
         EventBus.getDefault().unregister(this);
         SocketUtils.INSTANCE.closeConnect();
     }
+
+    private class TopVideoAdapter extends FragmentPagerAdapter {
+        public TopVideoAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return topVideoFragment.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return reserveEntity.getBanner().get(position).getTitle();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return topVideoFragment.get(position);
+        }
+    }
+
+
 }

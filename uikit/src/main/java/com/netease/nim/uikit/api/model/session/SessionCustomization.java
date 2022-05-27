@@ -64,6 +64,15 @@ public class SessionCustomization implements Serializable {
     }
 
     /**
+     * 获取消息的简述
+     *
+     * @return 消息的简述
+     */
+    public String getMessageDigest(IMMessage message) {
+        return message == null ? "" : message.getContent();
+    }
+
+    /**
      * ActionBar 右侧按钮，可定制icon和点击事件
      */
     public static abstract class OptionsButton implements Serializable {
@@ -73,14 +82,5 @@ public class SessionCustomization implements Serializable {
 
         // 响应事件
         public abstract void onClick(Context context, View view, String sessionId);
-    }
-
-    /**
-     * 获取消息的简述
-     *
-     * @return 消息的简述
-     */
-    public String getMessageDigest(IMMessage message) {
-        return message == null ? "" : message.getContent();
     }
 }

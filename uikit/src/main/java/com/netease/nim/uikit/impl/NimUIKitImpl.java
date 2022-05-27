@@ -252,8 +252,8 @@ public final class NimUIKitImpl {
     }
 
     /*
-    * ****************************** 登录登出 ******************************
-    */
+     * ****************************** 登录登出 ******************************
+     */
     public static AbortableFuture<LoginInfo> login(LoginInfo loginInfo, final RequestCallback<LoginInfo> callback) {
 
         AbortableFuture<LoginInfo> loginRequest = NIMClient.getService(AuthService.class).login(loginInfo);
@@ -421,11 +421,6 @@ public final class NimUIKitImpl {
         return contactProvider;
     }
 
-
-    public static void setTeamProvider(TeamProvider provider) {
-        teamProvider = provider;
-    }
-
     public static ContactChangedObservable getContactChangedObservable() {
         if (contactChangedObservable == null) {
             contactChangedObservable = new ContactChangedObservable(context);
@@ -438,6 +433,10 @@ public final class NimUIKitImpl {
             teamProvider = new DefaultTeamProvider();
         }
         return teamProvider;
+    }
+
+    public static void setTeamProvider(TeamProvider provider) {
+        teamProvider = provider;
     }
 
     public static SuperTeamProvider getSuperTeamProvider() {
@@ -465,10 +464,6 @@ public final class NimUIKitImpl {
         return superTeamChangedObservable;
     }
 
-    public static void setRobotInfoProvider(RobotInfoProvider provider) {
-        robotInfoProvider = provider;
-    }
-
     public static RobotInfoProvider getRobotInfoProvider() {
         if (robotInfoProvider == null) {
             robotInfoProvider = new DefaultRobotProvider();
@@ -476,8 +471,8 @@ public final class NimUIKitImpl {
         return robotInfoProvider;
     }
 
-    public static void setChatRoomProvider(ChatRoomProvider provider) {
-        chatRoomProvider = provider;
+    public static void setRobotInfoProvider(RobotInfoProvider provider) {
+        robotInfoProvider = provider;
     }
 
     public static ChatRoomProvider getChatRoomProvider() {
@@ -485,6 +480,10 @@ public final class NimUIKitImpl {
             chatRoomProvider = new DefaultChatRoomProvider();
         }
         return chatRoomProvider;
+    }
+
+    public static void setChatRoomProvider(ChatRoomProvider provider) {
+        chatRoomProvider = provider;
     }
 
     public static ChatRoomMemberChangedObservable getChatRoomMemberChangedObservable() {
@@ -498,12 +497,12 @@ public final class NimUIKitImpl {
         return locationProvider;
     }
 
-    public static ImageLoaderKit getImageLoaderKit() {
-        return imageLoaderKit;
-    }
-
     public static void setLocationProvider(LocationProvider locationProvider) {
         NimUIKitImpl.locationProvider = locationProvider;
+    }
+
+    public static ImageLoaderKit getImageLoaderKit() {
+        return imageLoaderKit;
     }
 
     public static SessionCustomization getCommonP2PSessionCustomization() {
@@ -522,10 +521,6 @@ public final class NimUIKitImpl {
         NimUIKitImpl.commonTeamSessionCustomization = commonTeamSessionCustomization;
     }
 
-    public static void setRecentCustomization(RecentCustomization recentCustomization) {
-        NimUIKitImpl.recentCustomization = recentCustomization;
-    }
-
     public static void setCommonChatRoomSessionCustomization(ChatRoomSessionCustomization commonChatRoomSessionCustomization) {
         ChatRoomMessageFragment.setChatRoomSessionCustomization(commonChatRoomSessionCustomization);
     }
@@ -534,11 +529,15 @@ public final class NimUIKitImpl {
         return recentCustomization;
     }
 
+    public static void setRecentCustomization(RecentCustomization recentCustomization) {
+        NimUIKitImpl.recentCustomization = recentCustomization;
+    }
+
     public static void registerMsgItemViewHolder(Class<? extends MsgAttachment> attach, Class<? extends MsgViewHolderBase> viewHolder) {
         MsgViewHolderFactory.register(attach, viewHolder);
     }
 
-    public static void registerMultiRetweetMsgCreator(IMultiRetweetMsgCreator creator){
+    public static void registerMultiRetweetMsgCreator(IMultiRetweetMsgCreator creator) {
         MultiRetweetMsgCreatorFactory.registerCreator(creator);
     }
 
@@ -548,10 +547,6 @@ public final class NimUIKitImpl {
 
     public static void registerTipMsgViewHolder(Class<? extends MsgViewHolderBase> viewHolder) {
         MsgViewHolderFactory.registerTipMsgViewHolder(viewHolder);
-    }
-
-    public static void setAccount(String account) {
-        NimUIKitImpl.account = account;
     }
 
     public static SessionEventListener getSessionListener() {
@@ -566,25 +561,24 @@ public final class NimUIKitImpl {
         return contactEventListener;
     }
 
-
     public static void setContactEventListener(ContactEventListener contactEventListener) {
         NimUIKitImpl.contactEventListener = contactEventListener;
-    }
-
-    public static void setMsgForwardFilter(MsgForwardFilter msgForwardFilter) {
-        NimUIKitImpl.msgForwardFilter = msgForwardFilter;
     }
 
     public static MsgForwardFilter getMsgForwardFilter() {
         return msgForwardFilter;
     }
 
-    public static void setMsgRevokeFilter(MsgRevokeFilter msgRevokeFilter) {
-        NimUIKitImpl.msgRevokeFilter = msgRevokeFilter;
+    public static void setMsgForwardFilter(MsgForwardFilter msgForwardFilter) {
+        NimUIKitImpl.msgForwardFilter = msgForwardFilter;
     }
 
     public static MsgRevokeFilter getMsgRevokeFilter() {
         return msgRevokeFilter;
+    }
+
+    public static void setMsgRevokeFilter(MsgRevokeFilter msgRevokeFilter) {
+        NimUIKitImpl.msgRevokeFilter = msgRevokeFilter;
     }
 
     public static CustomPushContentProvider getCustomPushContentProvider() {
@@ -595,16 +589,16 @@ public final class NimUIKitImpl {
         NimUIKitImpl.customPushContentProvider = mixPushCustomConfig;
     }
 
+    public static OnlineStateContentProvider getOnlineStateContentProvider() {
+        return onlineStateContentProvider;
+    }
+
     /*
-    * ****************************** 在线状态 ******************************
-    */
+     * ****************************** 在线状态 ******************************
+     */
 
     public static void setOnlineStateContentProvider(OnlineStateContentProvider onlineStateContentProvider) {
         NimUIKitImpl.onlineStateContentProvider = onlineStateContentProvider;
-    }
-
-    public static OnlineStateContentProvider getOnlineStateContentProvider() {
-        return onlineStateContentProvider;
     }
 
     public static OnlineStateChangeObservable getOnlineStateChangeObservable() {
@@ -618,24 +612,27 @@ public final class NimUIKitImpl {
         return onlineStateContentProvider != null;
     }
 
+    public static boolean getEarPhoneModeEnable() {
+        return UserPreferences.isEarPhoneModeEnable();
+    }
 
     public static void setEarPhoneModeEnable(boolean enable) {
         MessageAudioControl.getInstance(context).setEarPhoneModeEnable(enable);
         UserPreferences.setEarPhoneModeEnable(enable);
     }
 
-    public static boolean getEarPhoneModeEnable() {
-        return UserPreferences.isEarPhoneModeEnable();
-    }
-
     /*
-    * ****************************** basic ******************************
-    */
+     * ****************************** basic ******************************
+     */
     public static Context getContext() {
         return context;
     }
 
     public static String getAccount() {
         return account;
+    }
+
+    public static void setAccount(String account) {
+        NimUIKitImpl.account = account;
     }
 }

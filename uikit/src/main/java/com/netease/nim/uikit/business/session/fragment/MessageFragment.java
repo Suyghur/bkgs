@@ -19,9 +19,7 @@ import com.netease.nim.uikit.business.ait.AitManager;
 import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nim.uikit.business.session.actions.GiftFromMeAction;
 import com.netease.nim.uikit.business.session.actions.ImageAction;
-import com.netease.nim.uikit.business.session.actions.LocationAction;
 import com.netease.nim.uikit.business.session.actions.ScoreAction;
-import com.netease.nim.uikit.business.session.actions.VideoAction;
 import com.netease.nim.uikit.business.session.activity.P2PMessageActivity;
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftEvent;
@@ -36,20 +34,16 @@ import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
 import com.netease.nim.uikit.business.session.module.input.InputPanel;
 import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
-import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
 import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
 import com.netease.nim.uikit.business.session.myCustom.extension.ReservationMsgAttachment;
-import com.netease.nim.uikit.business.session.myCustom.extension.ScoreAttachment;
 import com.netease.nim.uikit.common.CommonUtil;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.fragment.TFragment;
-import com.netease.nim.uikit.common.http.NimHttpClient;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.chatroom.ChatRoomMessageBuilder;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
@@ -79,24 +73,38 @@ import java.util.Map;
  */
 public class MessageFragment extends TFragment implements ModuleProxy {
 
-    private View rootView;
-    private SessionCustomization customization;
-
     protected static final String TAG = "MessageActivity";
-
     // p2p对方Account或者群id
     protected String sessionId;
-
     protected SessionTypeEnum sessionType;
-
     // modules
     protected InputPanel inputPanel;
     protected MessageListPanelEx messageListPanel;
-
     protected AitManager aitManager;
+    GiftDialog giftDialog;
+    /**
+     * 消息接收观察者
+     */
+    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
+        @Override
+        public void onEvent(List<IMMessage> messages) {
+            onMessageIncoming(messages);
+        }
+    };
+    private View rootView;
+    private SessionCustomization customization;
     private GiftEntity entity;
     private GiftForMeEntity giftForMeEntity;
     private ImageView sendGiftIV;
+    /**
+     * 已读回执观察者
+     */
+    private Observer<List<MessageReceipt>> messageReceiptObserver = new Observer<List<MessageReceipt>>() {
+        @Override
+        public void onEvent(List<MessageReceipt> messageReceipts) {
+            messageListPanel.receiveReceipt();
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,8 +117,6 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         super.onActivityCreated(savedInstanceState);
         parseIntent();
     }
-
-    GiftDialog giftDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -406,7 +412,6 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         return customization.isAllowSendMessage(message);
     }
 
-
     private void registerObservers(boolean register) {
         MsgServiceObserve service = NIMClient.getService(MsgServiceObserve.class);
         service.observeReceiveMessage(incomingMessageObserver, register);
@@ -416,16 +421,6 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         }
     }
 
-    /**
-     * 消息接收观察者
-     */
-    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
-        @Override
-        public void onEvent(List<IMMessage> messages) {
-            onMessageIncoming(messages);
-        }
-    };
-
     private void onMessageIncoming(List<IMMessage> messages) {
         if (CommonUtil.isEmpty(messages)) {
             return;
@@ -434,17 +429,6 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         // 发送已读回执
         messageListPanel.sendReceipt();
     }
-
-    /**
-     * 已读回执观察者
-     */
-    private Observer<List<MessageReceipt>> messageReceiptObserver = new Observer<List<MessageReceipt>>() {
-        @Override
-        public void onEvent(List<MessageReceipt> messageReceipts) {
-            messageListPanel.receiveReceipt();
-        }
-    };
-
 
     /**
      * ********************** implements ModuleProxy *********************

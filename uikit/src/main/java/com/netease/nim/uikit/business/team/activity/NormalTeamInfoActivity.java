@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.TextView;
-import com.netease.nim.uikit.common.ToastHelper;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -30,6 +29,7 @@ import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nim.uikit.business.team.model.TeamRequestCode;
 import com.netease.nim.uikit.business.team.ui.TeamInfoGridView;
 import com.netease.nim.uikit.business.team.viewholder.TeamMemberHolder;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
@@ -100,8 +100,86 @@ public class NormalTeamInfoActivity extends UI implements OnClickListener, TAdap
 
     // state
     private boolean isSelfAdmin = false;
+    TeamDataChangedObserver teamDataObserver = new TeamDataChangedObserver() {
+        @Override
+        public void onUpdateTeams(List<Team> teams) {
+            for (Team team : teams) {
+                if (team.getId().equals(teamId)) {
+                    updateTeamInfo(team);
+                    break;
+                }
+            }
+        }
 
+        @Override
+        public void onRemoveTeam(Team team) {
+            if (team.getId().equals(teamId)) {
+                NormalTeamInfoActivity.this.team = team;
+            }
+        }
+    };
+    TeamMemberDataChangedObserver teamMemberObserver = new TeamMemberDataChangedObserver() {
+
+        @Override
+        public void onUpdateTeamMember(List<TeamMember> members) {
+            List<String> accounts = new ArrayList<>();
+            for (TeamMember m : members) {
+                if (m.getTid().equals(teamId)) {
+                    accounts.add(m.getAccount());
+                }
+            }
+
+            if (!accounts.isEmpty()) {
+                addMember(accounts, null, false);
+            }
+        }
+
+        @Override
+        public void onRemoveTeamMember(List<TeamMember> members) {
+            for (TeamMember member : members) {
+                if (member.getTid().equals(teamId)) {
+                    removeMember(member.getAccount());
+                }
+            }
+        }
+    };
     private int teamCapacity = 200; // 群人数上限，暂定
+    private SwitchButton.OnChangedListener onChangedListener = new SwitchButton.OnChangedListener() {
+        @Override
+        public void OnChanged(View v, final boolean checkState) {
+            if (!NetworkUtil.isNetAvailable(NormalTeamInfoActivity.this)) {
+                ToastHelper.showToast(NormalTeamInfoActivity.this, R.string.network_is_not_available);
+                noticeBtn.setCheck(!checkState);
+                return;
+            }
+            TeamMessageNotifyTypeEnum typeEnum = checkState ? TeamMessageNotifyTypeEnum.All : TeamMessageNotifyTypeEnum.Mute;
+            NIMClient.getService(TeamService.class).muteTeam(team.getId(), typeEnum).setCallback(new RequestCallback<Void>() {
+                @Override
+                public void onSuccess(Void param) {
+                    if (checkState) {
+                        ToastHelper.showToast(NormalTeamInfoActivity.this, "开启消息提醒");
+                    } else {
+                        ToastHelper.showToast(NormalTeamInfoActivity.this, "关闭消息提醒");
+                    }
+                }
+
+                @Override
+                public void onFailed(int code) {
+                    if (code == 408) {
+                        ToastHelper.showToast(NormalTeamInfoActivity.this, R.string.network_is_not_available);
+                    } else {
+                        ToastHelper.showToast(NormalTeamInfoActivity.this, "on failed:" + code);
+                    }
+                    noticeBtn.setCheck(!checkState);
+                }
+
+                @Override
+                public void onException(Throwable exception) {
+
+                }
+            });
+        }
+    };
 
     /**
      * 启动群资料页
@@ -157,6 +235,10 @@ public class NormalTeamInfoActivity extends UI implements OnClickListener, TAdap
         registerObservers(true);
     }
 
+    /**
+     * ************************** 群信息变更监听 **************************
+     */
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -180,9 +262,6 @@ public class NormalTeamInfoActivity extends UI implements OnClickListener, TAdap
     }
 
     /**
-     * ************************** 群信息变更监听 **************************
-     */
-    /**
      * 注册群信息更新监听
      *
      * @param register
@@ -192,51 +271,6 @@ public class NormalTeamInfoActivity extends UI implements OnClickListener, TAdap
         NimUIKit.getTeamChangedObservable().registerTeamMemberDataChangedObserver(teamMemberObserver, register);
         registerUserInfoChangedObserver(register);
     }
-
-    TeamDataChangedObserver teamDataObserver = new TeamDataChangedObserver() {
-        @Override
-        public void onUpdateTeams(List<Team> teams) {
-            for (Team team : teams) {
-                if (team.getId().equals(teamId)) {
-                    updateTeamInfo(team);
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onRemoveTeam(Team team) {
-            if (team.getId().equals(teamId)) {
-                NormalTeamInfoActivity.this.team = team;
-            }
-        }
-    };
-
-    TeamMemberDataChangedObserver teamMemberObserver = new TeamMemberDataChangedObserver() {
-
-        @Override
-        public void onUpdateTeamMember(List<TeamMember> members) {
-            List<String> accounts = new ArrayList<>();
-            for (TeamMember m : members) {
-                if (m.getTid().equals(teamId)) {
-                    accounts.add(m.getAccount());
-                }
-            }
-
-            if (!accounts.isEmpty()) {
-                addMember(accounts, null, false);
-            }
-        }
-
-        @Override
-        public void onRemoveTeamMember(List<TeamMember> members) {
-            for (TeamMember member : members) {
-                if (member.getTid().equals(teamId)) {
-                    removeMember(member.getAccount());
-                }
-            }
-        }
-    };
 
     private void refreshMembers(List<TeamMember> members) {
         gridView.setVisibility(View.VISIBLE);
@@ -287,43 +321,6 @@ public class NormalTeamInfoActivity extends UI implements OnClickListener, TAdap
 
         return switchButton;
     }
-
-    private SwitchButton.OnChangedListener onChangedListener = new SwitchButton.OnChangedListener() {
-        @Override
-        public void OnChanged(View v, final boolean checkState) {
-            if (!NetworkUtil.isNetAvailable(NormalTeamInfoActivity.this)) {
-                ToastHelper.showToast(NormalTeamInfoActivity.this, R.string.network_is_not_available);
-                noticeBtn.setCheck(!checkState);
-                return;
-            }
-            TeamMessageNotifyTypeEnum typeEnum = checkState ? TeamMessageNotifyTypeEnum.All : TeamMessageNotifyTypeEnum.Mute;
-            NIMClient.getService(TeamService.class).muteTeam(team.getId(), typeEnum).setCallback(new RequestCallback<Void>() {
-                @Override
-                public void onSuccess(Void param) {
-                    if (checkState) {
-                        ToastHelper.showToast(NormalTeamInfoActivity.this, "开启消息提醒");
-                    } else {
-                        ToastHelper.showToast(NormalTeamInfoActivity.this, "关闭消息提醒");
-                    }
-                }
-
-                @Override
-                public void onFailed(int code) {
-                    if (code == 408) {
-                        ToastHelper.showToast(NormalTeamInfoActivity.this, R.string.network_is_not_available);
-                    } else {
-                        ToastHelper.showToast(NormalTeamInfoActivity.this, "on failed:" + code);
-                    }
-                    noticeBtn.setCheck(!checkState);
-                }
-
-                @Override
-                public void onException(Throwable exception) {
-
-                }
-            });
-        }
-    };
 
     private void loadTeamInfo() {
         creator = "";

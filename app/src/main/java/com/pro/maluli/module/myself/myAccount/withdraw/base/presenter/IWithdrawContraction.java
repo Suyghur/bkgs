@@ -10,6 +10,7 @@ public interface IWithdrawContraction extends BaseView {
 
         void getCodeSuccess();
     }
+
     interface Presenter extends IClear {
 
         void getMyAccount();

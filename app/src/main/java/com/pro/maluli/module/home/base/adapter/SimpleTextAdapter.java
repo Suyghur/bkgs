@@ -21,9 +21,9 @@ public class SimpleTextAdapter extends CommonAdapter<HomeInfoEntity.NoticeBean> 
         TextView textTv = viewHolder.getView(R.id.textTv);
         TextView newTv = viewHolder.getView(R.id.newTv);
         textTv.setText(item.getTitle());
-        if (position==0){
+        if (position == 0) {
             newTv.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             newTv.setVisibility(View.GONE);
 
         }

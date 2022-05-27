@@ -6,13 +6,12 @@
     android:background="@drawable/shape_ffffff_10"
     android:gravity="center"
 
-    android:orientation="vertical"
-  >
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_marginBottom="@dimen/dp_10"
         android:layout_width="@dimen/dp_98"
-        android:layout_height="@dimen/dp_147">
+        android:layout_height="@dimen/dp_147"
+        android:layout_marginBottom="@dimen/dp_10">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/anchorListRiv"

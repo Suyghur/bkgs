@@ -91,6 +91,73 @@ import butterknife.BindView;
  * @date 2021/6/15
  */
 public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPresenter> implements IMainContraction.View {
+    public GiftEntity.ListBean giftBean;
+    @BindView(R.id.haveNews_iv)
+    TextView haveNews_iv;
+    @BindView(R.id.customerNewTv)
+    View customerNewTv;
+    @BindView(R.id.messageTestLL)
+    LinearLayout messageTestLL;
+    //收到的邀请参数,reject 用到
+//    private InvitedEvent invitedEvent;
+    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
+        @Override
+        public void onEvent(ChannelCommonEvent channelCommonEvent) {
+            SignallingEventType eventType = channelCommonEvent.getEventType();
+            switch (eventType) {
+                case CLOSE:
+                    ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
+                    break;
+                case JOIN:
+                    UserJoinEvent userJoinEvent = (UserJoinEvent) channelCommonEvent;
+                    break;
+                case INVITE://接收到邀请通知
+                    InvitedEvent invitedEvent = (InvitedEvent) channelCommonEvent;
+                    String lkda = invitedEvent.getChannelBaseInfo().getChannelExt();
+                    String customInfo = invitedEvent.getCustomInfo();
+                    JSONObject json = JSONObject.parseObject(customInfo);
+                    String type = json.getString("type");
+                    if (!TextUtils.isEmpty(type) && "1".equals(type)) {//判断是一对一通话邀请
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("LIVE_INFO", invitedEvent);
+                        gotoActivity(AnswerPhoneAct.class, false, bundle);
+                    }
+                    break;
+                case CANCEL_INVITE:
+                    CanceledInviteEvent canceledInviteEvent = (CanceledInviteEvent) channelCommonEvent;
+                    break;
+                case REJECT:
+                case ACCEPT:
+                    InviteAckEvent ackEvent = (InviteAckEvent) channelCommonEvent;
+                    String inviCustom = ackEvent.getCustomInfo();
+                    CallEvent callEvent = new CallEvent(ackEvent.getAckStatus().getValue());
+                    if (!TextUtils.isEmpty(inviCustom) && inviCustom.contains("跳过")) {
+                        callEvent.setJump(true);
+                    }
+                    EventBus.getDefault().post(callEvent);
+                    break;
+                case LEAVE:
+                    UserLeaveEvent userLeaveEvent = (UserLeaveEvent) channelCommonEvent;
+                    break;
+                case CONTROL:
+                    ControlEvent controlEvent = (ControlEvent) channelCommonEvent;
+                    break;
+            }
+        }
+    };
+    UserInfoEntity userInfoEntity;
+    NoticeDialog noticeDialog;
+    TeenagerNoSeeDialog teenagerNoSeeDialog;
+    PrivacyDialog privacyDialog;
+    /**
+     * "is_anchor": 1,是否主播 <number>
+     * "system_notice_count": 2,系统消息数量 <number>
+     * "anchor_appoint_count": 1,主播预约数量 <number>
+     * "appoint_count": 0我的预约数量 <number>
+     *
+     * @param data
+     */
+    int systemNews;
     private int[] resId = new int[]{R.id.rbMainTabHome, R.id.rbMainTabWealth, R.id.rbMainTabMessage, R.id.rbMainTabMine};
     private List<Fragment> fragments = new ArrayList<>();
     private int position = 0;
@@ -105,12 +172,26 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     private String imAccount, imToken;
     private boolean isinitCall;
     private String text = "asdadasda";
-    @BindView(R.id.haveNews_iv)
-    TextView haveNews_iv;
-    @BindView(R.id.customerNewTv)
-    View customerNewTv;
-    @BindView(R.id.messageTestLL)
-    LinearLayout messageTestLL;
+    private Observer<Integer> sysMsgUnreadCountChangedObserver = new Observer<Integer>() {
+        @Override
+        public void onEvent(Integer unreadCount) {
+            // 更新未读数变化
+            setNosee();
+        }
+    };
+    /**
+     * 在线状态监听
+     */
+    private Observer<StatusCode> onlineStatus = new Observer<StatusCode>() {
+        @Override
+        public void onEvent(StatusCode statusCode) {
+            if (statusCode.wontAutoLoginForever()) {
+                //被其他端的登录踢掉和 被同时在线的其他端主动踢掉
+                DialogActivity.showDialogActivity(MainActivity.this);
+            }
+        }
+    };
+    private boolean isSeenotic;
 
     public String getText1() {
         return text;
@@ -160,8 +241,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         rbMainTabMine.setOnClickListener(v -> switchFragment(3));
         initEvent();
         registerObserve(true);
-
-
     }
 
     @Override
@@ -177,8 +256,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         } else {
             haveNews_iv.setVisibility(View.GONE);
         }
-
-
     }
 
     @Override
@@ -192,25 +269,29 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 //        }
     }
 
-    private Observer<Integer> sysMsgUnreadCountChangedObserver = new Observer<Integer>() {
-        @Override
-        public void onEvent(Integer unreadCount) {
-            // 更新未读数变化
-            setNosee();
-        }
-    };
-    /**
-     * 在线状态监听
-     */
-    private Observer<StatusCode> onlineStatus = new Observer<StatusCode>() {
-        @Override
-        public void onEvent(StatusCode statusCode) {
-            if (statusCode.wontAutoLoginForever()) {
-                //被其他端的登录踢掉和 被同时在线的其他端主动踢掉
-                DialogActivity.showDialogActivity(MainActivity.this);
-            }
-        }
-    };
+//    /**
+//     * 获取 rtc AppKey
+//     */
+//    private String getRtcAppKey() {
+//        ApplicationInfo appInfo = null;
+//        try {
+//            appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        if (appInfo == null) {
+//            return null;
+//        }
+//        return appInfo.metaData.getString("com.netease.nim.appKey");
+//    }
+//
+//    /**
+//     * 已经登陆过，自动登陆
+//     */
+//    private boolean canAutoLogin() {
+//        LoginInfo loginInfo = Preferences.getLoginInfo();
+//        return loginInfo.valid();
+//    }
 
     private void setNosee() {
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
@@ -222,56 +303,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             haveNews_iv.setVisibility(View.GONE);
         }
     }
-
-    //收到的邀请参数,reject 用到
-//    private InvitedEvent invitedEvent;
-    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
-        @Override
-        public void onEvent(ChannelCommonEvent channelCommonEvent) {
-            SignallingEventType eventType = channelCommonEvent.getEventType();
-            switch (eventType) {
-                case CLOSE:
-                    ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
-                    break;
-                case JOIN:
-                    UserJoinEvent userJoinEvent = (UserJoinEvent) channelCommonEvent;
-                    break;
-                case INVITE://接收到邀请通知
-                    InvitedEvent invitedEvent = (InvitedEvent) channelCommonEvent;
-                    String lkda = invitedEvent.getChannelBaseInfo().getChannelExt();
-                    String customInfo = invitedEvent.getCustomInfo();
-                    JSONObject json = JSONObject.parseObject(customInfo);
-                    String type = json.getString("type");
-                    if (!TextUtils.isEmpty(type) && "1".equals(type)) {//判断是一对一通话邀请
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("LIVE_INFO", invitedEvent);
-                        gotoActivity(AnswerPhoneAct.class, false, bundle);
-                    }
-                    break;
-                case CANCEL_INVITE:
-                    CanceledInviteEvent canceledInviteEvent = (CanceledInviteEvent) channelCommonEvent;
-                    break;
-                case REJECT:
-                case ACCEPT:
-                    InviteAckEvent ackEvent = (InviteAckEvent) channelCommonEvent;
-                    String inviCustom = ackEvent.getCustomInfo();
-                    CallEvent callEvent = new CallEvent(ackEvent.getAckStatus().getValue());
-                    if (!TextUtils.isEmpty(inviCustom) && inviCustom.contains("跳过")) {
-                        callEvent.setJump(true);
-                    }
-                    EventBus.getDefault().post(callEvent);
-                    break;
-                case LEAVE:
-                    UserLeaveEvent userLeaveEvent = (UserLeaveEvent) channelCommonEvent;
-                    break;
-                case CONTROL:
-                    ControlEvent controlEvent = (ControlEvent) channelCommonEvent;
-                    break;
-            }
-        }
-    };
-    public GiftEntity.ListBean giftBean;
-    private boolean isSeenotic;
 
     /**
      * 处理uiKit传过来的操作
@@ -333,7 +364,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     }
 
-
     /**
      * 处理uiKit传过来的操作
      *
@@ -353,37 +383,12 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(onlineStatus, b);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         registerObserve(false);
         EventBus.getDefault().unregister(this);
     }
-
-//    /**
-//     * 获取 rtc AppKey
-//     */
-//    private String getRtcAppKey() {
-//        ApplicationInfo appInfo = null;
-//        try {
-//            appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        if (appInfo == null) {
-//            return null;
-//        }
-//        return appInfo.metaData.getString("com.netease.nim.appKey");
-//    }
-//
-//    /**
-//     * 已经登陆过，自动登陆
-//     */
-//    private boolean canAutoLogin() {
-//        LoginInfo loginInfo = Preferences.getLoginInfo();
-//        return loginInfo.valid();
-//    }
 
     private void loginUiKit() {
         if (TextUtils.isEmpty(Preferences.getLoginInfo().getAccount())) {
@@ -471,10 +476,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         }
     }
 
-    UserInfoEntity userInfoEntity;
-    NoticeDialog noticeDialog;
-    TeenagerNoSeeDialog teenagerNoSeeDialog;
-
     @Override
     public void setUserInfoSuccess(UserInfoEntity data) {
         userInfoEntity = data;
@@ -525,8 +526,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             rbMainTabMessage.setVisibility(View.VISIBLE);
         }
     }
-
-    PrivacyDialog privacyDialog;
 
     /**
      * 隐私协议弹框
@@ -660,16 +659,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         dialog.setArguments(bundle);
         dialog.show(getSupportFragmentManager(), "TeenagerDialog");
     }
-
-    /**
-     * "is_anchor": 1,是否主播 <number>
-     * "system_notice_count": 2,系统消息数量 <number>
-     * "anchor_appoint_count": 1,主播预约数量 <number>
-     * "appoint_count": 0我的预约数量 <number>
-     *
-     * @param data
-     */
-    int systemNews;
 
     @Override
     public void setMessageSuccess(MessageListEntity data) {

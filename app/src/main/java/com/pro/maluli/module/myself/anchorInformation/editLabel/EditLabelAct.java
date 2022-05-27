@@ -15,13 +15,11 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.AnchorLabelEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.myself.anchorInformation.addLabel.AddLabelAct;
 import com.pro.maluli.module.myself.anchorInformation.editLabel.adapter.EditLabelAdapter;
-import com.pro.maluli.module.myself.anchorInformation.editLabel.presenter.IEditLabelContraction;
 import com.pro.maluli.module.myself.anchorInformation.editLabel.presenter.EditLabelPresenter;
+import com.pro.maluli.module.myself.anchorInformation.editLabel.presenter.IEditLabelContraction;
 
 import org.jetbrains.annotations.NotNull;
 

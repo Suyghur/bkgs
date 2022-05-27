@@ -66,6 +66,26 @@ public class QFolderTextView extends AppCompatTextView {
      * 收缩状态监听器
      */
     private IFolderSpanClickListener mFolderSpanClickListener;
+    private ClickableSpan clickSpan = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            if (mFolderSpanClickListener != null) {
+                mFolderSpanClickListener.onClick(isFold);
+            }
+            isFold = !isFold;
+            isDrawn = false;
+            invalidate();
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            if (mFoldColor != 0) {
+                ds.setColor(mFoldColor);
+            } else {
+                ds.setColor(ds.linkColor);
+            }
+        }
+    };
 
     public QFolderTextView(Context context) {
         super(context);
@@ -230,27 +250,6 @@ public class QFolderTextView extends AppCompatTextView {
         return new StaticLayout(text, getPaint(), getWidth() - getPaddingLeft() - getPaddingRight(),
                 Layout.Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, false);
     }
-
-    private ClickableSpan clickSpan = new ClickableSpan() {
-        @Override
-        public void onClick(View widget) {
-            if (mFolderSpanClickListener != null) {
-                mFolderSpanClickListener.onClick(isFold);
-            }
-            isFold = !isFold;
-            isDrawn = false;
-            invalidate();
-        }
-
-        @Override
-        public void updateDrawState(TextPaint ds) {
-            if (mFoldColor != 0) {
-                ds.setColor(mFoldColor);
-            } else {
-                ds.setColor(ds.linkColor);
-            }
-        }
-    };
 
     public interface IFolderSpanClickListener {
         void onClick(boolean isFold);

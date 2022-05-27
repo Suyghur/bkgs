@@ -47,6 +47,7 @@ import com.pro.maluli.common.view.dialogview.presenter.InputTextMsgDialog;
 import com.pro.maluli.common.view.dialogview.presenter.adapter.CommentListAdapter;
 import com.pro.maluli.common.view.myselfView.LikeLayout;
 import com.pro.maluli.common.view.myselfView.StarBar;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.video.events.CanStartEvent;
 import com.pro.maluli.module.video.events.ClearPositionEvent;
@@ -54,7 +55,6 @@ import com.pro.maluli.module.video.fragment.recyclerUtils.RecyclerViewUtil;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.VideoFragmentPresenter;
-import com.pro.maluli.toolkit.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -89,6 +89,27 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter> implements IVideoFragmentContraction.View, View.OnClickListener {
+    ProgressDialog pd; // 进度条对话框
+    File videoFile;
+    //要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 0:
+                    ToastUtils.showShort("分享失败");
+                    break;
+                //微信登录
+                case 1:
+                    presenter.shareVideo();
+                    ToastUtils.showShort("分享成功");
+                    break;
+            }
+        }
+    };
+    SmartRefreshLayout commentSfl;
+    boolean isSeevideo;
     private int mCurrentPosition;
     private LinearLayout commentLL;
     private StandardGSYVideoPlayer videoPlayer;
@@ -101,14 +122,25 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     private StarBar abilityStar, serviceQualitySb;
     private boolean isSubAnchor;
     private int likeNumber;
-    private String videoUrl, cover, desc;
+    private String videoUrl, shareUrl, cover, desc;
     private RelativeLayout avatarRl;
     private TextView videoContentTv;
     private int shareNum;
-
-
     private List<CommentVideoEntity.ListBean> commentlist = new ArrayList<>();
     private int deletePosition;
+    private BottomSheetDialog bottomSheetDialog;
+    private CommentListAdapter bottomSheetAdapter;
+    private RecyclerView rv_dialog_lists;
+    private View nodataView;
+    private long totalCount = 30;//总条数不得超过它
+    private int offsetY;
+    private float slideOffset = 0;
+    private InputTextMsgDialog inputTextMsgDialog;
+    private RecyclerViewUtil mRecyclerViewUtil;
+    private SoftKeyBoardListener mKeyBoardListener;
+    private CircleImageView avaterIv;
+    private TextView nameTv, anchorNumberTv;
+    private boolean isCanStart;
 
     public static VideoFragment getNewInstance(VideoEntity videoBean) {
         VideoFragment fragment = new VideoFragment();
@@ -116,6 +148,27 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         bundle.putSerializable("url", videoBean);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    /**
+     * 视频存在本地
+     *
+     * @param paramContext
+     * @param paramFile
+     * @param paramLong
+     * @return
+     */
+    public static ContentValues getVideoContentValues(Context paramContext, File paramFile, long paramLong) {
+        ContentValues localContentValues = new ContentValues();
+        localContentValues.put("title", paramFile.getName());
+        localContentValues.put("_display_name", paramFile.getName());
+        localContentValues.put("mime_type", "video/3gp");
+        localContentValues.put("datetaken", Long.valueOf(paramLong));
+        localContentValues.put("date_modified", Long.valueOf(paramLong));
+        localContentValues.put("date_added", Long.valueOf(paramLong));
+        localContentValues.put("_data", paramFile.getAbsolutePath());
+        localContentValues.put("_size", Long.valueOf(paramFile.length()));
+        return localContentValues;
     }
 
     @Override
@@ -134,6 +187,14 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            String sda = "";
+        }
+    }
+
+    @Override
     public void baseInitialization() {
         EventBus.getDefault().register(this);
         videoBean = (VideoEntity) getArguments().getSerializable("url");
@@ -144,6 +205,7 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
             }
             likeNumber = videoBean.getVideo().getLike_num();
             videoUrl = videoBean.getVideo().getUrl();
+            shareUrl = videoBean.getVideo().getShare_url();
             cover = videoBean.getVideo().getCover();
             desc = videoBean.getVideo().getDesc();
         }
@@ -190,16 +252,16 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
                         // 1 QQ 2 微信 3朋友圈，4 QQ空间
                         switch (type) {
                             case 1:
-                                ToolUtils.shareVideo(handler, QQ.NAME, videoUrl, desc, cover);
+                                ToolUtils.shareVideoUrl(handler, QQ.NAME, shareUrl, desc, cover);
                                 break;
                             case 2:
-                                ToolUtils.shareVideo(handler, Wechat.NAME, videoUrl, desc, cover);
+                                ToolUtils.shareVideoUrl(handler, Wechat.NAME, shareUrl, desc, cover);
                                 break;
                             case 3:
-                                ToolUtils.shareVideo(handler, WechatMoments.NAME, videoUrl, desc, cover);
+                                ToolUtils.shareVideoUrl(handler, WechatMoments.NAME, shareUrl, desc, cover);
                                 break;
                             case 4:
-                                ToolUtils.shareVideo(handler, QZone.NAME, videoUrl, desc, cover);
+                                ToolUtils.shareVideoUrl(handler, QZone.NAME, shareUrl, desc, cover);
                                 break;
                         }
 
@@ -236,9 +298,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 
     }
 
-
-    ProgressDialog pd; // 进度条对话框
-
     /***
      * 下载MP4
      */
@@ -269,29 +328,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
             }
         }.start();
     }
-
-    /**
-     * 视频存在本地
-     *
-     * @param paramContext
-     * @param paramFile
-     * @param paramLong
-     * @return
-     */
-    public static ContentValues getVideoContentValues(Context paramContext, File paramFile, long paramLong) {
-        ContentValues localContentValues = new ContentValues();
-        localContentValues.put("title", paramFile.getName());
-        localContentValues.put("_display_name", paramFile.getName());
-        localContentValues.put("mime_type", "video/3gp");
-        localContentValues.put("datetaken", Long.valueOf(paramLong));
-        localContentValues.put("date_modified", Long.valueOf(paramLong));
-        localContentValues.put("date_added", Long.valueOf(paramLong));
-        localContentValues.put("_data", paramFile.getAbsolutePath());
-        localContentValues.put("_size", Long.valueOf(paramFile.length()));
-        return localContentValues;
-    }
-
-    File videoFile;
 
     public void getFileFromNew(String path) {
         pd = new ProgressDialog(getActivity());
@@ -360,25 +396,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
             e.printStackTrace();
         }
     }
-
-
-    //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 0:
-                    ToastUtils.showShort("分享失败");
-                    break;
-                //微信登录
-                case 1:
-                    presenter.shareVideo();
-                    ToastUtils.showShort("分享成功");
-                    break;
-            }
-        }
-    };
 
     @Override
     public void viewInitialization() {
@@ -632,20 +649,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         showSheetDialog();
     }
 
-    private BottomSheetDialog bottomSheetDialog;
-    private CommentListAdapter bottomSheetAdapter;
-    private RecyclerView rv_dialog_lists;
-    private View nodataView;
-    private long totalCount = 30;//总条数不得超过它
-    private int offsetY;
-    private float slideOffset = 0;
-    private InputTextMsgDialog inputTextMsgDialog;
-    private RecyclerViewUtil mRecyclerViewUtil;
-    private SoftKeyBoardListener mKeyBoardListener;
-    private CircleImageView avaterIv;
-    private TextView nameTv, anchorNumberTv;
-    SmartRefreshLayout commentSfl;
-
     private void showSheetDialog() {
         if (bottomSheetDialog != null) {
             bottomSheetDialog.show();
@@ -850,8 +853,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         presenter.getCommentVideo(String.valueOf(videoBean.getVideo().getVideo_id()));
     }
 
-    private boolean isCanStart;
-
     @Override
     public void onResume() {
         super.onResume();
@@ -877,14 +878,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (getUserVisibleHint()) {
-            String sda = "";
-        }
-    }
-
-    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (getUserVisibleHint()) {
@@ -898,8 +891,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
             mCurrentPosition = 0;
         }
     }
-
-    boolean isSeevideo;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClearPosition(CanStartEvent canStartEvent) {

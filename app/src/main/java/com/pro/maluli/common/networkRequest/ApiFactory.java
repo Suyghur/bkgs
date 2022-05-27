@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pro.maluli.common.utils.AcacheUtil;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
-import com.pro.maluli.toolkit.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

@@ -27,36 +27,6 @@ public class HttpClientWrapper {
     private static final String HTTP_GET = "GET";
     private static final String HTTP_POST = "POST";
 
-    public static class HttpResult<T> {
-        public int code;
-        public Throwable e;
-        public T obj;
-        public String gmt;
-
-        public HttpResult() {
-            this.code = 0;
-            e = null;
-            obj = null;
-            gmt = "";
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public Throwable getE() {
-            return e;
-        }
-
-        public T getObj() {
-            return obj;
-        }
-
-        public String getGmt() {
-            return gmt;
-        }
-    }
-
     public static String buildRequestParams(Map<String, Object> params) {
         if (params == null) {
             return null;
@@ -248,5 +218,35 @@ public class HttpClientWrapper {
         }
 
         return new String(os.toByteArray(), CHARSET);
+    }
+
+    public static class HttpResult<T> {
+        public int code;
+        public Throwable e;
+        public T obj;
+        public String gmt;
+
+        public HttpResult() {
+            this.code = 0;
+            e = null;
+            obj = null;
+            gmt = "";
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public Throwable getE() {
+            return e;
+        }
+
+        public T getObj() {
+            return obj;
+        }
+
+        public String getGmt() {
+            return gmt;
+        }
     }
 }

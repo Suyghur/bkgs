@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.netease.nim.uikit.common.ToastHelper;
-
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.chatroom.ChatRoomSessionCustomization;
@@ -19,6 +17,7 @@ import com.netease.nim.uikit.business.chatroom.module.ChatRoomMsgListPanel;
 import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.fragment.TFragment;
 import com.netease.nim.uikit.common.util.log.sdk.wrapper.NimLog;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
@@ -46,14 +45,32 @@ import java.util.List;
  * 可以直接集成到应用中
  */
 public class ChatRoomMessageFragment extends TFragment implements ModuleProxy {
-    private String roomId;
-    protected View rootView;
     private static ChatRoomSessionCustomization sCustomization;
-
+    protected View rootView;
     // modules
     protected ChatRoomInputPanel inputPanel;
     protected ChatRoomMsgListPanel messageListPanel;
     protected AitManager aitManager;
+    Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
+        @Override
+        public void onEvent(List<ChatRoomMessage> messages) {
+            if (messages == null || messages.isEmpty()) {
+                return;
+            }
+
+            messageListPanel.onIncomingMessage(messages);
+        }
+    };
+    Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
+        @Override
+        public void onEvent(CdnRequestData data) {
+            if (data == null) {
+                return;
+            }
+            NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
+        }
+    };
+    private String roomId;
 
     public static void setChatRoomSessionCustomization(ChatRoomSessionCustomization roomSessionCustomization) {
         sCustomization = roomSessionCustomization;
@@ -162,29 +179,6 @@ public class ChatRoomMessageFragment extends TFragment implements ModuleProxy {
         NIMClient.getService(ChatRoomServiceObserver.class).observeReceiveMessage(incomingChatRoomMsg, register);
         NIMClient.getService(ChatRoomServiceObserver.class).observeCdnRequestData(cdnReqData, register);
     }
-
-    Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
-        @Override
-        public void onEvent(List<ChatRoomMessage> messages) {
-            if (messages == null || messages.isEmpty()) {
-                return;
-            }
-
-            messageListPanel.onIncomingMessage(messages);
-        }
-    };
-
-    Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
-        @Override
-        public void onEvent(CdnRequestData data) {
-            if (data == null) {
-                return;
-            }
-            NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
-        }
-    };
-
-
 
     /************************** Module proxy ***************************/
 

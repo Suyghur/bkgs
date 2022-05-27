@@ -144,6 +144,7 @@ import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.common.view.dialogview.gift.GiftDialog;
 import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.SlideLayout;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.IStartOneToMoreLiveContraction;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.StartOneToMoreLivePresenter;
@@ -157,7 +158,6 @@ import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.socketService.SocketLiveUtils;
 import com.pro.maluli.module.socketService.event.OTOEvent;
-import com.pro.maluli.toolkit.Logger;
 import com.pro.maluli.toolkit.ToastExtKt;
 
 import org.greenrobot.eventbus.EventBus;
@@ -188,6 +188,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @date 2021/6/15
  */
 public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveContraction.View, StartOneToMoreLivePresenter> implements IStartOneToMoreLiveContraction.View, NERtcCallbackEx, ModuleProxy {
+    static boolean isActive = false;
+    protected VodPlayer player;
     @BindView(R.id.vv_local_user)
     NERtcVideoView vv_local_user;
     @BindView(R.id.changeCameraIV)
@@ -257,16 +259,84 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     Chronometer chronometer;
     @BindView(R.id.ReserveTv)//预约人数
     TextView ReserveTv;
-
-
     @BindView(R.id.ll_gift_group)
     LinearLayout ll_gift_group;
-
+    Container container;
+    AnchorInfoEntity anchorInfoEntity;//主播信息
+    String LMavatar, lmAccid;//被邀请连麦Accid;
+    JoinLiveEntity joinLiveEntity;
+    PreviewLiveAdapter previewLiveAdapter;
+    //    List<List<AnchorInfoEntity.PictureBean>> pictureBeanList = new ArrayList<>();
+    List<AnchorInfoEntity.PictureBean> pictureBeanList = new ArrayList<>();
+    OnlineMemberDialog memberDialog;
+    LianmaiDialog lianmaiDialog;
+    LianmaiEntity lianmaiEntity;
+    LianmaiDialog lianmaiDialogPD;
+    /**
+     * 邀请别人
+     */
+    String invitedRequestId;
+    InputTextLiveDialog inputTextLiveDialog;
+    //要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 0:
+                    ToastUtils.showShort("分享失败");
+                    break;
+                //微信登录
+                case 1:
+                    ToastUtils.showShort("分享成功");
+                    break;
+            }
+        }
+    };
+    Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
+        @Override
+        public void onEvent(CdnRequestData data) {
+            if (data == null) {
+                return;
+            }
+            NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
+        }
+    };
+    /**
+     * 获取在线观众
+     */
+    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+    List<ChatRoomMember> memberAll = new ArrayList<>();
+    /**
+     * 最小化
+     */
+    BaseTipsDialog baseTipsDialog;
     private AudioInputPanel audioInputPanel;
-
     private String roomId, liveId;
     private String push_url;//推流地址
     private String rtmp_pull_url;//拉流地址
+    ServiceConnection mVideoServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // 获取服务的操作对象
+            FloatingViewMoreService.MyBinder binder = (FloatingViewMoreService.MyBinder) service;
+            binder.getService();
+            //这里测试 设置通话从10秒开始
+            if (rtmp_pull_url != null) {
+                binder.setData(rtmp_pull_url);
+            }
+            binder.getService().setCallback(new FloatingViewMoreService.CallBack() {
+                @Override
+                public void onDataChanged(String data) {
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
     private Long uid;
     private boolean joinedChannel = false;
     private boolean enableLocalVideo = true;
@@ -274,8 +344,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private String nertc_token = "";
     private String channelName;
     private StartLiveAdapter adapter;
-    static boolean isActive = false;
-
     /**
      * 898
      * 子页面
@@ -285,12 +353,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private List<ChatRoomMessage> messageList;
     private SeeLiveUserEntity seeliveEntity;
     private boolean touched = false; // 是否按着
-    Container container;
     private UserInfoEntity userInfoEntity;
-
     private List<NoticeEntity.ListBean> listBeans = new ArrayList<>();
-
-
     private PushStream pushStream;
     /**
      * 6.0权限处理
@@ -304,18 +368,222 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      * @return
      */
     private SDKOptions config;
-    protected VodPlayer player;
     private String anchorAccid, userAccid;
-
     private GiftEntity giftEntity;
     private boolean isJoinChatroom;
     private String channelId;
-    AnchorInfoEntity anchorInfoEntity;//主播信息
     private boolean isSHowImg = false;//是否查看主播图片
-    String LMavatar, lmAccid;//被邀请连麦Accid;
-
     private boolean isLike;//是否关注
     private int numberReserve;//用户预约人数
+    /**
+     * 信令回调
+     */
+    //收到的邀请参数,reject 用到lianmai111
+    private InvitedEvent invitedEvent;
+    private List<LianmaiEntity> lianmaiEntities = new ArrayList<>();//同时连麦的集合
+    /**
+     * 邀请别人
+     */
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (lianmaiStatusTv.getText().toString().equalsIgnoreCase("连麦申请中")) {
+                ToastUtils.showShort("对方没有响应");
+                connectLL.setVisibility(View.GONE);
+                cancelInvite();
+            }
+        }
+    };
+    /**
+     * 刷礼物的方法
+     */
+    private TranslateAnimation outAnim;
+    private TranslateAnimation inAnim;
+    private NumberAnim giftNumberAnim;
+    // 聊天信息回调
+    Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
+        @Override
+        public void onEvent(List<ChatRoomMessage> messages) {
+            // 处理新收到的消息
+            if (messages == null || messages.isEmpty()) {
+                return;
+            }
+            boolean needRefresh = false;
+            for (ChatRoomMessage message : messages) {
+                // 保证显示到界面上的消息，来自同一个聊天室
+                if (isMyMessage(message) && message.getMsgType() != MsgTypeEnum.notification) {
+                    if (message.getMsgType() == MsgTypeEnum.custom) {
+                        String allData = message.getAttachStr();
+                        Logger.d(allData);
+                        JSONObject jsonObjectTop = JSONObject.parseObject(allData);
+                        int type = jsonObjectTop.getInteger("type");
+
+                        try {
+                            switch (type) {
+                                case CustomAttachmentType.RedPacket:
+                                    showGift(message);
+                                    messageList.add(message);
+                                    needRefresh = true;
+                                    break;
+                                case CustomAttachmentType.lianmai:
+                                    JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
+                                    String anchorPhoto = jsonObject.getString("playingStatus");//1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
+                                    showTipisPlaying(anchorPhoto);
+                                    break;
+                                case CustomAttachmentType.SystemMsg:
+                                    // 有人进入直播间了
+                                    Logger.d("有人预约直播, numReserve: " + numberReserve);
+                                    numberReserve++;
+                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
+                                    messageList.add(message);
+                                    needRefresh = true;
+                                    break;
+                                case CustomAttachmentType.SystemMsgOut:
+                                    // 有人取消预约直播
+                                    Logger.d("有人取消预约直播, numReserve: " + numberReserve);
+                                    numberReserve--;
+                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
+                                    break;
+                                case CustomAttachmentType.ModifyReserveNum:
+                                    JSONObject jsonObject1 = jsonObjectTop.getJSONObject("data");
+                                    int people = jsonObject1.getInteger("people");
+                                    Logger.d("主播修改了预约人数, people: " + people);
+                                    anchorInfoEntity.setReport_num(people);
+                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    try {
+                        // 来自聊天室通知
+                        Logger.e("来自聊天室通知");
+                        ChatRoomNotificationAttachment attachment = (ChatRoomNotificationAttachment) message.getAttachment();
+                        if (attachment.getType() == NotificationType.ChatRoomMemberIn || attachment.getType() == NotificationType.ChatRoomMemberExit || attachment.getType() == NotificationType.LeaveTeam) {
+                            //有用户进入或者退出直播间
+                            getOnlineMumber();
+                            if (attachment.getType() == NotificationType.ChatRoomMemberExit) {
+                                List<String> accounts = attachment.getTargets();
+                                if (attachment.getTargetNicks() != null) {
+                                    for (int i = 0; i < accounts.size(); i++) {
+                                        if (accounts.get(i).equalsIgnoreCase(anchorAccid)) {
+                                            anchorLeave();//主播退出了直播间
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (attachment.getType() == NotificationType.ChatRoomClose) {
+                            stopLiveDialog();
+                        }
+                        if (attachment.getType() == NotificationType.ChatRoomInfoUpdated) {
+                            Map<String, Object> remote = attachment.getExtension();
+                            if (remote != null && !remote.isEmpty()) {
+                                try {
+                                    String avatar = (String) remote.get("avatar");
+                                    if (connectLL.isShown() && !avatar.equals("1")) {
+                                        return;
+                                    }
+                                    showLianmaiView(avatar, !avatar.equals("1"));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+            if (needRefresh) {
+                adapter.setList(messageList);
+                doScrollToBottom();
+            }
+//            messageListPanel.onIncomingMessage(messages);
+        }
+    };    //这里直播可以用 LivePlayerObserver 点播用 VodPlayerObserver bofagnqi
+    private LivePlayerObserver playerObserver = new LivePlayerObserver() {
+
+        @Override
+        public void onPreparing() {
+            Log.e("haode", "a---onPreparing---a");
+        }
+
+        @Override
+        public void onPrepared(MediaInfo info) {
+            mediaInfo = info;
+        }
+
+        @Override
+        public void onError(int code, int extra) {
+            Log.e("haode", extra + "a------a" + code);
+            if (code == CauseCode.CODE_VIDEO_PARSER_ERROR) {
+                showToast("视频解析出错");
+            } else if (code == CauseCode.CODE_BUFFERING_ERROR) {
+                initPlayer();
+                player.switchContentUrl(rtmp_pull_url);
+//                if (chronometer != null) {
+//                    chronometer.stop();
+//                }
+//                anchorLeave();
+            } else if (code == CauseCode.CODE_RTMP_CONNECT_ERROR) {
+                stopLiveDialog();
+//                showToast("本场直播已被停播，去其他直播间看看");
+            }
+
+        }
+
+        @Override
+        public void onFirstVideoRendered() {
+//            showToast("视频第一帧已解析");
+            Log.e("haode", "a---onFirstVideoRendered---a");
+        }
+
+        @Override
+        public void onFirstAudioRendered() {
+            //            showToast("音频第一帧已解析");
+            Log.e("haode", "a---onFirstAudioRendered---a");
+        }
+
+        @Override
+        public void onBufferingStart() {
+            Log.e("haode", "a---onBufferingStart---a");
+        }
+
+        @Override
+        public void onBufferingEnd() {
+            Log.e("haode", "a---onBufferingStart---a");
+        }
+
+        @Override
+        public void onBuffering(int percent) {
+        }
+
+        @Override
+        public void onVideoDecoderOpen(int value) {
+//            showToast("使用解码类型：" + (value == 1 ? "硬件解码" : "软解解码"));
+            Log.e("haode", "a---onVideoDecoderOpen---a" + value);
+        }
+
+        @Override
+        public void onStateChanged(StateInfo stateInfo) {
+            Log.e("haode", "a---onStateChanged---a");
+            if (stateInfo != null && stateInfo.getCauseCode() == CauseCode.CODE_VIDEO_STOPPED_AS_NET_UNAVAILABLE) {
+                showToast("网络已断开");
+            }
+        }
+
+        @Override
+        public void onHttpResponseInfo(int code, String header) {
+            Log.e("haode", "a---header---a");
+        }
+    };
+    // 礼物
+    private int[] GiftIcon = new int[]{R.drawable.down_icon};
 
     @Override
     public StartOneToMoreLivePresenter initPresenter() {
@@ -395,8 +663,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         clearTiming(); // 开启定时清理礼物列表
         initAnim(); // 初始化动画
     }
-
-    JoinLiveEntity joinLiveEntity;
 
     @Override
     public void setJoinLiveSuccess(JoinLiveEntity data) {
@@ -485,10 +751,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         dialog.setArguments(bundle);
         dialog.show(getSupportFragmentManager(), "GiftForMeDialog");
     }
-
-    PreviewLiveAdapter previewLiveAdapter;
-    //    List<List<AnchorInfoEntity.PictureBean>> pictureBeanList = new ArrayList<>();
-    List<AnchorInfoEntity.PictureBean> pictureBeanList = new ArrayList<>();
 
     @Override
     public void setAnchorInfo(AnchorInfoEntity data) {
@@ -615,6 +877,158 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         initPlaye2r();
     }
 
+    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
+        @Override
+        public void onEvent(ChannelCommonEvent channelCommonEvent) {
+            SignallingEventType eventType = channelCommonEvent.getEventType();
+            switch (eventType) {
+                case CLOSE://关闭频道
+                    ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
+                    connectLL.setVisibility(View.GONE);
+                    break;
+                case JOIN://加入频道
+                    UserJoinEvent userJoinEvent = (UserJoinEvent) channelCommonEvent;
+
+                    break;
+                case INVITE://接收到邀请通知
+                    invitedEvent = (InvitedEvent) channelCommonEvent;
+                    String customInfo = invitedEvent.getCustomInfo();
+                    JSONObject json = JSONObject.parseObject(customInfo);
+                    String type = json.getString("type");
+                    String avatar = json.getString("avatar");
+
+                    if (!TextUtils.isEmpty(type) && "2".equals(type)) {
+                        LianmaiEntity entity = new LianmaiEntity();
+                        entity.setAccid(invitedEvent.getFromAccountId());
+                        entity.setAvatar(avatar);
+                        entity.setInvitedEvent(invitedEvent);
+                        boolean isCongfu = false;
+                        for (int i = 0; i < lianmaiEntities.size(); i++) {
+                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(entity.getAccid())) {
+                                isCongfu = true;
+                            }
+                        }
+                        if (!isCongfu) {
+                            lianmaiEntities.add(entity);
+                        }
+                        if (lianmaiEntities.size() > 1) {//如果多人同时发起连麦，弹出选择框，
+                            lianmaiPaidui(lianmaiEntities);
+                            connectLL.setVisibility(View.GONE);//收到连麦邀请
+                        } else {
+                            //如果同时只有一个人发起连麦，直接显示
+                            connectLL.setVisibility(View.VISIBLE);//收到连麦邀请
+                            lianmaiYesTv.setVisibility(View.VISIBLE);
+                            lianmaiNotv.setVisibility(View.VISIBLE);
+                            lianmaiStatusTv.setText("连麦申请中");
+                            lianmaiYesTv.setText("同意连麦");
+                            lianmaiNotv.setText("拒绝连麦");
+                            cancelLianmaiTv.setVisibility(View.GONE);
+                            if (isAvater) {
+                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, avatar, lianmaiAchonrIv);
+                            } else {
+                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, userInfoEntity.getAvatar(), lianmaiAchonrIv);
+                            }
+                        }
+                    }
+                    break;
+                case CANCEL_INVITE:
+                    CanceledInviteEvent canceledInviteEvent = (CanceledInviteEvent) channelCommonEvent;
+                    if (lianmaiEntities.size() > 0) {
+                        for (int i = 0; i < lianmaiEntities.size(); i++) {
+                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(canceledInviteEvent.getFromAccountId())
+                                    || lianmaiEntities.get(i).getAccid().equalsIgnoreCase(canceledInviteEvent.getToAccount())) {
+                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
+                            }
+                        }
+                    }
+                    if (handler != null && runnable != null) {
+                        handler.removeCallbacks(runnable);
+                    }
+                    //更新列表数据
+                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
+                            && lianmaiDialogPD.getDialog().isShowing()) {
+                        lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
+                    }
+//                    lianmaiPaidui(lianmaiEntities);
+                    if (lianmaiEntities.size() > 0) {
+                        return;
+                    }
+                    if (lianmaiYesTv.getText().toString().trim().equalsIgnoreCase("断开连麦")) {
+                        return;
+                    }
+                    connectLL.setVisibility(View.GONE);//收到连麦邀请
+                    ToastHelper.showToast(StartOneToMoreLiveAct.this, "对方取消连麦");
+                    break;
+                case REJECT://拒绝
+                    connectLL.setVisibility(View.GONE);//收到连麦邀请
+                    ToastHelper.showToast(StartOneToMoreLiveAct.this, "对方拒绝连麦");
+                    leave();
+                    if (handler != null && runnable != null) {
+                        handler.removeCallbacks(runnable);
+                    }
+                    break;
+                case ACCEPT://接受
+                    lianmainIngView();
+                    if (handler != null && runnable != null) {
+                        handler.removeCallbacks(runnable);
+                    }
+                    updateInfoChatroom(LMavatar);
+                    if (!isAvater) {
+                        releasePlayer();
+                        joinChannel(nertc_token, channelName, uid);
+//                        setLocalVideoEnable(false);
+                        ToastHelper.showToast(StartOneToMoreLiveAct.this, "连麦成功！");
+                        return;
+                    }
+
+
+                    break;
+                case LEAVE:
+                    UserLeaveEvent userLeaveEvent = (UserLeaveEvent) channelCommonEvent;
+                    if (lianmaiEntities.size() > 0) {
+                        for (int i = 0; i < lianmaiEntities.size(); i++) {
+                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(userLeaveEvent.getFromAccountId())) {
+                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
+                            }
+                        }
+                    }
+                    //更新列表数据
+                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
+                            && lianmaiDialogPD.getDialog().isShowing()) {
+                        lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
+                    }
+                    if (lianmaiEntities.size() > 1) {
+                        return;
+                    }
+                    updateInfoChatroom("1");
+                    break;
+                case CONTROL:
+                    ControlEvent controlEvent = (ControlEvent) channelCommonEvent;
+                    connectLL.setVisibility(View.GONE);
+                    if (lianmaiEntities.size() > 0) {
+                        for (int i = 0; i < lianmaiEntities.size(); i++) {
+                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(controlEvent.getFromAccountId())) {
+                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
+                            }
+                        }
+                    }
+                    if (!isAvater) {
+                        leaveChannel(true);
+                        initPlayer();
+                    } else {
+                        lianmaiEntities.clear();
+                    }
+
+
+                    updateInfoChatroom("1");
+                    leave();
+                    break;
+            }
+
+
+        }
+    };
+
     private void initPlaye2r() {
         config = new SDKOptions();
         config.privateConfig = new NEPlayerConfig();
@@ -647,84 +1061,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         comment_list.scrollToPosition(adapter.getItemCount() - 1);
     }
 
-    //这里直播可以用 LivePlayerObserver 点播用 VodPlayerObserver bofagnqi
-    private LivePlayerObserver playerObserver = new LivePlayerObserver() {
-
-        @Override
-        public void onPreparing() {
-            Log.e("haode", "a---onPreparing---a");
-        }
-
-        @Override
-        public void onPrepared(MediaInfo info) {
-            mediaInfo = info;
-        }
-
-        @Override
-        public void onError(int code, int extra) {
-            Log.e("haode", extra + "a------a" + code);
-            if (code == CauseCode.CODE_VIDEO_PARSER_ERROR) {
-                showToast("视频解析出错");
-            } else if (code == CauseCode.CODE_BUFFERING_ERROR) {
-                initPlayer();
-                player.switchContentUrl(rtmp_pull_url);
-//                if (chronometer != null) {
-//                    chronometer.stop();
-//                }
-//                anchorLeave();
-            } else if (code == CauseCode.CODE_RTMP_CONNECT_ERROR) {
-                stopLiveDialog();
-//                showToast("本场直播已被停播，去其他直播间看看");
-            }
-
-        }
-
-        @Override
-        public void onFirstVideoRendered() {
-//            showToast("视频第一帧已解析");
-            Log.e("haode", "a---onFirstVideoRendered---a");
-        }
-
-        @Override
-        public void onFirstAudioRendered() {
-            //            showToast("音频第一帧已解析");
-            Log.e("haode", "a---onFirstAudioRendered---a");
-        }
-
-        @Override
-        public void onBufferingStart() {
-            Log.e("haode", "a---onBufferingStart---a");
-        }
-
-        @Override
-        public void onBufferingEnd() {
-            Log.e("haode", "a---onBufferingStart---a");
-        }
-
-        @Override
-        public void onBuffering(int percent) {
-        }
-
-        @Override
-        public void onVideoDecoderOpen(int value) {
-//            showToast("使用解码类型：" + (value == 1 ? "硬件解码" : "软解解码"));
-            Log.e("haode", "a---onVideoDecoderOpen---a" + value);
-        }
-
-        @Override
-        public void onStateChanged(StateInfo stateInfo) {
-            Log.e("haode", "a---onStateChanged---a");
-            if (stateInfo != null && stateInfo.getCauseCode() == CauseCode.CODE_VIDEO_STOPPED_AS_NET_UNAVAILABLE) {
-                showToast("网络已断开");
-            }
-        }
-
-        @Override
-        public void onHttpResponseInfo(int code, String header) {
-            Log.e("haode", "a---header---a");
-        }
-    };
-
     /**
      * 主播退出了直播间
      */
@@ -744,7 +1080,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         });
     }
 
-
     private void togglePushStream() {
         if (pushStream == null) {
             return;
@@ -759,9 +1094,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             pushStream.stop();
         }
     }
-
-    OnlineMemberDialog memberDialog;
-    LianmaiDialog lianmaiDialog;
 
     /**
      * 在线成员弹框
@@ -780,9 +1112,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         }
 
     }
-
-    LianmaiEntity lianmaiEntity;
-    LianmaiDialog lianmaiDialogPD;
 
     public void lianmaiPaidui(List<LianmaiEntity> lianmaiEntities) {
         Logger.d("aaaaa");
@@ -939,7 +1268,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     }
 
-
     private void joinRoom(String accid) {
         lmAccid = accid;
         if (channelId == null) {
@@ -958,169 +1286,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             }
         });
     }
-
-    /**
-     * 信令回调
-     */
-    //收到的邀请参数,reject 用到lianmai111
-    private InvitedEvent invitedEvent;
-    private List<LianmaiEntity> lianmaiEntities = new ArrayList<>();//同时连麦的集合
-    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
-        @Override
-        public void onEvent(ChannelCommonEvent channelCommonEvent) {
-            SignallingEventType eventType = channelCommonEvent.getEventType();
-            switch (eventType) {
-                case CLOSE://关闭频道
-                    ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
-                    connectLL.setVisibility(View.GONE);
-                    break;
-                case JOIN://加入频道
-                    UserJoinEvent userJoinEvent = (UserJoinEvent) channelCommonEvent;
-
-                    break;
-                case INVITE://接收到邀请通知
-                    invitedEvent = (InvitedEvent) channelCommonEvent;
-                    String customInfo = invitedEvent.getCustomInfo();
-                    JSONObject json = JSONObject.parseObject(customInfo);
-                    String type = json.getString("type");
-                    String avatar = json.getString("avatar");
-
-                    if (!TextUtils.isEmpty(type) && "2".equals(type)) {
-                        LianmaiEntity entity = new LianmaiEntity();
-                        entity.setAccid(invitedEvent.getFromAccountId());
-                        entity.setAvatar(avatar);
-                        entity.setInvitedEvent(invitedEvent);
-                        boolean isCongfu = false;
-                        for (int i = 0; i < lianmaiEntities.size(); i++) {
-                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(entity.getAccid())) {
-                                isCongfu = true;
-                            }
-                        }
-                        if (!isCongfu) {
-                            lianmaiEntities.add(entity);
-                        }
-                        if (lianmaiEntities.size() > 1) {//如果多人同时发起连麦，弹出选择框，
-                            lianmaiPaidui(lianmaiEntities);
-                            connectLL.setVisibility(View.GONE);//收到连麦邀请
-                        } else {
-                            //如果同时只有一个人发起连麦，直接显示
-                            connectLL.setVisibility(View.VISIBLE);//收到连麦邀请
-                            lianmaiYesTv.setVisibility(View.VISIBLE);
-                            lianmaiNotv.setVisibility(View.VISIBLE);
-                            lianmaiStatusTv.setText("连麦申请中");
-                            lianmaiYesTv.setText("同意连麦");
-                            lianmaiNotv.setText("拒绝连麦");
-                            cancelLianmaiTv.setVisibility(View.GONE);
-                            if (isAvater) {
-                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, avatar, lianmaiAchonrIv);
-                            } else {
-                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, userInfoEntity.getAvatar(), lianmaiAchonrIv);
-                            }
-                        }
-                    }
-                    break;
-                case CANCEL_INVITE:
-                    CanceledInviteEvent canceledInviteEvent = (CanceledInviteEvent) channelCommonEvent;
-                    if (lianmaiEntities.size() > 0) {
-                        for (int i = 0; i < lianmaiEntities.size(); i++) {
-                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(canceledInviteEvent.getFromAccountId())
-                                    || lianmaiEntities.get(i).getAccid().equalsIgnoreCase(canceledInviteEvent.getToAccount())) {
-                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
-                            }
-                        }
-                    }
-                    if (handler != null && runnable != null) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    //更新列表数据
-                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
-                            && lianmaiDialogPD.getDialog().isShowing()) {
-                        lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
-                    }
-//                    lianmaiPaidui(lianmaiEntities);
-                    if (lianmaiEntities.size() > 0) {
-                        return;
-                    }
-                    if (lianmaiYesTv.getText().toString().trim().equalsIgnoreCase("断开连麦")) {
-                        return;
-                    }
-                    connectLL.setVisibility(View.GONE);//收到连麦邀请
-                    ToastHelper.showToast(StartOneToMoreLiveAct.this, "对方取消连麦");
-                    break;
-                case REJECT://拒绝
-                    connectLL.setVisibility(View.GONE);//收到连麦邀请
-                    ToastHelper.showToast(StartOneToMoreLiveAct.this, "对方拒绝连麦");
-                    leave();
-                    if (handler != null && runnable != null) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    break;
-                case ACCEPT://接受
-                    lianmainIngView();
-                    if (handler != null && runnable != null) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    updateInfoChatroom(LMavatar);
-                    if (!isAvater) {
-                        releasePlayer();
-                        joinChannel(nertc_token, channelName, uid);
-//                        setLocalVideoEnable(false);
-                        ToastHelper.showToast(StartOneToMoreLiveAct.this, "连麦成功！");
-                        return;
-                    }
-
-
-                    break;
-                case LEAVE:
-                    UserLeaveEvent userLeaveEvent = (UserLeaveEvent) channelCommonEvent;
-                    if (lianmaiEntities.size() > 0) {
-                        for (int i = 0; i < lianmaiEntities.size(); i++) {
-                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(userLeaveEvent.getFromAccountId())) {
-                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
-                            }
-                        }
-                    }
-                    //更新列表数据
-                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
-                            && lianmaiDialogPD.getDialog().isShowing()) {
-                        lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
-                    }
-                    if (lianmaiEntities.size() > 1) {
-                        return;
-                    }
-                    updateInfoChatroom("1");
-                    break;
-                case CONTROL:
-                    ControlEvent controlEvent = (ControlEvent) channelCommonEvent;
-                    connectLL.setVisibility(View.GONE);
-                    if (lianmaiEntities.size() > 0) {
-                        for (int i = 0; i < lianmaiEntities.size(); i++) {
-                            if (lianmaiEntities.get(i).getAccid().equalsIgnoreCase(controlEvent.getFromAccountId())) {
-                                lianmaiEntities.remove(i--);//i--删除了数据索引变少了，所以要减一下
-                            }
-                        }
-                    }
-                    if (!isAvater) {
-                        leaveChannel(true);
-                        initPlayer();
-                    } else {
-                        lianmaiEntities.clear();
-                    }
-
-
-                    updateInfoChatroom("1");
-                    leave();
-                    break;
-            }
-
-
-        }
-    };
-
-    /**
-     * 邀请别人
-     */
-    String invitedRequestId;
 
     private void inviteOther(String account) {
         if (channelId == null) {
@@ -1340,8 +1505,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         }
     }
 
-    InputTextLiveDialog inputTextLiveDialog;
-
     /**
      * 输入聊天内容
      */
@@ -1412,36 +1575,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             }
         });
     }
-
-    //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 0:
-                    ToastUtils.showShort("分享失败");
-                    break;
-                //微信登录
-                case 1:
-                    ToastUtils.showShort("分享成功");
-                    break;
-            }
-        }
-    };
-    /**
-     * 邀请别人
-     */
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (lianmaiStatusTv.getText().toString().equalsIgnoreCase("连麦申请中")) {
-                ToastUtils.showShort("对方没有响应");
-                connectLL.setVisibility(View.GONE);
-                cancelInvite();
-            }
-        }
-    };
 
     /**
      * 断开连麦
@@ -1641,105 +1774,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         ActivityTaskManager.getInstance().removeSingleInstanceActivity(this);
     }
 
-    // 聊天信息回调
-    Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
-        @Override
-        public void onEvent(List<ChatRoomMessage> messages) {
-            // 处理新收到的消息
-            if (messages == null || messages.isEmpty()) {
-                return;
-            }
-            boolean needRefresh = false;
-            for (ChatRoomMessage message : messages) {
-                // 保证显示到界面上的消息，来自同一个聊天室
-                if (isMyMessage(message) && message.getMsgType() != MsgTypeEnum.notification) {
-                    if (message.getMsgType() == MsgTypeEnum.custom) {
-                        String allData = message.getAttachStr();
-                        Logger.e(allData);
-                        JSONObject jsonObjectTop = JSONObject.parseObject(allData);
-                        int type = jsonObjectTop.getInteger("type");
-                        try {
-                            switch (type) {
-                                case CustomAttachmentType.RedPacket:
-                                    showGift(message);
-                                    messageList.add(message);
-                                    needRefresh = true;
-                                    break;
-                                case CustomAttachmentType.lianmai:
-                                    JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
-                                    String anchorPhoto = jsonObject.getString("playingStatus");//1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
-                                    showTipisPlaying(anchorPhoto);
-                                    break;
-                                case CustomAttachmentType.SystemMsg:
-                                    // 有人进入直播间了
-                                    Logger.e("有人预约直播, numReserve: " + numberReserve);
-                                    numberReserve++;
-                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
-                                    messageList.add(message);
-                                    needRefresh = true;
-                                    break;
-                                case CustomAttachmentType.SystemMsgOut:
-                                    // 有人取消预约直播
-                                    Logger.e("有人取消预约直播, numReserve: " + numberReserve);
-                                    numberReserve--;
-                                    ReserveTv.setText(String.format("已预约：%1$s/%2$s", numberReserve, anchorInfoEntity.getReport_num()));
-                                    break;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    try {
-                        // 来自聊天室通知
-                        Logger.e("来自聊天室通知");
-                        ChatRoomNotificationAttachment attachment = (ChatRoomNotificationAttachment) message.getAttachment();
-                        if (attachment.getType() == NotificationType.ChatRoomMemberIn || attachment.getType() == NotificationType.ChatRoomMemberExit || attachment.getType() == NotificationType.LeaveTeam) {
-                            //有用户进入或者退出直播间
-                            getOnlineMumber();
-                            if (attachment.getType() == NotificationType.ChatRoomMemberExit) {
-                                List<String> accounts = attachment.getTargets();
-                                if (attachment.getTargetNicks() != null) {
-                                    for (int i = 0; i < accounts.size(); i++) {
-                                        if (accounts.get(i).equalsIgnoreCase(anchorAccid)) {
-                                            anchorLeave();//主播退出了直播间
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (attachment.getType() == NotificationType.ChatRoomClose) {
-                            stopLiveDialog();
-                        }
-                        if (attachment.getType() == NotificationType.ChatRoomInfoUpdated) {
-                            Map<String, Object> remote = attachment.getExtension();
-                            if (remote != null && !remote.isEmpty()) {
-                                try {
-                                    String avatar = (String) remote.get("avatar");
-                                    if (connectLL.isShown() && !avatar.equals("1")) {
-                                        return;
-                                    }
-                                    showLianmaiView(avatar, !avatar.equals("1"));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-            if (needRefresh) {
-                adapter.setList(messageList);
-                doScrollToBottom();
-            }
-//            messageListPanel.onIncomingMessage(messages);
-        }
-    };
-
     /**
      * 被停播了
      */
@@ -1787,16 +1821,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         return false;
     }
 
-    Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
-        @Override
-        public void onEvent(CdnRequestData data) {
-            if (data == null) {
-                return;
-            }
-            NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
-        }
-    };
-
     /**
      * 加入房间
      *
@@ -1812,7 +1836,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         vv_local_user.setVisibility(View.VISIBLE);
         textureView.setVisibility(View.GONE);
     }
-
 
     public void joinLiaoTianSHi() {
         if (isJoinChatroom) {
@@ -1906,12 +1929,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         });
 
     }
-
-    /**
-     * 获取在线观众
-     */
-    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
-    List<ChatRoomMember> memberAll = new ArrayList<>();
 
     private void getOnlineMumber() {
         NIMClient.getService(ChatRoomService.class).fetchRoomMembers(roomId, MemberQueryType.ONLINE_NORMAL, 0, 1000).setCallback(new RequestCallback<List<ChatRoomMember>>() {
@@ -2046,7 +2063,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     }
 
-
     /**
      * 设置本地音频的可用性
      */
@@ -2115,6 +2131,18 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         }
     }
 
+//    @Override
+//    public void setSeeLiveInfo(SeeLiveUserEntity data) {
+//        this.seeliveEntity = data;
+//    }
+//
+//    @Override
+//    public void setDqLiveInfo(OneToOneLiveEntity data) {
+//        roomId = String.valueOf(data.getChat().getRoomid());
+//        joinLiaoTianSHi();
+//        joinChannel(WyToken, roomId, uid);
+//    }
+
     /**
      * 关闭频道
      */
@@ -2173,19 +2201,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         presenter.getAnchorInfo();
     }
 
-//    @Override
-//    public void setSeeLiveInfo(SeeLiveUserEntity data) {
-//        this.seeliveEntity = data;
-//    }
-//
-//    @Override
-//    public void setDqLiveInfo(OneToOneLiveEntity data) {
-//        roomId = String.valueOf(data.getChat().getRoomid());
-//        joinLiaoTianSHi();
-//        joinChannel(WyToken, roomId, uid);
-//    }
-
-
     @Override
     public void onJoinChannel(int i, long l, long l1, long l2) {
         if (i == NERtcConstants.ErrorCode.OK) {
@@ -2237,7 +2252,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         Log.e("haode", "onUserAudioStart");
     }
 
-
     @Override
     public void onUserAudioStop(long l) {
         Log.e("haode", "onUserAudioStop");
@@ -2261,11 +2275,14 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     }
 
-
     @Override
     public void onUserVideoStop(long l) {
         Log.e("haode", "onUserVideoStop");
     }
+
+    /**
+     * --------------------------------------礼物动画效果-------------------------------------------------------
+     */
 
     @Override
     public void onDisconnect(int i) {
@@ -2276,7 +2293,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     public void onClientRoleChange(int i, int i1) {
         Log.e("haode", "onClientRoleChange");
     }
-
 
     @Override
     public boolean sendMessage(IMMessage msg) {
@@ -2344,15 +2360,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             connectLL.setVisibility(View.GONE);
         }
     }
-    /**
-     * --------------------------------------礼物动画效果-------------------------------------------------------
-     */
-    /**
-     * 刷礼物的方法
-     */
-    private TranslateAnimation outAnim;
-    private TranslateAnimation inAnim;
-    private NumberAnim giftNumberAnim;
 
     private void showGift(ChatRoomMessage tag) {
         String allData = tag.getAttachment().toJson(false);
@@ -2447,29 +2454,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             }
         });
     }
-
-    public class NumberAnim {
-        private Animator lastAnimator;
-
-        public void showAnimator(View v) {
-
-            if (lastAnimator != null) {
-                lastAnimator.removeAllListeners();
-                lastAnimator.cancel();
-                lastAnimator.end();
-            }
-            ObjectAnimator animScaleX = ObjectAnimator.ofFloat(v, "scaleX", 1.3f, 1.0f);
-            ObjectAnimator animScaleY = ObjectAnimator.ofFloat(v, "scaleY", 1.3f, 1.0f);
-            AnimatorSet animSet = new AnimatorSet();
-            animSet.playTogether(animScaleX, animScaleY);
-            animSet.setDuration(200);
-            lastAnimator = animSet;
-            animSet.start();
-        }
-    }
-
-    // 礼物
-    private int[] GiftIcon = new int[]{R.drawable.down_icon};
 
     /**
      * 获取礼物
@@ -2587,7 +2571,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             }
         });
     }
-
 
     @Override
     public void onInputPanelExpand() {
@@ -2811,11 +2794,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         exit();
     }
 
-    /**
-     * 最小化
-     */
-    BaseTipsDialog baseTipsDialog;
-
     private void showFinishAct() {
         Logger.e("showFinishAct");
         if (baseTipsDialog != null && baseTipsDialog.getDialog() != null && baseTipsDialog.getDialog().isShowing()) {
@@ -2956,29 +2934,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     }
 
-    ServiceConnection mVideoServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // 获取服务的操作对象
-            FloatingViewMoreService.MyBinder binder = (FloatingViewMoreService.MyBinder) service;
-            binder.getService();
-            //这里测试 设置通话从10秒开始
-            if (rtmp_pull_url != null) {
-                binder.setData(rtmp_pull_url);
-            }
-            binder.getService().setCallback(new FloatingViewMoreService.CallBack() {
-                @Override
-                public void onDataChanged(String data) {
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
     /**
      * 关闭悬浮窗服务
      */
@@ -3036,6 +2991,26 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                     });
                     break;
             }
+        }
+    }
+
+    public class NumberAnim {
+        private Animator lastAnimator;
+
+        public void showAnimator(View v) {
+
+            if (lastAnimator != null) {
+                lastAnimator.removeAllListeners();
+                lastAnimator.cancel();
+                lastAnimator.end();
+            }
+            ObjectAnimator animScaleX = ObjectAnimator.ofFloat(v, "scaleX", 1.3f, 1.0f);
+            ObjectAnimator animScaleY = ObjectAnimator.ofFloat(v, "scaleY", 1.3f, 1.0f);
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animScaleX, animScaleY);
+            animSet.setDuration(200);
+            lastAnimator = animSet;
+            animSet.start();
         }
     }
 

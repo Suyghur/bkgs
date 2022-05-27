@@ -46,19 +46,21 @@ import java.util.Set;
  */
 
 public class LianmaiDialog extends DialogFragment implements View.OnClickListener {
+    LianmaiAdapter adapter;
+    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+    List<ChatRoomMember> memberAll = new ArrayList<>();
+    List<ChatRoomMember> memberSearch = new ArrayList<>();
+    List<ChatRoomMember> memberAllnoChange = new ArrayList<>();
     private Dialog mDetailDialog;
     private LinearLayout dismissLL;
     private TextView nodataTv;
     private EditText inputOnlineEt;
     private MaxHeightRecyclerView onlineMemberRl;
     private boolean idSeeCancel;//是否显示取消按钮
-    LianmaiAdapter adapter;
-    List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
-    List<ChatRoomMember> memberAll = new ArrayList<>();
-    List<ChatRoomMember> memberSearch = new ArrayList<>();
-    List<ChatRoomMember> memberAllnoChange = new ArrayList<>();
     private String roomId, anchorAccid;
     private List<LianmaiEntity> entities = new ArrayList<>();
+    private OnBaseTipsListener onFreezeTipsListener;
+    private OnLianMaiListtener onLianMaiListtener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -179,8 +181,6 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
         }
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public OnLianMaiListtener getOnLianMaiListtener() {
         return onLianMaiListtener;
     }
@@ -188,8 +188,6 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
     public void setOnLianMaiListtener(OnLianMaiListtener onLianMaiListtener) {
         this.onLianMaiListtener = onLianMaiListtener;
     }
-
-    private OnLianMaiListtener onLianMaiListtener;
 
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
@@ -208,16 +206,6 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm(String accid, String avatar);
-
-        void onBan();
-    }
-
-    public interface OnLianMaiListtener {
-        void comfirm(LianmaiEntity entity);//0去申述，2去绑定
     }
 
     public void getMembers() {
@@ -282,5 +270,15 @@ public class LianmaiDialog extends DialogFragment implements View.OnClickListene
                 }
                 break;
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm(String accid, String avatar);
+
+        void onBan();
+    }
+
+    public interface OnLianMaiListtener {
+        void comfirm(LianmaiEntity entity);//0去申述，2去绑定
     }
 }

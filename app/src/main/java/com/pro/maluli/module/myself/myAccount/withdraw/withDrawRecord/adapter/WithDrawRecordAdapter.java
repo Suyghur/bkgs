@@ -8,15 +8,11 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.WithDrawRecordEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WithDrawRecordAdapter extends BaseQuickAdapter<WithDrawRecordEntity.ListBean, BaseViewHolder> {
     List<WithDrawRecordEntity.ListBean> datas;
@@ -32,13 +28,13 @@ public class WithDrawRecordAdapter extends BaseQuickAdapter<WithDrawRecordEntity
     protected void convert(@NotNull BaseViewHolder baseViewHolder, WithDrawRecordEntity.ListBean entity) {
         baseViewHolder.setText(R.id.nameTv, entity.getAlipay_account());
         baseViewHolder.setText(R.id.timeTv, entity.getCreated_at());
-        baseViewHolder.setText(R.id.numberBkTv, "提现金额："+entity.getMoney());
+        baseViewHolder.setText(R.id.numberBkTv, "提现金额：" + entity.getMoney());
         baseViewHolder.setText(R.id.statusTv, entity.getStatus());
 //        baseViewHolder.setText(R.id.resourceTv, entity.getProduct_type() + "");
-        TextView resourceTv= baseViewHolder.getView(R.id.resourceTv);
-        TextView statusTv= baseViewHolder.getView(R.id.statusTv);
-        TextView contentTv= baseViewHolder.getView(R.id.contentTv);
-        if (!TextUtils.isEmpty(entity.getContent())){
+        TextView resourceTv = baseViewHolder.getView(R.id.resourceTv);
+        TextView statusTv = baseViewHolder.getView(R.id.statusTv);
+        TextView contentTv = baseViewHolder.getView(R.id.contentTv);
+        if (!TextUtils.isEmpty(entity.getContent())) {
             contentTv.setText(entity.getContent());
         }
         //类型 0- 通过 1-审核中 2-失败
@@ -59,10 +55,10 @@ public class WithDrawRecordAdapter extends BaseQuickAdapter<WithDrawRecordEntity
         resourceTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (resourceTv.getText().toString().equalsIgnoreCase("展开原因")){
+                if (resourceTv.getText().toString().equalsIgnoreCase("展开原因")) {
                     resourceTv.setText("收起原因");
                     contentTv.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     resourceTv.setText("展开原因");
                     contentTv.setVisibility(View.GONE);
                 }

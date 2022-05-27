@@ -11,6 +11,7 @@ public interface IAppealContraction extends BaseView {
     interface View extends BaseView {
         void setUpdateImgSuccess(UpdateImgEntity data);
     }
+
     interface Presenter extends IClear {
         void subImg(List<File> files);
 
@@ -18,7 +19,7 @@ public interface IAppealContraction extends BaseView {
 
         void liveAppeal(String trim, String images, String type, String trim1);
 
-        void reportLive(String content, String images, String msgType, String trim, String s,String userid, String liveId);
+        void reportLive(String content, String images, String msgType, String trim, String s, String userid, String liveId);
 
         void drawCashReport(String content, String images, String msgType, String trim);
     }

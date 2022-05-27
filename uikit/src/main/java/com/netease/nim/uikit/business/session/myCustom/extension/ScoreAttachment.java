@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 
 public class ScoreAttachment extends CustomAttachment {
 
-    private String icon;//  礼物名称
-    private String msg;//  礼物id
-
     private static final String KEY_ICON = "icon";
     private static final String KEY_MSG = "msg";
+    private String icon;//  礼物名称
+    private String msg;//  礼物id
 
     public ScoreAttachment() {
         super(CustomAttachmentType.score);

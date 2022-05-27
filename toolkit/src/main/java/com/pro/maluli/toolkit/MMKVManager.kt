@@ -64,6 +64,6 @@ class MMKVManager private constructor() : MMKVHandler {
 
     override fun mmkvLog(level: MMKVLogLevel?, file: String?, line: Int, function: String?, message: String?) {
         val log = "<${file.toString()}:${line}::${function}>${message}"
-        Logger.d(log)
+        com.pro.maluli.ktx.utils.Logger.d(log)
     }
 }

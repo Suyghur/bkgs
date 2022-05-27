@@ -8,7 +8,7 @@ package com.netease.nim.uikit.common.ui.imageview;
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ package com.netease.nim.uikit.common.ui.imageview;
 /*
  * This class is based upon the file ImageViewTouchBase.java which can be found at:
  * https://dl-ssl.google.com/dl/googlesource/git-repo/repo
- *  
+ *
  * Copyright (C) 2009 The Android Open Source Project
  */
 
@@ -31,10 +31,10 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
 public class MultiTouchZoomableImageView extends BaseZoomableImageView {
+    protected boolean transIgnoreScale = false;
     // Scale and gesture listeners for the view
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
-    protected boolean transIgnoreScale = false;
     private boolean scaleRecognized = false;
 
     // Programatic entry point
@@ -56,6 +56,40 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
         mGestureDetector = new GestureDetector(context, new MyGestureListener());
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        try {
+            if (mViewPager != null) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        mViewPager.requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        mViewPager.requestDisallowInterceptTouchEvent(false);
+                        scaleRecognized = false;
+                        break;
+                }
+            }
+
+            // If the bitmap was set, check the scale and gesture detectors
+            if (mBitmap != null) {
+                // Check the scale detector
+                mScaleDetector.onTouchEvent(event);
+
+                // Check the gesture detector
+                if (!mScaleDetector.isInProgress())
+                    mGestureDetector.onTouchEvent(event);
+            } else {
+                mImageGestureListener.onImageGestureSingleTapConfirmed();
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
 
     // Adjusts the zoom of the view
     class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -197,40 +231,5 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
 
             return super.onFling(e1, e2, velocityX, velocityY);
         }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        try {
-            if (mViewPager != null) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_MOVE:
-                        mViewPager.requestDisallowInterceptTouchEvent(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        mViewPager.requestDisallowInterceptTouchEvent(false);
-                        scaleRecognized = false;
-                        break;
-                }
-            }
-
-            // If the bitmap was set, check the scale and gesture detectors
-            if (mBitmap != null) {
-                // Check the scale detector
-                mScaleDetector.onTouchEvent(event);
-
-                // Check the gesture detector
-                if (!mScaleDetector.isInProgress())
-                    mGestureDetector.onTouchEvent(event);
-            } else {
-                mImageGestureListener.onImageGestureSingleTapConfirmed();
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return true;
     }
 }

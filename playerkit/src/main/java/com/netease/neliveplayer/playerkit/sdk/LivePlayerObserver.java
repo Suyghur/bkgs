@@ -8,6 +8,7 @@ import com.netease.neliveplayer.playerkit.sdk.model.StateInfo;
  * 直播拉流播放器状态/事件回调函数观察者
  * 基于播放器SDK封装的直播相关的状态/事件回调
  * <p>
+ *
  * @author netease
  */
 
@@ -75,9 +76,9 @@ public interface LivePlayerObserver {
 
     /**
      * 拉流http状态信息
-     * @param code 状态码
-     * @param header 头信息
      *
+     * @param code   状态码
+     * @param header 头信息
      */
     void onHttpResponseInfo(int code, String header);
 

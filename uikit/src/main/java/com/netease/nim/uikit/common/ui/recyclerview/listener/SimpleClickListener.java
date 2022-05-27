@@ -1,12 +1,13 @@
 package com.netease.nim.uikit.common.ui.recyclerview.listener;
 
 import android.os.Build;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.view.GestureDetectorCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.IRecyclerView;
 import com.netease.nim.uikit.common.ui.recyclerview.holder.BaseViewHolder;
@@ -23,12 +24,12 @@ import java.util.Set;
  * @see RecyclerView.OnItemTouchListener
  */
 public abstract class SimpleClickListener<T extends IRecyclerView> implements RecyclerView.OnItemTouchListener {
+    public static String TAG = "SimpleClickListener";
+    protected T baseAdapter;
     private GestureDetectorCompat mGestureDetector;
     private RecyclerView recyclerView;
     private Set<Integer> childClickViewIds;
     private Set<Integer> longClickViewIds;
-    protected T baseAdapter;
-    public static String TAG = "SimpleClickListener";
     private boolean mIsPrepressed = false;
     private boolean mIsShowPress = false;
     private View mPressedView = null;
@@ -73,6 +74,95 @@ public abstract class SimpleClickListener<T extends IRecyclerView> implements Re
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+    }
+
+    private void setPressViewHotSpot(final MotionEvent e, final View mPressedView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            /**
+             * when   click   Outside the region  ,mPressedView is null
+             */
+            if (mPressedView != null && mPressedView.getBackground() != null) {
+                mPressedView.getBackground().setHotspot(e.getRawX(), e.getY() - mPressedView.getY());
+            }
+        }
+    }
+
+    /**
+     * Callback method to be invoked when an item in this AdapterView has
+     * been clicked.
+     *
+     * @param view     The view within the AdapterView that was clicked (this
+     *                 will be a view provided by the adapter)
+     * @param position The position of the view in the adapter.
+     */
+    public abstract void onItemClick(T adapter, View view, int position);
+
+    /**
+     * callback method to be invoked when an item in this view has been
+     * click and held
+     *
+     * @param view     The view whihin the AbsListView that was clicked
+     * @param position The position of the view int the adapter
+     * @return true if the callback consumed the long click ,false otherwise
+     */
+    public abstract void onItemLongClick(T adapter, View view, int position);
+
+    public abstract void onItemChildClick(T adapter, View view, int position);
+
+    public abstract void onItemChildLongClick(T adapter, View view, int position);
+
+    public boolean inRangeOfView(View view, MotionEvent ev) {
+        int[] location = new int[2];
+        if (view.getVisibility() != View.VISIBLE) {
+            return false;
+        }
+        view.getLocationOnScreen(location);
+        int x = location[0];
+        int y = location[1];
+        if (ev.getRawX() < x
+                || ev.getRawX() > (x + view.getWidth())
+                || ev.getRawY() < y
+                || ev.getRawY() > (y + view.getHeight())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isHeaderOrFooterPosition(int position) {
+        /**
+         *  have a headview and EMPTY_VIEW FOOTER_VIEW LOADING_VIEW
+         */
+        if (baseAdapter == null) {
+            if (recyclerView != null) {
+                baseAdapter = (T) recyclerView.getAdapter();
+            } else {
+                return false;
+            }
+        }
+        int type = baseAdapter.getItemViewType(position);
+        return (type == IRecyclerView.EMPTY_VIEW || type == IRecyclerView.HEADER_VIEW || type == IRecyclerView.FOOTER_VIEW
+                || type == IRecyclerView.LOADING_VIEW || type == IRecyclerView.FETCHING_VIEW);
+    }
+
+    public void setShouldDetectGesture(boolean shouldDetectGesture) {
+        this.shouldDetectGesture = shouldDetectGesture;
+    }
+
+    private boolean shouldDetectGesture() {
+        if (!shouldDetectGesture) {
+            mIsPrepressed = false;
+            mPressedView = null;
+        }
+
+        return shouldDetectGesture;
+    }
+
+    public void setLongClickDelta(int longClickDelta) {
+        if (longClickDelta <= 0 || longClickDelta > 2000) {
+            longClickDelta = 200;
+        }
+
+        this.longClickDelta = longClickDelta;
     }
 
     private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -213,95 +303,6 @@ public abstract class SimpleClickListener<T extends IRecyclerView> implements Re
             mIsPrepressed = false;
             mPressedView = null;
         }
-    }
-
-    private void setPressViewHotSpot(final MotionEvent e, final View mPressedView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            /**
-             * when   click   Outside the region  ,mPressedView is null
-             */
-            if (mPressedView != null && mPressedView.getBackground() != null) {
-                mPressedView.getBackground().setHotspot(e.getRawX(), e.getY() - mPressedView.getY());
-            }
-        }
-    }
-
-    /**
-     * Callback method to be invoked when an item in this AdapterView has
-     * been clicked.
-     *
-     * @param view     The view within the AdapterView that was clicked (this
-     *                 will be a view provided by the adapter)
-     * @param position The position of the view in the adapter.
-     */
-    public abstract void onItemClick(T adapter, View view, int position);
-
-    /**
-     * callback method to be invoked when an item in this view has been
-     * click and held
-     *
-     * @param view     The view whihin the AbsListView that was clicked
-     * @param position The position of the view int the adapter
-     * @return true if the callback consumed the long click ,false otherwise
-     */
-    public abstract void onItemLongClick(T adapter, View view, int position);
-
-    public abstract void onItemChildClick(T adapter, View view, int position);
-
-    public abstract void onItemChildLongClick(T adapter, View view, int position);
-
-    public boolean inRangeOfView(View view, MotionEvent ev) {
-        int[] location = new int[2];
-        if (view.getVisibility() != View.VISIBLE) {
-            return false;
-        }
-        view.getLocationOnScreen(location);
-        int x = location[0];
-        int y = location[1];
-        if (ev.getRawX() < x
-                || ev.getRawX() > (x + view.getWidth())
-                || ev.getRawY() < y
-                || ev.getRawY() > (y + view.getHeight())) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isHeaderOrFooterPosition(int position) {
-        /**
-         *  have a headview and EMPTY_VIEW FOOTER_VIEW LOADING_VIEW
-         */
-        if (baseAdapter == null) {
-            if (recyclerView != null) {
-                baseAdapter = (T) recyclerView.getAdapter();
-            } else {
-                return false;
-            }
-        }
-        int type = baseAdapter.getItemViewType(position);
-        return (type == IRecyclerView.EMPTY_VIEW || type == IRecyclerView.HEADER_VIEW || type == IRecyclerView.FOOTER_VIEW
-                || type == IRecyclerView.LOADING_VIEW || type == IRecyclerView.FETCHING_VIEW);
-    }
-
-    public void setShouldDetectGesture(boolean shouldDetectGesture) {
-        this.shouldDetectGesture = shouldDetectGesture;
-    }
-
-    private boolean shouldDetectGesture() {
-        if (!shouldDetectGesture) {
-            mIsPrepressed = false;
-            mPressedView = null;
-        }
-
-        return shouldDetectGesture;
-    }
-
-    public void setLongClickDelta(int longClickDelta) {
-        if (longClickDelta <= 0 || longClickDelta > 2000) {
-            longClickDelta = 200;
-        }
-
-        this.longClickDelta = longClickDelta;
     }
 }
 

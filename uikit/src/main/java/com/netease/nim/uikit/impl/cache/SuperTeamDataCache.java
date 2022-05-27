@@ -26,6 +26,56 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SuperTeamDataCache {
     private static SuperTeamDataCache instance;
+    /**
+     * *
+     * ******************************************** 群资料缓存 ********************************************
+     */
+
+    private Map<String, SuperTeam> id2TeamMap = new ConcurrentHashMap<>();
+    // 群资料变动观察者通知。新建群和群更新的通知都通过该接口传递
+    private Observer<List<SuperTeam>> teamUpdateObserver = new Observer<List<SuperTeam>>() {
+        @Override
+        public void onEvent(final List<SuperTeam> teams) {
+            if (teams == null) {
+                return;
+            }
+            LogUtil.i(UIKitLogTag.TEAM_CACHE, "team update size:" + teams.size());
+            addOrUpdateTeam(teams);
+            NimUIKit.getSuperTeamChangedObservable().notifyTeamDataUpdate(teams);
+        }
+    };
+    // 移除群的观察者通知。自己退群，群被解散，自己被踢出群时，会收到该通知
+    private Observer<SuperTeam> teamRemoveObserver = new Observer<SuperTeam>() {
+        @Override
+        public void onEvent(SuperTeam team) {
+            // team的flag被更新，isMyTeam为false
+            addOrUpdateTeam(team);
+            NimUIKit.getSuperTeamChangedObservable().notifyTeamDataRemove(team);
+        }
+    };
+    /**
+     * *
+     * ************************************** 群成员缓存(由App主动添加缓存) ****************************************
+     */
+
+    private Map<String, Map<String, SuperTeamMember>> teamMemberCache = new ConcurrentHashMap<>();
+    // 群成员资料变化观察者通知。可通过此接口更新缓存。
+    private Observer<List<SuperTeamMember>> memberUpdateObserver = new Observer<List<SuperTeamMember>>() {
+        @Override
+        public void onEvent(List<SuperTeamMember> members) {
+            addOrUpdateTeamMembers(members);
+            NimUIKit.getSuperTeamChangedObservable().notifyTeamMemberDataUpdate(members);
+        }
+    };
+    // 移除群成员的观察者通知，仅仅 member的validFlag被更新，db 仍存在数据
+    private Observer<List<SuperTeamMember>> memberRemoveObserver = new Observer<List<SuperTeamMember>>() {
+        @Override
+        public void onEvent(List<SuperTeamMember> member) {
+            // member的validFlag被更新，isInTeam为false
+            addOrUpdateTeamMembers(member);
+            NimUIKit.getSuperTeamChangedObservable().notifyTeamMemberRemove(member);
+        }
+    };
 
     public static synchronized SuperTeamDataCache getInstance() {
         if (instance == null) {
@@ -63,56 +113,6 @@ public class SuperTeamDataCache {
         NIMClient.getService(SuperTeamServiceObserver.class).observeMemberUpdate(memberUpdateObserver, register);
         NIMClient.getService(SuperTeamServiceObserver.class).observeMemberRemove(memberRemoveObserver, register);
     }
-
-    // 群资料变动观察者通知。新建群和群更新的通知都通过该接口传递
-    private Observer<List<SuperTeam>> teamUpdateObserver = new Observer<List<SuperTeam>>() {
-        @Override
-        public void onEvent(final List<SuperTeam> teams) {
-            if (teams == null) {
-                return;
-            }
-            LogUtil.i(UIKitLogTag.TEAM_CACHE, "team update size:" + teams.size());
-            addOrUpdateTeam(teams);
-            NimUIKit.getSuperTeamChangedObservable().notifyTeamDataUpdate(teams);
-        }
-    };
-
-    // 移除群的观察者通知。自己退群，群被解散，自己被踢出群时，会收到该通知
-    private Observer<SuperTeam> teamRemoveObserver = new Observer<SuperTeam>() {
-        @Override
-        public void onEvent(SuperTeam team) {
-            // team的flag被更新，isMyTeam为false
-            addOrUpdateTeam(team);
-            NimUIKit.getSuperTeamChangedObservable().notifyTeamDataRemove(team);
-        }
-    };
-
-    // 群成员资料变化观察者通知。可通过此接口更新缓存。
-    private Observer<List<SuperTeamMember>> memberUpdateObserver = new Observer<List<SuperTeamMember>>() {
-        @Override
-        public void onEvent(List<SuperTeamMember> members) {
-            addOrUpdateTeamMembers(members);
-            NimUIKit.getSuperTeamChangedObservable().notifyTeamMemberDataUpdate(members);
-        }
-    };
-
-    // 移除群成员的观察者通知，仅仅 member的validFlag被更新，db 仍存在数据
-    private Observer<List<SuperTeamMember>> memberRemoveObserver = new Observer<List<SuperTeamMember>>() {
-        @Override
-        public void onEvent(List<SuperTeamMember> member) {
-            // member的validFlag被更新，isInTeam为false
-            addOrUpdateTeamMembers(member);
-            NimUIKit.getSuperTeamChangedObservable().notifyTeamMemberRemove(member);
-        }
-    };
-
-
-    /**
-     * *
-     * ******************************************** 群资料缓存 ********************************************
-     */
-
-    private Map<String, SuperTeam> id2TeamMap = new ConcurrentHashMap<>();
 
     public void clearTeamCache() {
         id2TeamMap.clear();
@@ -193,13 +193,6 @@ public class SuperTeamDataCache {
             id2TeamMap.put(t.getId(), t);
         }
     }
-
-    /**
-     * *
-     * ************************************** 群成员缓存(由App主动添加缓存) ****************************************
-     */
-
-    private Map<String, Map<String, SuperTeamMember>> teamMemberCache = new ConcurrentHashMap<>();
 
     public void clearTeamMemberCache() {
         teamMemberCache.clear();

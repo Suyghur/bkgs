@@ -10,16 +10,14 @@ import com.netease.nim.uikit.common.util.log.sdk.wrapper.NimLog;
 import java.io.File;
 
 public class StorageUtil {
-    private static final String TAG = "StorageUtil";
-
     public final static long K = 1024;
     public final static long M = K * 1024;
     public final static long G = M * 1024;
-
     // 外置存储卡默认预警临界值
     private static final long THRESHOLD_WARNING_SPACE = 100 * M;
     // 保存文件时所需的最小空间的默认值
     static final long THRESHOLD_MIN_SPCAE = 20 * M;
+    private static final String TAG = "StorageUtil";
 
     public static void init(Context context, String rootPath) {
         ExternalStorage.getInstance().init(context, rootPath);

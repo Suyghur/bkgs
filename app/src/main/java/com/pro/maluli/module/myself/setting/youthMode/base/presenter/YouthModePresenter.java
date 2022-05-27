@@ -2,12 +2,10 @@ package com.pro.maluli.module.myself.setting.youthMode.base.presenter;
 
 import android.content.Context;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
 
 import io.reactivex.functions.Consumer;
 

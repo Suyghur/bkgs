@@ -24,9 +24,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.netease.nim.uikit.common.ToastHelper;
-
 import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
@@ -46,10 +45,8 @@ import java.util.List;
  */
 public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
 
-    private static final String TAG = "video";
-
     public static final String EXTRA_DATA_FILE_NAME = "EXTRA_DATA_FILE_NAME";
-
+    private static final String TAG = "video";
     private static final int VIDEO_TIMES = 180;
 
     private static final int VIDEO_WIDTH = 320;
@@ -99,15 +96,14 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
     private LinkedList<Point> backCameraSize = new LinkedList<>();
 
     private LinkedList<Point> frontCameraSize = new LinkedList<>();
+    private Point currentUsePoint = null;
 
     public static void start(Activity activity, String videoFilePath, int captureCode) {
         Intent intent = new Intent();
         intent.setClass(activity, CaptureVideoActivity.class);
         intent.putExtra(EXTRA_DATA_FILE_NAME, videoFilePath);
         activity.startActivityForResult(intent, captureCode);
-    }
-
-    // 录制时间计数
+    }    // 录制时间计数
     private Runnable runnable = new Runnable() {
 
         public void run() {
@@ -200,7 +196,7 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
     public void onResume() {
         super.onResume();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-                             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void onPause() {
@@ -344,8 +340,6 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         }
     }
 
-    private Point currentUsePoint = null;
-
     private void resizeSurfaceView() {
         Point point;
         if (cameraId == 0) {
@@ -369,7 +363,6 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         }
     }
 
-
     @SuppressLint("NewApi")
     private void setCamcorderProfile() {
         CamcorderProfile profile;
@@ -381,7 +374,7 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
             }
             profile.fileFormat = MediaRecorder.OutputFormat.MPEG_4;
             if (Build.MODEL.equalsIgnoreCase("MB525") || Build.MODEL.equalsIgnoreCase("C8812") ||
-                Build.MODEL.equalsIgnoreCase("C8650")) {
+                    Build.MODEL.equalsIgnoreCase("C8650")) {
                 profile.videoCodec = MediaRecorder.VideoEncoder.H263;
             } else {
                 profile.videoCodec = MediaRecorder.VideoEncoder.H264;
@@ -524,7 +517,7 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
      */
     private void tooShortAlert() {
         EasyAlertDialogHelper.showOneButtonDiolag(this, null, getString(R.string.video_record_short),
-                                                  getString(R.string.iknow), true, new OnClickListener() {
+                getString(R.string.iknow), true, new OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -617,7 +610,6 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         }
     }
 
-
     /**
      * **************************** SurfaceHolder.Callback Start *******************************
      */
@@ -700,5 +692,7 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         }
         return 0;
     }
+
+
 
 }

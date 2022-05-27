@@ -23,7 +23,6 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.ACEConstant;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.StringUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.myself.personalCenter.PersonalCenterAct;
 import com.pro.maluli.module.other.findPassword.presenter.FindPasswordPresenter;
@@ -51,6 +50,29 @@ public class FindPasswordAct extends BaseMvpActivity<IFindPasswordContraction.Vi
     ImageView checkPwdImg;
     @BindView(R.id.reCheckPwdImg)
     ImageView reCheckPwdImg;
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!TextUtils.isEmpty(inputRePwdEt.getText().toString().trim())
+                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
+                submitPwdTv.setSelected(true);
+            } else {
+                submitPwdTv.setSelected(false);
+
+            }
+
+        }
+    };
     private String mobile;
     private String code;
 
@@ -106,30 +128,6 @@ public class FindPasswordAct extends BaseMvpActivity<IFindPasswordContraction.Vi
         inputPwdEt.addTextChangedListener(textWatcher);
 
     }
-
-    TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(inputRePwdEt.getText().toString().trim())
-                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
-                submitPwdTv.setSelected(true);
-            } else {
-                submitPwdTv.setSelected(false);
-
-            }
-
-        }
-    };
 
     @OnClick({R.id.submitPwdTv, R.id.leftImg_ly, R.id.checkPwdImg, R.id.reCheckPwdImg})
     public void onViewClick(View view) {

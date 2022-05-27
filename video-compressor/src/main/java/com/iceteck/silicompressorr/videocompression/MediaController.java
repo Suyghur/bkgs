@@ -29,9 +29,6 @@ import java.util.Locale;
 @SuppressLint("NewApi")
 public class MediaController {
 
-    public static File cachedFile;
-    public String path;
-
     public final static String MIME_TYPE = "video/avc";
     private final static int PROCESSOR_TYPE_OTHER = 0;
     private final static int PROCESSOR_TYPE_QCOM = 1;
@@ -39,13 +36,14 @@ public class MediaController {
     private final static int PROCESSOR_TYPE_MTK = 3;
     private final static int PROCESSOR_TYPE_SEC = 4;
     private final static int PROCESSOR_TYPE_TI = 5;
-    private static volatile MediaController Instance = null;
-    private boolean videoConvertFirstWrite = true;
-
     //Default values
     private final static int DEFAULT_VIDEO_WIDTH = 640;
     private final static int DEFAULT_VIDEO_HEIGHT = 360;
     private final static int DEFAULT_VIDEO_BITRATE = 450000;
+    public static File cachedFile;
+    private static volatile MediaController Instance = null;
+    public String path;
+    private boolean videoConvertFirstWrite = true;
 
     public static MediaController getInstance() {
         MediaController localInstance = Instance;
@@ -91,45 +89,6 @@ public class MediaController {
 
     public native static int convertVideoFrame(ByteBuffer src, ByteBuffer dest, int destFormat, int width, int height, int padding, int swap);
 
-    private void didWriteData(final boolean last, final boolean error) {
-        final boolean firstWrite = videoConvertFirstWrite;
-        if (firstWrite) {
-            videoConvertFirstWrite = false;
-        }
-    }
-
-    public static class VideoConvertRunnable implements Runnable {
-
-        private String videoPath;
-        private File destDirectory;
-
-        private VideoConvertRunnable(String videoPath, File dest) {
-            this.videoPath = videoPath;
-            this.destDirectory = dest;
-        }
-
-        public static void runConversion(final String videoPath, final File dest) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        VideoConvertRunnable wrapper = new VideoConvertRunnable(videoPath, dest);
-                        Thread th = new Thread(wrapper, "VideoConvertRunnable");
-                        th.start();
-                        th.join();
-                    } catch (Exception e) {
-                        Log.e("tmessages", e.getMessage());
-                    }
-                }
-            }).start();
-        }
-
-        @Override
-        public void run() {
-            MediaController.getInstance().convertVideo(videoPath, destDirectory);
-        }
-    }
-
     public static MediaCodecInfo selectCodec(String mimeType) {
         int numCodecs = MediaCodecList.getCodecCount();
         MediaCodecInfo lastCodecInfo = null;
@@ -153,13 +112,34 @@ public class MediaController {
         return lastCodecInfo;
     }
 
+    public static void copyFile(File src, File dst) throws IOException {
+        FileChannel inChannel = new FileInputStream(src).getChannel();
+        FileChannel outChannel = new FileOutputStream(dst).getChannel();
+        try {
+            inChannel.transferTo(1, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+    }
+
+    private void didWriteData(final boolean last, final boolean error) {
+        final boolean firstWrite = videoConvertFirstWrite;
+        if (firstWrite) {
+            videoConvertFirstWrite = false;
+        }
+    }
+
     /**
      * Background conversion for queueing tasks
+     *
      * @param path source file to compress
      * @param dest destination directory to put result
      */
 
-public void scheduleVideoConvert(String path, File dest) {
+    public void scheduleVideoConvert(String path, File dest) {
         startVideoConvertFromQueue(path, dest);
     }
 
@@ -246,27 +226,28 @@ public void scheduleVideoConvert(String path, File dest) {
     /**
      * Perform the actual video compression. Processes the frames and does the magic
      * Width, height and bitrate are now default
+     *
      * @param sourcePath the source uri for the file as per
-     * @param destDir the destination directory where compressed video is eventually saved
+     * @param destDir    the destination directory where compressed video is eventually saved
      * @return
      */
-    public boolean  convertVideo(final String sourcePath, File destDir)
-    {
-        return convertVideo( sourcePath, destDir, 0, 0, 0 );
+    public boolean convertVideo(final String sourcePath, File destDir) {
+        return convertVideo(sourcePath, destDir, 0, 0, 0);
     }
 
     /**
      * Perform the actual video compression. Processes the frames and does the magic
+     *
      * @param sourcePath the source uri for the file as per
-     * @param destDir the destination directory where compressed video is eventually saved
-     * @param outWidth the target width of the converted video, 0 is default
-     * @param outHeight the target height of the converted video, 0 is default
+     * @param destDir    the destination directory where compressed video is eventually saved
+     * @param outWidth   the target width of the converted video, 0 is default
+     * @param outHeight  the target height of the converted video, 0 is default
      * @param outBitrate the target bitrate of the converted video, 0 is default
      * @return
      */
     @TargetApi(16)
-    public boolean  convertVideo(final String sourcePath, File destDir, int outWidth, int outHeight, int outBitrate) {
-        this.path=sourcePath;
+    public boolean convertVideo(final String sourcePath, File destDir, int outWidth, int outHeight, int outBitrate) {
+        this.path = sourcePath;
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
@@ -709,7 +690,7 @@ public void scheduleVideoConvert(String path, File dest) {
         }
         didWriteData(true, error);
 
-        cachedFile=cacheFile;
+        cachedFile = cacheFile;
 
        /* File fdelete = inputFile;
         if (fdelete.exists()) {
@@ -721,9 +702,9 @@ public void scheduleVideoConvert(String path, File dest) {
         }*/
 
         //inputFile.delete();
-        Log.e("ViratPath",path+"");
-        Log.e("ViratPath",cacheFile.getPath()+"");
-        Log.e("ViratPath",inputFile.getPath()+"");
+        Log.e("ViratPath", path + "");
+        Log.e("ViratPath", cacheFile.getPath() + "");
+        Log.e("ViratPath", inputFile.getPath() + "");
 
 
        /* Log.e("ViratPath",path+"");
@@ -749,7 +730,7 @@ public void scheduleVideoConvert(String path, File dest) {
         }
 */
 
-    //    cacheFile.delete();
+        //    cacheFile.delete();
 
        /* try {
            // copyFile(cacheFile,inputFile);
@@ -758,25 +739,40 @@ public void scheduleVideoConvert(String path, File dest) {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-         // cacheFile.delete();
-       // inputFile.delete();
+        // cacheFile.delete();
+        // inputFile.delete();
         return true;
     }
 
-    public static void copyFile(File src, File dst) throws IOException
-    {
-        FileChannel inChannel = new FileInputStream(src).getChannel();
-        FileChannel outChannel = new FileOutputStream(dst).getChannel();
-        try
-        {
-            inChannel.transferTo(1, inChannel.size(), outChannel);
+    public static class VideoConvertRunnable implements Runnable {
+
+        private String videoPath;
+        private File destDirectory;
+
+        private VideoConvertRunnable(String videoPath, File dest) {
+            this.videoPath = videoPath;
+            this.destDirectory = dest;
         }
-        finally
-        {
-            if (inChannel != null)
-                inChannel.close();
-            if (outChannel != null)
-                outChannel.close();
+
+        public static void runConversion(final String videoPath, final File dest) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        VideoConvertRunnable wrapper = new VideoConvertRunnable(videoPath, dest);
+                        Thread th = new Thread(wrapper, "VideoConvertRunnable");
+                        th.start();
+                        th.join();
+                    } catch (Exception e) {
+                        Log.e("tmessages", e.getMessage());
+                    }
+                }
+            }).start();
+        }
+
+        @Override
+        public void run() {
+            MediaController.getInstance().convertVideo(videoPath, destDirectory);
         }
     }
 }

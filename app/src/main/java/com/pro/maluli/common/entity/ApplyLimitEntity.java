@@ -4,8 +4,10 @@ import java.io.Serializable;
 
 public class ApplyLimitEntity implements Serializable {
     /**
+     *
      */
     private String max_picture;
+    private String max_desc;
 
     public String getMax_picture() {
         return max_picture;
@@ -22,6 +24,4 @@ public class ApplyLimitEntity implements Serializable {
     public void setMax_desc(String max_desc) {
         this.max_desc = max_desc;
     }
-
-    private String max_desc;
 }

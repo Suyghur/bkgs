@@ -5,7 +5,6 @@ import android.content.Context;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.NoticeEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;

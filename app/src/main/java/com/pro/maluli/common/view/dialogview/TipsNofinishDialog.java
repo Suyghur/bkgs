@@ -2,10 +2,8 @@ package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -22,8 +20,9 @@ import com.pro.maluli.common.utils.ToolUtils;
 
 public class TipsNofinishDialog extends DialogFragment implements View.OnClickListener {
     private Dialog mDetailDialog;
-    private TextView  comfirmTv, contentTv;
+    private TextView comfirmTv, contentTv;
     private String showContent;
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -45,14 +44,8 @@ public class TipsNofinishDialog extends DialogFragment implements View.OnClickLi
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
     }
 
     @Override
@@ -72,5 +65,9 @@ public class TipsNofinishDialog extends DialogFragment implements View.OnClickLi
                 }
                 break;
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
     }
 }

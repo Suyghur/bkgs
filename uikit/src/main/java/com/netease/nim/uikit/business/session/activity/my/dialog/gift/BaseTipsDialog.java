@@ -27,13 +27,17 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
     private TextView cancelTv, comfirmTv, contentTv, titleTv;
     private String showContent, comfirm, title, cancel;
     private boolean idSeeCancel;//是否显示取消按钮
+    private OnBaseTipsListener onFreezeTipsListener;
+    private OnTwoBaseTipsListener onTwoBaseTipsListener;
+
     //获取内容区域
-    public  int getContextRect(Activity activity) {
+    public int getContextRect(Activity activity) {
         //应用区域
         Rect outRect1 = new Rect();
         activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
         return outRect1.height();
     }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDetailDialog = new Dialog(getActivity(), R.style.dialog_bottom);
@@ -43,7 +47,7 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
         mDetailDialog.getWindow().getDecorView().setSystemUiVisibility(flag);
         //设置背景为透明
         mDetailDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(), android.R.color.transparent));
-        int dialogHeight =getContextRect(getActivity());
+        int dialogHeight = getContextRect(getActivity());
         //设置弹窗大小为会屏
         mDetailDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight == 0 ? ViewGroup.LayoutParams.MATCH_PARENT : dialogHeight);
         dismissLL = mDetailDialog.findViewById(R.id.dismissLL);
@@ -81,20 +85,9 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-    }
-    public interface OnTwoBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-        void cancel();
-    }
-    private OnTwoBaseTipsListener onTwoBaseTipsListener;
 
     public OnTwoBaseTipsListener getOnTwoBaseTipsListener() {
         return onTwoBaseTipsListener;
@@ -129,5 +122,15 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
                 mDetailDialog.dismiss();
             }
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+    }
+
+    public interface OnTwoBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+
+        void cancel();
     }
 }

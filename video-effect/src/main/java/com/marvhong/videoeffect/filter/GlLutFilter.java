@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+
 import com.marvhong.videoeffect.filter.base.GlFilter;
 import com.marvhong.videoeffect.utils.OpenGlUtils;
 
@@ -12,10 +13,6 @@ import com.marvhong.videoeffect.utils.OpenGlUtils;
  */
 
 public class GlLutFilter extends GlFilter {
-
-    private int hTex;
-    private final int NO_TEXTURE = -1;
-    private Bitmap lutTexture;
 
     private final static String FRAGMENT_SHADER =
             "#extension GL_OES_EGL_image_external : require\n" +
@@ -46,6 +43,9 @@ public class GlLutFilter extends GlFilter {
                     "   pixel = gradedPixel;\n" +
                     "   gl_FragColor = pixel;\n " +
                     "}";
+    private final int NO_TEXTURE = -1;
+    private int hTex;
+    private Bitmap lutTexture;
 
     public GlLutFilter(Bitmap bitmap) {
         super(OpenGlUtils.DEFAULT_VERTEX_SHADER, FRAGMENT_SHADER);

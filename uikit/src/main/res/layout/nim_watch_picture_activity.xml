@@ -29,10 +29,10 @@
                 android:id="@+id/actionbar_menu"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:gravity="center_vertical"
                 android:layout_gravity="right|center"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/nim_ic_menu_selector"
-                android:layout_marginRight="15dp" />
+                android:gravity="center_vertical" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -40,13 +40,13 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <ImageView
-        android:visibility="gone"
         android:id="@+id/simple_image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <include layout="@layout/nim_watch_media_download_progress_layout" />
 

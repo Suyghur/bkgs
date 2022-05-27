@@ -15,10 +15,9 @@ import java.util.List;
 
 public class RecentSessionAdapter extends RecentContactAdapter {
 
-    private static final int VIEW_TYPE_LOAD_MORE = 4;
-
     public static final int TAG_NO_MORE = 0;
     public static final int TAG_HAS_MORE = 1;
+    private static final int VIEW_TYPE_LOAD_MORE = 4;
 
     public RecentSessionAdapter(RecyclerView recyclerView, List<RecentContact> data) {
         super(recyclerView, data);

@@ -7,44 +7,26 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.netease.nim.uikit.business.recent.RecentContactsCallback;
 import com.netease.nim.uikit.business.recent.RecentContactsFragment;
-import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
-import com.netease.nim.uikit.common.ToastHelper;
-import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.fragment.TFragment;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.msg.MsgService;
-import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.MessageListEntity;
 import com.pro.maluli.common.eventBus.SettingSeeView;
 import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.common.utils.reminder.ReminderManager;
-//import com.pro.maluli.common.wyy.view.SessionHelper;
 import com.pro.maluli.module.message.base.presenter.IMessageContraction;
 import com.pro.maluli.module.message.base.presenter.MessagePresenter;
 import com.pro.maluli.module.message.lineUp.LineUpAct;
 import com.pro.maluli.module.message.reserveMessage.ReserveMessageAct;
 import com.pro.maluli.module.message.searchMessasge.SearchMsgAct;
 import com.pro.maluli.module.message.systemNotification.SystemNotificationAct;
-import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
-import com.pro.maluli.module.socketService.event.OTOEvent;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,8 +38,6 @@ import butterknife.OnClick;
  * @author 23203
  */
 public class MessageFrag extends BaseMvpFragment<IMessageContraction.View, MessagePresenter> implements IMessageContraction.View {
-    private LinearLayout mine_mian_ll;
-    private RecentContactsFragment fragment;
     @BindView(R.id.systemLL)
     LinearLayout systemLL;
     @BindView(R.id.yuyueLL)
@@ -72,6 +52,8 @@ public class MessageFrag extends BaseMvpFragment<IMessageContraction.View, Messa
     TextView emptyBg;
     @BindView(R.id.recentLL)
     LinearLayout recentLL;
+    private LinearLayout mine_mian_ll;
+    private RecentContactsFragment fragment;
 
     @Override
     public MessagePresenter initPresenter() {

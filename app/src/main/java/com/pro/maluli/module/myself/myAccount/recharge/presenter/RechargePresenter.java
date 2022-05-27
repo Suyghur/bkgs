@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.entity.PayInfoEntity;
 import com.pro.maluli.common.entity.RechargeEntity;
+import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;
@@ -64,7 +64,7 @@ public class RechargePresenter extends BasePresenter<IRechargeContraction.View> 
                     @Override
                     public void onSuccess(BaseResponse<WechatpayEntity> response) {
 //                        mView.setPayInfo(response.getData());
-                        WechatpayEntity ada =response.getData();
+                        WechatpayEntity ada = response.getData();
                         mView.setWeChatOrderInfo(response.getData());
                     }
                 }, new Consumer<Throwable>() {

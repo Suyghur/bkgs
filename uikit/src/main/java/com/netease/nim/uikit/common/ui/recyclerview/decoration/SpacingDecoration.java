@@ -1,11 +1,12 @@
 package com.netease.nim.uikit.common.ui.recyclerview.decoration;
 
 import android.graphics.Rect;
+import android.view.View;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import android.view.View;
 
 /**
  * Created by huangjun on 2016/12/9.

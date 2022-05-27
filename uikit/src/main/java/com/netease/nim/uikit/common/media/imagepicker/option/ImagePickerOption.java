@@ -1,6 +1,7 @@
 package com.netease.nim.uikit.common.media.imagepicker.option;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.netease.nim.uikit.R;
@@ -13,28 +14,14 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
+ *
  */
 
 public class ImagePickerOption implements Serializable {
-    public enum PickType {
-        Image(R.string.pick_image), Video(R.string.pick_video), All(R.string.pick_album);
-
-        private final int title;
-
-        PickType(int title) {
-            this.title = title;
-        }
-
-        public int getTitle() {
-            return title;
-        }
-
-    }
-
+    private static final int FEED_VIDEO_DURATION_MAX = 15; //单位秒
+    private static final int FEED_VIDEO_DURATION_MIN = 3;
     private PickType pickType;
-
     private boolean multiMode = false;    //图片选择模式
-
     private int selectMax = Constants.MAX_SELECT_NUM;         //最大选择图片数量
     private int selectMin = 0;
     private boolean crop = false;         //裁剪
@@ -49,13 +36,9 @@ public class ImagePickerOption implements Serializable {
     private CropImageView.Style style = CropImageView.Style.RECTANGLE; //裁剪框的形状
     private boolean checkNetwork = false;
     private boolean mixMode = false;// 是否能够混选
-    private static final int FEED_VIDEO_DURATION_MAX = 15; //单位秒
-    private static final int FEED_VIDEO_DURATION_MIN = 3;
-
     private int maxVideoDuration = FEED_VIDEO_DURATION_MAX;
     private int minVideoDuration = FEED_VIDEO_DURATION_MIN;
     private File cropCacheFolder;
-
     private String mTitle;
 
     public boolean isMultiMode() {
@@ -80,13 +63,13 @@ public class ImagePickerOption implements Serializable {
         return selectMax;
     }
 
-    public int getSelectMin() {
-        return selectMin;
-    }
-
     public ImagePickerOption setSelectMax(int selectMax) {
         this.selectMax = selectMax;
         return this;
+    }
+
+    public int getSelectMin() {
+        return selectMin;
     }
 
     public ImagePickerOption setSelectMin(int selectMin) {
@@ -138,13 +121,13 @@ public class ImagePickerOption implements Serializable {
         return showCamera;
     }
 
-    public boolean isShowSection() {
-        return section;
-    }
-
     public ImagePickerOption setShowCamera(boolean showCamera) {
         this.showCamera = showCamera;
         return this;
+    }
+
+    public boolean isShowSection() {
+        return section;
     }
 
     public boolean videoOnly() {
@@ -230,13 +213,13 @@ public class ImagePickerOption implements Serializable {
         return this;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
     public ImagePickerOption setTitle(String title) {
         mTitle = title;
         return this;
-    }
-
-    public String getTitle() {
-        return mTitle;
     }
 
     public PickType getPickType() {
@@ -252,5 +235,20 @@ public class ImagePickerOption implements Serializable {
         if (videoOnly() && isMultiMode()) {
             throw new IllegalArgumentException("can't set Video with MultiMode");
         }
+    }
+
+    public enum PickType {
+        Image(R.string.pick_image), Video(R.string.pick_video), All(R.string.pick_album);
+
+        private final int title;
+
+        PickType(int title) {
+            this.title = title;
+        }
+
+        public int getTitle() {
+            return title;
+        }
+
     }
 }

@@ -12,28 +12,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.listener.OnResultCallbackListener;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.ImageEntity;
 import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.common.utils.glideImg.GlideEngine;
-import com.pro.maluli.module.myself.myAccount.appeal.adapter.AppealAdapter;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -47,6 +31,7 @@ public class EditGongGaoDialog extends DialogFragment implements View.OnClickLis
     private TextView toAppealTv, inputMaxTv;
     private EditText editGgEt;
     private String desc;
+    private OnEditPersonListener onEditPersonListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -108,14 +93,8 @@ public class EditGongGaoDialog extends DialogFragment implements View.OnClickLis
         return mDetailDialog;
     }
 
-    private OnEditPersonListener onEditPersonListener;
-
     public void setOnConfirmListener(OnEditPersonListener onEditPersonListener) {
         this.onEditPersonListener = onEditPersonListener;
-    }
-
-    public interface OnEditPersonListener {
-        void subNumber(String type);
     }
 
     @Override
@@ -123,7 +102,7 @@ public class EditGongGaoDialog extends DialogFragment implements View.OnClickLis
         switch (v.getId()) {
             case R.id.toAppealTv:
                 if (TextUtils.isEmpty(editGgEt.getText().toString().trim())) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请输入公告内容");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请输入公告内容");
                     return;
                 }
                 if (onEditPersonListener != null) {
@@ -143,5 +122,9 @@ public class EditGongGaoDialog extends DialogFragment implements View.OnClickLis
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnEditPersonListener {
+        void subNumber(String type);
     }
 }

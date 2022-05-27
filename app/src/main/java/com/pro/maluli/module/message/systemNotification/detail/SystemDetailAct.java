@@ -1,7 +1,6 @@
 package com.pro.maluli.module.message.systemNotification.detail;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ import com.pro.maluli.module.message.systemNotification.detail.presenter.ISystem
 import com.pro.maluli.module.message.systemNotification.detail.presenter.SystemDetailPresenter;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * @author Kingsley

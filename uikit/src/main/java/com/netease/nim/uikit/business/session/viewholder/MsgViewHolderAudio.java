@@ -29,18 +29,60 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
  */
 public class MsgViewHolderAudio extends MsgViewHolderBase {
 
-    public MsgViewHolderAudio(BaseMultiItemFetchLoadAdapter adapter) {
-        super(adapter);
-    }
-
     public static final int CLICK_TO_PLAY_AUDIO_DELAY = 500;
-
     private TextView durationLabel;
     private View containerView;
     private View unreadIndicator;
     private ImageView animationView;
-
     private MessageAudioControl audioControl;
+    private MessageAudioControl.AudioControlListener onPlayListener = new MessageAudioControl.AudioControlListener() {
+
+        @Override
+        public void updatePlayingProgress(Playable playable, long curPosition) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            if (curPosition > playable.getDuration()) {
+                return;
+            }
+            updateTime(curPosition);
+        }
+
+        @Override
+        public void onAudioControllerReady(Playable playable) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            play();
+        }
+
+        @Override
+        public void onEndPlay(Playable playable) {
+            if (!isTheSame(message.getUuid())) {
+                return;
+            }
+
+            updateTime(playable.getDuration());
+
+            stop();
+        }
+
+
+    };
+
+    public MsgViewHolderAudio(BaseMultiItemFetchLoadAdapter adapter) {
+        super(adapter);
+    }
+
+    public static int getAudioMaxEdge() {
+        return (int) (0.6 * ScreenUtil.screenMin);
+    }
+
+    public static int getAudioMinEdge() {
+        return (int) (0.1875 * ScreenUtil.screenMin);
+    }
 
     @Override
     public int getContentResId() {
@@ -164,14 +206,6 @@ public class MsgViewHolderAudio extends MsgViewHolderBase {
         }
     }
 
-    public static int getAudioMaxEdge() {
-        return (int) (0.6 * ScreenUtil.screenMin);
-    }
-
-    public static int getAudioMinEdge() {
-        return (int) (0.1875 * ScreenUtil.screenMin);
-    }
-
     private void setAudioBubbleWidth(long milliseconds) {
         long seconds = TimeUtil.getSecondsByMilliseconds(milliseconds);
 
@@ -221,43 +255,6 @@ public class MsgViewHolderAudio extends MsgViewHolderBase {
             return false;
         }
     }
-
-    private MessageAudioControl.AudioControlListener onPlayListener = new MessageAudioControl.AudioControlListener() {
-
-        @Override
-        public void updatePlayingProgress(Playable playable, long curPosition) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            if (curPosition > playable.getDuration()) {
-                return;
-            }
-            updateTime(curPosition);
-        }
-
-        @Override
-        public void onAudioControllerReady(Playable playable) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            play();
-        }
-
-        @Override
-        public void onEndPlay(Playable playable) {
-            if (!isTheSame(message.getUuid())) {
-                return;
-            }
-
-            updateTime(playable.getDuration());
-
-            stop();
-        }
-
-
-    };
 
     private void play() {
         if (animationView.getBackground() instanceof AnimationDrawable) {

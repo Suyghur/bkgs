@@ -8,6 +8,17 @@ import android.os.Parcelable;
  */
 
 public class FillModeCustomItem implements Parcelable {
+    public static final Parcelable.Creator<FillModeCustomItem> CREATOR = new Parcelable.Creator<FillModeCustomItem>() {
+        @Override
+        public FillModeCustomItem createFromParcel(Parcel source) {
+            return new FillModeCustomItem(source);
+        }
+
+        @Override
+        public FillModeCustomItem[] newArray(int size) {
+            return new FillModeCustomItem[size];
+        }
+    };
     private final float scale;
     private final float rotate;
     private final float translateX;
@@ -22,6 +33,15 @@ public class FillModeCustomItem implements Parcelable {
         this.translateY = translateY;
         this.videoWidth = videoWidth;
         this.videoHeight = videoHeight;
+    }
+
+    protected FillModeCustomItem(Parcel in) {
+        this.scale = in.readFloat();
+        this.rotate = in.readFloat();
+        this.translateX = in.readFloat();
+        this.translateY = in.readFloat();
+        this.videoWidth = in.readFloat();
+        this.videoHeight = in.readFloat();
     }
 
     public float getScale() {
@@ -62,25 +82,4 @@ public class FillModeCustomItem implements Parcelable {
         dest.writeFloat(this.videoWidth);
         dest.writeFloat(this.videoHeight);
     }
-
-    protected FillModeCustomItem(Parcel in) {
-        this.scale = in.readFloat();
-        this.rotate = in.readFloat();
-        this.translateX = in.readFloat();
-        this.translateY = in.readFloat();
-        this.videoWidth = in.readFloat();
-        this.videoHeight = in.readFloat();
-    }
-
-    public static final Parcelable.Creator<FillModeCustomItem> CREATOR = new Parcelable.Creator<FillModeCustomItem>() {
-        @Override
-        public FillModeCustomItem createFromParcel(Parcel source) {
-            return new FillModeCustomItem(source);
-        }
-
-        @Override
-        public FillModeCustomItem[] newArray(int size) {
-            return new FillModeCustomItem[size];
-        }
-    };
 }

@@ -2,13 +2,11 @@ package com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.adap
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
@@ -40,17 +38,17 @@ public class SearchRewardAdapter extends BaseQuickAdapter<RewardDetailEntity.Lis
 
         if (!TextUtils.isEmpty(entity.getGift_title())) {
             giftTypeTv.setText(entity.getGift_title());
-            giftTypeTv.setPadding((int) context.getResources().getDimension(R.dimen.dp_6),0,0,0);
-        }else {
-            giftTypeTv.setPadding(0,0,0,0);
+            giftTypeTv.setPadding((int) context.getResources().getDimension(R.dimen.dp_6), 0, 0, 0);
+        } else {
+            giftTypeTv.setPadding(0, 0, 0, 0);
         }
         TextView textView = baseViewHolder.getView(R.id.numberBkTv);
-        textView.setPadding(0,0,0,0);
+        textView.setPadding(0, 0, 0, 0);
         if (entity.getType() == 0) {//0-收入 1-提现
-            baseViewHolder.setText(R.id.numberBkTv, "+"+entity.getMoney() );
+            baseViewHolder.setText(R.id.numberBkTv, "+" + entity.getMoney());
             textView.setTextColor(context.getResources().getColor(R.color.c_8e1d77));
         } else {
-            baseViewHolder.setText(R.id.numberBkTv, "-"+entity.getMoney());
+            baseViewHolder.setText(R.id.numberBkTv, "-" + entity.getMoney());
             textView.setTextColor(context.getResources().getColor(R.color.c_ffa743));
         }
     }

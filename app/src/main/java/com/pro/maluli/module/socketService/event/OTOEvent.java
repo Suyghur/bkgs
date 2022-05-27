@@ -2,11 +2,11 @@ package com.pro.maluli.module.socketService.event;
 
 public class OTOEvent {
 
+    private OnTwoOneStartEntity entity;//总数居
+    private int msg_id;//数据类型  msg_id 0-推送失败 1-正常推送 2-设定时间 3-加时 4-开始 5-结束
+
     public OTOEvent() {
     }
-    private OnTwoOneStartEntity entity;//总数居
-
-    private int msg_id;//数据类型  msg_id 0-推送失败 1-正常推送 2-设定时间 3-加时 4-开始 5-结束
 
     public int getMsg_id() {
         return msg_id;

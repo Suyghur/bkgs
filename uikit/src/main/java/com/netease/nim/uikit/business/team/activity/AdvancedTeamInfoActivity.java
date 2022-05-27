@@ -72,29 +72,18 @@ import java.util.List;
 public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, TeamMemberAdapter.AddMemberCallback,
         TeamMemberHolder.TeamMemberHolderEventListener {
 
+    public static final String RESULT_EXTRA_REASON = "RESULT_EXTRA_REASON";
+    public static final String RESULT_EXTRA_REASON_QUIT = "RESULT_EXTRA_REASON_QUIT";
+    public static final String RESULT_EXTRA_REASON_DISMISS = "RESULT_EXTRA_REASON_DISMISS";
     private static final int REQUEST_CODE_TRANSFER = 101;
-
     private static final int REQUEST_CODE_MEMBER_LIST = 102;
-
     private static final int REQUEST_CODE_CONTACT_SELECT = 103;
-
     private static final int REQUEST_PICK_ICON = 104;
-
     private static final int REQUEST_CODE_TRANSFER_AND_QUIT = 105;
-
     private static final int ICON_TIME_OUT = 30000;
-
     // constant
     private static final String TAG = "RegularTeamInfoActivity";
-
     private static final String EXTRA_ID = "EXTRA_ID";
-
-    public static final String RESULT_EXTRA_REASON = "RESULT_EXTRA_REASON";
-
-    public static final String RESULT_EXTRA_REASON_QUIT = "RESULT_EXTRA_REASON_QUIT";
-
-    public static final String RESULT_EXTRA_REASON_DISMISS = "RESULT_EXTRA_REASON_DISMISS";
-
     private static final int TEAM_MEMBERS_SHOW_LIMIT = 5;
 
     // data
@@ -198,6 +187,71 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
     private boolean isSelfAdmin = false;
 
     private boolean isSelfManager = false;
+    TeamMemberDataChangedObserver teamMemberObserver = new TeamMemberDataChangedObserver() {
+
+        @Override
+        public void onUpdateTeamMember(List<TeamMember> m) {
+            List<TeamMember> filterList = new ArrayList<>();
+            for (TeamMember member : m) {
+                if (TextUtils.equals(member.getTid(), teamId)) {
+                    filterList.add(member);
+                }
+            }
+            if (filterList.isEmpty()) {
+                return;
+            }
+            for (TeamMember mm : filterList) {
+                for (TeamMember member : members) {
+                    if (mm.getAccount().equals(member.getAccount())) {
+                        members.set(members.indexOf(member), mm);
+                        break;
+                    }
+                }
+            }
+            addTeamMembers(filterList, false);
+        }
+
+        @Override
+        public void onRemoveTeamMember(List<TeamMember> members) {
+            List<String> filter = new ArrayList<>();
+            for (TeamMember member : members) {
+                if (TextUtils.equals(member.getTid(), teamId)) {
+                    filter.add(member.getAccount());
+                }
+            }
+            if (filter.size() > 0) {
+                removeMembers(filter);
+            }
+        }
+    };
+    TeamDataChangedObserver teamDataObserver = new TeamDataChangedObserver() {
+
+        @Override
+        public void onUpdateTeams(List<Team> teams) {
+            for (Team team : teams) {
+                if (team.getId().equals(teamId)) {
+                    updateTeamInfo(team);
+                    updateTeamMemberDataSource();
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public void onRemoveTeam(Team team) {
+            if (team.getId().equals(teamId)) {
+                AdvancedTeamInfoActivity.this.team = team;
+                finish();
+            }
+        }
+    };
+    private Runnable outimeTask = new Runnable() {
+
+        @Override
+        public void run() {
+            cancelUpload(R.string.team_update_failed);
+        }
+    };
 
     public static void start(Context context, String tid) {
         Intent intent = new Intent();
@@ -346,7 +400,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             @Override
             public void onClick(View v) {
                 AdvancedTeamNicknameActivity.start(AdvancedTeamInfoActivity.this,
-                                                   teamBusinessCard.getText().toString());
+                        teamBusinessCard.getText().toString());
             }
         });
         layoutTeamMember = findViewById(R.id.team_memeber_layout);
@@ -360,7 +414,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             @Override
             public void onClick(View v) {
                 AdvancedTeamMemberActivity.startActivityForResult(AdvancedTeamInfoActivity.this, teamId,
-                                                                  REQUEST_CODE_MEMBER_LIST);
+                        REQUEST_CODE_MEMBER_LIST);
             }
         });
         layoutTeamName = findViewById(R.id.team_name_layout);
@@ -370,7 +424,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             @Override
             public void onClick(View v) {
                 TeamPropertySettingActivity.start(AdvancedTeamInfoActivity.this, teamId, TeamFieldEnum.Name,
-                                                  team.getName());
+                        team.getName());
             }
         });
         layoutTeamIntroduce = findViewById(R.id.team_introduce_layout);
@@ -382,7 +436,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             @Override
             public void onClick(View v) {
                 TeamPropertySettingActivity.start(AdvancedTeamInfoActivity.this, teamId, TeamFieldEnum.Introduce,
-                                                  team.getIntroduce());
+                        team.getIntroduce());
             }
         });
         layoutTeamAnnouncement = findViewById(R.id.team_announcement_layout);
@@ -405,7 +459,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             @Override
             public void onClick(View v) {
                 TeamPropertySettingActivity.start(AdvancedTeamInfoActivity.this, teamId, TeamFieldEnum.Extension,
-                                                  team.getExtension());
+                        team.getExtension());
             }
         });
         // 群消息提醒设置
@@ -445,7 +499,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
         });
     }
 
-
     /**
      * 禁言所有普通群成员初始化
      */
@@ -462,7 +515,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             }
         });
     }
-
 
     /**
      * 身份验证布局初始化
@@ -514,7 +566,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             }
         });
     }
-
 
     /**
      * 被邀请人身份验证布局初始化
@@ -730,6 +781,9 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             announcementEdit.setHint(R.string.without_content);
         }
     }
+    /**
+     * ************************** 群信息变更监听 **************************
+     */
 
     /**
      * 更新成员信息
@@ -760,7 +814,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             if (count < limit) {
                 identity = getIdentity(account);
                 dataSource.add(new TeamMemberAdapter.TeamMemberItem(TeamMemberAdapter.TeamMemberItemTag.NORMAL, teamId,
-                                                                    account, identity));
+                        account, identity));
             }
             count++;
         }
@@ -796,8 +850,9 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
         });
     }
     /**
-     * ************************** 群信息变更监听 **************************
+     * ******************************* Action *********************************
      */
+
     /**
      * 注册群信息更新监听
      *
@@ -808,69 +863,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
         NimUIKit.getTeamChangedObservable().registerTeamDataChangedObserver(teamDataObserver, register);
         registerUserInfoChangedObserver(register);
     }
-
-    TeamMemberDataChangedObserver teamMemberObserver = new TeamMemberDataChangedObserver() {
-
-        @Override
-        public void onUpdateTeamMember(List<TeamMember> m) {
-            List<TeamMember> filterList = new ArrayList<>();
-            for (TeamMember member : m) {
-                if (TextUtils.equals(member.getTid(), teamId)) {
-                    filterList.add(member);
-                }
-            }
-            if (filterList.isEmpty()) {
-                return;
-            }
-            for (TeamMember mm : filterList) {
-                for (TeamMember member : members) {
-                    if (mm.getAccount().equals(member.getAccount())) {
-                        members.set(members.indexOf(member), mm);
-                        break;
-                    }
-                }
-            }
-            addTeamMembers(filterList, false);
-        }
-
-        @Override
-        public void onRemoveTeamMember(List<TeamMember> members) {
-            List<String> filter = new ArrayList<>();
-            for (TeamMember member : members) {
-                if (TextUtils.equals(member.getTid(), teamId)) {
-                    filter.add(member.getAccount());
-                }
-            }
-            if (filter.size() > 0) {
-                removeMembers(filter);
-            }
-        }
-    };
-
-    TeamDataChangedObserver teamDataObserver = new TeamDataChangedObserver() {
-
-        @Override
-        public void onUpdateTeams(List<Team> teams) {
-            for (Team team : teams) {
-                if (team.getId().equals(teamId)) {
-                    updateTeamInfo(team);
-                    updateTeamMemberDataSource();
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onRemoveTeam(Team team) {
-            if (team.getId().equals(teamId)) {
-                AdvancedTeamInfoActivity.this.team = team;
-                finish();
-            }
-        }
-    };
-    /**
-     * ******************************* Action *********************************
-     */
 
     /**
      * 从联系人选择器发起邀请成员
@@ -1003,6 +995,9 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             }
         });
     }
+    /**
+     * ******************************* Event *********************************
+     */
 
     /**
      * 群主解散群(直接退出)
@@ -1031,9 +1026,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             }
         });
     }
-    /**
-     * ******************************* Event *********************************
-     */
+
     /**
      * 显示菜单
      */
@@ -1070,47 +1063,46 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
         dialog.show();
     }
 
-
     private void showTeamNotifyMenu() {
         if (teamNotifyDialog == null) {
             List<String> btnNames = TeamHelper.createNotifyMenuStrings();
             int type = team.getMessageNotifyType().getValue();
             teamNotifyDialog = new MenuDialog(AdvancedTeamInfoActivity.this, btnNames, type, 3,
-                                              new MenuDialog.MenuDialogOnButtonClickListener() {
+                    new MenuDialog.MenuDialogOnButtonClickListener() {
 
-                                                  @Override
-                                                  public void onButtonClick(String name) {
-                                                      teamNotifyDialog.dismiss();
-                                                      TeamMessageNotifyTypeEnum type = TeamHelper.getNotifyType(name);
-                                                      if (type == null) {
-                                                          return;
-                                                      }
-                                                      DialogMaker.showProgressDialog(AdvancedTeamInfoActivity.this,
-                                                                                     getString(R.string.empty), true);
-                                                      NIMClient.getService(TeamService.class).muteTeam(teamId, type)
-                                                               .setCallback(new RequestCallback<Void>() {
+                        @Override
+                        public void onButtonClick(String name) {
+                            teamNotifyDialog.dismiss();
+                            TeamMessageNotifyTypeEnum type = TeamHelper.getNotifyType(name);
+                            if (type == null) {
+                                return;
+                            }
+                            DialogMaker.showProgressDialog(AdvancedTeamInfoActivity.this,
+                                    getString(R.string.empty), true);
+                            NIMClient.getService(TeamService.class).muteTeam(teamId, type)
+                                    .setCallback(new RequestCallback<Void>() {
 
-                                                                   @Override
-                                                                   public void onSuccess(Void param) {
-                                                                       DialogMaker.dismissProgressDialog();
-                                                                       updateTeamNotifyText(
-                                                                               team.getMessageNotifyType());
-                                                                   }
+                                        @Override
+                                        public void onSuccess(Void param) {
+                                            DialogMaker.dismissProgressDialog();
+                                            updateTeamNotifyText(
+                                                    team.getMessageNotifyType());
+                                        }
 
-                                                                   @Override
-                                                                   public void onFailed(int code) {
-                                                                       DialogMaker.dismissProgressDialog();
-                                                                       teamNotifyDialog.undoLastSelect();
-                                                                       Log.d(TAG, "muteTeam failed code:" + code);
-                                                                   }
+                                        @Override
+                                        public void onFailed(int code) {
+                                            DialogMaker.dismissProgressDialog();
+                                            teamNotifyDialog.undoLastSelect();
+                                            Log.d(TAG, "muteTeam failed code:" + code);
+                                        }
 
-                                                                   @Override
-                                                                   public void onException(Throwable exception) {
-                                                                       DialogMaker.dismissProgressDialog();
-                                                                   }
-                                                               });
-                                                  }
-                                              });
+                                        @Override
+                                        public void onException(Throwable exception) {
+                                            DialogMaker.dismissProgressDialog();
+                                        }
+                                    });
+                        }
+                    });
         }
         teamNotifyDialog.show();
     }
@@ -1144,21 +1136,21 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             List<String> btnNames = TeamHelper.createAuthenMenuStrings();
             int type = team.getVerifyType().getValue();
             authenDialog = new MenuDialog(AdvancedTeamInfoActivity.this, btnNames, type, 3,
-                                          new MenuDialog.MenuDialogOnButtonClickListener() {
+                    new MenuDialog.MenuDialogOnButtonClickListener() {
 
-                                              @Override
-                                              public void onButtonClick(String name) {
-                                                  authenDialog.dismiss();
-                                                  if (name.equals(getString(R.string.cancel))) {
-                                                      return; // 取消不处理
-                                                  }
-                                                  VerifyTypeEnum type = TeamHelper.getVerifyTypeEnum(name);
-                                                  if (type != null) {
-                                                      setAuthen(type);
-                                                  }
+                        @Override
+                        public void onButtonClick(String name) {
+                            authenDialog.dismiss();
+                            if (name.equals(getString(R.string.cancel))) {
+                                return; // 取消不处理
+                            }
+                            VerifyTypeEnum type = TeamHelper.getVerifyTypeEnum(name);
+                            if (type != null) {
+                                setAuthen(type);
+                            }
 
-                                              }
-                                          });
+                        }
+                    });
         }
         authenDialog.show();
     }
@@ -1171,20 +1163,20 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             List<String> btnNames = TeamHelper.createInviteMenuStrings();
             int type = team.getTeamInviteMode().getValue();
             inviteDialog = new MenuDialog(AdvancedTeamInfoActivity.this, btnNames, type, 2,
-                                          new MenuDialog.MenuDialogOnButtonClickListener() {
+                    new MenuDialog.MenuDialogOnButtonClickListener() {
 
-                                              @Override
-                                              public void onButtonClick(String name) {
-                                                  inviteDialog.dismiss();
-                                                  if (name.equals(getString(R.string.cancel))) {
-                                                      return; // 取消不处理
-                                                  }
-                                                  TeamInviteModeEnum type = TeamHelper.getInviteModeEnum(name);
-                                                  if (type != null) {
-                                                      updateInviteMode(type);
-                                                  }
-                                              }
-                                          });
+                        @Override
+                        public void onButtonClick(String name) {
+                            inviteDialog.dismiss();
+                            if (name.equals(getString(R.string.cancel))) {
+                                return; // 取消不处理
+                            }
+                            TeamInviteModeEnum type = TeamHelper.getInviteModeEnum(name);
+                            if (type != null) {
+                                updateInviteMode(type);
+                            }
+                        }
+                    });
         }
         inviteDialog.show();
     }
@@ -1195,20 +1187,20 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             List<String> btnNames = TeamHelper.createTeamInfoUpdateMenuStrings();
             int type = team.getTeamUpdateMode().getValue();
             teamInfoUpdateDialog = new MenuDialog(AdvancedTeamInfoActivity.this, btnNames, type, 2,
-                                                  new MenuDialog.MenuDialogOnButtonClickListener() {
+                    new MenuDialog.MenuDialogOnButtonClickListener() {
 
-                                                      @Override
-                                                      public void onButtonClick(String name) {
-                                                          teamInfoUpdateDialog.dismiss();
-                                                          if (name.equals(getString(R.string.cancel))) {
-                                                              return; // 取消不处理
-                                                          }
-                                                          TeamUpdateModeEnum type = TeamHelper.getUpdateModeEnum(name);
-                                                          if (type != null) {
-                                                              updateInfoUpdateMode(type);
-                                                          }
-                                                      }
-                                                  });
+                        @Override
+                        public void onButtonClick(String name) {
+                            teamInfoUpdateDialog.dismiss();
+                            if (name.equals(getString(R.string.cancel))) {
+                                return; // 取消不处理
+                            }
+                            TeamUpdateModeEnum type = TeamHelper.getUpdateModeEnum(name);
+                            if (type != null) {
+                                updateInfoUpdateMode(type);
+                            }
+                        }
+                    });
         }
         teamInfoUpdateDialog.show();
     }
@@ -1219,25 +1211,24 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             List<String> btnNames = TeamHelper.createTeamInviteeAuthenMenuStrings();
             int type = team.getTeamBeInviteMode().getValue();
             teamInviteeDialog = new MenuDialog(AdvancedTeamInfoActivity.this, btnNames, type, 2,
-                                               new MenuDialog.MenuDialogOnButtonClickListener() {
+                    new MenuDialog.MenuDialogOnButtonClickListener() {
 
-                                                   @Override
-                                                   public void onButtonClick(String name) {
-                                                       teamInviteeDialog.dismiss();
-                                                       if (name.equals(getString(R.string.cancel))) {
-                                                           return; // 取消不处理
-                                                       }
-                                                       TeamBeInviteModeEnum type = TeamHelper.getBeInvitedModeEnum(
-                                                               name);
-                                                       if (type != null) {
-                                                           updateBeInvitedMode(type);
-                                                       }
-                                                   }
-                                               });
+                        @Override
+                        public void onButtonClick(String name) {
+                            teamInviteeDialog.dismiss();
+                            if (name.equals(getString(R.string.cancel))) {
+                                return; // 取消不处理
+                            }
+                            TeamBeInviteModeEnum type = TeamHelper.getBeInvitedModeEnum(
+                                    name);
+                            if (type != null) {
+                                updateBeInvitedMode(type);
+                            }
+                        }
+                    });
         }
         teamInviteeDialog.show();
     }
-
 
     /**
      * 设置我的名片
@@ -1260,7 +1251,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                     public void onFailed(int code) {
                         DialogMaker.dismissProgressDialog();
                         ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                              String.format(getString(R.string.update_failed), code));
+                                String.format(getString(R.string.update_failed), code));
                     }
 
                     @Override
@@ -1339,7 +1330,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                         authenDialog.undoLastSelect(); // 撤销选择
                         DialogMaker.dismissProgressDialog();
                         ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                              String.format(getString(R.string.update_failed), code));
+                                String.format(getString(R.string.update_failed), code));
                     }
 
                     @Override
@@ -1394,7 +1385,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                         inviteDialog.undoLastSelect(); // 撤销选择
                         DialogMaker.dismissProgressDialog();
                         ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                              String.format(getString(R.string.update_failed), code));
+                                String.format(getString(R.string.update_failed), code));
                     }
 
                     @Override
@@ -1435,7 +1426,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                         teamInfoUpdateDialog.undoLastSelect(); // 撤销选择
                         DialogMaker.dismissProgressDialog();
                         ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                              String.format(getString(R.string.update_failed), code));
+                                String.format(getString(R.string.update_failed), code));
                     }
 
                     @Override
@@ -1476,7 +1467,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                         teamInviteeDialog.undoLastSelect(); // 撤销选择
                         DialogMaker.dismissProgressDialog();
                         ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                              String.format(getString(R.string.update_failed), code));
+                                String.format(getString(R.string.update_failed), code));
                     }
 
                     @Override
@@ -1628,7 +1619,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
                                 public void onFailed(int code) {
                                     DialogMaker.dismissProgressDialog();
                                     ToastHelper.showToast(AdvancedTeamInfoActivity.this,
-                                                          String.format(getString(R.string.update_failed), code));
+                                            String.format(getString(R.string.update_failed), code));
                                 }
 
                                 @Override
@@ -1651,14 +1642,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             onUpdateDone();
         }
     }
-
-    private Runnable outimeTask = new Runnable() {
-
-        @Override
-        public void run() {
-            cancelUpload(R.string.team_update_failed);
-        }
-    };
 
     private void onUpdateDone() {
         uploadFuture = null;

@@ -15,16 +15,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
-import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.addImg.EditImgAct;
-import com.pro.maluli.module.myself.myAccount.appeal.presenter.IAppealContraction;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,11 +44,7 @@ public class AnchorImageFrag extends BaseMvpFragment<IAnchorImageContraction.Vie
     @BindView(R.id.nodataView)
     View nodataView;
     List<AnchorInfoEntity.PictureBean> pictureBeans = new ArrayList<>();
-
-    @Override
-    public AnchorImagePresenter initPresenter() {
-        return new AnchorImagePresenter(getActivity());
-    }
+    List<AnchorInfoEntity.PictureBean> pictureBean = new ArrayList<>();
 
     public static Fragment newInstance(String anchorID) {
         AnchorImageFrag treasureGameFrag = new AnchorImageFrag();
@@ -60,6 +52,11 @@ public class AnchorImageFrag extends BaseMvpFragment<IAnchorImageContraction.Vie
         bundle.putString("ISANCHOR", anchorID);
         treasureGameFrag.setArguments(bundle);
         return treasureGameFrag;
+    }
+
+    @Override
+    public AnchorImagePresenter initPresenter() {
+        return new AnchorImagePresenter(getActivity());
     }
 
     @Override
@@ -109,12 +106,10 @@ public class AnchorImageFrag extends BaseMvpFragment<IAnchorImageContraction.Vie
 
     }
 
-    List<AnchorInfoEntity.PictureBean> pictureBean=new ArrayList<>();
-
     @Override
     public void setAnchorInfo(AnchorInfoEntity data) {
         pictureBean.clear();
-        pictureBean .addAll( data.getPicture());
+        pictureBean.addAll(data.getPicture());
         if (data.getIs_edit() == 1) {
             editImg.setVisibility(View.VISIBLE);
         } else {

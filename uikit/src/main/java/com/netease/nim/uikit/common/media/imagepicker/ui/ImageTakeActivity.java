@@ -1,5 +1,8 @@
 package com.netease.nim.uikit.common.media.imagepicker.ui;
 
+import static com.netease.nim.uikit.common.media.imagepicker.Constants.REQUEST_CODE_CROP;
+import static com.netease.nim.uikit.common.media.imagepicker.Constants.REQUEST_PERMISSION_CAMERA;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
@@ -21,9 +25,6 @@ import com.netease.nim.uikit.common.media.model.GenericFileProvider;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
 
 import java.io.File;
-
-import static com.netease.nim.uikit.common.media.imagepicker.Constants.REQUEST_CODE_CROP;
-import static com.netease.nim.uikit.common.media.imagepicker.Constants.REQUEST_PERMISSION_CAMERA;
 
 
 /**
@@ -42,7 +43,7 @@ public class ImageTakeActivity extends ImageBaseActivity {
         if (savedInstanceState == null) {
             if (!(checkPermission(Manifest.permission.CAMERA))) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
-                                                  REQUEST_PERMISSION_CAMERA);
+                        REQUEST_PERMISSION_CAMERA);
             } else {
                 takePicture();
             }
@@ -90,7 +91,7 @@ public class ImageTakeActivity extends ImageBaseActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     //Android N必须使用这种方式
                     Uri photoURI = GenericFileProvider.getUriForFile(this, getApplicationContext().getPackageName() +
-                                                                           ".fileprovider", takeImageFile);
+                            ".fileprovider", takeImageFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 } else {
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(takeImageFile));

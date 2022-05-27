@@ -2,24 +2,17 @@ package com.pro.maluli.common.view.slideView;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.customview.widget.ViewDragHelper;
 
-import com.pro.maluli.R;
-import com.pro.maluli.common.view.clearScreenlayout.ClearScreenLayout;
-import com.tencent.bugly.proguard.U;
-
 import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * name: SlideLayout
@@ -30,51 +23,41 @@ import java.util.List;
  */
 public class SlideLayout extends FrameLayout implements View.OnTouchListener {
 
+    /**
+     * 表示当前滑动闲置
+     */
+    public static final int STATE_IDLE = ViewDragHelper.STATE_IDLE;
     private static final String TAG = SlideLayout.class.getName();
-
     /**
      * 滑动速率，每秒dip
      */
     private static final int SLIDING_VELOCITY = 600;
-
+    boolean isCanListener;
     /**
      * debug
      */
     private boolean isDebug = true;
 
     /**
+     * 菜单视图
+     */
+//    private View mMenuView;
+    /**
      * 最底层视图
      */
     private View mBaseView;
-
     /**
      * 清屏视图
      */
     private View mDrawerView;
-
-    /**
-     * 菜单视图
-     */
-//    private View mMenuView;
-
     /**
      *
      */
     private Context mContext;
-
     /**
      * 抽屉视图是否可见
      */
     private boolean flag = true;
-
-    public int getStateCoutorm() {
-        return stateCoutorm;
-    }
-
-    public void setStateCoutorm(int stateCoutorm) {
-        this.stateCoutorm = stateCoutorm;
-    }
-
     /**
      * 页面状态 1:侧边栏可见，清屏可见 2:侧边栏不可见 清屏可见 3:侧边栏和清屏界面不可见，初始状态是都可见
      */
@@ -121,17 +104,7 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
      */
     private ISlideListener slideListener;
     private int openStatus;
-
-    /**
-     * 设置进度监听
-     *
-     * @param
-     * @return void
-     */
-    public void setSlideListener(ISlideListener slideListener) {
-        this.slideListener = slideListener;
-    }
-
+    private DragListener mListeners;
     /**
      * ViewDragHelper回调接口
      */
@@ -167,10 +140,10 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
 //            float offset = (left - (getWidth() - childWidth))* 1.0f / childWidth;
             float offset = (float) left / childWidth;
 //            if (slideListener != null) {
-                if (offset == 1.0 || offset == 0.0) {
+            if (offset == 1.0 || offset == 0.0) {
 //                    slideListener.onPositionChanged(offset);
-                    openStatus = (int) offset;
-                }
+                openStatus = (int) offset;
+            }
 //            }
             if (changedView == mDrawerView) {
                 mLeftMenuOnScrren = offset;
@@ -233,7 +206,52 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
             updateDragState(state, mHelper.getCapturedView());
         }
     };
-    private DragListener mListeners;
+    /**
+     * 按下点X坐标
+     */
+    private float startX;
+    /**
+     * 以下4个参数用来记录按下点的初始坐标和结束坐标
+     */
+    private float firstDownX = 0;
+    private float lastDownX = 0;
+    private float firstDownY = 0;
+    private float lastDownY = 0;
+
+    public SlideLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.mContext = context;
+
+
+        final float density = getResources().getDisplayMetrics().density;
+        final float minVel = SLIDING_VELOCITY * density;
+
+        mHelper = ViewDragHelper.create(this, 1.0f, cb);
+        mHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_RIGHT);
+        mHelper.setMinVelocity(minVel);
+
+        setDrawerLeftEdgeSize(context, mHelper, 1.0f);
+        setOnTouchListener(this);
+
+    }
+
+    public int getStateCoutorm() {
+        return stateCoutorm;
+    }
+
+    public void setStateCoutorm(int stateCoutorm) {
+        this.stateCoutorm = stateCoutorm;
+    }
+
+    /**
+     * 设置进度监听
+     *
+     * @param
+     * @return void
+     */
+    public void setSlideListener(ISlideListener slideListener) {
+        this.slideListener = slideListener;
+    }
 
     public DragListener getmListeners() {
         return mListeners;
@@ -242,29 +260,6 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
     public void setmListeners(DragListener mListeners) {
         this.mListeners = mListeners;
     }
-
-    public interface DragListener {
-
-        /**
-         * 当遮罩层被拖动至屏幕外时调用
-         *
-         * @param dragView 被拖动的View
-         */
-        void onDragToOut(@NonNull View dragView);
-
-        /**
-         * 当遮罩层被拖动至屏幕内时调用
-         *
-         * @param dragView 被拖动的View
-         */
-        void onDragToIn(@NonNull View dragView);
-
-    }
-
-    /**
-     * 表示当前滑动闲置
-     */
-    public static final int STATE_IDLE = ViewDragHelper.STATE_IDLE;
 
     public void updateDragState(int activeState, View activeView) {
 //        if (isCanListener){
@@ -298,23 +293,6 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
             // 发出通知。从列表的末尾开始，这样，如果监听器由于被调用而将自己删除，则不会干扰我们的迭代
             mListeners.onDragToIn(dragView);
         }
-    }
-
-    public SlideLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.mContext = context;
-
-
-        final float density = getResources().getDisplayMetrics().density;
-        final float minVel = SLIDING_VELOCITY * density;
-
-        mHelper = ViewDragHelper.create(this, 1.0f, cb);
-        mHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_RIGHT);
-        mHelper.setMinVelocity(minVel);
-
-        setDrawerLeftEdgeSize(context, mHelper, 1.0f);
-        setOnTouchListener(this);
-
     }
 
     /**
@@ -376,11 +354,6 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
 //        }
         controlView = mDrawerView;
     }
-
-    /**
-     * 按下点X坐标
-     */
-    private float startX;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -467,7 +440,40 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
         }
     }
 
-    boolean isCanListener;
+//    /**
+//     * 关闭drawer，预留
+//     * @param:
+//     * @return: void
+//     */
+//    public void closeSlideMenu() {
+//        View menuView = mMenuView;
+//        mSlideViewOnScreen = 1.0f;
+//        newLeft = getWidth();
+//        mHelper.smoothSlideViewTo(menuView, getWidth(), menuView.getTop());
+//        invalidate();
+//    }
+
+//    /**
+//     * 打开drawer，预留
+//     * @param:
+//     * @return: void
+//     */
+//    public void openSlideMenu() {
+//        View menuView = mMenuView;
+//        mSlideViewOnScreen = 0.0f;
+//        newLeft = getWidth() - mMenuView.getWidth();
+//        mHelper.smoothSlideViewTo(menuView, getWidth() - mMenuView.getWidth(), menuView.getTop());
+//        invalidate();
+//    }
+
+    /**
+     * 判断侧滑菜单是否打开
+     * @param:
+     * @return:
+     */
+//    public boolean isSlideMenuOpen() {
+//        return mMenuView.getLeft() >= getWidth() - mMenuView.getWidth() && mMenuView.getLeft() <  getWidth() - mMenuView.getWidth() / 2;
+//    }
 
     /**
      * 恢复清屏内容
@@ -515,49 +521,6 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
         mHelper.smoothSlideViewTo(menuView, 0, menuView.getTop());
         invalidate();
     }
-
-//    /**
-//     * 关闭drawer，预留
-//     * @param:
-//     * @return: void
-//     */
-//    public void closeSlideMenu() {
-//        View menuView = mMenuView;
-//        mSlideViewOnScreen = 1.0f;
-//        newLeft = getWidth();
-//        mHelper.smoothSlideViewTo(menuView, getWidth(), menuView.getTop());
-//        invalidate();
-//    }
-
-//    /**
-//     * 打开drawer，预留
-//     * @param:
-//     * @return: void
-//     */
-//    public void openSlideMenu() {
-//        View menuView = mMenuView;
-//        mSlideViewOnScreen = 0.0f;
-//        newLeft = getWidth() - mMenuView.getWidth();
-//        mHelper.smoothSlideViewTo(menuView, getWidth() - mMenuView.getWidth(), menuView.getTop());
-//        invalidate();
-//    }
-
-    /**
-     * 判断侧滑菜单是否打开
-     * @param:
-     * @return:
-     */
-//    public boolean isSlideMenuOpen() {
-//        return mMenuView.getLeft() >= getWidth() - mMenuView.getWidth() && mMenuView.getLeft() <  getWidth() - mMenuView.getWidth() / 2;
-//    }
-
-    /**
-     * 以下4个参数用来记录按下点的初始坐标和结束坐标
-     */
-    private float firstDownX = 0;
-    private float lastDownX = 0;
-    private float firstDownY = 0;
-    private float lastDownY = 0;
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -610,5 +573,23 @@ public class SlideLayout extends FrameLayout implements View.OnTouchListener {
     private void log(String msg) {
         if (isDebug)
             Log.e(TAG, "===================================> " + msg);
+    }
+
+    public interface DragListener {
+
+        /**
+         * 当遮罩层被拖动至屏幕外时调用
+         *
+         * @param dragView 被拖动的View
+         */
+        void onDragToOut(@NonNull View dragView);
+
+        /**
+         * 当遮罩层被拖动至屏幕内时调用
+         *
+         * @param dragView 被拖动的View
+         */
+        void onDragToIn(@NonNull View dragView);
+
     }
 }

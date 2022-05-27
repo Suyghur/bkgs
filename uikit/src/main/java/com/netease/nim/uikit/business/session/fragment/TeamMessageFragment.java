@@ -1,9 +1,8 @@
 package com.netease.nim.uikit.business.session.fragment;
 
-import com.netease.nim.uikit.common.ToastHelper;
-
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
 

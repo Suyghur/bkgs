@@ -106,6 +106,7 @@ public class VideoEntity implements Serializable {
             this.file_type = file_type;
         }
     }
+
     public static class AnchorBean implements Serializable {
         private int is_live;
         private int is_report;
@@ -276,6 +277,7 @@ public class VideoEntity implements Serializable {
         private int comment_num;
         private int download_num;
         private int share_num;
+        private String share_url;
 
         public int getVideo_id() {
             return video_id;
@@ -355,6 +357,14 @@ public class VideoEntity implements Serializable {
 
         public void setShare_num(int share_num) {
             this.share_num = share_num;
+        }
+
+        public String getShare_url() {
+            return share_url;
+        }
+
+        public void setShare_url(String share_url) {
+            this.share_url = share_url;
         }
     }
 }

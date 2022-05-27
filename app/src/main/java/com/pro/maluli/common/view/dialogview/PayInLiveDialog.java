@@ -24,6 +24,7 @@ public class PayInLiveDialog extends DialogFragment implements View.OnClickListe
     private TextView hasPayMoneyTv, nowPayTv;
     private LinearLayout dismissLL;
     private String needPay;
+    private OnLiveTypeListener onLiveTypeListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,14 +49,8 @@ public class PayInLiveDialog extends DialogFragment implements View.OnClickListe
         return mDetailDialog;
     }
 
-    private OnLiveTypeListener onLiveTypeListener;
-
     public void setOnTimeListener(OnLiveTypeListener onLiveTypeListener) {
         this.onLiveTypeListener = onLiveTypeListener;
-    }
-
-    public interface OnLiveTypeListener {
-        void confirmSuccess();
     }
 
     @Override
@@ -74,5 +69,9 @@ public class PayInLiveDialog extends DialogFragment implements View.OnClickListe
 
                 break;
         }
+    }
+
+    public interface OnLiveTypeListener {
+        void confirmSuccess();
     }
 }

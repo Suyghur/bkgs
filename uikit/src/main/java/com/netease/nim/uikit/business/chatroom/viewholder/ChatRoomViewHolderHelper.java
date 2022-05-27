@@ -34,7 +34,7 @@ public class ChatRoomViewHolderHelper {
         } else {
             ChatRoomProvider provider = NimUIKitImpl.getChatRoomProvider();
             ChatRoomMember member = provider.getChatRoomMember(message.getSessionId(),
-                                                               message.getFromAccount());
+                    message.getFromAccount());
             if (member == null) {
                 // fetch
                 provider.fetchMember(message.getSessionId(), message.getFromAccount(), null);
@@ -57,7 +57,7 @@ public class ChatRoomViewHolderHelper {
         } else {
             ChatRoomProvider provider = NimUIKitImpl.getChatRoomProvider();
             ChatRoomMember member = provider.getChatRoomMember(message.getSessionId(),
-                                                               message.getFromAccount());
+                    message.getFromAccount());
             if (member == null) {
                 // fetch
                 provider.fetchMember(message.getSessionId(), message.getFromAccount(), null);

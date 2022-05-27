@@ -2,9 +2,9 @@ package com.pro.maluli.module.main.base.presenter;
 
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
+import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
-import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.entity.MessageListEntity;
 import com.pro.maluli.common.entity.ProtocolDetailEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;

@@ -24,9 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
-import com.netease.nim.uikit.common.ToastHelper;
-
 import com.alibaba.fastjson.JSONObject;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -38,6 +35,8 @@ import com.netease.nim.uikit.business.session.emoji.EmoticonPickerView;
 import com.netease.nim.uikit.business.session.emoji.IEmoticonSelectedListener;
 import com.netease.nim.uikit.business.session.emoji.MoonUtil;
 import com.netease.nim.uikit.business.session.module.Container;
+import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.string.StringUtil;
@@ -86,14 +85,11 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
     protected TextView replyInfoTv;// 被回复消息信息
     protected View replyLayout;
     protected ImageView cancelReplyImg;// 取消回复消息的按钮
-
-    private SessionCustomization customization;
-
     // 表情
     protected EmoticonPickerView emoticonPickerView;  // 贴图表情控件
-
     // 语音
     protected AudioRecorder audioMessageHelper;
+    private SessionCustomization customization;
     private Chronometer time;
     private TextView timerTip;
     private LinearLayout timerTipContainer;
@@ -117,6 +113,48 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
     private TextWatcher aitTextWatcher;
 
     private IMMessage replyMessage = null;
+    private Runnable showEmojiRunnable = new Runnable() {
+        @Override
+        public void run() {
+            emoticonPickerView.setVisibility(View.VISIBLE);
+        }
+    };
+    private Runnable showMoreFuncRunnable = new Runnable() {
+        @Override
+        public void run() {
+            actionPanelBottomLayout.setVisibility(View.VISIBLE);
+        }
+    };
+    private Runnable showTextRunnable = new Runnable() {
+        @Override
+        public void run() {
+            showInputMethod(messageEditText);
+        }
+    };
+    /**
+     * ************************* 键盘布局切换 *******************************
+     */
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (v == switchToTextButtonInInputBar) {
+                switchToTextLayout(true);// 显示文本发送的布局
+            } else if (v == sendMessageButtonInInputBar) {
+                onTextMessageSendButtonPressed();
+            } else if (v == switchToAudioButtonInInputBar) {
+                switchToAudioLayout();
+            } else if (v == moreFuntionButtonInInputBar) {
+                toggleActionPanelLayout();
+            } else if (v == emojiButtonInInputBar) {
+                toggleEmojiLayout();
+            } else if (v == cancelReplyImg) {
+                cancelReply();
+            }
+        }
+    };
+    private Runnable hideAllInputLayoutRunnable;
 
     public InputPanel(Container container, View view, List<BaseAction> actions, boolean isTextAudioSwitchShow) {
         this.container = container;
@@ -129,6 +167,19 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
 
     public InputPanel(Container container, View view, List<BaseAction> actions) {
         this(container, view, actions, true);
+    }
+
+    // 上滑取消录音判断
+    private static boolean isCancelled(View view, MotionEvent event) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
+                || event.getRawY() < location[1] - 40) {
+            return true;
+        }
+
+        return false;
     }
 
     public void onPause() {
@@ -307,7 +358,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
         });
     }
 
-
     /**
      * 发送“正在输入”通知
      */
@@ -337,30 +387,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
             NIMClient.getService(MsgService.class).sendCustomNotification(command);
         }
     }
-
-    /**
-     * ************************* 键盘布局切换 *******************************
-     */
-
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (v == switchToTextButtonInInputBar) {
-                switchToTextLayout(true);// 显示文本发送的布局
-            } else if (v == sendMessageButtonInInputBar) {
-                onTextMessageSendButtonPressed();
-            } else if (v == switchToAudioButtonInInputBar) {
-                switchToAudioLayout();
-            } else if (v == moreFuntionButtonInInputBar) {
-                toggleActionPanelLayout();
-            } else if (v == emojiButtonInInputBar) {
-                toggleEmojiLayout();
-            } else if (v == cancelReplyImg) {
-                cancelReply();
-            }
-        }
-    };
 
     // 点击edittext，切换键盘和更多布局
     private void switchToTextLayout(boolean needShowInput) {
@@ -535,27 +561,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
         actionPanelBottomLayoutHasSetup = true;
     }
 
-    private Runnable showEmojiRunnable = new Runnable() {
-        @Override
-        public void run() {
-            emoticonPickerView.setVisibility(View.VISIBLE);
-        }
-    };
-
-    private Runnable showMoreFuncRunnable = new Runnable() {
-        @Override
-        public void run() {
-            actionPanelBottomLayout.setVisibility(View.VISIBLE);
-        }
-    };
-
-    private Runnable showTextRunnable = new Runnable() {
-        @Override
-        public void run() {
-            showInputMethod(messageEditText);
-        }
-    };
-
     private void restoreText(boolean clearText) {
         if (clearText) {
             messageEditText.setText("");
@@ -600,8 +605,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
         }
     }
 
-    private Runnable hideAllInputLayoutRunnable;
-
     @Override
     public void onStickerSelected(String category, String item) {
         Log.i("InputPanel", "onStickerSelected, category =" + category + ", sticker =" + item);
@@ -638,7 +641,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
     public int getEditSelectionStart() {
         return messageEditText.getSelectionStart();
     }
-
 
     /**
      * 隐藏所有输入布局
@@ -683,19 +685,6 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
                 return false;
             }
         });
-    }
-
-    // 上滑取消录音判断
-    private static boolean isCancelled(View view, MotionEvent event) {
-        int[] location = new int[2];
-        view.getLocationOnScreen(location);
-
-        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
-                || event.getRawY() < location[1] - 40) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

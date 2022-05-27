@@ -9,10 +9,10 @@
         android:layout_marginRight="@dimen/dp_size_58"
         android:background="@drawable/nim_bg_message_tip"
         android:gravity="center"
-        android:text="sdasadfad"
         android:paddingLeft="7dip"
         android:paddingRight="7dip"
+        android:text="sdasadfad"
         android:textColor="#ffffff"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
 </merge>

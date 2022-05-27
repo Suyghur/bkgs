@@ -12,6 +12,7 @@ import com.netease.nim.uikit.common.util.sys.TimeUtil;
 
 
 /**
+ *
  */
 
 public class VideoItemViewHolder extends ItemViewHolder {

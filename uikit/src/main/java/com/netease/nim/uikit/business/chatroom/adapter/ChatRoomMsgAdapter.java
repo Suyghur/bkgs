@@ -2,6 +2,8 @@ package com.netease.nim.uikit.business.chatroom.adapter;
 
 import android.view.View;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomMsgViewHolderBase;
 import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomMsgViewHolderFactory;
@@ -18,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 /**
  * Created by huangjun on 2016/12/21.
  */
@@ -35,6 +35,12 @@ public class ChatRoomMsgAdapter extends
     private String messageId;
 
     private Container container;
+    /**
+     * *********************** 时间显示处理 ***********************
+     */
+
+    private Set<String> timedItems; // 需要显示消息时间的消息ID
+    private IMMessage lastShowTimeItem; // 用于消息时间显示,判断和上条消息间的时间间隔
 
     public ChatRoomMsgAdapter(RecyclerView recyclerView, List<ChatRoomMessage> data,
                               Container container) {
@@ -64,12 +70,12 @@ public class ChatRoomMsgAdapter extends
         return item.getUuid();
     }
 
-    public void setEventListener(ViewHolderEventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
     public ViewHolderEventListener getEventListener() {
         return eventListener;
+    }
+
+    public void setEventListener(ViewHolderEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public void deleteItem(IMMessage message, boolean isRelocateTime) {
@@ -100,14 +106,6 @@ public class ChatRoomMsgAdapter extends
     public void putProgress(IMMessage message, float progress) {
         progresses.put(message.getUuid(), progress);
     }
-
-    /**
-     * *********************** 时间显示处理 ***********************
-     */
-
-    private Set<String> timedItems; // 需要显示消息时间的消息ID
-
-    private IMMessage lastShowTimeItem; // 用于消息时间显示,判断和上条消息间的时间间隔
 
     public boolean needShowTime(IMMessage message) {
         return timedItems.contains(message.getUuid());
@@ -183,7 +181,7 @@ public class ChatRoomMsgAdapter extends
                 if (hideTimeAlways(nextItem)) {
                     setShowTime(nextItem, false);
                     if (lastShowTimeItem != null && lastShowTimeItem != null &&
-                        lastShowTimeItem.isTheSame(messageItem)) {
+                            lastShowTimeItem.isTheSame(messageItem)) {
                         lastShowTimeItem = null;
                         for (int i = getDataSize() - 1; i >= 0; i--) {
                             IMMessage item = getItem(i);
@@ -196,7 +194,7 @@ public class ChatRoomMsgAdapter extends
                 } else {
                     setShowTime(nextItem, true);
                     if (lastShowTimeItem == null ||
-                        (lastShowTimeItem != null && lastShowTimeItem.isTheSame(messageItem))) {
+                            (lastShowTimeItem != null && lastShowTimeItem.isTheSame(messageItem))) {
                         lastShowTimeItem = nextItem;
                     }
                 }
@@ -218,6 +216,18 @@ public class ChatRoomMsgAdapter extends
         }
     }
 
+    public String getUuid() {
+        return messageId;
+    }
+
+    public void setUuid(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public Container getContainer() {
+        return container;
+    }
+
     public interface ViewHolderEventListener {
 
         // 长按事件响应处理
@@ -228,17 +238,5 @@ public class ChatRoomMsgAdapter extends
 
         // viewholder footer按钮点击，如机器人继续会话
         void onFooterClick(ChatRoomMsgViewHolderBase holderBase, IMMessage message);
-    }
-
-    public void setUuid(String messageId) {
-        this.messageId = messageId;
-    }
-
-    public String getUuid() {
-        return messageId;
-    }
-
-    public Container getContainer() {
-        return container;
     }
 }

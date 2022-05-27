@@ -15,9 +15,9 @@ public class GetCodePresenter extends BasePresenter<IGetCodeContraction.View> im
     }
 
     @Override
-    public void getVerifiCationCode(String mobile,String codetype) {
+    public void getVerifiCationCode(String mobile, String codetype) {
         showLoading(mContext);
-        add(mService.getVerificationCode(mobile,codetype)
+        add(mService.getVerificationCode(mobile, codetype)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

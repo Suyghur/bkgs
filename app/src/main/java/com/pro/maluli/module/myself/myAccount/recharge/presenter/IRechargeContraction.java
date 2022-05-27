@@ -2,9 +2,9 @@ package com.pro.maluli.module.myself.myAccount.recharge.presenter;
 
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
-import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.entity.PayInfoEntity;
 import com.pro.maluli.common.entity.RechargeEntity;
+import com.pro.maluli.common.entity.WechatpayEntity;
 
 public interface IRechargeContraction extends BaseView {
     interface View extends BaseView {
@@ -15,6 +15,7 @@ public interface IRechargeContraction extends BaseView {
 
         void setWeChatOrderInfo(WechatpayEntity data);
     }
+
     interface Presenter extends IClear {
         void getUserInfo();
 

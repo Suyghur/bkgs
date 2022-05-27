@@ -7,8 +7,8 @@
     android:orientation="vertical">
 
     <com.makeramen.roundedimageview.RoundedImageView
-        android:layout_width="match_parent"
         android:id="@+id/APPriv"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomLl"
         android:layout_marginHorizontal="@dimen/dp_30"

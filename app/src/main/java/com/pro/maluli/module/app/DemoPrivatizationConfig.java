@@ -51,7 +51,7 @@ public class DemoPrivatizationConfig {
 
     private static final String KEY_NOS_ACCELERATE_HOST = "nos_accelerate_host";
 
-    private static final String KEY_NOS_ACCELERATE_HOST_LIST  = "nos_accelerate_host_list";
+    private static final String KEY_NOS_ACCELERATE_HOST_LIST = "nos_accelerate_host_list";
 
     private static final String KEY_NOS_CDN_ENABLE = "nos_cdn_enable";
 

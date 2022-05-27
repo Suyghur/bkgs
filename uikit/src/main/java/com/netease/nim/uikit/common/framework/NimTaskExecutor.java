@@ -14,33 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class NimTaskExecutor implements Executor {
 
-    private final static int QUEUE_INIT_CAPACITY = 20;
-
     public static final Executor IMMEDIATE_EXECUTOR = new Executor() {
         @Override
         public void execute(Runnable command) {
             command.run();
         }
     };
-
-    public static class Config {
-        public int core;
-        public int max;
-        public int timeout;
-        public boolean allowCoreTimeOut;
-
-        public Config(int core, int max, int timeout, boolean allowCoreTimeOut) {
-            this.core = core;
-            this.max = max;
-            this.timeout = timeout;
-            this.allowCoreTimeOut = allowCoreTimeOut;
-        }
-    }
-
+    private final static int QUEUE_INIT_CAPACITY = 20;
     private final String name;
-
     private final Config config;
-
     private ExecutorService service;
 
     public NimTaskExecutor(String name, Config config) {
@@ -54,6 +36,17 @@ public class NimTaskExecutor implements Executor {
         if (startup) {
             startup();
         }
+    }
+
+    private static final void allowCoreThreadTimeOut(ThreadPoolExecutor service, boolean value) {
+        if (Build.VERSION.SDK_INT >= 9) {
+            allowCoreThreadTimeOut9(service, value);
+        }
+    }
+
+    @TargetApi(9)
+    private static final void allowCoreThreadTimeOut9(ThreadPoolExecutor service, boolean value) {
+        service.allowCoreThreadTimeOut(value);
     }
 
     public void startup() {
@@ -122,6 +115,20 @@ public class NimTaskExecutor implements Executor {
         return service;
     }
 
+    public static class Config {
+        public int core;
+        public int max;
+        public int timeout;
+        public boolean allowCoreTimeOut;
+
+        public Config(int core, int max, int timeout, boolean allowCoreTimeOut) {
+            this.core = core;
+            this.max = max;
+            this.timeout = timeout;
+            this.allowCoreTimeOut = allowCoreTimeOut;
+        }
+    }
+
     static class TaskThreadFactory implements ThreadFactory {
         private final ThreadGroup mThreadGroup;
 
@@ -150,16 +157,5 @@ public class NimTaskExecutor implements Executor {
 
             return t;
         }
-    }
-
-    private static final void allowCoreThreadTimeOut(ThreadPoolExecutor service, boolean value) {
-        if (Build.VERSION.SDK_INT >= 9) {
-            allowCoreThreadTimeOut9(service, value);
-        }
-    }
-
-    @TargetApi(9)
-    private static final void allowCoreThreadTimeOut9(ThreadPoolExecutor service, boolean value) {
-        service.allowCoreThreadTimeOut(value);
     }
 }

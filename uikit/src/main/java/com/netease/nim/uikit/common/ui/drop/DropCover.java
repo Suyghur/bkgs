@@ -26,18 +26,13 @@ import java.util.List;
  */
 public class DropCover extends View {
 
-    public interface IDropCompletedListener {
-        void onCompleted(Object id, boolean explosive);
-    }
-
-    private final float MAX_RATIO = 0.8f; // 固定圆最大的缩放比例
-    private final float MIN_RATIO = 0.4f; // 固定圆最小的缩放比例
-    private final int DISTANCE_LIMIT = ScreenUtil.dip2px(70); // 固定圆和移动圆的圆心之间的断裂距离
     private static final int SHAKE_ANIM_DURATION = 150; // 抖动动画执行的时间
     private static final int EXPLOSION_ANIM_FRAME_INTERVAL = 50; // 爆裂动画帧之间的间隔
     private static final int CLICK_DISTANCE_LIMIT = ScreenUtil.dip2px(15); // 不超过此距离视为点击
     private static final int CLICK_DELTA_TIME_LIMIT = 10; // 超过此时长需要爆裂
-
+    private final float MAX_RATIO = 0.8f; // 固定圆最大的缩放比例
+    private final float MIN_RATIO = 0.4f; // 固定圆最小的缩放比例
+    private final int DISTANCE_LIMIT = ScreenUtil.dip2px(70); // 固定圆和移动圆的圆心之间的断裂距离
     private View dropFake;
     private Path path = new Path();
     private int radius; // 移动圆形半径
@@ -52,7 +47,6 @@ public class DropCover extends View {
     private boolean click = true; // 是否在点击的距离限制范围内，超过了clickDistance则不属于点击
     private long clickTime; // 记录down的时间点
     private String text; // 显示的数字
-
     private Bitmap[] explosionAnim; // 爆裂动画位图
     private boolean explosionAnimStart; // 爆裂动画是否开始
     private int explosionAnimNumber; // 爆裂动画帧的个数
@@ -60,7 +54,6 @@ public class DropCover extends View {
     private int explosionAnimWidth; // 爆裂动画帧的宽度
     private int explosionAnimHeight; // 爆裂动画帧的高度
     private List<IDropCompletedListener> dropCompletedListeners; // 拖拽动作完成，回调
-
     /**
      * ************************* 绘制 *************************
      */
@@ -359,5 +352,9 @@ public class DropCover extends View {
 
         // free
         DropManager.getInstance().setTouchable(true);
+    }
+
+    public interface IDropCompletedListener {
+        void onCompleted(Object id, boolean explosive);
     }
 }

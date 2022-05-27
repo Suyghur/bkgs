@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topClickRl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    android:id="@+id/topClickRl"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -13,16 +13,16 @@
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
-            android:layout_above="@id/viewLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/viewLine"
             android:layout_marginTop="@dimen/dp_size_15" />
 
         <LinearLayout
-            android:layout_above="@id/viewLine"
             android:id="@+id/ll_dot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/viewLine"
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal" />

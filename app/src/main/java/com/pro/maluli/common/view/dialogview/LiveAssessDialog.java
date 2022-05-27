@@ -1,13 +1,18 @@
 package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
@@ -32,17 +37,19 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
     private RelativeLayout cancelTv;
     private String[] ability = new String[]{"非常差", "差", "一般", "强", "非常强"};
     private String[] service = new String[]{"非常差", "差", "一般", "满意", "非常满意"};
+    private OnBaseTipsListener onFreezeTipsListener;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDetailDialog = new Dialog(getActivity(), R.style.dialog_bottom);
+//        mDetailDialog = super.onCreateDialog(savedInstanceState);
         mDetailDialog.setContentView(R.layout.dialog_assess_message);
-        mDetailDialog.setCanceledOnTouchOutside(false);
         abilityStar = mDetailDialog.findViewById(R.id.abilityStar);
         serviceStar = mDetailDialog.findViewById(R.id.serviceStar);
         //设置背景为透明
-        mDetailDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(), android.R.color.transparent));
-        int dialogHeight = ToolUtils.getContextRect(getActivity());
+        mDetailDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(), android.R.color.transparent));
+        int dialogHeight = ToolUtils.getContextRect(requireActivity());
         //设置弹窗大小为会屏
         mDetailDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight == 0 ? ViewGroup.LayoutParams.MATCH_PARENT : dialogHeight);
         int flag = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -69,8 +76,13 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
                 canOnclick();
             }
         });
-
-        mDetailDialog.setCancelable(true);
+        mDetailDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return keyCode == KeyEvent.KEYCODE_BACK;
+            }
+        });
+        mDetailDialog.setCancelable(false);
         comfirmTv.setOnClickListener(this);
         dismissLL.setOnClickListener(this);
         cancelTv.setOnClickListener(this);
@@ -87,14 +99,8 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
         }
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm(int abilityNumber, int srviceNumber);//0去申述，2去绑定
     }
 
     private void dismissView() {
@@ -102,7 +108,6 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
             mDetailDialog.dismiss();
         }
     }
-
 
     @Override
     public void onClick(View v) {
@@ -126,5 +131,10 @@ public class LiveAssessDialog extends DialogFragment implements View.OnClickList
                 dismissView();
                 break;
         }
+    }
+
+
+    public interface OnBaseTipsListener {
+        void comfirm(int abilityNumber, int srviceNumber);//0去申述，2去绑定
     }
 }

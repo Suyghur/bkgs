@@ -74,15 +74,6 @@ public class FileUtil {
         return type;
     }
 
-    public enum SizeUnit {
-        Byte,
-        KB,
-        MB,
-        GB,
-        TB,
-        Auto,
-    }
-
     public static String formatFileSize(long size) {
         return formatFileSize(size, SizeUnit.Auto);
     }
@@ -124,5 +115,14 @@ public class FileUtil {
             default:
                 return size + "B";
         }
+    }
+
+    public enum SizeUnit {
+        Byte,
+        KB,
+        MB,
+        GB,
+        TB,
+        Auto,
     }
 }

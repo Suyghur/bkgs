@@ -4,17 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.netease.nim.uikit.R;
 
 /**
-
+ *
  */
 
 public class GLVideoActivity extends AppCompatActivity implements GLVideoModel.ModelObserver {
     protected static final String KEY_Duration = "duration";
+    private GLMediaPlayerManager mediaPlayerManager = new GLMediaPlayerManager();
+    private GLVideoPlaceholder placeholder;
+    private GLVideoModel videoModel;
 
     public static void start(Context context, Uri uri, long duration) {
         Intent intent = new Intent(context, GLVideoActivity.class);
@@ -26,12 +30,6 @@ public class GLVideoActivity extends AppCompatActivity implements GLVideoModel.M
     public static void start(Context context, String url, long duration) {
         start(context, Uri.parse(url), duration);
     }
-
-    private GLMediaPlayerManager mediaPlayerManager = new GLMediaPlayerManager();
-
-    private GLVideoPlaceholder placeholder;
-
-    private GLVideoModel videoModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

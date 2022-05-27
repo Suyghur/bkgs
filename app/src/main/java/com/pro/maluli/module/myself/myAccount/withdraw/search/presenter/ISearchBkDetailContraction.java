@@ -15,6 +15,7 @@ public interface ISearchBkDetailContraction extends BaseView {
         void deleteSuccess();
 
     }
+
     interface Presenter extends IClear {
 
         void getBkDetail();

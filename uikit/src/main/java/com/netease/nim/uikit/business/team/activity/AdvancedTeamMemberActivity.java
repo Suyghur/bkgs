@@ -37,10 +37,9 @@ import java.util.List;
 public class AdvancedTeamMemberActivity extends UI implements TAdapterDelegate,
         TeamMemberAdapter.RemoveMemberCallback, TeamMemberAdapter.AddMemberCallback, TeamMemberHolder.TeamMemberHolderEventListener {
 
+    public static final String EXTRA_DATA = "EXTRA_DATA";
     // constant
     private static final String EXTRA_ID = "EXTRA_ID";
-    public static final String EXTRA_DATA = "EXTRA_DATA";
-
     // data source
     private String teamId;
     private List<TeamMember> members;

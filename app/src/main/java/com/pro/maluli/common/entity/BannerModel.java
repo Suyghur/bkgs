@@ -7,7 +7,6 @@ public class BannerModel {
     private int urlType;//
 
 
-
     public String getBannerName() {
         return bannerName;
     }

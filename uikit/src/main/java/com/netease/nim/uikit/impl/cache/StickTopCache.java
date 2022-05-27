@@ -33,7 +33,7 @@ public class StickTopCache {
         if (CommonUtil.isEmpty(infoList)) {
             return;
         }
-        for (StickTopSessionInfo info: infoList) {
+        for (StickTopSessionInfo info : infoList) {
             if (info == null) {
                 continue;
             }

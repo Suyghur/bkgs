@@ -29,12 +29,9 @@ import java.util.Map;
  * 特殊布局需求可以自定义布局.
  */
 public class EasyAlertDialog extends Dialog {
-    private Context context;
-
     public static final int NO_TEXT_COLOR = -99999999;
-
     public static final int NO_TEXT_SIZE = -99999999;
-
+    private Context context;
     private View titleView;
 
     private ImageButton titleBtn;

@@ -7,8 +7,9 @@ public interface IGetCodeContraction extends BaseView {
     interface View extends BaseView {
         void getCodeSuccess();
     }
+
     interface Presenter extends IClear {
-        void getVerifiCationCode(String mobile,String codetype);
+        void getVerifiCationCode(String mobile, String codetype);
 
     }
 }

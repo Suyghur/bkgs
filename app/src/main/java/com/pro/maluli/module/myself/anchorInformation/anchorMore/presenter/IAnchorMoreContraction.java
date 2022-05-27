@@ -9,8 +9,8 @@ public interface IAnchorMoreContraction extends BaseView {
 
         void removeBlackSuccess();
     }
-    interface Presenter extends IClear {
 
+    interface Presenter extends IClear {
 
 
         void addBlack(String accid);

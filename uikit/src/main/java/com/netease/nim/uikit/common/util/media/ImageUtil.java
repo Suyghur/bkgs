@@ -29,18 +29,6 @@ import java.io.InputStream;
 
 public class ImageUtil {
 
-    public static class ImageSize {
-
-        public int width = 0;
-
-        public int height = 0;
-
-        public ImageSize(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-    }
-
     public final static float MAX_IMAGE_RATIO = 5f;
 
     public static Bitmap getDefaultBitmapWhenGetFail() {
@@ -74,13 +62,13 @@ public class ImageUtil {
         try {
             localExifInterface = new ExifInterface(path);
             int rotateInt = localExifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                                               ExifInterface.ORIENTATION_NORMAL);
+                    ExifInterface.ORIENTATION_NORMAL);
             float rotate = getImageRotate(rotateInt);
             if (rotate != 0) {
                 Matrix matrix = new Matrix();
                 matrix.postRotate(rotate);
                 Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(),
-                                                       matrix, false);
+                        matrix, false);
                 if (dstBitmap == null) {
                     return srcBitmap;
                 } else {
@@ -125,7 +113,7 @@ public class ImageUtil {
             return null;
         }
         boolean result = scaleThumbnail(imageFile, thumbFile, MsgViewHolderThumbBase.getImageMaxEdge(),
-                                        MsgViewHolderThumbBase.getImageMinEdge(), CompressFormat.JPEG, 60);
+                MsgViewHolderThumbBase.getImageMinEdge(), CompressFormat.JPEG, 60);
         if (!result) {
             AttachmentStore.delete(thumbFilePath);
             return null;
@@ -146,13 +134,13 @@ public class ImageUtil {
             // 旋转
             ExifInterface localExifInterface = new ExifInterface(srcFile.getAbsolutePath());
             int rotateInt = localExifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                                               ExifInterface.ORIENTATION_NORMAL);
+                    ExifInterface.ORIENTATION_NORMAL);
             float rotate = getImageRotate(rotateInt);
             Matrix matrix = new Matrix();
             matrix.postRotate(rotate);
             float inSampleSize = 1;
             if (srcBitmap.getWidth() >= dstMinWH && srcBitmap.getHeight() <= dstMaxWH &&
-                srcBitmap.getWidth() >= dstMinWH && srcBitmap.getHeight() <= dstMaxWH) {
+                    srcBitmap.getWidth() >= dstMinWH && srcBitmap.getHeight() <= dstMaxWH) {
                 //如果第一轮拿到的srcBitmap尺寸都符合要求，不需要再做缩放
             } else {
                 if (srcBitmap.getWidth() != size.width || srcBitmap.getHeight() != size.height) {
@@ -272,7 +260,7 @@ public class ImageUtil {
 
     private static String getTempFilePath(String extension) {
         return StorageUtil.getWritePath(NimUIKit.getContext(), "temp_image_" + StringUtil.get36UUID() + "." + extension,
-                                        StorageType.TYPE_TEMP);
+                StorageType.TYPE_TEMP);
     }
 
     /**
@@ -306,12 +294,12 @@ public class ImageUtil {
                 // 旋转
                 ExifInterface localExifInterface = new ExifInterface(srcFile.getAbsolutePath());
                 int rotateInt = localExifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                                                   ExifInterface.ORIENTATION_NORMAL);
+                        ExifInterface.ORIENTATION_NORMAL);
                 rotate = getImageRotate(rotateInt);
             }
             Bitmap dstBitmap;
             float scale = (float) Math.sqrt(((float) dstMaxWH * (float) dstMaxWH) /
-                                            ((float) srcBitmap.getWidth() * (float) srcBitmap.getHeight()));
+                    ((float) srcBitmap.getWidth() * (float) srcBitmap.getHeight()));
             if (rotate == 0f && scale >= 1) {
                 dstBitmap = srcBitmap;
             } else {
@@ -324,7 +312,7 @@ public class ImageUtil {
                         matrix.postScale(scale, scale);
                     }
                     dstBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(),
-                                                    matrix, true);
+                            matrix, true);
                 } catch (OutOfMemoryError e) {
                     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dstFile));
                     srcBitmap.compress(compressFormat, quality, bos);
@@ -429,5 +417,17 @@ public class ImageUtil {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
         return options;
+    }
+
+    public static class ImageSize {
+
+        public int width = 0;
+
+        public int height = 0;
+
+        public ImageSize(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
     }
 }

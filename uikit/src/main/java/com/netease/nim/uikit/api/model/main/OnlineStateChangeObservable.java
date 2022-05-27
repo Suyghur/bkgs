@@ -2,6 +2,7 @@ package com.netease.nim.uikit.api.model.main;
 
 import android.content.Context;
 import android.os.Handler;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class OnlineStateChangeObservable {
     public synchronized void registerOnlineStateChangeListeners(OnlineStateChangeObserver onlineStateChangeObserver, boolean register) {
         if (register) {
             onlineStateChangeObservers.add(onlineStateChangeObserver);
-        }else {
+        } else {
             onlineStateChangeObservers.remove(onlineStateChangeObserver);
         }
     }

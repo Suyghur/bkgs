@@ -26,7 +26,9 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
     private TextView cancelTv, comfirmTv, contentTv, titleTv;
     private String showContent, comfirm, title, cancel;
     private boolean hideCancel;//是否显示取消按钮
-    private boolean isCanfinish=true;//是否显示取消按钮
+    private boolean isCanfinish = true;//是否显示取消按钮
+    private OnBaseTipsListener onFreezeTipsListener;
+    private OnTwoBaseTipsListener onTwoBaseTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -65,9 +67,9 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
         if (!TextUtils.isEmpty(comfirm)) {
             comfirmTv.setText(comfirm);
         }
-        if (isCanfinish){
+        if (isCanfinish) {
             comfirmTv.setVisibility(View.GONE);
-        }else {
+        } else {
             comfirmTv.setVisibility(View.VISIBLE);
         }
         //更改取消按钮文字
@@ -83,20 +85,9 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-    }
-    public interface OnTwoBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-        void cancel();
-    }
-    private OnTwoBaseTipsListener onTwoBaseTipsListener;
 
     public OnTwoBaseTipsListener getOnTwoBaseTipsListener() {
         return onTwoBaseTipsListener;
@@ -113,7 +104,7 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
                 if (onFreezeTipsListener != null) {
                     onFreezeTipsListener.comfirm();
                 }
-                if (onTwoBaseTipsListener!=null){
+                if (onTwoBaseTipsListener != null) {
                     onTwoBaseTipsListener.comfirm();
                 }
                 if (mDetailDialog != null) {
@@ -126,7 +117,7 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
                 }
                 break;
             case R.id.cancelTv:
-                if (onTwoBaseTipsListener!=null){
+                if (onTwoBaseTipsListener != null) {
                     onTwoBaseTipsListener.cancel();
                 }
                 if (mDetailDialog != null) {
@@ -134,5 +125,15 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+    }
+
+    public interface OnTwoBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+
+        void cancel();
     }
 }

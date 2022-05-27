@@ -48,10 +48,10 @@
 
 
         <TextView
-            android:layout_marginTop="@dimen/dp_20"
             android:id="@+id/comfirmTv"
             android:layout_width="@dimen/dp_99"
             android:layout_height="@dimen/dp_38"
+            android:layout_marginTop="@dimen/dp_20"
             android:background="@drawable/shape_b23299_d23db3_34"
             android:gravity="center"
             android:text="去登陆"

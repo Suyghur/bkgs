@@ -1,12 +1,10 @@
 package com.pro.maluli.module.myself.myAccount.appeal;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,32 +16,23 @@ import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.constant.ACEConstant;
-import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.ImageEntity;
-import com.pro.maluli.common.entity.RechargeEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
-import com.pro.maluli.common.entity.UserInfoEntity;
-import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.StringUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
-import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.common.view.popwindow.SelectChatWindow;
 import com.pro.maluli.module.myself.myAccount.appeal.adapter.AppealAdapter;
-import com.pro.maluli.module.myself.myAccount.appeal.presenter.IAppealContraction;
 import com.pro.maluli.module.myself.myAccount.appeal.presenter.AppealPresenter;
+import com.pro.maluli.module.myself.myAccount.appeal.presenter.IAppealContraction;
 import com.yalantis.ucrop.view.OverlayView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,8 +60,8 @@ public class AppealAct extends BaseMvpActivity<IAppealContraction.View, AppealPr
     TextView feedTypeTv;
     @BindView(R.id.selectChatRl)
     LinearLayout selectChatRl;
-    private List<ImageEntity> imageEntities = new ArrayList<>();
     List<File> files = new ArrayList<>();
+    private List<ImageEntity> imageEntities = new ArrayList<>();
     private String msgType = "phone";
     private String images;
     private String liveId;

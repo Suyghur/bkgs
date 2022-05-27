@@ -9,6 +9,7 @@ public interface IBkDetailContraction extends BaseView {
 
         void setBkDetailSuccess(BKRecordEntity data);
     }
+
     interface Presenter extends IClear {
 
         void getBkDetail();

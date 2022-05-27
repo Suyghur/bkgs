@@ -7,14 +7,21 @@ import java.util.List;
 
 public class ReservationMsgAttachment extends CustomAttachment {
 
+    private static final String KEY_NAME = "reservation_message";
+    private static final String KEY_ID = "imgs";
     private String reservation_message;//  礼物名称
     private List<String> imgs;//  礼物id
 
-    private static final String KEY_NAME = "reservation_message";
-    private static final String KEY_ID = "imgs";
-
     public ReservationMsgAttachment() {
         super(CustomAttachmentType.subscribe);
+    }
+
+    public static String getKeyName() {
+        return KEY_NAME;
+    }
+
+    public static String getKeyId() {
+        return KEY_ID;
     }
 
     @Override
@@ -48,13 +55,5 @@ public class ReservationMsgAttachment extends CustomAttachment {
 
     public void setImgs(List<String> imgs) {
         this.imgs = imgs;
-    }
-
-    public static String getKeyName() {
-        return KEY_NAME;
-    }
-
-    public static String getKeyId() {
-        return KEY_ID;
     }
 }

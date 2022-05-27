@@ -4,6 +4,8 @@ import android.opengl.GLES10;
 
 public class SampleSizeUtil {
 
+    private static int textureSize = 0;
+
     public static int calculateSampleSize(String imagePath, int totalPixel) {
         int[] bound = BitmapDecoder.decodeBound(imagePath);
         return calculateSampleSize(bound[0], bound[1], totalPixel);
@@ -102,8 +104,6 @@ public class SampleSizeUtil {
 
         return sampleSize;
     }
-
-    private static int textureSize = 0;
 
     //存在第二次拿拿不到的情况，所以把拿到的数据用一个static变量保存下来
     public static final int getTextureSize() {

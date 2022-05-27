@@ -77,7 +77,7 @@ public class EyelidView extends View {
         valueAnimator.start();
     }
 
-    public void resetAnimator(){
+    public void resetAnimator() {
         valueAnimator.start();
     }
 
@@ -103,8 +103,7 @@ public class EyelidView extends View {
         }
         if (visibility == View.VISIBLE) {
             valueAnimator.resume();
-        }
-        else {
+        } else {
             valueAnimator.pause();
         }
     }
@@ -122,8 +121,7 @@ public class EyelidView extends View {
             float bottom = 0.0f;
             if (!isFromFull) {
                 bottom = progress * getHeight();
-            }
-            else {
+            } else {
                 bottom = (1.0f - progress) * getHeight();
             }
 

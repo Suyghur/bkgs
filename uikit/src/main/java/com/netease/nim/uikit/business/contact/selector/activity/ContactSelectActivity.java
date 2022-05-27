@@ -92,100 +92,6 @@ public class ContactSelectActivity extends UI implements View.OnClickListener, a
 
     // class
 
-    private static class ContactsSelectGroupStrategy extends ContactGroupStrategy {
-        public ContactsSelectGroupStrategy() {
-            add(ContactGroupStrategy.GROUP_NULL, -1, "");
-            addABC(0);
-        }
-    }
-
-    /**
-     * 联系人选择器配置可选项
-     */
-    public enum ContactSelectType {
-        BUDDY,
-        TEAM_MEMBER,
-        TEAM
-    }
-
-    public static class Option implements Serializable {
-
-        /**
-         * 联系人选择器中数据源类型：好友（默认）、群、群成员（需要设置teamId）
-         */
-        public ContactSelectType type = ContactSelectType.BUDDY;
-
-        /**
-         * 联系人选择器数据源类型为群成员时，需要设置群号
-         */
-        public String teamId = null;
-
-        /**
-         * 联系人选择器标题
-         */
-        public String title = "联系人选择器";
-
-        /**
-         * 联系人单选/多选（默认）
-         */
-        public boolean multi = true;
-
-        /**
-         * 至少选择人数
-         */
-        public int minSelectNum = 1;
-
-        /**
-         * 低于最少选择人数的提示
-         */
-        public String minSelectedTip = null;
-
-        /**
-         * 最大可选人数
-         */
-        public int maxSelectNum = 2000;
-
-        /**
-         * 超过最大可选人数的提示
-         */
-        public String maxSelectedTip = null;
-
-        /**
-         * 是否显示已选头像区域
-         */
-        public boolean showContactSelectArea = true;
-
-        /**
-         * 默认勾选（且可操作）的联系人项
-         */
-        public ArrayList<String> alreadySelectedAccounts = null;
-
-        /**
-         * 需要过滤（不显示）的联系人项
-         */
-        public ContactItemFilter itemFilter = null;
-
-        /**
-         * 需要disable(可见但不可操作）的联系人项
-         */
-        public ContactItemFilter itemDisableFilter = null;
-
-        /**
-         * 是否支持搜索
-         */
-        public boolean searchVisible = true;
-
-        /**
-         * 允许不选任何人点击确定
-         */
-        public boolean allowSelectEmpty = false;
-
-        /**
-         * 是否显示最大数目，结合maxSelectNum,与搜索位置相同
-         */
-        public boolean maxSelectNumVisible = false;
-    }
-
     public static void startActivityForResult(Context context, Option option, int requestCode) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DATA, option);
@@ -259,38 +165,6 @@ public class ContactSelectActivity extends UI implements View.OnClickListener, a
             option.minSelectedTip = "至少选择" + option.minSelectNum + "人";
         }
         setTitle(option.title);
-    }
-
-    private class ContactDataProviderEx extends ContactDataProvider {
-        private String teamId;
-
-        private boolean loadedTeamMember = false;
-
-        public ContactDataProviderEx(String teamId, int... itemTypes) {
-            super(itemTypes);
-            this.teamId = teamId;
-        }
-
-        @Override
-        public List<AbsContactItem> provide(TextQuery query) {
-            List<AbsContactItem> data = new ArrayList<>();
-            // 异步加载
-            if (!loadedTeamMember) {
-                TeamMemberDataProvider.loadTeamMemberDataAsync(teamId, new TeamMemberDataProvider.LoadTeamMemberCallback() {
-                    @Override
-                    public void onResult(boolean success) {
-                        if (success) {
-                            loadedTeamMember = true;
-                            // 列表重新加载数据
-                            loadData();
-                        }
-                    }
-                });
-            } else {
-                data = TeamMemberDataProvider.provide(query, teamId);
-            }
-            return data;
-        }
     }
 
     private void initAdapter() {
@@ -625,5 +499,131 @@ public class ContactSelectActivity extends UI implements View.OnClickListener, a
     public void finish() {
         showKeyboard(false);
         super.finish();
+    }
+
+    /**
+     * 联系人选择器配置可选项
+     */
+    public enum ContactSelectType {
+        BUDDY,
+        TEAM_MEMBER,
+        TEAM
+    }
+
+    private static class ContactsSelectGroupStrategy extends ContactGroupStrategy {
+        public ContactsSelectGroupStrategy() {
+            add(ContactGroupStrategy.GROUP_NULL, -1, "");
+            addABC(0);
+        }
+    }
+
+    public static class Option implements Serializable {
+
+        /**
+         * 联系人选择器中数据源类型：好友（默认）、群、群成员（需要设置teamId）
+         */
+        public ContactSelectType type = ContactSelectType.BUDDY;
+
+        /**
+         * 联系人选择器数据源类型为群成员时，需要设置群号
+         */
+        public String teamId = null;
+
+        /**
+         * 联系人选择器标题
+         */
+        public String title = "联系人选择器";
+
+        /**
+         * 联系人单选/多选（默认）
+         */
+        public boolean multi = true;
+
+        /**
+         * 至少选择人数
+         */
+        public int minSelectNum = 1;
+
+        /**
+         * 低于最少选择人数的提示
+         */
+        public String minSelectedTip = null;
+
+        /**
+         * 最大可选人数
+         */
+        public int maxSelectNum = 2000;
+
+        /**
+         * 超过最大可选人数的提示
+         */
+        public String maxSelectedTip = null;
+
+        /**
+         * 是否显示已选头像区域
+         */
+        public boolean showContactSelectArea = true;
+
+        /**
+         * 默认勾选（且可操作）的联系人项
+         */
+        public ArrayList<String> alreadySelectedAccounts = null;
+
+        /**
+         * 需要过滤（不显示）的联系人项
+         */
+        public ContactItemFilter itemFilter = null;
+
+        /**
+         * 需要disable(可见但不可操作）的联系人项
+         */
+        public ContactItemFilter itemDisableFilter = null;
+
+        /**
+         * 是否支持搜索
+         */
+        public boolean searchVisible = true;
+
+        /**
+         * 允许不选任何人点击确定
+         */
+        public boolean allowSelectEmpty = false;
+
+        /**
+         * 是否显示最大数目，结合maxSelectNum,与搜索位置相同
+         */
+        public boolean maxSelectNumVisible = false;
+    }
+
+    private class ContactDataProviderEx extends ContactDataProvider {
+        private String teamId;
+
+        private boolean loadedTeamMember = false;
+
+        public ContactDataProviderEx(String teamId, int... itemTypes) {
+            super(itemTypes);
+            this.teamId = teamId;
+        }
+
+        @Override
+        public List<AbsContactItem> provide(TextQuery query) {
+            List<AbsContactItem> data = new ArrayList<>();
+            // 异步加载
+            if (!loadedTeamMember) {
+                TeamMemberDataProvider.loadTeamMemberDataAsync(teamId, new TeamMemberDataProvider.LoadTeamMemberCallback() {
+                    @Override
+                    public void onResult(boolean success) {
+                        if (success) {
+                            loadedTeamMember = true;
+                            // 列表重新加载数据
+                            loadData();
+                        }
+                    }
+                });
+            } else {
+                data = TeamMemberDataProvider.provide(query, teamId);
+            }
+            return data;
+        }
     }
 }

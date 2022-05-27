@@ -9,7 +9,6 @@ import com.chad.library.adapter.base.module.UpFetchModule;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.CommentVideoEntity;
-import com.pro.maluli.common.entity.ProtocolEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +17,12 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CommentListAdapter extends BaseQuickAdapter<CommentVideoEntity.ListBean, BaseViewHolder> implements LoadMoreModule , UpFetchModule {
+public class CommentListAdapter extends BaseQuickAdapter<CommentVideoEntity.ListBean, BaseViewHolder> implements LoadMoreModule, UpFetchModule {
     private Context context;
 
     public CommentListAdapter(List<CommentVideoEntity.ListBean> data, Context context) {
         super(R.layout.item_comment, data);
-        this.context =context;
+        this.context = context;
     }
 
     @Override

@@ -17,29 +17,18 @@ import java.util.concurrent.Executors;
 
 public abstract class LogBase {
 
-    public interface LogInterceptor {
-        /**
-         * 子类实现写日志前处理逻辑，例如本地存储读写权限检查，只有返回 true 才会执行写操作
-         *
-         * @return 是否允许执行写操作
-         */
-        boolean checkValidBeforeWrite();
-    }
-
     static final int K = 1024;
     static final int M = 1024 * K;
     private static final int DEFAULT_MAX_LENGTH = 8 * M; // 每次初始化的时候检查，大于该值时缩减log文件
     private static final int DEFAULT_BASE_LENGTH = 4 * M; // 如果大于MAX_LENGTH，缩减到该值
     private static final boolean RUN_ON_SINGLE_THREAD = true; // 默认在独立线程上排队写日志，测试性能可以改成在主线程上执行
-
+    private final Executor logger = Executors.newSingleThreadExecutor();
     int maxLength;
     int baseLength;
 
     String logPath;
     private int level = Log.DEBUG;
     private LogInterceptor interceptor;
-
-    private final Executor logger = Executors.newSingleThreadExecutor();
 
     /**
      * 动态设置日志级别
@@ -221,4 +210,13 @@ public abstract class LogBase {
      * 子类实现关闭日志，清理缓存
      */
     abstract void close();
+
+    public interface LogInterceptor {
+        /**
+         * 子类实现写日志前处理逻辑，例如本地存储读写权限检查，只有返回 true 才会执行写操作
+         *
+         * @return 是否允许执行写操作
+         */
+        boolean checkValidBeforeWrite();
+    }
 }

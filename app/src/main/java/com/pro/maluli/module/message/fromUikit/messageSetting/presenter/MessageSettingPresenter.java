@@ -5,7 +5,6 @@ import android.content.Context;
 import com.netease.nim.uikit.business.session.activity.my.MessageCanScoreEntity;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;
@@ -38,7 +37,7 @@ public class MessageSettingPresenter extends BasePresenter<IMessageSettingContra
 
     @Override
     public void addBlack(String accid) {
-        add(mService.addBlack(accid,"")
+        add(mService.addBlack(accid, "")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
@@ -57,7 +56,7 @@ public class MessageSettingPresenter extends BasePresenter<IMessageSettingContra
 
     @Override
     public void removeBlack(String accid) {
-        add(mService.removeBlack(accid,"","")
+        add(mService.removeBlack(accid, "", "")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

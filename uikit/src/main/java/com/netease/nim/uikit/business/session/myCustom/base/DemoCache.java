@@ -15,6 +15,7 @@ public class DemoCache {
     private static String account;
 
     private static StatusBarNotificationConfig notificationConfig;
+    private static boolean mainTaskLaunching;
 
     public static void clear() {
         account = null;
@@ -24,8 +25,6 @@ public class DemoCache {
         return account;
     }
 
-    private static boolean mainTaskLaunching;
-
     public static void setAccount(String account) {
         DemoCache.account = account;
         NimUIKit.setAccount(account);
@@ -33,12 +32,12 @@ public class DemoCache {
 //        RTSKit.setAccount(account);
     }
 
-    public static void setNotificationConfig(StatusBarNotificationConfig notificationConfig) {
-        DemoCache.notificationConfig = notificationConfig;
-    }
-
     public static StatusBarNotificationConfig getNotificationConfig() {
         return notificationConfig;
+    }
+
+    public static void setNotificationConfig(StatusBarNotificationConfig notificationConfig) {
+        DemoCache.notificationConfig = notificationConfig;
     }
 
     public static Context getContext() {
@@ -52,13 +51,13 @@ public class DemoCache {
 //        RTSKit.setContext(context);
     }
 
+    public static boolean isMainTaskLaunching() {
+        return mainTaskLaunching;
+    }
+
     public static void setMainTaskLaunching(boolean mainTaskLaunching) {
         DemoCache.mainTaskLaunching = mainTaskLaunching;
 
 //        AVChatKit.setMainTaskLaunching(mainTaskLaunching);
-    }
-
-    public static boolean isMainTaskLaunching() {
-        return mainTaskLaunching;
     }
 }

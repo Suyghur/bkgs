@@ -8,12 +8,12 @@ public class AudioMessagePlayable implements Playable {
 
     private IMMessage message;
 
-    public IMMessage getMessage() {
-        return message;
-    }
-
     public AudioMessagePlayable(IMMessage playableMessage) {
         this.message = playableMessage;
+    }
+
+    public IMMessage getMessage() {
+        return message;
     }
 
     @Override

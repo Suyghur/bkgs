@@ -79,8 +79,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
             android:layout_toEndOf="@id/team_nickname"
-            android:drawablePadding="5dp"
             android:drawableEnd="@drawable/nim_arrow_right"
+            android:drawablePadding="5dp"
             android:gravity="end|center_vertical"
             android:hint="@string/team_nickname_none"
             android:textColor="@color/grey"
@@ -114,10 +114,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
-            android:paddingEnd="@dimen/dp_size_20"
             android:layout_toEndOf="@id/team_member_identity"
             android:gravity="end|center_vertical"
             android:hint="@string/team_nickname_none"
+            android:paddingEnd="@dimen/dp_size_20"
             android:textColor="@color/grey"
             android:textSize="@dimen/text_size_17" />
     </RelativeLayout>

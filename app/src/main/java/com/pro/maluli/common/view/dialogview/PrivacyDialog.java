@@ -9,7 +9,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +38,7 @@ public class PrivacyDialog extends DialogFragment implements View.OnClickListene
     private ProgressWebView tipsWv;
     private ImageView successImg;
     private TextView submitTv, xieyiTv;
-
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -98,14 +97,8 @@ public class PrivacyDialog extends DialogFragment implements View.OnClickListene
         return mDetailDialog;
     }
 
-    private OnFreezeTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -138,5 +131,9 @@ public class PrivacyDialog extends DialogFragment implements View.OnClickListene
                 }
                 break;
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 }

@@ -30,10 +30,8 @@ import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.home.oneToOne.answerPhone.presenter.AnswerPhonePresenter;
 import com.pro.maluli.module.home.oneToOne.answerPhone.presenter.IAnswerPhoneContraction;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
-import com.pro.maluli.module.main.base.MainActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,9 +51,15 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
     LinearLayout ivReject;
     @BindView(R.id.ivAccept)
     LinearLayout ivAccept;
+    /**
+     * 播放铃声
+     *
+     * @paramctx
+     * @paramtype
+     */
+    MediaPlayer mMediaPlayer;
     private InvitedEvent invitedEvent;
     private String roomId, avatar, userName, liveId, liveClassify;
-
 
     @Override
     public AnswerPhonePresenter initPresenter() {
@@ -140,15 +144,6 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
         return RingtoneManager.getActualDefaultRingtoneUri(ctx, type);
 
     }
-
-
-    /**
-     * 播放铃声
-     *
-     * @paramctx
-     * @paramtype
-     */
-    MediaPlayer mMediaPlayer;
 
     public void PlayRingTone(Context ctx, int type) {
         mMediaPlayer = MediaPlayer.create(ctx,

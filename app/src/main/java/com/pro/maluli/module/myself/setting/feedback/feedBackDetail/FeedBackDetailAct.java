@@ -19,7 +19,6 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.FeedBackDetailEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.StringUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.module.myself.setting.feedback.feedBackDetail.adapter.FeedBackDetailAdapter;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -59,10 +57,10 @@ public class FeedBackDetailAct extends BaseMvpActivity<IFeedBackDetailContractio
     TextView subTimeTv;
     @BindView(R.id.noReptLL)
     LinearLayout noReptLL;
+    FeedBackDetailGirdAdapter feedBackDetailGirdAdapter;
     private List<FeedBackDetailEntity.ReplyBean> replyBeans;
     private String id;
     private List<String> ReportImgs;
-    FeedBackDetailGirdAdapter feedBackDetailGirdAdapter;
 
     @Override
     public FeedBackDetailPresenter initPresenter() {

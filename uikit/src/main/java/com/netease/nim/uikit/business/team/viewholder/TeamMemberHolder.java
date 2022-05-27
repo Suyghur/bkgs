@@ -13,16 +13,9 @@ import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 
 public class TeamMemberHolder extends TViewHolder {
 
-    public interface TeamMemberHolderEventListener {
-        void onHeadImageViewClick(String account);
-    }
-
+    public final static String OWNER = "owner";
+    public final static String ADMIN = "admin";
     protected TeamMemberHolderEventListener teamMemberHolderEventListener;
-
-    public void setEventListener(TeamMemberHolderEventListener eventListener) {
-        this.teamMemberHolderEventListener = eventListener;
-    }
-
     private HeadImageView headImageView;
 
     private ImageView ownerImageView;
@@ -35,8 +28,9 @@ public class TeamMemberHolder extends TViewHolder {
 
     private TeamMemberAdapter.TeamMemberItem memberItem;
 
-    public final static String OWNER = "owner";
-    public final static String ADMIN = "admin";
+    public void setEventListener(TeamMemberHolderEventListener eventListener) {
+        this.teamMemberHolderEventListener = eventListener;
+    }
 
     protected TeamMemberAdapter getAdapter() {
         return (TeamMemberAdapter) super.getAdapter();
@@ -136,5 +130,9 @@ public class TeamMemberHolder extends TViewHolder {
 
     private boolean isSelf(String account) {
         return account.equals(NimUIKit.getAccount());
+    }
+
+    public interface TeamMemberHolderEventListener {
+        void onHeadImageViewClick(String account);
     }
 }

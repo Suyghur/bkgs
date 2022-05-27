@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.setting.base.presenter;
 
 import android.content.Context;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.UserInfoEntity;

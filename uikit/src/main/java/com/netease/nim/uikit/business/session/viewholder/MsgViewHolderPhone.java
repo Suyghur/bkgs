@@ -6,8 +6,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.myCustom.extension.PhoneAttachment;
-import com.netease.nim.uikit.business.session.myCustom.extension.RedPacketAttachment;
-import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 
 public class MsgViewHolderPhone extends MsgViewHolderBase {
@@ -34,7 +32,7 @@ public class MsgViewHolderPhone extends MsgViewHolderBase {
     public void bindContentView() {
         PhoneAttachment attachment = (PhoneAttachment) message.getAttachment();
         Glide.with(context).load(attachment.getIcon()).into(giftImg);
-        contentGiftTv.setText( attachment.getMsg());
+        contentGiftTv.setText(attachment.getMsg());
     }
 
     @Override

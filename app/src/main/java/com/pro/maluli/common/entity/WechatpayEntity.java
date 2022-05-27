@@ -1,102 +1,100 @@
 package com.pro.maluli.common.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.io.Serializable;
 
 public class WechatpayEntity implements Serializable {
 
-        private PayBean pay;
+    private PayBean pay;
 
-        public PayBean getPay() {
-            return pay;
+    public PayBean getPay() {
+        return pay;
+    }
+
+    public void setPay(PayBean pay) {
+        this.pay = pay;
+    }
+
+    public static class PayBean implements Serializable {
+        private String sub_appid;
+        private String sub_mch_id;
+        private String partnerid;
+        private String prepayid;
+        private String packagex;
+        private int timestamp;
+        private String appid;
+        private String noncestr;
+        private String sign;
+
+        public String getSub_appid() {
+            return sub_appid;
         }
 
-        public void setPay(PayBean pay) {
-            this.pay = pay;
+        public void setSub_appid(String sub_appid) {
+            this.sub_appid = sub_appid;
         }
 
-        public static class PayBean implements Serializable {
-            private String sub_appid;
-            private String sub_mch_id;
-            private String partnerid;
-            private String prepayid;
-            private String packagex;
-            private int timestamp;
-            private String appid;
-            private String noncestr;
-            private String sign;
+        public String getSub_mch_id() {
+            return sub_mch_id;
+        }
 
-            public String getSub_appid() {
-                return sub_appid;
-            }
+        public void setSub_mch_id(String sub_mch_id) {
+            this.sub_mch_id = sub_mch_id;
+        }
 
-            public void setSub_appid(String sub_appid) {
-                this.sub_appid = sub_appid;
-            }
+        public String getPartnerid() {
+            return partnerid;
+        }
 
-            public String getSub_mch_id() {
-                return sub_mch_id;
-            }
+        public void setPartnerid(String partnerid) {
+            this.partnerid = partnerid;
+        }
 
-            public void setSub_mch_id(String sub_mch_id) {
-                this.sub_mch_id = sub_mch_id;
-            }
+        public String getPrepayid() {
+            return prepayid;
+        }
 
-            public String getPartnerid() {
-                return partnerid;
-            }
+        public void setPrepayid(String prepayid) {
+            this.prepayid = prepayid;
+        }
 
-            public void setPartnerid(String partnerid) {
-                this.partnerid = partnerid;
-            }
+        public String getPackageX() {
+            return packagex;
+        }
 
-            public String getPrepayid() {
-                return prepayid;
-            }
+        public void setPackageX(String packagex) {
+            this.packagex = packagex;
+        }
 
-            public void setPrepayid(String prepayid) {
-                this.prepayid = prepayid;
-            }
+        public int getTimestamp() {
+            return timestamp;
+        }
 
-            public String getPackageX() {
-                return packagex;
-            }
+        public void setTimestamp(int timestamp) {
+            this.timestamp = timestamp;
+        }
 
-            public void setPackageX(String packagex) {
-                this.packagex = packagex;
-            }
+        public String getAppid() {
+            return appid;
+        }
 
-            public int getTimestamp() {
-                return timestamp;
-            }
+        public void setAppid(String appid) {
+            this.appid = appid;
+        }
 
-            public void setTimestamp(int timestamp) {
-                this.timestamp = timestamp;
-            }
+        public String getNoncestr() {
+            return noncestr;
+        }
 
-            public String getAppid() {
-                return appid;
-            }
+        public void setNoncestr(String noncestr) {
+            this.noncestr = noncestr;
+        }
 
-            public void setAppid(String appid) {
-                this.appid = appid;
-            }
+        public String getSign() {
+            return sign;
+        }
 
-            public String getNoncestr() {
-                return noncestr;
-            }
-
-            public void setNoncestr(String noncestr) {
-                this.noncestr = noncestr;
-            }
-
-            public String getSign() {
-                return sign;
-            }
-
-            public void setSign(String sign) {
-                this.sign = sign;
+        public void setSign(String sign) {
+            this.sign = sign;
         }
     }
 }

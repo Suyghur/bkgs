@@ -10,6 +10,7 @@ public interface IAnnouncementDetailContraction extends BaseView {
 
         void setDetailInfo(NoticeEntity.ListBean data);
     }
+
     interface Presenter extends IClear {
 
 

@@ -23,7 +23,7 @@ public class RoundVideoView extends RelativeLayout {
     public Paint mPaint;                   // 画笔
     public int mStrokeColor;               // 描边颜色
     public int mStrokeWidth;               // 描边半径
-    public boolean mClipBackground=true;        // 是否剪裁背景
+    public boolean mClipBackground = true;        // 是否剪裁背景
     public Region mAreaRegion;             // 内容区域
     public RectF mLayer;                   // 画布图层大小
     private int mRoundCorner;              // 圆角大小

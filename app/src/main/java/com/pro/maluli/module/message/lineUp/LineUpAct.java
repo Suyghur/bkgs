@@ -3,9 +3,7 @@ package com.pro.maluli.module.message.lineUp;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,13 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.BarUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.LineUpEntity;
-import com.pro.maluli.common.entity.ReserveMessageEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.view.popwindow.PopupWindowList;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.message.lineUp.adapter.LineUpAdapter;
 import com.pro.maluli.module.message.lineUp.presenter.ILineUpContraction;
@@ -69,6 +64,7 @@ public class LineUpAct extends BaseMvpActivity<ILineUpContraction.View, LineUpPr
         StatusbarUtils.setStatusBarView(this);
 
     }
+
     @Override
     public int setR_Layout() {
         return R.layout.act_line_up;
@@ -123,7 +119,6 @@ public class LineUpAct extends BaseMvpActivity<ILineUpContraction.View, LineUpPr
     public void doBusiness() {
         presenter.getReserveMsg();
     }
-
 
 
     @Override

@@ -10,6 +10,7 @@ public interface IMyFansContraction extends BaseView {
         void setWatchInfo(WatchListEntity data);
 
     }
+
     interface Presenter extends IClear {
 
         void getFansListInfo();

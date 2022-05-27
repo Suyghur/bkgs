@@ -5,11 +5,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import java.util.List;
 
 /**
+ *
  */
 
 public class DiffHelper {
 
-    public static class SimpleDiff<T> extends BaseDiff<T>{
+    public static class SimpleDiff<T> extends BaseDiff<T> {
 
         public SimpleDiff(List<T> mOld, List<T> mNew) {
             super(mOld, mNew);
@@ -28,7 +29,7 @@ public class DiffHelper {
         }
     }
 
-    public abstract static class BaseDiff<T> extends DiffUtil.Callback{
+    public abstract static class BaseDiff<T> extends DiffUtil.Callback {
 
         private final List<T> mOld;
         private final List<T> mNew;
@@ -48,18 +49,18 @@ public class DiffHelper {
             return mNew == null ? 0 : mNew.size();
         }
 
-        protected T getOldListItem(int pos){
+        protected T getOldListItem(int pos) {
             try {
                 return mOld.get(pos);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
 
-        protected T getNewListItem(int pos){
+        protected T getNewListItem(int pos) {
             try {
                 return mNew.get(pos);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }

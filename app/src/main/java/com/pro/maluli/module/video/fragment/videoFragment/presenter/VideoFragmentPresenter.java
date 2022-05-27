@@ -16,12 +16,11 @@ import io.reactivex.functions.Consumer;
 public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContraction.View> implements IVideoFragmentContraction.Presenter {
     public String videoId;
     public String anchor_id;
+    public int page = 1;
 
     public VideoFragmentPresenter(Context context) {
         super(context);
     }
-
-    public int page = 1;
 
     @Override
     public void getVideo() {
@@ -168,6 +167,7 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
 
     /**
      * 下载视频
+     *
      * @param video_id
      */
     @Override
@@ -184,7 +184,7 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
                         JSONObject jsonObject = JSONObject.parseObject(myJson);
                         String data = jsonObject.getString("data");
                         JSONObject jsonObject2 = JSONObject.parseObject(data);
-                        String download_url =jsonObject2.getString("download_url");
+                        String download_url = jsonObject2.getString("download_url");
                         mView.downVideoSuccess(download_url);
                     }
                 }, new Consumer<Throwable>() {

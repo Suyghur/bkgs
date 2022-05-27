@@ -7,11 +7,11 @@
 
     <RelativeLayout
         android:id="@+id/itemRl"
-        android:paddingVertical="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingVertical="@dimen/dp_10">
 
 
         <TextView
@@ -19,18 +19,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_7"
-            android:text="时间萨达"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
+            android:text="时间萨达"
             android:textColor="@color/c_342C33"
             android:textSize="@dimen/sp_16" />
+
         <TextView
-            android:layout_below="@+id/titleTv"
-            android:layout_marginTop="@dimen/dp_3"
             android:id="@+id/timeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/titleTv"
             android:layout_marginLeft="@dimen/dp_7"
+            android:layout_marginTop="@dimen/dp_3"
             android:text="时间萨达"
             android:textColor="@color/c_958f94"
             android:textSize="@dimen/sp_12" />
@@ -38,8 +39,8 @@
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:src="@mipmap/ic_right" />
 
     </RelativeLayout>

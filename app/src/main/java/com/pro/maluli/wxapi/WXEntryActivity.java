@@ -7,7 +7,9 @@ import cn.sharesdk.wechat.utils.WXAppExtendObject;
 import cn.sharesdk.wechat.utils.WXMediaMessage;
 import cn.sharesdk.wechat.utils.WechatHandlerActivity;
 
-/** 微信客户端回调activity示例 */
+/**
+ * 微信客户端回调activity示例
+ */
 public class WXEntryActivity extends WechatHandlerActivity {
 
     /**

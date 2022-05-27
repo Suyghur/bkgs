@@ -1,5 +1,8 @@
 package com.pro.maluli.common.view.popwindow;
 
+import static com.pro.maluli.module.message.systemNotification.SystemNotificationAct.getX;
+import static com.pro.maluli.module.message.systemNotification.SystemNotificationAct.getY;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -14,19 +17,14 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.pro.maluli.R;
 
 import java.util.List;
 
-import static com.pro.maluli.module.message.systemNotification.SystemNotificationAct.getX;
-import static com.pro.maluli.module.message.systemNotification.SystemNotificationAct.getY;
-
 
 /**
- *
- * @Time:  2018/11/15 0015
+ * @Time: 2018/11/15 0015
  */
 public class PopupWindowList {
 
@@ -46,6 +44,8 @@ public class PopupWindowList {
     private AdapterView.OnItemClickListener mItemClickListener;
     //是否可点击
     private boolean mModal;
+    private ListView mPopView;
+    private int mDeviceWidth, mDeviceHeight;
 
     public PopupWindowList(Context mContext) {
         if (mContext == null) {
@@ -110,8 +110,6 @@ public class PopupWindowList {
             mPopView.setOnItemClickListener(mItemClickListener);
         }
     }
-
-    private ListView mPopView;
 
     public void show() {
         if (mAnchorView == null) {
@@ -191,9 +189,6 @@ public class PopupWindowList {
         location.bottom = location.top + v.getHeight();
         return location;
     }
-
-
-    private int mDeviceWidth, mDeviceHeight;
 
     public void setHeightWidth() {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);

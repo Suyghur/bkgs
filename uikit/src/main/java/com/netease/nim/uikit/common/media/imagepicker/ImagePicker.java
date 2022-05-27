@@ -19,22 +19,15 @@ import java.util.List;
 public class ImagePicker {
 
     public static final String TAG = ImagePicker.class.getSimpleName();
-
-    private File takeImageFile;
-
-    public Bitmap cropBitmap;
-
-    private ArrayList<GLImage> mSelectedImages = new ArrayList<>();   //选中的图片集合
-
-    private List<ImageFolder> mImageFolders;      //所有的图片文件夹
-
-    private int mCurrentImageFolderPosition = 0;  //当前选中的文件夹位置 0表示所有图片
-
-    private ImageFolder mCurrentImageFolder = null;
-
-    private List<OnImageSelectedListener> mImageSelectedListeners;          // 图片选中的监听回调
-
     private static ImagePicker mInstance;
+    public Bitmap cropBitmap;
+    private File takeImageFile;
+    private ArrayList<GLImage> mSelectedImages = new ArrayList<>();   //选中的图片集合
+    private List<ImageFolder> mImageFolders;      //所有的图片文件夹
+    private int mCurrentImageFolderPosition = 0;  //当前选中的文件夹位置 0表示所有图片
+    private ImageFolder mCurrentImageFolder = null;
+    private List<OnImageSelectedListener> mImageSelectedListeners;          // 图片选中的监听回调
+    private ImagePickerOption option = DefaultImagePickerOption.getInstance();
 
     private ImagePicker() {
     }
@@ -49,7 +42,6 @@ public class ImagePicker {
         }
         return mInstance;
     }
-
 
     public File getTakeImageFile() {
         return takeImageFile;
@@ -84,10 +76,6 @@ public class ImagePicker {
         return mCurrentImageFolderPosition;
     }
 
-    public ImageFolder getCurrentImageFolder() {
-        return mCurrentImageFolder;
-    }
-
     public void setCurrentImageFolderPosition(int mCurrentSelectedImageSetPosition) {
         mCurrentImageFolderPosition = mCurrentSelectedImageSetPosition;
         if (mImageFolders != null && mImageFolders.size() > mCurrentImageFolderPosition) {
@@ -95,6 +83,10 @@ public class ImagePicker {
         } else {
             mCurrentImageFolder = null;
         }
+    }
+
+    public ImageFolder getCurrentImageFolder() {
+        return mCurrentImageFolder;
     }
 
     public ArrayList<GLImage> getCurrentImageFolderItems() {
@@ -169,8 +161,6 @@ public class ImagePicker {
         mCurrentImageFolderPosition = 0;
     }
 
-    private ImagePickerOption option = DefaultImagePickerOption.getInstance();
-
     public ImagePickerOption getOption() {
         return option;
     }
@@ -228,14 +218,6 @@ public class ImagePicker {
         return option.isShowSection();
     }
 
-    /**
-     * 图片选中的监听
-     */
-    public interface OnImageSelectedListener {
-
-        void onImageSelected(GLImage item, boolean isAdd);
-    }
-
     public void addOnImageSelectedListener(OnImageSelectedListener l) {
         if (mImageSelectedListeners == null) {
             mImageSelectedListeners = new ArrayList<>();
@@ -269,7 +251,6 @@ public class ImagePicker {
             l.onImageSelected(item, isAdd);
         }
     }
-
 
     public boolean isMultiMode() {
         return option.isMultiMode();
@@ -341,5 +322,13 @@ public class ImagePicker {
 
     public boolean needCheckNetwork() {
         return option.needCheckNetwork();
+    }
+
+    /**
+     * 图片选中的监听
+     */
+    public interface OnImageSelectedListener {
+
+        void onImageSelected(GLImage item, boolean isAdd);
     }
 }

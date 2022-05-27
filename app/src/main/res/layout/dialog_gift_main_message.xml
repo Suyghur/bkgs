@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topClickRl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    android:id="@+id/topClickRl"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -14,16 +14,16 @@
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
-            android:layout_above="@id/viewLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/viewLine"
             android:layout_marginTop="@dimen/dp_size_15" />
 
         <LinearLayout
-            android:layout_above="@id/viewLine"
             android:id="@+id/ll_dot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/viewLine"
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal" />
@@ -60,11 +60,11 @@
                 android:textSize="@dimen/text_size_24" />
 
             <TextView
-                android:paddingVertical="@dimen/dp_10"
                 android:id="@+id/gotRechargeTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_size_7"
+                android:paddingVertical="@dimen/dp_10"
                 android:text="充值"
                 android:textColor="#FFFFA743"
                 android:textSize="@dimen/sp_14" />

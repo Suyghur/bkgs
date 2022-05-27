@@ -23,12 +23,13 @@ public class MessageAssessDialog extends DialogFragment implements View.OnClickL
     private Dialog mDetailDialog;
     private StarBar abilityStar;
     private StarBar serviceStar;
-    private TextView comfirmTv,abilityTv,serviceTv;
+    private TextView comfirmTv, abilityTv, serviceTv;
     private LinearLayout dismissLL;
     private RelativeLayout cancelTv;
     private int abilityNumber, srviceNumber;
     private String[] ability = new String[]{"非常差", "差", "一般", "强", "非常强"};
     private String[] service = new String[]{"非常差", "差", "一般", "满意", "非常满意"};
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -45,14 +46,14 @@ public class MessageAssessDialog extends DialogFragment implements View.OnClickL
             @Override
             public void onStarChange(int mark) {
                 abilityNumber = mark;
-                abilityTv.setText(ability[abilityNumber-1]);
+                abilityTv.setText(ability[abilityNumber - 1]);
             }
         });
         serviceStar.setOnStarChangeListener(new StarBar.OnStarChangeListener() {
             @Override
             public void onStarChange(int mark) {
                 srviceNumber = mark;
-                serviceTv.setText(service[srviceNumber-1]);
+                serviceTv.setText(service[srviceNumber - 1]);
             }
         });
 
@@ -63,14 +64,8 @@ public class MessageAssessDialog extends DialogFragment implements View.OnClickL
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnBaseTipsListener {
-        void comfirm(int abilityNumber, int srviceNumber);//0去申述，2去绑定
     }
 
     @Override
@@ -98,5 +93,9 @@ public class MessageAssessDialog extends DialogFragment implements View.OnClickL
                 mDetailDialog.dismiss();
             }
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm(int abilityNumber, int srviceNumber);//0去申述，2去绑定
     }
 }

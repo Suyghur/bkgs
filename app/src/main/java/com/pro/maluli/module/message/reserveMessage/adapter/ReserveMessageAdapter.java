@@ -9,7 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.ReserveMessageEntity;
-import com.pro.maluli.common.entity.SystemMsgEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,21 +17,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ReserveMessageAdapter extends BaseQuickAdapter<ReserveMessageEntity.ListBean, ReserveMessageAdapter.ViewHolder> {
     private Context context;
 
+    public ReserveMessageAdapter(List<ReserveMessageEntity.ListBean> data, Context context) {
+        super(R.layout.item_reserve_message, data);
+        this.context = context;
+    }
+
     @NotNull
     @Override
     protected ReserveMessageAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public ReserveMessageAdapter(List<ReserveMessageEntity.ListBean> data, Context context) {
-        super(R.layout.item_reserve_message, data);
-        this.context = context;
     }
 
     @Override

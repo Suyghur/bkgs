@@ -16,9 +16,9 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.base.classify.adapter.ClassiftAdapter;
 import com.pro.maluli.module.home.base.classify.adapter.ClassiftChildAdapter;
-import com.pro.maluli.toolkit.Logger;
 
 import org.jetbrains.annotations.NotNull;
 

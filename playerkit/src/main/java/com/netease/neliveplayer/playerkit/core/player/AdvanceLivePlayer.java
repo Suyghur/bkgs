@@ -109,7 +109,7 @@ public class AdvanceLivePlayer extends BaseLivePlayer {
     public void onActivityResume(boolean isLive) {
         super.onActivityResume(isLive);
         LogUtil.app("activity on resume");
-        if(foreground){
+        if (foreground) {
             LogUtil.app("activity on resume foreground is already true");
             return;
         }

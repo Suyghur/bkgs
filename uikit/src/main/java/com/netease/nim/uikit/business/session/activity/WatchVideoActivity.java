@@ -51,60 +51,103 @@ public class WatchVideoActivity extends UI implements Callback {
     public static final String INTENT_EXTRA_MENU = "EXTRA_MENU";
 
     // player
-
-    private MediaPlayer mediaPlayer;
-
-    // context
-
-    private Handler handlerTimes = new Handler();
-
-    private ActionBar actionBar;
-
-    private IMMessage message;
-
-    // view
-
-    private SurfaceView surfaceView;
-
-    private SurfaceHolder surfaceHolder;
-
-    private View videoIcon;
-
-    private View downloadLayout;
-
-    private View downloadProgressBackground;
-
-    private View downloadProgressForeground;
-
-    private TextView downloadProgressText;
-
-    protected TextView fileInfoTextView;
-
-    private TextView playTimeTextView;
-
-    // state
-    private boolean isShowMenu = true;
-
-    private boolean isSurfaceCreated = false;
-
-    protected String videoFilePath;
-
-    protected long videoLength = 0;
-
-    private float lastPercent;
-
-    private int playState = PLAY_STATE_STOP;
-
     private final static int PLAY_STATE_PLAYING = 1;
 
+    // context
     private final static int PLAY_STATE_STOP = 2;
-
     private final static int PLAY_STATE_PAUSE = 3;
+    protected TextView fileInfoTextView;
 
+    // view
+    protected String videoFilePath;
+    protected long videoLength = 0;
+    private MediaPlayer mediaPlayer;
+    private Handler handlerTimes = new Handler();
+    private ActionBar actionBar;
+    private IMMessage message;
+    private SurfaceView surfaceView;
+    private SurfaceHolder surfaceHolder;
+    private View videoIcon;
+    private View downloadLayout;
+    private View downloadProgressBackground;
+    private View downloadProgressForeground;
+    private TextView downloadProgressText;
+    private TextView playTimeTextView;
+    // state
+    private boolean isShowMenu = true;
+    private boolean isSurfaceCreated = false;
+    private float lastPercent;
+    private int playState = PLAY_STATE_STOP;
     // download control
     private boolean downloading;
     private ImageView downloadBtn;
     private AbortableFuture downloadFuture;
+    /**
+     * 处理视频播放时间
+     */
+    private Runnable timeRunnable = new Runnable() {
+        public void run() {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                playState = PLAY_STATE_PLAYING;
+
+                if (videoLength <= 0) {
+                    playTimeTextView.setVisibility(View.INVISIBLE);
+                } else {
+                    // 由于mediaPlayer取到的时间不统一,采用消息体中的时间
+                    int leftTimes = (int) (videoLength * 1000 - mediaPlayer.getCurrentPosition());
+                    if (leftTimes < 0) {
+                        leftTimes = 0;
+                    }
+
+                    playTimeTextView.setVisibility(View.VISIBLE);
+                    long seconds = TimeUtil.getSecondsByMilliseconds(leftTimes);
+                    playTimeTextView.setText(TimeUtil.secToTime((int) seconds));
+                    handlerTimes.postDelayed(this, 1000);
+                }
+
+            }
+        }
+    };
+    private Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
+        @Override
+        public void onEvent(IMMessage msg) {
+            if (!msg.isTheSame(message) || isDestroyedCompatible()) {
+                return;
+            }
+
+            if (msg.getAttachStatus() == AttachStatusEnum.transferred && isVideoHasDownloaded(msg)) {
+                onDownloadSuccess(msg);
+            } else if (msg.getAttachStatus() == AttachStatusEnum.fail) {
+                onDownloadFailed();
+            }
+        }
+    };
+    private Observer<AttachmentProgress> attachmentProgressObserver = new Observer<AttachmentProgress>() {
+        @Override
+        public void onEvent(AttachmentProgress p) {
+            long total = p.getTotal();
+            long progress = p.getTransferred();
+            float percent = (float) progress / (float) total;
+            if (percent > 1.0) {
+                // 消息中标识的文件大小有误，小于实际大小
+                percent = (float) 1.0;
+                progress = total;
+            }
+            if (percent - lastPercent >= 0.10) {
+                lastPercent = percent;
+                setDownloadProgress(getString(R.string.download_video), progress, total);
+            } else {
+                if (lastPercent == 0.0) {
+                    lastPercent = percent;
+                    setDownloadProgress(getString(R.string.download_video), progress, total);
+                }
+                if (percent == 1.0 && lastPercent != 1.0) {
+                    lastPercent = percent;
+                    setDownloadProgress(getString(R.string.download_video), progress, total);
+                }
+            }
+        }
+    };
 
     public static void start(Context context, IMMessage message) {
         Intent intent = new Intent();
@@ -278,33 +321,6 @@ public class WatchVideoActivity extends UI implements Callback {
         }
     }
 
-    /**
-     * 处理视频播放时间
-     */
-    private Runnable timeRunnable = new Runnable() {
-        public void run() {
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                playState = PLAY_STATE_PLAYING;
-
-                if (videoLength <= 0) {
-                    playTimeTextView.setVisibility(View.INVISIBLE);
-                } else {
-                    // 由于mediaPlayer取到的时间不统一,采用消息体中的时间
-                    int leftTimes = (int) (videoLength * 1000 - mediaPlayer.getCurrentPosition());
-                    if (leftTimes < 0) {
-                        leftTimes = 0;
-                    }
-
-                    playTimeTextView.setVisibility(View.VISIBLE);
-                    long seconds = TimeUtil.getSecondsByMilliseconds(leftTimes);
-                    playTimeTextView.setText(TimeUtil.secToTime((int) seconds));
-                    handlerTimes.postDelayed(this, 1000);
-                }
-
-            }
-        }
-    };
-
     protected void pauseVideo() {
         videoIcon.setVisibility(View.VISIBLE);
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
@@ -421,48 +437,6 @@ public class WatchVideoActivity extends UI implements Callback {
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(statusObserver, register);
         NIMClient.getService(MsgServiceObserve.class).observeAttachmentProgress(attachmentProgressObserver, register);
     }
-
-    private Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
-        @Override
-        public void onEvent(IMMessage msg) {
-            if (!msg.isTheSame(message) || isDestroyedCompatible()) {
-                return;
-            }
-
-            if (msg.getAttachStatus() == AttachStatusEnum.transferred && isVideoHasDownloaded(msg)) {
-                onDownloadSuccess(msg);
-            } else if (msg.getAttachStatus() == AttachStatusEnum.fail) {
-                onDownloadFailed();
-            }
-        }
-    };
-
-    private Observer<AttachmentProgress> attachmentProgressObserver = new Observer<AttachmentProgress>() {
-        @Override
-        public void onEvent(AttachmentProgress p) {
-            long total = p.getTotal();
-            long progress = p.getTransferred();
-            float percent = (float) progress / (float) total;
-            if (percent > 1.0) {
-                // 消息中标识的文件大小有误，小于实际大小
-                percent = (float) 1.0;
-                progress = total;
-            }
-            if (percent - lastPercent >= 0.10) {
-                lastPercent = percent;
-                setDownloadProgress(getString(R.string.download_video), progress, total);
-            } else {
-                if (lastPercent == 0.0) {
-                    lastPercent = percent;
-                    setDownloadProgress(getString(R.string.download_video), progress, total);
-                }
-                if (percent == 1.0 && lastPercent != 1.0) {
-                    lastPercent = percent;
-                    setDownloadProgress(getString(R.string.download_video), progress, total);
-                }
-            }
-        }
-    };
 
     private void setDownloadProgress(final String label, final long progress, final long total) {
         final float percent = (float) ((double) progress / total);

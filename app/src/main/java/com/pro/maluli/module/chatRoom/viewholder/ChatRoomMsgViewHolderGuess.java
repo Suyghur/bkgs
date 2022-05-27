@@ -3,10 +3,10 @@ package com.pro.maluli.module.chatRoom.viewholder;
 import android.widget.ImageView;
 
 import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomMsgViewHolderBase;
+import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.pro.maluli.R;
-import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
 
 /**
  * Created by hzliuxuanlin on 17/9/15.

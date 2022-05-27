@@ -3,6 +3,7 @@ package com.netease.nim.uikit.common.media.imagepicker.data;
 import java.util.List;
 
 /**
+ *
  */
 
 public abstract class AbsDataSource {
@@ -21,7 +22,9 @@ public abstract class AbsDataSource {
 
     public abstract void reload();
 
-    /** 所有图片加载完成的回调接口 */
+    /**
+     * 所有图片加载完成的回调接口
+     */
     public interface OnImagesLoadedListener {
         void onImagesLoaded(List<ImageFolder> imageFolders);
     }

@@ -1,31 +1,18 @@
 package com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.base.BasePresenter;
-import com.pro.maluli.common.base.BaseView;
-import com.pro.maluli.common.entity.RewardDetailEntity;
-import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.entity.WithDrawRecordEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
-import com.pro.maluli.common.view.myselfView.LabelsView;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.adapter.WithDrawRecordAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.presenter.IWithDrawRecordContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.presenter.WithDrawRecordPresenter;
@@ -40,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @author Kingsley
@@ -54,7 +40,7 @@ public class WithDrawRecordAct extends BaseMvpActivity<IWithDrawRecordContractio
     View nodataView;
     @BindView(R.id.bkDetailSfl)
     SmartRefreshLayout bkDetailSfl;
-    private List<WithDrawRecordEntity.ListBean> entities =new ArrayList<>();
+    private List<WithDrawRecordEntity.ListBean> entities = new ArrayList<>();
 
 
     @Override
@@ -104,7 +90,6 @@ public class WithDrawRecordAct extends BaseMvpActivity<IWithDrawRecordContractio
         bkDetailRv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new WithDrawRecordAdapter(entities, this);
         bkDetailRv.setAdapter(adapter);
-
 
 
     }
@@ -166,7 +151,6 @@ public class WithDrawRecordAct extends BaseMvpActivity<IWithDrawRecordContractio
 //
 //        }
 //    }
-
 
 
     @Override

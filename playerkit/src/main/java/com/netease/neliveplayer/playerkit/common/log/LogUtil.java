@@ -25,7 +25,7 @@ public class LogUtil {
         final String logDir = StorageUtil.getAppCacheDir(context.getApplicationContext()) + "/app/playerkit/log";
         LogImpl.init(logDir, Log.DEBUG);
         inited = true;
-        Log.i("player_log", "log init done, log dir=" + logDir );
+        Log.i("player_log", "log init done, log dir=" + logDir);
     }
 
     public static void info(String msg) {
@@ -121,6 +121,7 @@ public class LogUtil {
     public static final void e(String tag, String msg, Throwable thr) {
         LogImpl.e(tag, buildMessage(msg), thr);
     }
+
     private static String buildMessage(String msg) {
         return msg;
     }

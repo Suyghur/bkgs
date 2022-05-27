@@ -11,6 +11,7 @@ public interface IMyAccountContraction extends BaseView {
 
         void setAccountInfo(MyAccountEntity data);
     }
+
     interface Presenter extends IClear {
         void getUserInfo();
 

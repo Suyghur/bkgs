@@ -42,6 +42,21 @@ public class LocalVideoModel {
 
     private String lon;
 
+    public static LocalVideoModel buildVideo(Context context, String videoPath) {
+        LocalVideoModel info = new LocalVideoModel();
+        info.setVideoPath(videoPath);
+        try {
+            MediaPlayer mp = MediaPlayer.create(context, Uri.fromFile(new File(videoPath)));
+            if (mp != null) {
+                info.setDuration(mp.getDuration());
+                mp.release();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return info;
+    }
+
     public long getVideoId() {
         return videoId;
     }
@@ -78,6 +93,10 @@ public class LocalVideoModel {
         return videoPath;
     }
 
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
+
     public int getRotate() {
         return rotate;
     }
@@ -92,10 +111,6 @@ public class LocalVideoModel {
 
     public void setThumbPath(String thumbPath) {
         this.thumbPath = thumbPath;
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
     }
 
     public String getVideoFolderPath() {
@@ -122,27 +137,12 @@ public class LocalVideoModel {
         this.duration = duration;
     }
 
-    public static LocalVideoModel buildVideo(Context context, String videoPath) {
-        LocalVideoModel info = new LocalVideoModel();
-        info.setVideoPath(videoPath);
-        try {
-            MediaPlayer mp = MediaPlayer.create(context, Uri.fromFile(new File(videoPath)));
-            if (mp != null) {
-                info.setDuration(mp.getDuration());
-                mp.release();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return info;
-    }
-
     public LocalVideoModel calcDuration() {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         try {
             mediaMetadataRetriever.setDataSource(getVideoPath());
             String time = mediaMetadataRetriever
-                .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             duration = Long.parseLong(time);
         } catch (Exception e) {
             e.printStackTrace();

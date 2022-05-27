@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
  * @author 23203
  */
 public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View, SmallVideoPresenter> implements ISmallVideoContraction.View {
+    private static final int UPTATE_SMALL_VIDEO = 0;
     @BindView(R.id.mine_mian_ll)
     FrameLayout mine_mian_ll;
     @BindView(R.id.viewPager)
@@ -45,10 +46,21 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
     View nodataView;
     @BindView(R.id.tipsVideoTv)
     TextView tipsVideoTv;
+    CountDownTimer countDownTimer;
+    boolean isSeeVideo;
     private VideoHomeAdapter mPagerAdapter;
     private List<VideoEntity> videoBeans = new ArrayList<>();
-    CountDownTimer countDownTimer;
-    private static final int UPTATE_SMALL_VIDEO = 0;
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == UPTATE_SMALL_VIDEO) {
+                if (isHidden) {
+                    return;
+                }
+                presenter.videoTime();
+            }
+        }
+    };
 
     /**
      * ,
@@ -107,18 +119,6 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
         countDownTimer.start();
     }
 
-    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == UPTATE_SMALL_VIDEO) {
-                if (isHidden) {
-                    return;
-                }
-                presenter.videoTime();
-            }
-        }
-    };
-
     @Override
     public void baseInitialization() {
         BarUtils.setStatusBarColor(getActivity(), Color.parseColor("#ffffff"));
@@ -160,19 +160,19 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
         });
     }
 
-    @Override
-    public void onError(int code, String msg) {
-        showToast(msg);
-        nodataView.setVisibility(View.VISIBLE);
-        viewPager.setVisibility(View.GONE);
-    }
-
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    public void onCanScrollState(CanScrollEvent event) {
 //        if (viewPager != null) {
 //            viewPager.setUserInputEnabled(event.isScroll());
 //        }
 //    }
+
+    @Override
+    public void onError(int code, String msg) {
+        showToast(msg);
+        nodataView.setVisibility(View.VISIBLE);
+        viewPager.setVisibility(View.GONE);
+    }
 
     @Override
     public void doBusiness() {
@@ -193,7 +193,6 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
         tipsVideoTv.setVisibility(View.GONE);
 //        cantSeeVideo("nihao",true);
     }
-
 
     @Override
     public void onDestroy() {
@@ -218,8 +217,6 @@ public class SmallVideoFrag extends BaseMvpFragment<ISmallVideoContraction.View,
     public void setVideoTime() {
         startTime();
     }
-
-    boolean isSeeVideo;
 
     @Override
     public void setNoSeeVideo(String msg) {

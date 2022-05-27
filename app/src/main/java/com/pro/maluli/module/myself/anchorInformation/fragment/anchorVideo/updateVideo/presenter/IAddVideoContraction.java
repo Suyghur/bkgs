@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.upda
 
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
-import com.pro.maluli.common.entity.AnchorImgEntity;
 import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 
@@ -18,11 +17,12 @@ public interface IAddVideoContraction extends BaseView {
 
         void addVideoSuccess(String msg);
     }
+
     interface Presenter extends IClear {
 
         void subImg(List<File> files);
 
-        void submitVideo(String trim, List<File>  videoUrl);
+        void submitVideo(String trim, List<File> videoUrl);
 
         void getVideoCanTime();
     }

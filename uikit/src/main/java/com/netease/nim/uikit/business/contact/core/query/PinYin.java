@@ -238,12 +238,12 @@ public class PinYin {
             "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z",
             "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z", "z",
             "z", "z", "z",};
-
-    private static Context context;
-
-    private static byte[] indexes;
-
     private static final Object lock = new Object();
+    private static final char[] T9 = {'2', '2', '2', '3', '3', '3', '4', '4',
+            '4', '5', '5', '5', '6', '6', '6', '7', '7', '7', '7', '8', '8',
+            '8', '9', '9', '9', '9'};
+    private static Context context;
+    private static byte[] indexes;
 
     private static byte[] loadIndexes(Context context) {
         byte[] indexes = null;
@@ -338,10 +338,6 @@ public class PinYin {
 
         return result;
     }
-
-    private static final char[] T9 = {'2', '2', '2', '3', '3', '3', '4', '4',
-            '4', '5', '5', '5', '6', '6', '6', '7', '7', '7', '7', '8', '8',
-            '8', '9', '9', '9', '9'};
 
     private static final boolean validatePinYinT9() {
         if (pinyin.length != pinyinT9.length) {

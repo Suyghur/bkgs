@@ -3,6 +3,7 @@ package com.netease.nim.uikit.common.adapter;
 import android.view.View;
 
 /**
+ *
  */
 public class ItemClickListerAdapter<T> implements OnItemClickListener<T> {
 

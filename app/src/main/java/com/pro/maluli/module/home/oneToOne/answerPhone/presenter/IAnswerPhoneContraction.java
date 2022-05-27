@@ -6,6 +6,7 @@ import com.pro.maluli.common.base.IClear;
 public interface IAnswerPhoneContraction extends BaseView {
     interface View extends BaseView {
     }
+
     interface Presenter extends IClear {
 
     }

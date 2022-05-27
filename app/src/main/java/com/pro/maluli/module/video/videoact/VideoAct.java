@@ -1,32 +1,19 @@
 package com.pro.maluli.module.video.videoact;
 
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.WelcomInfoEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.view.myselfView.CustomVideoView;
-import com.pro.maluli.module.main.base.MainActivity;
-import com.pro.maluli.module.video.base.adapter.VideoHomeAdapter;
 import com.pro.maluli.module.video.events.ClearPositionEvent;
 import com.pro.maluli.module.video.videoact.adapter.VideoAnchorAdapter;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import butterknife.BindView;
@@ -87,6 +74,7 @@ public class VideoAct extends BaseMvpActivity<IVideoActContraction.View, VideoAc
     public void onClick(View v) {
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -104,6 +92,7 @@ public class VideoAct extends BaseMvpActivity<IVideoActContraction.View, VideoAc
         super.onDestroy();
         GSYVideoManager.releaseAllVideos();
     }
+
     @Override
     public void setAnchorInfo(AnchorInfoEntity data) {
         List<AnchorInfoEntity.VideoBean> video = data.getVideo();

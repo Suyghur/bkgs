@@ -22,12 +22,14 @@ public interface IVideoFragmentContraction extends BaseView {
 
         void downVideoSuccess(String download_url);
     }
+
     interface Presenter extends IClear {
         void anchorSub();
 
         void loveVideo();
 
         void getCommentVideo(String videoId);
+
         void getVideo();
 
         void subComment(String videoId, String s);

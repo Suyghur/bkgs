@@ -46,19 +46,13 @@ import java.util.Map;
  */
 public class AdvancedTeamMemberInfoActivity extends UI implements View.OnClickListener {
 
-    private static final String TAG = AdvancedTeamMemberInfoActivity.class.getSimpleName();
-
     // constant
     public static final int REQ_CODE_REMOVE_MEMBER = 11;
-
-    private static final String EXTRA_ID = "EXTRA_ID";
-
-    private static final String EXTRA_TID = "EXTRA_TID";
-
     public static final String EXTRA_ISADMIN = "EXTRA_ISADMIN";
-
     public static final String EXTRA_ISREMOVE = "EXTRA_ISREMOVE";
-
+    private static final String TAG = AdvancedTeamMemberInfoActivity.class.getSimpleName();
+    private static final String EXTRA_ID = "EXTRA_ID";
+    private static final String EXTRA_TID = "EXTRA_TID";
     private final String KEY_MUTE_MSG = "mute_msg";
 
     // data
@@ -94,13 +88,52 @@ public class AdvancedTeamMemberInfoActivity extends UI implements View.OnClickLi
     private TextView setMuteTv;
 
     private SwitchButton muteSwitch;
+    private final SwitchButton.OnChangedListener onChangedListener = new SwitchButton.OnChangedListener() {
 
+        @Override
+        public void OnChanged(View v, final boolean checkState) {
+            final String key = (String) v.getTag();
+            if (!NetworkUtil.isNetAvailable(AdvancedTeamMemberInfoActivity.this)) {
+                ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, R.string.network_is_not_available);
+                if (key.equals(KEY_MUTE_MSG)) {
+                    muteSwitch.setCheck(!checkState);
+                }
+                return;
+            }
+            if (key.equals(KEY_MUTE_MSG)) {
+                NIMClient.getService(TeamService.class).muteTeamMember(teamId, account, checkState).setCallback(
+                        new RequestCallback<Void>() {
+
+                            @Override
+                            public void onSuccess(Void param) {
+                                if (checkState) {
+                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "群禁言成功");
+                                } else {
+                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "取消群禁言成功");
+                                }
+                            }
+
+                            @Override
+                            public void onFailed(int code) {
+                                if (code == 408) {
+                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this,
+                                            R.string.network_is_not_available);
+                                } else {
+                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "on failed:" + code);
+                                }
+                                muteSwitch.setCheck(!checkState);
+                            }
+
+                            @Override
+                            public void onException(Throwable exception) {
+                            }
+                        });
+            }
+        }
+    };
     private TextView invitorInfo;
-
-
     // state
     private boolean isSelfCreator = false;
-
     private boolean isSelfManager = false;
 
     public static void startActivityForResult(Activity activity, String account, String tid) {
@@ -142,7 +175,7 @@ public class AdvancedTeamMemberInfoActivity extends UI implements View.OnClickLi
             @Override
             public void onEvent(List<TeamMember> teamMembers) {
                 if (TextUtils.isEmpty(teamId) || TextUtils.isEmpty(account)) {
-                    NimLog.i(TAG, String .format("cancel handle team members update, can not find current info. teamId: %s, account: %s", teamId, account));
+                    NimLog.i(TAG, String.format("cancel handle team members update, can not find current info. teamId: %s, account: %s", teamId, account));
                     return;
                 }
                 // 当前页面的对应用户
@@ -206,50 +239,6 @@ public class AdvancedTeamMemberInfoActivity extends UI implements View.OnClickLi
     private void hideIsMute() {
         isMuteContainer.setVisibility(View.GONE);
     }
-
-    private final SwitchButton.OnChangedListener onChangedListener = new SwitchButton.OnChangedListener() {
-
-        @Override
-        public void OnChanged(View v, final boolean checkState) {
-            final String key = (String) v.getTag();
-            if (!NetworkUtil.isNetAvailable(AdvancedTeamMemberInfoActivity.this)) {
-                ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, R.string.network_is_not_available);
-                if (key.equals(KEY_MUTE_MSG)) {
-                    muteSwitch.setCheck(!checkState);
-                }
-                return;
-            }
-            if (key.equals(KEY_MUTE_MSG)) {
-                NIMClient.getService(TeamService.class).muteTeamMember(teamId, account, checkState).setCallback(
-                        new RequestCallback<Void>() {
-
-                            @Override
-                            public void onSuccess(Void param) {
-                                if (checkState) {
-                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "群禁言成功");
-                                } else {
-                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "取消群禁言成功");
-                                }
-                            }
-
-                            @Override
-                            public void onFailed(int code) {
-                                if (code == 408) {
-                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this,
-                                            R.string.network_is_not_available);
-                                } else {
-                                    ToastHelper.showToast(AdvancedTeamMemberInfoActivity.this, "on failed:" + code);
-                                }
-                                muteSwitch.setCheck(!checkState);
-                            }
-
-                            @Override
-                            public void onException(Throwable exception) {
-                            }
-                        });
-            }
-        }
-    };
 
     private void loadMemberInfo() {
         viewMember = NimUIKit.getTeamProvider().getTeamMember(teamId, account);
@@ -581,7 +570,7 @@ public class AdvancedTeamMemberInfoActivity extends UI implements View.OnClickLi
             }
         };
         final EasyAlertDialog dialog = EasyAlertDialogHelper.createOkCancelDiolag(this, null, getString(
-                R.string.team_member_remove_confirm), getString(R.string.remove), getString(R.string.cancel), true,
+                        R.string.team_member_remove_confirm), getString(R.string.remove), getString(R.string.cancel), true,
                 listener);
         dialog.show();
     }

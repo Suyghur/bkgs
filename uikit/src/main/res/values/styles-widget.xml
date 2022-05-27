@@ -85,8 +85,7 @@
         <item name="android:paddingBottom">6dp</item>
     </style>
 
-    <style name="grid_view" parent="@android:style/Widget.GridView">
-    </style>
+    <style name="grid_view" parent="@android:style/Widget.GridView"></style>
 
     <style name="sdk_share_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@color/transparent</item>

@@ -17,10 +17,7 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.FeedbackEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.BlackListPresenter;
 import com.pro.maluli.module.myself.setting.feedback.base.adapter.FeedBackAdapter;
 import com.pro.maluli.module.myself.setting.feedback.base.presenter.FeedBackPresenter;
 import com.pro.maluli.module.myself.setting.feedback.base.presenter.IFeedBackContraction;
@@ -129,9 +126,9 @@ public class FeedBackAct extends BaseMvpActivity<IFeedBackContraction.View, Feed
 //        }
         switch (view.getId()) {
             case R.id.right_tv:
-                Bundle bundle2 =new Bundle();
-                bundle2.putString("SUB_TYPE","3");
-                gotoActivity(AppealAct.class,false,bundle2);
+                Bundle bundle2 = new Bundle();
+                bundle2.putString("SUB_TYPE", "3");
+                gotoActivity(AppealAct.class, false, bundle2);
                 break;
         }
     }

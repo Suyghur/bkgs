@@ -17,6 +17,7 @@ public class ImageSpanAlignCenter extends ImageSpan {
 
     private static final char[] ELLIPSIS_NORMAL = {'\u2026'};
     private static final char[] ELLIPSIS_TWO_DOTS = {'\u2025'};
+    private WeakReference<Drawable> mDrawableRef;
 
     public ImageSpanAlignCenter(Context context, int resourceId) {
         super(context, resourceId);
@@ -84,6 +85,4 @@ public class ImageSpanAlignCenter extends ImageSpan {
 
         return d;
     }
-
-    private WeakReference<Drawable> mDrawableRef;
 }

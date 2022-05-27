@@ -2,22 +2,17 @@ package com.pro.maluli.module.home.base.fragment.rechild.presenter;
 
 import android.content.Context;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.LiveListEntity;
-import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-
-import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
 public class ChildLiveListPresenter extends BasePresenter<IChildLiveListContraction.View> implements IChildLiveListContraction.Presenter {
-    public int page=1;
+    public int page = 1;
 
     public ChildLiveListPresenter(Context context) {
         super(context);

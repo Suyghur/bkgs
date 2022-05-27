@@ -16,12 +16,9 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.netease.nim.uikit.common.util.string.StringUtil;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.AnchorVideoEntity;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo.AddVideoAct;
 import com.pro.maluli.module.video.videoact.VideoAct;
 
@@ -58,17 +55,17 @@ public class AnchorVideoFrag extends BaseMvpFragment<IAnchorVideoContraction.Vie
     List<AnchorInfoEntity.VideoBean> pictureBeans = new ArrayList<>();
     private boolean isShowSelect;
 
-    @Override
-    public AnchorVideoPresenter initPresenter() {
-        return new AnchorVideoPresenter(getActivity());
-    }
-
     public static Fragment newInstance(String anchorId) {
         AnchorVideoFrag treasureGameFrag = new AnchorVideoFrag();
         Bundle bundle = new Bundle();
         bundle.putString("ANCHOR_ID", anchorId);
         treasureGameFrag.setArguments(bundle);
         return treasureGameFrag;
+    }
+
+    @Override
+    public AnchorVideoPresenter initPresenter() {
+        return new AnchorVideoPresenter(getActivity());
     }
 
     @Override
@@ -108,7 +105,7 @@ public class AnchorVideoFrag extends BaseMvpFragment<IAnchorVideoContraction.Vie
                 Bundle bundle = new Bundle();
                 bundle.putString("AnchorID", presenter.anchorId);
                 bundle.putInt("Position", position);
-                gotoActivity(VideoAct.class,false,bundle);
+                gotoActivity(VideoAct.class, false, bundle);
             }
         });
         nodataTipsTv.setText("暂无数据");

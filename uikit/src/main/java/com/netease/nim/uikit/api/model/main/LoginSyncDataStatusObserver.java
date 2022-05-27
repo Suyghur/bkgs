@@ -35,25 +35,6 @@ public class LoginSyncDataStatusObserver {
      * 监听
      */
     private List<Observer<Void>> observers = new ArrayList<>();
-
-    /**
-     * 注销时清除状态&监听
-     */
-    public void reset() {
-        syncStatus = LoginSyncStatus.NO_BEGIN;
-        observers.clear();
-    }
-
-    /**
-     * 在App启动时向SDK注册登录后同步数据过程状态的通知
-     * 调用时机：主进程Application onCreate中
-     */
-    public void registerLoginSyncDataStatus(boolean register) {
-        LogUtil.i(TAG, "observe login sync data completed event on Application create");
-        NIMClient.getService(AuthServiceObserver.class).observeLoginSyncDataStatus(loginSyncStatusObserver, register);
-        NIMClient.getService(AuthServiceObserver.class).observeLoginSyncTeamMembersCompleteResult(syncTeamMemberObserver, register);
-    }
-
     private Observer<LoginSyncStatus> loginSyncStatusObserver = new Observer<LoginSyncStatus>() {
         @Override
         public void onEvent(LoginSyncStatus status) {
@@ -72,6 +53,31 @@ public class LoginSyncDataStatusObserver {
             LogUtil.i(TAG, "login sync all team members result = " + result);
         }
     };
+
+    /**
+     * 单例
+     */
+    public static LoginSyncDataStatusObserver getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    /**
+     * 注销时清除状态&监听
+     */
+    public void reset() {
+        syncStatus = LoginSyncStatus.NO_BEGIN;
+        observers.clear();
+    }
+
+    /**
+     * 在App启动时向SDK注册登录后同步数据过程状态的通知
+     * 调用时机：主进程Application onCreate中
+     */
+    public void registerLoginSyncDataStatus(boolean register) {
+        LogUtil.i(TAG, "observe login sync data completed event on Application create");
+        NIMClient.getService(AuthServiceObserver.class).observeLoginSyncDataStatus(loginSyncStatusObserver, register);
+        NIMClient.getService(AuthServiceObserver.class).observeLoginSyncTeamMembersCompleteResult(syncTeamMemberObserver, register);
+    }
 
     /**
      * 监听登录后同步数据完成事件，缓存构建完成后自动取消监听
@@ -135,14 +141,6 @@ public class LoginSyncDataStatusObserver {
 
         // 重置状态
         reset();
-    }
-
-
-    /**
-     * 单例
-     */
-    public static LoginSyncDataStatusObserver getInstance() {
-        return InstanceHolder.instance;
     }
 
     static class InstanceHolder {

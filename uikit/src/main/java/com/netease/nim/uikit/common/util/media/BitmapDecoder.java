@@ -48,9 +48,9 @@ public class BitmapDecoder {
     public static Bitmap decodeSampledForDisplay(String pathName, boolean withTextureLimit) {
         float ratio = ImageUtil.MAX_IMAGE_RATIO;
         int[][] reqBounds = new int[][]{new int[]{ScreenUtil.screenWidth * 2, ScreenUtil.screenHeight},
-                                        new int[]{ScreenUtil.screenWidth, ScreenUtil.screenHeight * 2},
-                                        new int[]{(int) (ScreenUtil.screenWidth * 1.414),
-                                                  (int) (ScreenUtil.screenHeight * 1.414)},};
+                new int[]{ScreenUtil.screenWidth, ScreenUtil.screenHeight * 2},
+                new int[]{(int) (ScreenUtil.screenWidth * 1.414),
+                        (int) (ScreenUtil.screenHeight * 1.414)},};
         // decode bound
         int[] bound = decodeBound(pathName);
         // pick request bound

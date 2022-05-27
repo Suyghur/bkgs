@@ -20,12 +20,14 @@ public interface IPreviewLiveContraction extends BaseView {
 
         void setLikeAnNoLike(String msg);
     }
+
     interface Presenter extends IClear {
         void getAnchorInfo(String anchorID);
 
         void joinLive(String roomId);
 
         void payInLive(int id);
+
         void anchorSub();
     }
 }

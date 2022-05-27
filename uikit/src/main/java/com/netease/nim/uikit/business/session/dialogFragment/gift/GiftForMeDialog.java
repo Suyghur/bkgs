@@ -2,7 +2,6 @@ package com.netease.nim.uikit.business.session.dialogFragment.gift;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,8 +27,10 @@ public class GiftForMeDialog extends DialogFragment implements View.OnClickListe
     private GiftForMeEntity giftForMeEntity;
     private RecyclerView giftRlv;
     private GiftForMeListAdapter adapter;
-    private TextView allMoneyTv, nodataTv,yigognTv;
+    private TextView allMoneyTv, nodataTv, yigognTv;
     private boolean isfromSX;//true 私信弹框
+    private OnBaseTipsListener onFreezeTipsListener;
+    private OnTwoBaseTipsListener onTwoBaseTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -69,23 +70,9 @@ public class GiftForMeDialog extends DialogFragment implements View.OnClickListe
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-    }
-
-    public interface OnTwoBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-
-        void cancel();
-    }
-
-    private OnTwoBaseTipsListener onTwoBaseTipsListener;
 
     public OnTwoBaseTipsListener getOnTwoBaseTipsListener() {
         return onTwoBaseTipsListener;
@@ -122,5 +109,15 @@ public class GiftForMeDialog extends DialogFragment implements View.OnClickListe
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+    }
+
+    public interface OnTwoBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
+
+        void cancel();
     }
 }

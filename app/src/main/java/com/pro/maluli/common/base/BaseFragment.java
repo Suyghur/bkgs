@@ -13,13 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.pro.maluli.common.base.BasePresenter;
-import com.pro.maluli.common.base.BaseView;
-
 
 public abstract class BaseFragment extends Fragment implements BaseView {
-    Toast mToast;
     public View mainView;
+    protected Context mContext;
+    protected BasePresenter basePresenter;
+    Toast mToast;
 
     /**
      * 鍩烘湰鍒濆鍖栧伐浣滄斁鍦ㄨ繖涓柟娉� 濡� P绫�
@@ -37,9 +36,6 @@ public abstract class BaseFragment extends Fragment implements BaseView {
      * 涓氬姟閫昏緫鏀惧湪杩欎釜鏂规硶 濡傝幏鍙栫綉缁滄暟鎹�
      */
     public abstract void doBusiness();
-
-    protected Context mContext;
-    protected BasePresenter basePresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

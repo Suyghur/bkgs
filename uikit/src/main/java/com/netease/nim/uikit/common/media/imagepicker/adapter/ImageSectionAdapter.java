@@ -21,16 +21,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
  */
 
 public class ImageSectionAdapter extends AdvancedAdapter {
 
-    private ImageBaseActivity activity;
-    private ImagePicker imagePicker;
     private static final int sTypeItemImage = 0;
     private static final int sTypeItemVideo = 1;
     private static final int sTypeItemTitle = 2;
     private static final int sTypeItemCamera = 3;
+    private ImageBaseActivity activity;
+    private ImagePicker imagePicker;
+    private OnImageClickListener listener;   //图片被点击的监听
 
     public ImageSectionAdapter(ImageBaseActivity activity) {
         this.activity = activity;
@@ -92,14 +94,8 @@ public class ImageSectionAdapter extends AdvancedAdapter {
         notifyDataSetChanged();
     }
 
-    private OnImageClickListener listener;   //图片被点击的监听
-
     public void setOnImageItemClickListener(OnImageClickListener listener) {
         this.listener = listener;
-    }
-
-    public interface OnImageClickListener {
-        void onImageItemClick(View view, GLImage GLImage, int position);
     }
 
     public int getSpanSize(int position) {
@@ -110,5 +106,9 @@ public class ImageSectionAdapter extends AdvancedAdapter {
             default:
                 return 1;
         }
+    }
+
+    public interface OnImageClickListener {
+        void onImageItemClick(View view, GLImage GLImage, int position);
     }
 }

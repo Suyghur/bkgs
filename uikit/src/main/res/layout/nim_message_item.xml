@@ -138,13 +138,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tv_reply_tip_above_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/reply_with_message"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <FrameLayout
                     android:id="@+id/message_item_content"
@@ -176,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/nim_uikit_icon_pin"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/message_item_reply"
@@ -184,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/nim_uikit_icon_reply"
                 android:text="@string/reply_has_blank"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
     </FrameLayout>
 </RelativeLayout>

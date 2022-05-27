@@ -4,11 +4,11 @@ import android.os.Handler;
 import android.os.Looper;
 
 public class DefaultTaskScheduler implements TaskScheduler {
+    private static final Handler sharedHandler = new Handler(Looper.getMainLooper());
     /**
      * registry
      */
     private final TaskRegistry registry = new DefaultTaskRegistry();
-
     /**
      * execute callback
      */
@@ -20,15 +20,11 @@ public class DefaultTaskScheduler implements TaskScheduler {
             }
         }
     };
-
     /**
      * worker
      */
     private final AbstractTaskWorker worker;
-
     private final Handler handler;
-
-    private static final Handler sharedHandler = new Handler(Looper.getMainLooper());
 
     public DefaultTaskScheduler(AbstractTaskWorker worker) {
         this(worker, sharedHandler);

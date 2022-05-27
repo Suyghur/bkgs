@@ -5,83 +5,58 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.alibaba.fastjson.JSONObject;
+import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nimlib.sdk.NotificationFoldStyle;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
-import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 
 /**
  * Created by hzxuwen on 2015/4/13.
  */
 public class UserPreferences {
 
+    /*************************no disturb begin***************************************/
+    public static final String DOWN_TIME_BEGIN = "downTimeBegin";
+    public static final String DOWN_TIME_END = "downTimeEnd";
+    public static final String DOWN_TIME_TOGGLE = "downTimeToggle";
+    public static final String DOWN_TIME_ENABLE_NOTIFICATION = "downTimeEnableNotification";
+    public static final String RING = "ring";
+    public static final String VIBRATE = "vibrate";
+    public static final String NOTIFICATION_SMALL_ICON_ID = "notificationSmallIconId";
+    public static final String NOTIFICATION_SOUND = "notificationSound";
+    public static final String HIDE_CONTENT = "hideContent";
+    public static final String LEDARGB = "ledargb";
+    public static final String LEDONMS = "ledonms";
+    public static final String LEDOFFMS = "ledoffms";
+    public static final String TITLE_ONLY_SHOW_APP_NAME = "titleOnlyShowAppName";
+    public static final String NOTIFICATION_FOLDED = "notificationFolded";
+    public static final String NOTIFICATION_FOLD_TYPE = "notificationFoldType";
+    public static final String NOTIFICATION_ENTRANCE = "notificationEntrance";
+    public static final String NOTIFICATION_COLOR = "notificationColor";
     private final static String KEY_DOWNTIME_TOGGLE = "down_time_toggle";
-
     private final static String KEY_SB_NOTIFY_TOGGLE = "sb_notify_toggle";
-
     private final static String KEY_OFFLINE_PUSH = "offline_push";
-
     private final static String KEY_TEAM_ANNOUNCE_CLOSED = "team_announce_closed";
-
     private final static String KEY_STATUS_BAR_NOTIFICATION_CONFIG = "KEY_STATUS_BAR_NOTIFICATION_CONFIG";
-
     // 测试过滤通知
     private final static String KEY_MSG_IGNORE = "KEY_MSG_IGNORE";
-
     // 响铃配置
     private final static String KEY_RING_TOGGLE = "KEY_RING_TOGGLE";
-
     // 震动配置
     private final static String KEY_VIBRATE_TOGGLE = "KEY_VIBRATE_TOGGLE";
-
     // 呼吸灯配置
     private final static String KEY_LED_TOGGLE = "KEY_LED_TOGGLE";
-
     // 通知栏标题配置
     private final static String KEY_NOTICE_CONTENT_TOGGLE = "KEY_NOTICE_CONTENT_TOGGLE";
-
     // 删除好友同时删除备注
     private final static String KEY_DELETE_FRIEND_AND_DELETE_ALIAS = "KEY_DELETE_FRIEND_AND_DELETE_ALIAS";
-
     // 保存在线状态订阅时间
     private final static String KEY_SUBSCRIBE_TIME = "KEY_SUBSCRIBE_TIME";
-    
     // 是否开启最近联系人会话时间索引
     private final static String KEY_ENABLE_TIME_INDEX = "KEY_ENABLE_TIME_INDEX";
 
-    /*************************no disturb begin***************************************/
-    public static final String DOWN_TIME_BEGIN = "downTimeBegin";
-
-    public static final String DOWN_TIME_END = "downTimeEnd";
-
-    public static final String DOWN_TIME_TOGGLE = "downTimeToggle";
-
-    public static final String DOWN_TIME_ENABLE_NOTIFICATION = "downTimeEnableNotification";
-
-    public static final String RING = "ring";
-
-    public static final String VIBRATE = "vibrate";
-
-    public static final String NOTIFICATION_SMALL_ICON_ID = "notificationSmallIconId";
-
-    public static final String NOTIFICATION_SOUND = "notificationSound";
-
-    public static final String HIDE_CONTENT = "hideContent";
-
-    public static final String LEDARGB = "ledargb";
-
-    public static final String LEDONMS = "ledonms";
-
-    public static final String LEDOFFMS = "ledoffms";
-
-    public static final String TITLE_ONLY_SHOW_APP_NAME = "titleOnlyShowAppName";
-
-    public static final String NOTIFICATION_FOLDED = "notificationFolded";
-
-    public static final String NOTIFICATION_FOLD_TYPE = "notificationFoldType";
-
-    public static final String NOTIFICATION_ENTRANCE = "notificationEntrance";
-
-    public static final String NOTIFICATION_COLOR = "notificationColor";
+    public static boolean getMsgIgnore() {
+        return getBoolean(KEY_MSG_IGNORE, false);
+    }
 
     /**************************no disturb end************************************/
 
@@ -89,40 +64,36 @@ public class UserPreferences {
         saveBoolean(KEY_MSG_IGNORE, enable);
     }
 
-    public static boolean getMsgIgnore() {
-        return getBoolean(KEY_MSG_IGNORE, false);
+    public static boolean getNotificationToggle() {
+        return getBoolean(KEY_SB_NOTIFY_TOGGLE, true);
     }
 
     public static void setNotificationToggle(boolean on) {
         saveBoolean(KEY_SB_NOTIFY_TOGGLE, on);
     }
 
-    public static boolean getNotificationToggle() {
-        return getBoolean(KEY_SB_NOTIFY_TOGGLE, true);
+    public static boolean getRingToggle() {
+        return getBoolean(KEY_RING_TOGGLE, true);
     }
 
     public static void setRingToggle(boolean on) {
         saveBoolean(KEY_RING_TOGGLE, on);
     }
 
-    public static boolean getRingToggle() {
-        return getBoolean(KEY_RING_TOGGLE, true);
+    public static boolean getVibrateToggle() {
+        return getBoolean(KEY_VIBRATE_TOGGLE, true);
     }
 
     public static void setVibrateToggle(boolean on) {
         saveBoolean(KEY_VIBRATE_TOGGLE, on);
     }
 
-    public static boolean getVibrateToggle() {
-        return getBoolean(KEY_VIBRATE_TOGGLE, true);
+    public static boolean getLedToggle() {
+        return getBoolean(KEY_LED_TOGGLE, true);
     }
 
     public static void setLedToggle(boolean on) {
         saveBoolean(KEY_LED_TOGGLE, on);
-    }
-
-    public static boolean getLedToggle() {
-        return getBoolean(KEY_LED_TOGGLE, true);
     }
 
     public static boolean getNoticeContentToggle() {
@@ -141,29 +112,29 @@ public class UserPreferences {
     public static void setDeleteFriendAndDeleteAlias(boolean on) {
         saveBoolean(KEY_DELETE_FRIEND_AND_DELETE_ALIAS, on);
     }
-    
+
     public static boolean isEnableRecentContactsTimeIndex() {
         return getBoolean(KEY_ENABLE_TIME_INDEX, true);
     }
-    
+
     public static void setEnableRecentContactsTimeIndex(boolean on) {
         saveBoolean(KEY_ENABLE_TIME_INDEX, on);
-    }
-
-    public static void setDownTimeToggle(boolean on) {
-        saveBoolean(KEY_DOWNTIME_TOGGLE, on);
     }
 
     public static boolean getDownTimeToggle() {
         return getBoolean(KEY_DOWNTIME_TOGGLE, false);
     }
 
-    public static void setStatusConfig(StatusBarNotificationConfig config) {
-        saveStatusBarNotificationConfig(KEY_STATUS_BAR_NOTIFICATION_CONFIG, config);
+    public static void setDownTimeToggle(boolean on) {
+        saveBoolean(KEY_DOWNTIME_TOGGLE, on);
     }
 
     public static StatusBarNotificationConfig getStatusConfig() {
         return getConfig(KEY_STATUS_BAR_NOTIFICATION_CONFIG);
+    }
+
+    public static void setStatusConfig(StatusBarNotificationConfig config) {
+        saveStatusBarNotificationConfig(KEY_STATUS_BAR_NOTIFICATION_CONFIG, config);
     }
 
     public static void setTeamAnnounceClosed(String teamId, boolean closed) {
@@ -174,12 +145,12 @@ public class UserPreferences {
         return getBoolean(KEY_TEAM_ANNOUNCE_CLOSED + teamId, false);
     }
 
-    public static void setOnlineStateSubsTime(long time) {
-        saveLong(KEY_SUBSCRIBE_TIME, time);
-    }
-
     public static long getOnlineStateSubsTime() {
         return getLong(KEY_SUBSCRIBE_TIME, 0);
+    }
+
+    public static void setOnlineStateSubsTime(long time) {
+        saveLong(KEY_SUBSCRIBE_TIME, time);
     }
 
     private static StatusBarNotificationConfig getConfig(String key) {

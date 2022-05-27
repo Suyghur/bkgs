@@ -23,7 +23,6 @@
             android:layout_above="@+id/addLabelTv" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/addLabelTv"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_44"
@@ -34,7 +33,8 @@
             android:gravity="center"
             android:text="+加标签"
             android:textColor="@color/c_ffffff"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="@dimen/sp_16"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

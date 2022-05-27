@@ -1,20 +1,10 @@
 package com.pro.maluli.module.home.startLive.adapter.provide;
 
-import android.graphics.Color;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
-import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.provider.BaseItemProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.netease.nim.uikit.business.chatroom.helper.ChatRoomNotificationHelper;
-import com.netease.nim.uikit.business.session.helper.TeamNotificationHelper;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomNotificationAttachment;
 import com.pro.maluli.R;

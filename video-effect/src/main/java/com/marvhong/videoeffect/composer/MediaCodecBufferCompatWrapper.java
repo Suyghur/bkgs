@@ -3,6 +3,7 @@ package com.marvhong.videoeffect.composer;
 
 import android.media.MediaCodec;
 import android.os.Build;
+
 import java.nio.ByteBuffer;
 
 // Refer: https://github.com/ypresto/android-transcoder/blob/master/lib/src/main/java/net/ypresto/androidtranscoder/compat/MediaCodecBufferCompatWrapper.java

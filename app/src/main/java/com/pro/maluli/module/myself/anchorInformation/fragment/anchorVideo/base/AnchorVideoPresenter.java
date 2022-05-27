@@ -7,17 +7,16 @@ import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
 import com.pro.maluli.common.entity.AnchorVideoEntity;
-import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import io.reactivex.functions.Consumer;
 
 public class AnchorVideoPresenter extends BasePresenter<IAnchorVideoContraction.View> implements IAnchorVideoContraction.Presenter {
+    public String anchorId;
+
     public AnchorVideoPresenter(Context context) {
         super(context);
     }
-
-    public String anchorId;
 
     //
 //    @Override

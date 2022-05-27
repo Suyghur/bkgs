@@ -8,7 +8,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,16 +23,16 @@ public class OnlineMemberAdapter extends BaseQuickAdapter<ChatRoomMember, Online
     private Context context;
     private String anchorAccid;
 
+    public OnlineMemberAdapter(List<ChatRoomMember> data, String anchorAccid, Context context) {
+        super(R.layout.item_online_number, data);
+        this.context = context;
+        this.anchorAccid = anchorAccid;
+    }
+
     @NotNull
     @Override
     protected OnlineMemberAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public OnlineMemberAdapter(List<ChatRoomMember> data,String anchorAccid, Context context) {
-        super(R.layout.item_online_number, data);
-        this.context = context;
-        this.anchorAccid =anchorAccid;
     }
 
     @Override

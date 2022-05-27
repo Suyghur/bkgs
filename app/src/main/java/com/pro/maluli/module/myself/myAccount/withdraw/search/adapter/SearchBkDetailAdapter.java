@@ -35,7 +35,7 @@ public class SearchBkDetailAdapter extends BaseQuickAdapter<BKRecordEntity.ListB
         baseViewHolder.setText(R.id.numberBkTv, entity.getMoney() + "");
 //        baseViewHolder.setText(R.id.giftTypeTv, entity.getGift_title());
 //        baseViewHolder.setText(R.id.resourceTv, entity.getProduct_type() + "");
-        TextView textView= baseViewHolder.getView(R.id.numberBkTv);
+        TextView textView = baseViewHolder.getView(R.id.numberBkTv);
         //类型 0:百科充值,1:一对一直播打赏,2:私信打赏,3:对众直播打赏,4:进入付费直播间 5-支出 999-全部
         switch (entity.getFlow_type()) {
             case 0:

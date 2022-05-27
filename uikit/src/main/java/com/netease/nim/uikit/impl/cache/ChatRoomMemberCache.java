@@ -33,14 +33,28 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatRoomMemberCache {
 
     private static final String TAG = "ChatRoomMemberCache";
+    private Map<String, Map<String, ChatRoomMember>> cache = new ConcurrentHashMap<>();
+    private Map<String, List<SimpleCallback<ChatRoomMember>>> frequencyLimitCache = new ConcurrentHashMap<>(); // 重复请求处理
+    private Observer<List<ChatRoomMessage>> incomingChatRoomMsg = (Observer<List<ChatRoomMessage>>) messages -> {
+        if (messages == null || messages.isEmpty()) {
+            return;
+        }
+
+        for (IMMessage msg : messages) {
+            if (msg == null) {
+                LogUtil.e(TAG, "receive chat room message null");
+                continue;
+            }
+
+            if (msg.getMsgType() == MsgTypeEnum.notification) {
+                handleNotification(msg);
+            }
+        }
+    };
 
     public static ChatRoomMemberCache getInstance() {
         return InstanceHolder.instance;
     }
-
-    private Map<String, Map<String, ChatRoomMember>> cache = new ConcurrentHashMap<>();
-
-    private Map<String, List<SimpleCallback<ChatRoomMember>>> frequencyLimitCache = new ConcurrentHashMap<>(); // 重复请求处理
 
     public void clear() {
         cache.clear();
@@ -172,36 +186,12 @@ public class ChatRoomMemberCache {
     }
 
     /**
-     * ************************************ 单例 ***************************************
-     */
-    static class InstanceHolder {
-        final static ChatRoomMemberCache instance = new ChatRoomMemberCache();
-    }
-
-    /**
      * ********************************** 监听 ********************************
      */
 
     public void registerObservers(boolean register) {
         NIMClient.getService(ChatRoomServiceObserver.class).observeReceiveMessage(incomingChatRoomMsg, register);
     }
-
-    private Observer<List<ChatRoomMessage>> incomingChatRoomMsg = (Observer<List<ChatRoomMessage>>) messages -> {
-        if (messages == null || messages.isEmpty()) {
-            return;
-        }
-
-        for (IMMessage msg : messages) {
-            if (msg == null) {
-                LogUtil.e(TAG, "receive chat room message null");
-                continue;
-            }
-
-            if (msg.getMsgType() == MsgTypeEnum.notification) {
-                handleNotification(msg);
-            }
-        }
-    };
 
     private void handleNotification(IMMessage message) {
         if (message.getAttachment() == null) {
@@ -261,5 +251,12 @@ public class ChatRoomMemberCache {
         }
 
         saveMember(member);
+    }
+
+    /**
+     * ************************************ 单例 ***************************************
+     */
+    static class InstanceHolder {
+        final static ChatRoomMemberCache instance = new ChatRoomMemberCache();
     }
 }

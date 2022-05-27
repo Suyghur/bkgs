@@ -1,7 +1,6 @@
 package com.pro.maluli.module.home.announcement.detail;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * @author Kingsley

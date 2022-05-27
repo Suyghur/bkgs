@@ -5,13 +5,25 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class CustomizeInfoEntity implements Serializable {
     private String gift_name;//  礼物名称
     private String gift_id;//  礼物id
     private String gift_logo;// 礼物logo
     private String gift_number;// 红包名称
+    private int type;
+
+    public CustomizeInfoEntity() {
+
+    }
+
+    public CustomizeInfoEntity(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return;
+        }
+        goJsonYes(string);
+
+    }
 
     public String getGift_name() {
         return gift_name;
@@ -45,18 +57,6 @@ public class CustomizeInfoEntity implements Serializable {
         this.gift_number = gift_number;
     }
 
-    public CustomizeInfoEntity() {
-
-    }
-
-    public CustomizeInfoEntity(String string) {
-        if (TextUtils.isEmpty(string)) {
-            return;
-        }
-        goJsonYes(string);
-
-    }
-
     public CustomizeInfoEntity goJsonYes(String string) {
         CustomizeInfoEntity entity = new CustomizeInfoEntity();
         JSONObject jsonObjectTop = JSONObject.parseObject(string);
@@ -76,9 +76,6 @@ public class CustomizeInfoEntity implements Serializable {
         return entity;
     }
 
-    private int type;
-
-
     public int getType() {
         return type;
     }
@@ -86,9 +83,6 @@ public class CustomizeInfoEntity implements Serializable {
     public void setType(int type) {
         this.type = type;
     }
-
-
-
 
 
 }

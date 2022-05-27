@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +22,6 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.ReserveDetailEntity;
 import com.pro.maluli.common.entity.ReserveMessageEntity;
 import com.pro.maluli.common.entity.SeeLiveUserEntity;
-import com.pro.maluli.common.entity.SystemMsgEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.popwindow.PopupWindowList;
@@ -64,6 +62,7 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
     View nodataView;
     private int deletePosition;
     private List<ReserveMessageEntity.ListBean> listBeans = new ArrayList<>();
+    private PopupWindowList mPopupWindowList;
 
     @Override
     public ReserveMessagePresenter initPresenter() {
@@ -92,9 +91,6 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
 
         return super.dispatchTouchEvent(ev);
     }
-
-
-    private PopupWindowList mPopupWindowList;
 
     @Override
     public void viewInitialization() {
@@ -171,7 +167,7 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
                         presenter.setReserveTop(listBeans.get(itemPosition).getId());
                         break;
                     case 1:
-                        deletePosition=itemPosition;
+                        deletePosition = itemPosition;
                         presenter.setDeleteReserve(listBeans.get(itemPosition).getId());
                         break;
                 }

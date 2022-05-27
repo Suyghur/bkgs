@@ -7,20 +7,18 @@ import android.util.AttributeSet;
 import com.netease.nim.uikit.R;
 
 /**
+ *
  */
 
 public class RatioImage extends androidx.appcompat.widget.AppCompatImageView {
 
+    private static final int sEnumWidth = 0;
+    private static final int sEnumHeight = 1;
     private float ratioWidth;
-
     private float ratioHeight;
-
     // 0 for width
     // 1 for height
     private int standard;
-
-    private static final int sEnumWidth = 0;
-    private static final int sEnumHeight = 1;
 
     public RatioImage(Context context) {
         this(context, null);

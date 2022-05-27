@@ -5,10 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -16,6 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.netease.nim.uikit.common.fragment.TFragment;
 import com.netease.nim.uikit.common.util.log.LogUtil;
@@ -26,10 +27,8 @@ import java.util.List;
 
 public abstract class UI extends AppCompatActivity {
 
-    private boolean destroyed = false;
-
     private static Handler handler;
-
+    private boolean destroyed = false;
     private Toolbar toolbar;
 
     @Override
@@ -134,6 +133,7 @@ public abstract class UI extends AppCompatActivity {
 //            toolbar.setTitle(null);
         }
     }
+
     public void setTitleCenter(Toolbar toolbar) {
         String title = "title";
         final CharSequence originalTitle = toolbar.getTitle();
@@ -152,6 +152,7 @@ public abstract class UI extends AppCompatActivity {
             toolbar.setTitle(originalTitle);
         }
     }
+
     public void setSubTitle(String subTitle) {
         if (toolbar != null) {
             toolbar.setSubtitle(subTitle);

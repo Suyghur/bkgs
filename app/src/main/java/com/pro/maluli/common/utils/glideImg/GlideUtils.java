@@ -48,6 +48,7 @@ public class GlideUtils {
     public static void loadImage(Context context, String url, ImageView imageView) {
         Glide.with(context).load(url).apply(options).into(imageView);
     }
+
     /**
      * 加载常规图片
      *
@@ -58,6 +59,7 @@ public class GlideUtils {
     public static void loadImageNoImage(Context context, String url, ImageView imageView) {
         Glide.with(context).load(url).into(imageView);
     }
+
     /**
      * 加载常规图片
      *
@@ -68,6 +70,7 @@ public class GlideUtils {
     public static void loadHeardImg(Context context, String url, ImageView imageView) {
         Glide.with(context).load(url).apply(heardOptions).into(imageView);
     }
+
     /**
      * 加载图片自动适配容器大小
      *
@@ -195,6 +198,17 @@ public class GlideUtils {
         }
         return density;
     }
+
+    /**
+     * 清除glide全部缓存
+     *
+     * @param context
+     */
+    public static void clearCache(Context context) {
+        Glide.get(context).clearDiskCache();
+        Glide.get(context).clearMemory();
+    }
+
     /**
      * 自定义角度
      */
@@ -204,6 +218,15 @@ public class GlideUtils {
         private float radius;
 
         private boolean isLeftTop, isRightTop, isLeftBottom, isRightBotoom;
+
+        /**
+         * @param context 上下文
+         * @param radius  圆角幅度
+         */
+        public RoundedCornersTransform(Context context, float radius) {
+            this.mBitmapPool = Glide.get(context).getBitmapPool();
+            this.radius = radius;
+        }
 
         /**
          * 需要设置圆角的部分
@@ -218,15 +241,6 @@ public class GlideUtils {
             isRightTop = rightTop;
             isLeftBottom = leftBottom;
             isRightBotoom = rightBottom;
-        }
-
-        /**
-         * @param context 上下文
-         * @param radius  圆角幅度
-         */
-        public RoundedCornersTransform(Context context, float radius) {
-            this.mBitmapPool = Glide.get(context).getBitmapPool();
-            this.radius = radius;
         }
 
         @NonNull
@@ -318,16 +332,6 @@ public class GlideUtils {
         @Override
         public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
         }
-    }
-
-    /**
-     * 清除glide全部缓存
-     *
-     * @param context
-     */
-    public static void clearCache(Context context) {
-        Glide.get(context).clearDiskCache();
-        Glide.get(context).clearMemory();
     }
 
 }

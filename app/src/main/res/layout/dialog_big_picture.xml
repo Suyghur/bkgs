@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
     android:id="@+id/ousideDismissFl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_30"
-    android:layout_marginVertical="@dimen/dp_50"
-    android:layout_height="wrap_content" >
+    android:layout_marginVertical="@dimen/dp_50">
 
     <com.pro.maluli.common.view.myselfView.HackyViewPager
         android:id="@+id/pager"

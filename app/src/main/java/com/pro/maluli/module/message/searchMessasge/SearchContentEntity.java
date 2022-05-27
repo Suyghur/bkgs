@@ -2,14 +2,14 @@ package com.pro.maluli.module.message.searchMessasge;
 
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
-import com.pro.maluli.common.entity.AboutMeEntity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchContentEntity implements Serializable {
     private int typee;
+    private List<IMMessage> message;
+    private List<NimUserInfo> userInfo;
 
     public int getTypee() {
         return typee;
@@ -34,7 +34,4 @@ public class SearchContentEntity implements Serializable {
     public void setUserInfo(List<NimUserInfo> userInfo) {
         this.userInfo = userInfo;
     }
-
-    private List<IMMessage> message;
-    private List<NimUserInfo> userInfo;
 }

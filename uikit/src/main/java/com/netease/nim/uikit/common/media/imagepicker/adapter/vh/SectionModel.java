@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
-
+ *
  */
 
 public class SectionModel {
@@ -24,16 +24,16 @@ public class SectionModel {
         shared.add(this);
     }
 
-    Shared getShared() {
-        return shared;
-    }
-
     public static SectionModel wrap(int index, SectionModel begin) {
         return new SectionModel(index, begin.getShared());
     }
 
     public static SectionModel begin(String key, List<GLImage> images, int offset, ImageSectionAdapter.OnImageClickListener listener) {
         return new SectionModel(-1, new Shared(key, images, offset, listener));
+    }
+
+    Shared getShared() {
+        return shared;
     }
 
     public List<GLImage> getImages() {
@@ -72,6 +72,10 @@ public class SectionModel {
         }
     }
 
+    public interface Listener {
+        void onChanged();
+    }
+
     public static class Shared {
         private final List<GLImage> images;
         private final String key;
@@ -95,10 +99,6 @@ public class SectionModel {
                 model.onChanged();
             }
         }
-    }
-
-    public interface Listener {
-        void onChanged();
     }
 
 }

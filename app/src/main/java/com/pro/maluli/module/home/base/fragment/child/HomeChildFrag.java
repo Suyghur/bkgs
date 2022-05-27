@@ -2,7 +2,6 @@ package com.pro.maluli.module.home.base.fragment.child;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 
 import androidx.fragment.app.Fragment;
@@ -16,8 +15,8 @@ import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
-import com.pro.maluli.module.home.base.fragment.child.presenter.IHomeChildContraction;
 import com.pro.maluli.module.home.base.fragment.child.presenter.HomeChildPresenter;
+import com.pro.maluli.module.home.base.fragment.child.presenter.IHomeChildContraction;
 import com.pro.maluli.module.home.base.fragment.rechild.ChildLiveListFrag;
 
 import java.io.Serializable;
@@ -41,9 +40,9 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
 
     List<Fragment> fragments;
     MyPagerAdapter mAdapter;
+    List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> allBeanList;
     private int selectPosition;
     private boolean isAll;
-    List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> allBeanList;
 
     public static Fragment newInstance(List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> children) {
         HomeChildFrag treasureGameFrag = new HomeChildFrag();

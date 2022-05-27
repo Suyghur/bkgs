@@ -87,6 +87,8 @@ public class RechargeEntity implements Serializable {
         private int bk_money;
         private String money;
         private int type;
+        private int id;
+        private boolean isSelect;
 
         public int getId() {
             return id;
@@ -95,9 +97,6 @@ public class RechargeEntity implements Serializable {
         public void setId(int id) {
             this.id = id;
         }
-
-        private int id;
-        private boolean isSelect;
 
         public boolean isSelect() {
             return isSelect;

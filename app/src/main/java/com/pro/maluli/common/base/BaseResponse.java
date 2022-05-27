@@ -1,6 +1,6 @@
 package com.pro.maluli.common.base;
 
-public class BaseResponse <T>  {
+public class BaseResponse<T> {
     private int code;
     private T data;
     private String message;

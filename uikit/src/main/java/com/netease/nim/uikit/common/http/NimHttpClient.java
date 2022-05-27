@@ -13,6 +13,59 @@ import java.util.Map;
 public class NimHttpClient {
 
     /**
+     * ************************ Single instance **************************
+     */
+    private static NimHttpClient instance;
+    /**
+     * **************** Http Config & Thread pool & Http Client ******************
+     */
+
+    private boolean inited = false;
+    private NimTaskExecutor executor;
+    private Handler uiHandler;
+
+    private NimHttpClient() {
+
+    }
+
+    public synchronized static NimHttpClient getInstance() {
+        if (instance == null) {
+            instance = new NimHttpClient();
+        }
+
+        return instance;
+    }
+
+    public void init(Context context) {
+        if (inited) {
+            return;
+        }
+
+        // init thread pool
+        executor = new NimTaskExecutor("NIM_HTTP_TASK_EXECUTOR", new NimTaskExecutor.Config(1, 3, 10 * 1000, true));
+        uiHandler = new Handler(context.getMainLooper());
+        inited = true;
+    }
+
+    public void release() {
+        if (executor != null) {
+            executor.shutdown();
+        }
+    }
+
+    public void execute(String url, Map<String, String> headers, String body, NimHttpCallback callback) {
+        execute(url, headers, body, true, callback);
+    }
+
+    public void execute(String url, Map<String, String> headers, String body, boolean post, NimHttpCallback callback) {
+        if (!inited) {
+            return;
+        }
+
+        executor.execute(new NimHttpTask(url, headers, body, callback, post));
+    }
+
+    /**
      * *********************** Http Task & Callback *************************
      */
     public interface NimHttpCallback {
@@ -54,61 +107,5 @@ public class NimHttpClient {
                 }
             });
         }
-    }
-
-    /**
-     * ************************ Single instance **************************
-     */
-    private static NimHttpClient instance;
-
-    public synchronized static NimHttpClient getInstance() {
-        if (instance == null) {
-            instance = new NimHttpClient();
-        }
-
-        return instance;
-    }
-
-    private NimHttpClient() {
-
-    }
-
-    /**
-     * **************** Http Config & Thread pool & Http Client ******************
-     */
-
-    private boolean inited = false;
-
-    private NimTaskExecutor executor;
-
-    private Handler uiHandler;
-
-    public void init(Context context) {
-        if (inited) {
-            return;
-        }
-
-        // init thread pool
-        executor = new NimTaskExecutor("NIM_HTTP_TASK_EXECUTOR", new NimTaskExecutor.Config(1, 3, 10 * 1000, true));
-        uiHandler = new Handler(context.getMainLooper());
-        inited = true;
-    }
-
-    public void release() {
-        if (executor != null) {
-            executor.shutdown();
-        }
-    }
-
-    public void execute(String url, Map<String, String> headers, String body, NimHttpCallback callback) {
-        execute(url, headers, body, true, callback);
-    }
-
-    public void execute(String url, Map<String, String> headers, String body, boolean post, NimHttpCallback callback) {
-        if (!inited) {
-            return;
-        }
-
-        executor.execute(new NimHttpTask(url, headers, body, callback, post));
     }
 }

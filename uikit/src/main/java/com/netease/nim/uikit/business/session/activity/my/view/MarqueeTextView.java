@@ -2,7 +2,6 @@ package com.netease.nim.uikit.business.session.activity.my.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
@@ -21,7 +20,7 @@ public class MarqueeTextView extends AppCompatTextView {
     }
 
     @Override
-    public boolean isFocused(){
+    public boolean isFocused() {
         return true;
     }
 

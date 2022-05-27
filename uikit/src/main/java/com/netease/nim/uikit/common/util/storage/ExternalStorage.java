@@ -17,17 +17,14 @@ import java.io.IOException;
  * package
  */
 public class ExternalStorage {
+    private static final String TAG = "ExternalStorage";
+    protected static String NO_MEDIA_FILE_NAME = ".nomedia";
+    private static ExternalStorage instance;
     /**
      * 外部存储根目录
      */
     private String sdkStorageRoot = null;
-
-    private static ExternalStorage instance;
-
-    private static final String TAG = "ExternalStorage";
-
     private boolean hasPermission = true; // 是否拥有存储卡权限
-
     private Context context;
 
     private ExternalStorage() {
@@ -99,8 +96,6 @@ public class ExternalStorage {
         }
         return exist;
     }
-
-    protected static String NO_MEDIA_FILE_NAME = ".nomedia";
 
     private void createNoMediaFile(String path) {
         File noMediaFile = new File(path + "/" + NO_MEDIA_FILE_NAME);

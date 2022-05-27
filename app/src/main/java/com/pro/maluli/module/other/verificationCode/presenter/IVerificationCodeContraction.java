@@ -13,9 +13,12 @@ public interface IVerificationCodeContraction extends BaseView {
         void getCodeSuccess();
 
     }
+
     interface Presenter extends IClear {
         void checkCode(String mobile, String codeType, String input);
+
         void getVerifiCationCode(String mobile);
+
         void codeLogin(String mobile, String s, String input);
 
         void bindMobile(String mobile, String openid, String type, String input);

@@ -1,12 +1,12 @@
 package com.iceteck.silicompressorr.videocompression;
 
 /*
-* By Jorge E. Hernandez (@lalongooo) 2015
-* */
+ * By Jorge E. Hernandez (@lalongooo) 2015
+ * */
 
 /*
-* Static class to define general configuration values of the application
-* */
+ * Static class to define general configuration values of the application
+ * */
 public class Config {
 
     /**

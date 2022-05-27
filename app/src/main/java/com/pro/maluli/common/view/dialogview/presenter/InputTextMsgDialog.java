@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialog;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.R;
 
 
@@ -40,14 +38,6 @@ public class InputTextMsgDialog extends AppCompatDialog {
     private int mLastDiff = 0;
     private TextView tvNumber;
     private int maxNumber = 200;
-
-    public interface OnTextSendListener {
-
-        void onTextSend(String msg);
-
-        void dismiss();
-    }
-
     private OnTextSendListener mOnTextSendListener;
 
     public InputTextMsgDialog(@NonNull Context context, int theme) {
@@ -129,7 +119,7 @@ public class InputTextMsgDialog extends AppCompatDialog {
                     messageTextView.setText("");
                     InputTextMsgDialog.this.dismiss();
                 } else {
-                Toast.makeText(mContext, "请输入文字", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "请输入文字", Toast.LENGTH_LONG).show();
                 }
                 messageTextView.setText(null);
             }
@@ -207,7 +197,6 @@ public class InputTextMsgDialog extends AppCompatDialog {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
-
     public void setmOnTextSendListener(OnTextSendListener onTextSendListener) {
         this.mOnTextSendListener = onTextSendListener;
     }
@@ -217,12 +206,19 @@ public class InputTextMsgDialog extends AppCompatDialog {
         super.dismiss();
         //dismiss之前重置mLastDiff值避免下次无法打开
         mLastDiff = 0;
-        if (mOnTextSendListener!=null) mOnTextSendListener.dismiss();
+        if (mOnTextSendListener != null) mOnTextSendListener.dismiss();
 
     }
 
     @Override
     public void show() {
         super.show();
+    }
+
+    public interface OnTextSendListener {
+
+        void onTextSend(String msg);
+
+        void dismiss();
     }
 }

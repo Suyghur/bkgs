@@ -8,18 +8,11 @@ import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode;
 /**
  * 渲染View公共接口
  * <p>
+ *
  * @author netease
  */
 
 public interface IRenderView {
-
-    interface SurfaceCallback {
-        void onSurfaceCreated(Surface surface);
-
-        void onSurfaceDestroyed(Surface surface);
-
-        void onSurfaceSizeChanged(Surface surface, int format, int width, int height);
-    }
 
     void onSetupRenderView();
 
@@ -32,4 +25,12 @@ public interface IRenderView {
     void removeCallback();
 
     void showView(boolean show);
+
+    interface SurfaceCallback {
+        void onSurfaceCreated(Surface surface);
+
+        void onSurfaceDestroyed(Surface surface);
+
+        void onSurfaceSizeChanged(Surface surface, int format, int width, int height);
+    }
 }

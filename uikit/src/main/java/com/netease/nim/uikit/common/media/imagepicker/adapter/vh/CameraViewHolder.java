@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.common.media.imagepicker.adapter.vh;
 
 import android.Manifest;
-import androidx.core.app.ActivityCompat;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.core.app.ActivityCompat;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.adapter.BaseViewHolder;
@@ -15,6 +16,7 @@ import com.netease.nim.uikit.common.media.imagepicker.ui.ImageBaseActivity;
 
 
 /**
+ *
  */
 
 public class CameraViewHolder extends BaseViewHolder<Object> {
@@ -42,7 +44,7 @@ public class CameraViewHolder extends BaseViewHolder<Object> {
                 } else if (imagePicker.imageOnly()) {
                     if (!(activity.checkPermission(Manifest.permission.CAMERA))) {
                         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA},
-                                                          Constants.REQUEST_PERMISSION_CAMERA);
+                                Constants.REQUEST_PERMISSION_CAMERA);
                     } else {
                         ImagePickerLauncher.takePicture(activity, Constants.REQUEST_CODE_TAKE, imagePicker.getOption());
                     }

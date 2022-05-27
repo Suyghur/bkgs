@@ -44,6 +44,67 @@ public class MyP2PMessageActivity extends BaseMessageActivity {
 
     private boolean isResume = false;
     private TextView titleCustorm;
+    /**
+     * 命令消息接收观察者
+     */
+    private Observer<CustomNotification> commandObserver = new Observer<CustomNotification>() {
+        @Override
+        public void onEvent(CustomNotification message) {
+            if (!sessionId.equals(message.getSessionId()) || message.getSessionType() != SessionTypeEnum.P2P) {
+                return;
+            }
+            showCommandMessage(message);
+        }
+    };
+    /**
+     * 用户信息变更观察者
+     */
+    private UserInfoObserver userInfoObserver = new UserInfoObserver() {
+        @Override
+        public void onUserInfoChanged(List<String> accounts) {
+            if (!accounts.contains(sessionId)) {
+                return;
+            }
+            requestBuddyInfo();
+        }
+    };
+    /**
+     * 好友资料变更（eg:关系）
+     */
+    private ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
+        @Override
+        public void onAddedOrUpdatedFriends(List<String> accounts) {
+            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
+        }
+
+        @Override
+        public void onDeletedFriends(List<String> accounts) {
+            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
+        }
+
+        @Override
+        public void onAddUserToBlackList(List<String> account) {
+            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
+        }
+
+        @Override
+        public void onRemoveUserFromBlackList(List<String> account) {
+            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
+        }
+    };
+    /**
+     * 好友在线状态观察者
+     */
+    private OnlineStateChangeObserver onlineStateChangeObserver = new OnlineStateChangeObserver() {
+        @Override
+        public void onlineStateChange(Set<String> accounts) {
+            if (!accounts.contains(sessionId)) {
+                return;
+            }
+            // 按照交互来展示
+            displayOnlineState();
+        }
+    };
 
     public static void start(Context context, String contactId, SessionCustomization customization, IMMessage anchor) {
         Intent intent = new Intent();
@@ -101,73 +162,6 @@ public class MyP2PMessageActivity extends BaseMessageActivity {
         String detailContent = NimUIKitImpl.getOnlineStateContentProvider().getDetailDisplay(sessionId);
         setSubTitle(detailContent);
     }
-
-
-    /**
-     * 命令消息接收观察者
-     */
-    private Observer<CustomNotification> commandObserver = new Observer<CustomNotification>() {
-        @Override
-        public void onEvent(CustomNotification message) {
-            if (!sessionId.equals(message.getSessionId()) || message.getSessionType() != SessionTypeEnum.P2P) {
-                return;
-            }
-            showCommandMessage(message);
-        }
-    };
-
-
-    /**
-     * 用户信息变更观察者
-     */
-    private UserInfoObserver userInfoObserver = new UserInfoObserver() {
-        @Override
-        public void onUserInfoChanged(List<String> accounts) {
-            if (!accounts.contains(sessionId)) {
-                return;
-            }
-            requestBuddyInfo();
-        }
-    };
-
-    /**
-     * 好友资料变更（eg:关系）
-     */
-    private ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
-        @Override
-        public void onAddedOrUpdatedFriends(List<String> accounts) {
-            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
-        }
-
-        @Override
-        public void onDeletedFriends(List<String> accounts) {
-            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
-        }
-
-        @Override
-        public void onAddUserToBlackList(List<String> account) {
-            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
-        }
-
-        @Override
-        public void onRemoveUserFromBlackList(List<String> account) {
-            setTitle(UserInfoHelper.getUserTitleName(sessionId, SessionTypeEnum.P2P));
-        }
-    };
-
-    /**
-     * 好友在线状态观察者
-     */
-    private OnlineStateChangeObserver onlineStateChangeObserver = new OnlineStateChangeObserver() {
-        @Override
-        public void onlineStateChange(Set<String> accounts) {
-            if (!accounts.contains(sessionId)) {
-                return;
-            }
-            // 按照交互来展示
-            displayOnlineState();
-        }
-    };
 
     private void registerObservers(boolean register) {
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(commandObserver, register);

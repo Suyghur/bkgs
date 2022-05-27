@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.pres
 
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
-import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 
@@ -16,6 +15,7 @@ public interface ISearchRewardContraction extends BaseView {
         void deleteSuccess();
 
     }
+
     interface Presenter extends IClear {
 
         void getBkDetail();

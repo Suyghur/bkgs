@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-
 import androidx.annotation.Nullable;
 
 import com.pro.maluli.R;
@@ -35,7 +34,10 @@ import java.text.DecimalFormat;
 
 public class RangeSeekBar extends View {
 
+    public static final int INVALID_POINTER_ID = 255;
+    public static final int ACTION_POINTER_INDEX_MASK = 0x0000ff00, ACTION_POINTER_INDEX_SHIFT = 8;
     private static final String TAG = RangeSeekBar.class.getSimpleName();
+    private final float padding = 0;
     private double absoluteMinValuePrim, absoluteMaxValuePrim;
     private double normalizedMinValue = 0d;//点坐标占总长度的比例值，范围从0-1
     private double normalizedMaxValue = 1d;//点坐标占总长度的比例值，范围从0-1
@@ -52,17 +54,13 @@ public class RangeSeekBar extends View {
     private int thumbWidth;
     private int thumbHeight;
     private float thumbHalfWidth;
-    private final float padding = 0;
     private int top_bottom_border_height; //上下两边边框高度
     private int left_right_gray_width; //左右两边灰色线条宽度
     private int left_right_gray_height; //左右两边灰色线条高度
     private int left_right_gray_margin; //左右两边灰色线条距离顶部的间距
-
     private float thumbPaddingTop = 0;
     private float thumbPressPaddingTop = 0;
     private boolean isTouchDown;
-    public static final int INVALID_POINTER_ID = 255;
-    public static final int ACTION_POINTER_INDEX_MASK = 0x0000ff00, ACTION_POINTER_INDEX_SHIFT = 8;
     private int mActivePointerId = INVALID_POINTER_ID;
     private float mDownMotionX;
     private boolean mIsDragging;
@@ -70,10 +68,7 @@ public class RangeSeekBar extends View {
     private boolean isMin;
     private double min_width = 1;//最小裁剪距离
     private boolean notifyWhileDragging = false;
-
-    public enum Thumb {
-        MIN, MAX
-    }
+    private OnRangeSeekBarChangeListener listener;
 
     public RangeSeekBar(Context context) {
         super(context);
@@ -158,16 +153,16 @@ public class RangeSeekBar extends View {
                 Matrix mx = new Matrix();
                 mx.postScale(scale, 1f);
                 Bitmap m_bitmap_black_new = Bitmap
-                    .createBitmap(mBitmapBlack, 0, 0, mBitmapBlack.getWidth(), mBitmapBlack.getHeight(), mx, true);
+                        .createBitmap(mBitmapBlack, 0, 0, mBitmapBlack.getWidth(), mBitmapBlack.getHeight(), mx, true);
 
                 //画左边的半透明遮罩
                 Bitmap m_bg_new1 = Bitmap
-                    .createBitmap(m_bitmap_black_new, 0, 0, (int) (rangeL - bg_middle_left) + (int) thumbWidth / 2, mBitmapBlack.getHeight());
+                        .createBitmap(m_bitmap_black_new, 0, 0, (int) (rangeL - bg_middle_left) + (int) thumbWidth / 2, mBitmapBlack.getHeight());
                 canvas.drawBitmap(m_bg_new1, bg_middle_left, thumbPaddingTop, paint);
 
                 //画右边的半透明遮罩
                 Bitmap m_bg_new2 = Bitmap
-                    .createBitmap(m_bitmap_black_new, (int) (rangeR - thumbWidth / 2), 0, (int) (getWidth() - rangeR) + (int) thumbWidth / 2, mBitmapBlack.getHeight());
+                        .createBitmap(m_bitmap_black_new, (int) (rangeR - thumbWidth / 2), 0, (int) (getWidth() - rangeR) + (int) thumbWidth / 2, mBitmapBlack.getHeight());
                 canvas.drawBitmap(m_bg_new2, (int) (rangeR - thumbWidth / 2), thumbPaddingTop, paint);
 
                 //画上下的矩形
@@ -178,21 +173,21 @@ public class RangeSeekBar extends View {
 //                drawThumb(normalizedToScreen(normalizedMinValue), false, canvas, true);
 //                drawThumb(normalizedToScreen(normalizedMaxValue), false, canvas, false);
                 canvas.drawRect(normalizedToScreen(normalizedMinValue),
-                    thumbPaddingTop,
-                    normalizedToScreen(normalizedMinValue) + thumbWidth,
-                    thumbPaddingTop + thumbHeight, rectPaint);
+                        thumbPaddingTop,
+                        normalizedToScreen(normalizedMinValue) + thumbWidth,
+                        thumbPaddingTop + thumbHeight, rectPaint);
                 canvas.drawRect(normalizedToScreen(normalizedMaxValue) - thumbWidth,
-                    thumbPaddingTop,
-                    normalizedToScreen(normalizedMaxValue),
-                    thumbPaddingTop + thumbHeight, rectPaint);
+                        thumbPaddingTop,
+                        normalizedToScreen(normalizedMaxValue),
+                        thumbPaddingTop + thumbHeight, rectPaint);
                 canvas.drawRect(normalizedToScreen(normalizedMinValue) + top_bottom_border_height,
-                    thumbPaddingTop + left_right_gray_margin,
-                    normalizedToScreen(normalizedMinValue) + top_bottom_border_height + left_right_gray_width,
-                    thumbPaddingTop + left_right_gray_margin + left_right_gray_height, mGrayPaint);
+                        thumbPaddingTop + left_right_gray_margin,
+                        normalizedToScreen(normalizedMinValue) + top_bottom_border_height + left_right_gray_width,
+                        thumbPaddingTop + left_right_gray_margin + left_right_gray_height, mGrayPaint);
                 canvas.drawRect(normalizedToScreen(normalizedMaxValue) - thumbWidth + top_bottom_border_height,
-                    thumbPaddingTop + left_right_gray_margin,
-                    normalizedToScreen(normalizedMaxValue) - thumbWidth + top_bottom_border_height + left_right_gray_width,
-                    thumbPaddingTop + left_right_gray_margin + left_right_gray_height, mGrayPaint);
+                        thumbPaddingTop + left_right_gray_margin,
+                        normalizedToScreen(normalizedMaxValue) - thumbWidth + top_bottom_border_height + left_right_gray_width,
+                        thumbPaddingTop + left_right_gray_margin + left_right_gray_height, mGrayPaint);
             } catch (Exception e) {
                 // 当pro_scale非常小，例如width=12，Height=48，pro_scale=0.01979065时，
                 // 宽高按比例计算后值为0.237、0.949，系统强转为int型后宽就变成0了。就出现非法参数异常
@@ -489,6 +484,20 @@ public class RangeSeekBar extends View {
         return (value - absoluteMinValuePrim) / (absoluteMaxValuePrim - absoluteMinValuePrim);
     }
 
+    public void setNormalizedMinValue(double value) {
+        normalizedMinValue = Math.max(0d, Math.min(1d, Math.min(value, normalizedMaxValue)));
+        invalidate();// 重新绘制此view
+    }
+
+    public void setNormalizedMaxValue(double value) {
+        normalizedMaxValue = Math.max(0d, Math.min(1d, Math.max(value, normalizedMinValue)));
+        invalidate();// 重新绘制此view
+    }
+
+    public long getSelectedMinValue() {
+        return normalizedToValue(normalizedMinValueTime);
+    }
+
     public void setSelectedMinValue(long value) {
         if (0 == (absoluteMaxValuePrim - absoluteMinValuePrim)) {
             setNormalizedMinValue(0d);
@@ -497,32 +506,16 @@ public class RangeSeekBar extends View {
         }
     }
 
+    public long getSelectedMaxValue() {
+        return normalizedToValue(normalizedMaxValueTime);
+    }
+
     public void setSelectedMaxValue(long value) {
         if (0 == (absoluteMaxValuePrim - absoluteMinValuePrim)) {
             setNormalizedMaxValue(1d);
         } else {
             setNormalizedMaxValue(valueToNormalized(value));
         }
-    }
-
-    public void setNormalizedMinValue(double value) {
-        normalizedMinValue = Math.max(0d, Math.min(1d, Math.min(value, normalizedMaxValue)));
-        invalidate();// 重新绘制此view
-    }
-
-
-    public void setNormalizedMaxValue(double value) {
-        normalizedMaxValue = Math.max(0d, Math.min(1d, Math.max(value, normalizedMinValue)));
-        invalidate();// 重新绘制此view
-    }
-
-
-    public long getSelectedMinValue() {
-        return normalizedToValue(normalizedMinValueTime);
-    }
-
-    public long getSelectedMaxValue() {
-        return normalizedToValue(normalizedMaxValueTime);
     }
 
     private long normalizedToValue(double normalized) {
@@ -572,14 +565,16 @@ public class RangeSeekBar extends View {
         normalizedMaxValueTime = bundle.getDouble("MAX_TIME");
     }
 
-    private OnRangeSeekBarChangeListener listener;
+    public void setOnRangeSeekBarChangeListener(OnRangeSeekBarChangeListener listener) {
+        this.listener = listener;
+    }
+
+    public enum Thumb {
+        MIN, MAX
+    }
 
     public interface OnRangeSeekBarChangeListener {
         void onRangeSeekBarValuesChanged(RangeSeekBar bar, long minValue, long maxValue, int action,
-            boolean isMin, Thumb pressedThumb);
-    }
-
-    public void setOnRangeSeekBarChangeListener(OnRangeSeekBarChangeListener listener) {
-        this.listener = listener;
+                                         boolean isMin, Thumb pressedThumb);
     }
 }

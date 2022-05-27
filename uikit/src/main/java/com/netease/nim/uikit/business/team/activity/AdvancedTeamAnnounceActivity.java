@@ -10,7 +10,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.netease.nim.uikit.common.ToastHelper;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -19,6 +18,7 @@ import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
 import com.netease.nim.uikit.business.team.helper.AnnouncementHelper;
 import com.netease.nim.uikit.business.team.model.Announcement;
 import com.netease.nim.uikit.business.team.viewholder.TeamAnnounceHolder;
+import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.adapter.TAdapter;
@@ -37,12 +37,11 @@ import java.util.List;
  * Created by hzxuwen on 2015/3/18.
  */
 public class AdvancedTeamAnnounceActivity extends UI implements TAdapterDelegate {
+    public final static String RESULT_ANNOUNCE_DATA = "RESULT_ANNOUNCE_DATA";
     // constant
     private final static String EXTRA_TID = "EXTRA_TID";
     private final static String EXTRA_AID = "EXTRA_AID";
     private final static int RES_ANNOUNCE_CREATE_CODE = 0x10;
-    public final static String RESULT_ANNOUNCE_DATA = "RESULT_ANNOUNCE_DATA";
-
     // context
     private Handler uiHandler;
 

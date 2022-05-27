@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.common.ui.recyclerview.callback;
 
 import android.graphics.Canvas;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseItemDraggableAdapter;

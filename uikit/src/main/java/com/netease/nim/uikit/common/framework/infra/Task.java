@@ -5,108 +5,18 @@ import android.os.Handler;
 public abstract class Task {
     private static final String ENCLOSURE = "<>";
     private static final int RETRY_COUNT = 1;
-
-    /*package*/ static class Info {
-        /**
-         * background
-         */
-        boolean background;
-
-        /**
-         * key
-         */
-        String key;
-
-        /**
-         * parameters
-         */
-        Object[] params;
-
-        Info(boolean background, String key, Object[] params) {
-            this.background = background;
-            this.key = key;
-            this.params = params;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("B");
-            sb.append(ENCLOSURE.charAt(0));
-            sb.append(background ? "T" : "F");
-            sb.append(ENCLOSURE.charAt(1));
-
-            sb.append(" ");
-
-            sb.append("K");
-            sb.append(ENCLOSURE.charAt(0));
-            sb.append(key);
-            sb.append(ENCLOSURE.charAt(1));
-
-            return sb.toString();
-        }
-    }
-
-    /*package*/ static class State {
-        /**
-         * cancelled
-         */
-        boolean cancelled;
-
-        /**
-         * chances
-         */
-        int chances;
-
-        /**
-         * pending
-         */
-        boolean pending;
-
-        /**
-         * fault
-         */
-        boolean fault;
-
-        State() {
-
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("C");
-            sb.append(ENCLOSURE.charAt(0));
-            sb.append(chances);
-            sb.append(ENCLOSURE.charAt(1));
-
-            sb.append(" ");
-
-            sb.append("P");
-            sb.append(ENCLOSURE.charAt(0));
-            sb.append(pending ? "T" : "F");
-            sb.append(ENCLOSURE.charAt(1));
-
-            return sb.toString();
-        }
-    }
-
     /**
      * handler for publish states
      */
     /*package*/ Handler handler;
-
     /**
      * task info
      */
     /*package*/ Info info;
-
     /**
      * task state
      */
-	/*package*/ State state;
+    /*package*/ State state;
 
     public void cancel() {
         state.cancelled = true;
@@ -199,8 +109,6 @@ public abstract class Task {
 //		AppCrashHandler.getInstance(null).saveException(tr, false);
     }
 
-    ;
-
     /**
      * on handle result
      *
@@ -208,8 +116,6 @@ public abstract class Task {
      */
     protected void onHandleResult(Object[] results) {
     }
-
-    ;
 
     /**
      * on publish result
@@ -219,6 +125,8 @@ public abstract class Task {
     protected void onPublishResult(Object[] results) {
     }
 
+    ;
+
     /**
      * on publish progress
      *
@@ -226,6 +134,8 @@ public abstract class Task {
      */
     protected void onPublishProgress(Object[] params) {
     }
+
+    ;
 
     /**
      * publish result
@@ -287,5 +197,92 @@ public abstract class Task {
     @Override
     public String toString() {
         return dump(true);
+    }
+
+    /*package*/ static class Info {
+        /**
+         * background
+         */
+        boolean background;
+
+        /**
+         * key
+         */
+        String key;
+
+        /**
+         * parameters
+         */
+        Object[] params;
+
+        Info(boolean background, String key, Object[] params) {
+            this.background = background;
+            this.key = key;
+            this.params = params;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("B");
+            sb.append(ENCLOSURE.charAt(0));
+            sb.append(background ? "T" : "F");
+            sb.append(ENCLOSURE.charAt(1));
+
+            sb.append(" ");
+
+            sb.append("K");
+            sb.append(ENCLOSURE.charAt(0));
+            sb.append(key);
+            sb.append(ENCLOSURE.charAt(1));
+
+            return sb.toString();
+        }
+    }
+
+    /*package*/ static class State {
+        /**
+         * cancelled
+         */
+        boolean cancelled;
+
+        /**
+         * chances
+         */
+        int chances;
+
+        /**
+         * pending
+         */
+        boolean pending;
+
+        /**
+         * fault
+         */
+        boolean fault;
+
+        State() {
+
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("C");
+            sb.append(ENCLOSURE.charAt(0));
+            sb.append(chances);
+            sb.append(ENCLOSURE.charAt(1));
+
+            sb.append(" ");
+
+            sb.append("P");
+            sb.append(ENCLOSURE.charAt(0));
+            sb.append(pending ? "T" : "F");
+            sb.append(ENCLOSURE.charAt(1));
+
+            return sb.toString();
+        }
     }
 }

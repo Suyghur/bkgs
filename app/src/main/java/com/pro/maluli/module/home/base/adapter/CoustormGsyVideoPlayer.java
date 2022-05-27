@@ -16,18 +16,18 @@ public class CoustormGsyVideoPlayer extends StandardGSYVideoPlayer {
 
     public CoustormGsyVideoPlayer(Context context, Boolean fullFlag) {
         super(context, fullFlag);
-        initmy();
+        initMy();
     }
 
 
     public CoustormGsyVideoPlayer(Context context) {
         super(context);
-        initmy();
+        initMy();
     }
 
     public CoustormGsyVideoPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initmy();
+        initMy();
     }
 
 
@@ -37,15 +37,10 @@ public class CoustormGsyVideoPlayer extends StandardGSYVideoPlayer {
     }
 
 
-    private void initmy() {
-
+    private void initMy() {
         boolean isMute = GSYVideoManager.instance().isNeedMute();
         jiugnying = findViewById(R.id.jiugnying);
-        if (isMute) {
-            jiugnying.setSelected(true);
-        } else {
-            jiugnying.setSelected(false);
-        }
+        jiugnying.setSelected(isMute);
         jiugnying.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +86,4 @@ public class CoustormGsyVideoPlayer extends StandardGSYVideoPlayer {
             ACache.get(mContext).put("MUTE", "0");
         }
     }
-
-    ;
-
 }

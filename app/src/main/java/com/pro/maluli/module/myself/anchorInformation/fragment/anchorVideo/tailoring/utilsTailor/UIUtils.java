@@ -62,7 +62,7 @@ public class UIUtils {
 
     public static boolean isFullScreen(final Activity activity) {
         return (activity.getWindow().getAttributes().flags &
-            WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
+                WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -70,7 +70,7 @@ public class UIUtils {
         //noinspection SimplifiableIfStatement
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return (activity.getWindow().getAttributes().flags &
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
         }
         return false;
     }
@@ -80,7 +80,7 @@ public class UIUtils {
         //noinspection SimplifiableIfStatement
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0).
-                getFitsSystemWindows();
+                    getFitsSystemWindows();
         }
         return false;
     }
@@ -90,7 +90,7 @@ public class UIUtils {
         return dm.widthPixels;
     }
 
-    public  static int getScreenWidth(Activity activity){
+    public static int getScreenWidth(Activity activity) {
         WindowManager manager = activity.getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
@@ -103,7 +103,7 @@ public class UIUtils {
         return dm.heightPixels;
     }
 
-    public static int getScreenHeight(Activity activity){
+    public static int getScreenHeight(Activity activity) {
         WindowManager manager = activity.getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);

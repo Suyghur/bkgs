@@ -1,7 +1,6 @@
 package com.netease.nim.uikit.business.session.actions;
 
 import com.netease.nim.uikit.R;
-import com.netease.nim.uikit.business.session.activity.my.GiftEvent;
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
 
 import org.greenrobot.eventbus.EventBus;

@@ -14,10 +14,6 @@ import java.util.List;
 
 public class CollectionUtil {
 
-    public interface ITransformer<T, S> {
-        S transform(T t);
-    }
-
     /**
      * 判断一个{@link Collection}是否为空
      *
@@ -35,7 +31,6 @@ public class CollectionUtil {
         return toString(collection, ", ");
     }
 
-
     /**
      * 返回一个能代表这个{@link Collection}的字符串
      */
@@ -43,14 +38,12 @@ public class CollectionUtil {
         return toString(collection, separator, String::valueOf);
     }
 
-
     /**
      * 返回一个能代表这个{@link Collection}的字符串
      */
     public static <T> String toString(Collection<T> collection, String separator, ITransformer<T, String> itemToString) {
         return toString(collection, separator, "", "", itemToString);
     }
-
 
     /**
      * 返回一个能代表这个{@link Collection}的字符串
@@ -136,7 +129,6 @@ public class CollectionUtil {
         }
     }
 
-
     /**
      * 顺序对比，选择具有最值的元素并返回其index
      *
@@ -220,7 +212,7 @@ public class CollectionUtil {
     /**
      * 创建一个ArrayList，并根据元素生成器的规则填入元素
      *
-     * @param size 元素个数
+     * @param size        元素个数
      * @param transformer 元素生成器
      */
     public static <T> ArrayList<T> createArrayList(int size, ITransformer<Integer, T> transformer) {
@@ -253,5 +245,9 @@ public class CollectionUtil {
                 it.remove();
             }
         }
+    }
+
+    public interface ITransformer<T, S> {
+        S transform(T t);
     }
 }

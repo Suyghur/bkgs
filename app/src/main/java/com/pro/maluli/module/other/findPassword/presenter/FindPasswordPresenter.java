@@ -1,5 +1,7 @@
 package com.pro.maluli.module.other.findPassword.presenter;
 
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -12,12 +14,11 @@ import com.pro.maluli.common.utils.AcacheUtil;
 
 import io.reactivex.functions.Consumer;
 
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
-
 public class FindPasswordPresenter extends BasePresenter<IFindPasswordContraction.View> implements IFindPasswordContraction.Presenter {
     public FindPasswordPresenter(Context context) {
         super(context);
     }
+
     @Override
     public void subMitPwd(String mobile, String code, String pwd) {
         showLoading(mContext);
@@ -36,7 +37,7 @@ public class FindPasswordPresenter extends BasePresenter<IFindPasswordContractio
                         int is_first = JSONObject.parseObject(myJson).getInteger("is_first");//第一次设置密码，跳到个人中心
                         LoginInfo loginInfo = new LoginInfo(accid, accid_token);
                         saveLoginInfo(loginInfo);
-                        mView.setPwdSuccess(response.getMsg(),is_first);
+                        mView.setPwdSuccess(response.getMsg(), is_first);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

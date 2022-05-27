@@ -42,19 +42,29 @@ public class MultiRetweetAttachment extends CustomAttachment {
 
     private String sessionID;
     private String sessionName;
-    /** nos文件存储地址 */
+    /**
+     * nos文件存储地址
+     */
     private String url;
     private String md5;
     private boolean compressed;
     private boolean encrypted;
     private String password;
-    /** 第一条消息的发送者ID */
+    /**
+     * 第一条消息的发送者ID
+     */
     private String sender1;
-    /** 第一条消息在合并转发消息中的展示文案 */
+    /**
+     * 第一条消息在合并转发消息中的展示文案
+     */
     private String message1;
-    /** 第二条消息的发送者ID */
+    /**
+     * 第二条消息的发送者ID
+     */
     private String sender2;
-    /** 第二条消息在合并转发消息中的展示文案 */
+    /**
+     * 第二条消息在合并转发消息中的展示文案
+     */
     private String message2;
 
     public MultiRetweetAttachment() {
@@ -74,63 +84,6 @@ public class MultiRetweetAttachment extends CustomAttachment {
         this.message1 = message1;
         this.sender2 = sender2;
         this.message2 = message2;
-    }
-
-    @Override
-    protected void parseData(JSONObject data) {
-        //如果Json格式包含外层部分，则先进入内层
-        if (data.containsKey("data")) {
-            data = data.getJSONObject("data");
-        }
-        try {
-            sessionID = data.getString(KEY_SESSION_ID);
-            sessionName = data.getString(KEY_SESSION_NAME);
-            url = data.getString(KEY_URL);
-            md5 = data.getString(KEY_MD5);
-            compressed = data.getBooleanValue(KEY_COMPRESSED);
-            encrypted = data.getBooleanValue(KEY_ENCRYPTED);
-            password = data.getString(KEY_PASSWORD);
-
-            JSONArray msgAbs = data.getJSONArray(KEY_MESSAGE_ABSTRACT);
-            JSONObject obj1 = msgAbs.getJSONObject(0);
-            sender1 = obj1.getString(KEY_SENDER);
-            message1 = obj1.getString(KEY_MESSAGE);
-            if (msgAbs.size()>1){
-                JSONObject obj2 = msgAbs.getJSONObject(1);
-                sender2 = obj2.getString(KEY_SENDER);
-                message2 = obj2.getString(KEY_MESSAGE);
-            }
-        } catch (Exception e) {
-            //转化失败，条目显示null字符
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected JSONObject packData() {
-        JSONObject data = new JSONObject();
-        data.put(KEY_SESSION_ID, sessionID);
-        data.put(KEY_SESSION_NAME, sessionName);
-        data.put(KEY_URL, url);
-        data.put(KEY_MD5, md5);
-        data.put(KEY_COMPRESSED, compressed);
-        data.put(KEY_ENCRYPTED, encrypted);
-        data.put(KEY_PASSWORD, password);
-
-        JSONArray messageAbstract = new JSONArray();
-        JSONObject obj1 = new JSONObject();
-        obj1.put(KEY_SENDER, sender1);
-        obj1.put(KEY_MESSAGE, message1);
-        messageAbstract.add(obj1);
-        //只有一条消息时，不传递第二组的字段
-        if (!TextUtils.isEmpty(sender2)) {
-            JSONObject obj2 = new JSONObject();
-            obj2.put(KEY_SENDER, sender2);
-            obj2.put(KEY_MESSAGE, message2);
-            messageAbstract.add(obj2);
-        }
-        data.put(KEY_MESSAGE_ABSTRACT, messageAbstract);
-        return data;
     }
 
     public static String getKeySessionId() {
@@ -171,6 +124,63 @@ public class MultiRetweetAttachment extends CustomAttachment {
 
     public static String getKeyMessage() {
         return KEY_MESSAGE;
+    }
+
+    @Override
+    protected void parseData(JSONObject data) {
+        //如果Json格式包含外层部分，则先进入内层
+        if (data.containsKey("data")) {
+            data = data.getJSONObject("data");
+        }
+        try {
+            sessionID = data.getString(KEY_SESSION_ID);
+            sessionName = data.getString(KEY_SESSION_NAME);
+            url = data.getString(KEY_URL);
+            md5 = data.getString(KEY_MD5);
+            compressed = data.getBooleanValue(KEY_COMPRESSED);
+            encrypted = data.getBooleanValue(KEY_ENCRYPTED);
+            password = data.getString(KEY_PASSWORD);
+
+            JSONArray msgAbs = data.getJSONArray(KEY_MESSAGE_ABSTRACT);
+            JSONObject obj1 = msgAbs.getJSONObject(0);
+            sender1 = obj1.getString(KEY_SENDER);
+            message1 = obj1.getString(KEY_MESSAGE);
+            if (msgAbs.size() > 1) {
+                JSONObject obj2 = msgAbs.getJSONObject(1);
+                sender2 = obj2.getString(KEY_SENDER);
+                message2 = obj2.getString(KEY_MESSAGE);
+            }
+        } catch (Exception e) {
+            //转化失败，条目显示null字符
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected JSONObject packData() {
+        JSONObject data = new JSONObject();
+        data.put(KEY_SESSION_ID, sessionID);
+        data.put(KEY_SESSION_NAME, sessionName);
+        data.put(KEY_URL, url);
+        data.put(KEY_MD5, md5);
+        data.put(KEY_COMPRESSED, compressed);
+        data.put(KEY_ENCRYPTED, encrypted);
+        data.put(KEY_PASSWORD, password);
+
+        JSONArray messageAbstract = new JSONArray();
+        JSONObject obj1 = new JSONObject();
+        obj1.put(KEY_SENDER, sender1);
+        obj1.put(KEY_MESSAGE, message1);
+        messageAbstract.add(obj1);
+        //只有一条消息时，不传递第二组的字段
+        if (!TextUtils.isEmpty(sender2)) {
+            JSONObject obj2 = new JSONObject();
+            obj2.put(KEY_SENDER, sender2);
+            obj2.put(KEY_MESSAGE, message2);
+            messageAbstract.add(obj2);
+        }
+        data.put(KEY_MESSAGE_ABSTRACT, messageAbstract);
+        return data;
     }
 
     public String getSessionID() {

@@ -12,7 +12,6 @@ import com.blankj.utilcode.util.BarUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.myselfView.LabelsView;
 import com.pro.maluli.module.myself.anchorInformation.editLabel.EditLabelAct;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.anchorIntro.AnchorIntroAct;
@@ -37,11 +36,7 @@ public class AnchorInfoFrag extends BaseMvpFragment<IAnchorInfoContraction.View,
     TextView lableTipsTv;
     @BindView(R.id.labeleLV)
     LabelsView labeleLV;
-
-    @Override
-    public AnchorInfoPresenter initPresenter() {
-        return new AnchorInfoPresenter(getActivity());
-    }
+    AnchorInfoEntity entity;
 
     public static Fragment newInstance(String anchorId) {
         AnchorInfoFrag treasureGameFrag = new AnchorInfoFrag();
@@ -49,6 +44,11 @@ public class AnchorInfoFrag extends BaseMvpFragment<IAnchorInfoContraction.View,
         bundle.putString("ANCHOR_ID", anchorId);
         treasureGameFrag.setArguments(bundle);
         return treasureGameFrag;
+    }
+
+    @Override
+    public AnchorInfoPresenter initPresenter() {
+        return new AnchorInfoPresenter(getActivity());
     }
 
     @Override
@@ -102,8 +102,6 @@ public class AnchorInfoFrag extends BaseMvpFragment<IAnchorInfoContraction.View,
         super.onResume();
         presenter.getAnchorInfo();
     }
-
-    AnchorInfoEntity entity;
 
     @Override
     public void setAnchorInfo(AnchorInfoEntity data) {

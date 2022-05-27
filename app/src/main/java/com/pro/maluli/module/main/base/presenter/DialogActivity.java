@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.AcacheUtil;
-import com.pro.maluli.module.myself.setting.base.SettingAct;
 import com.pro.maluli.module.other.login.LoginAct;
 
 

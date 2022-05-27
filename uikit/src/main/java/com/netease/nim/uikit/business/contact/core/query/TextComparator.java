@@ -3,6 +3,14 @@ package com.netease.nim.uikit.business.contact.core.query;
 import android.text.TextUtils;
 
 public class TextComparator {
+    private static final String[] leadingUp = new String[]{"A", "B", "C", "D", "E",
+            "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+            "S", "T", "U", "V", "W", "X", "Y", "Z"
+    };
+    private static final String[] leadingLo = new String[]{"a", "b", "c",
+            "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
+            "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+
     public static final int compare(String a, String b) {
         if (a == b) {
             return 0;
@@ -181,15 +189,6 @@ public class TextComparator {
 
         return -1;
     }
-
-    private static final String[] leadingUp = new String[]{"A", "B", "C", "D", "E",
-            "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
-            "S", "T", "U", "V", "W", "X", "Y", "Z"
-    };
-
-    private static final String[] leadingLo = new String[]{"a", "b", "c",
-            "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
-            "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 
     private static String getAsciiLeadingUp(char c) {
         // a-z 0xA

@@ -9,7 +9,6 @@ import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.FeedBackDetailEntity;
 import com.pro.maluli.common.entity.FeedbackEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-import com.pro.maluli.module.myself.setting.blacklist.presenter.IBlackListContraction;
 
 import io.reactivex.functions.Consumer;
 

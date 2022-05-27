@@ -11,21 +11,9 @@ import android.util.AttributeSet;
  */
 public class PullToRefreshLayout extends SuperSwipeRefreshLayout {
 
-    public interface OnRefreshListener {
-        void onPullDownToRefresh();
-
-        void onPullUpToRefresh();
-    }
-
     private CustomLoadingLayout loadingLayoutDown;
     private CustomLoadingLayout loadingLayoutUp;
     private OnRefreshListener listener;
-
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        this.listener = listener;
-    }
-
-
     public PullToRefreshLayout(Context context) {
         super(context);
         initLoadingView(true, true);
@@ -34,6 +22,10 @@ public class PullToRefreshLayout extends SuperSwipeRefreshLayout {
     public PullToRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         initLoadingView(true, true);
+    }
+
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        this.listener = listener;
     }
 
     //一般用于进页面第一次刷新
@@ -106,6 +98,12 @@ public class PullToRefreshLayout extends SuperSwipeRefreshLayout {
             });
         }
 
+    }
+
+    public interface OnRefreshListener {
+        void onPullDownToRefresh();
+
+        void onPullUpToRefresh();
     }
 
 }

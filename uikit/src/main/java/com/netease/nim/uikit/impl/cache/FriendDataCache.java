@@ -31,98 +31,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class FriendDataCache {
 
-    public static FriendDataCache getInstance() {
-        return InstanceHolder.instance;
-    }
-
     /**
      * 属性
      */
     private Set<String> friendAccountSet = new CopyOnWriteArraySet<>();
-
     private Map<String, Friend> friendMap = new ConcurrentHashMap<>();
-
-    /**
-     * 初始化&清理
-     */
-
-    public void clear() {
-        clearFriendCache();
-    }
-
-    public void buildCache() {
-        // 获取我所有的好友关系
-        List<Friend> friends = NIMClient.getService(FriendService.class).getFriends();
-        if (friends == null) {
-            return;
-        }
-        for (Friend f : friends) {
-            friendMap.put(f.getAccount(), f);
-        }
-
-        // 获取我所有好友的帐号
-        List<String> accounts = NIMClient.getService(FriendService.class).getFriendAccounts();
-        if (accounts == null || accounts.isEmpty()) {
-            return;
-        }
-
-        // 排除黑名单
-        List<String> blacks = NIMClient.getService(FriendService.class).getBlackList();
-        accounts.removeAll(blacks);
-
-        // 排除掉自己
-        accounts.remove(NimUIKit.getAccount());
-
-        // 确定缓存
-        friendAccountSet.addAll(accounts);
-
-        LogUtil.i(UIKitLogTag.FRIEND_CACHE, "build FriendDataCache completed, friends count = " + friendAccountSet.size());
-    }
-
-    private void clearFriendCache() {
-        friendAccountSet.clear();
-        friendMap.clear();
-    }
-
-    /**
-     * ****************************** 好友查询接口 ******************************
-     */
-
-    public List<String> getMyFriendAccounts() {
-        List<String> accounts = new ArrayList<>(friendAccountSet.size());
-        accounts.addAll(friendAccountSet);
-
-        return accounts;
-    }
-
-    public int getMyFriendCounts() {
-        return friendAccountSet.size();
-    }
-
-    public Friend getFriendByAccount(String account) {
-        if (TextUtils.isEmpty(account)) {
-            return null;
-        }
-
-        return friendMap.get(account);
-    }
-
-    public boolean isMyFriend(String account) {
-        return friendAccountSet.contains(account);
-    }
-
-    /**
-     * ****************************** 缓存好友关系变更监听&通知 ******************************
-     */
-
-    /**
-     * 缓存监听SDK
-     */
-    public void registerObservers(boolean register) {
-        NIMClient.getService(FriendServiceObserve.class).observeFriendChangedNotify(friendChangedNotifyObserver, register);
-        NIMClient.getService(FriendServiceObserve.class).observeBlackListChangedNotify(blackListChangedNotifyObserver, register);
-    }
-
     /**
      * 监听好友关系变化
      */
@@ -218,6 +131,91 @@ public class FriendDataCache {
             }
         }
     };
+
+    public static FriendDataCache getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    /**
+     * 初始化&清理
+     */
+
+    public void clear() {
+        clearFriendCache();
+    }
+
+    public void buildCache() {
+        // 获取我所有的好友关系
+        List<Friend> friends = NIMClient.getService(FriendService.class).getFriends();
+        if (friends == null) {
+            return;
+        }
+        for (Friend f : friends) {
+            friendMap.put(f.getAccount(), f);
+        }
+
+        // 获取我所有好友的帐号
+        List<String> accounts = NIMClient.getService(FriendService.class).getFriendAccounts();
+        if (accounts == null || accounts.isEmpty()) {
+            return;
+        }
+
+        // 排除黑名单
+        List<String> blacks = NIMClient.getService(FriendService.class).getBlackList();
+        accounts.removeAll(blacks);
+
+        // 排除掉自己
+        accounts.remove(NimUIKit.getAccount());
+
+        // 确定缓存
+        friendAccountSet.addAll(accounts);
+
+        LogUtil.i(UIKitLogTag.FRIEND_CACHE, "build FriendDataCache completed, friends count = " + friendAccountSet.size());
+    }
+
+    private void clearFriendCache() {
+        friendAccountSet.clear();
+        friendMap.clear();
+    }
+
+    /**
+     * ****************************** 好友查询接口 ******************************
+     */
+
+    public List<String> getMyFriendAccounts() {
+        List<String> accounts = new ArrayList<>(friendAccountSet.size());
+        accounts.addAll(friendAccountSet);
+
+        return accounts;
+    }
+
+    public int getMyFriendCounts() {
+        return friendAccountSet.size();
+    }
+
+    /**
+     * ****************************** 缓存好友关系变更监听&通知 ******************************
+     */
+
+    public Friend getFriendByAccount(String account) {
+        if (TextUtils.isEmpty(account)) {
+            return null;
+        }
+
+        return friendMap.get(account);
+    }
+
+    public boolean isMyFriend(String account) {
+        return friendAccountSet.contains(account);
+    }
+
+    /**
+     * 缓存监听SDK
+     */
+    public void registerObservers(boolean register) {
+        NIMClient.getService(FriendServiceObserve.class).observeFriendChangedNotify(friendChangedNotifyObserver, register);
+        NIMClient.getService(FriendServiceObserve.class).observeBlackListChangedNotify(blackListChangedNotifyObserver, register);
+    }
 
     /**
      * ************************************ 单例 **********************************************

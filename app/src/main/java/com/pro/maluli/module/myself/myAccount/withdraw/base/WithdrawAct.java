@@ -17,7 +17,6 @@ import com.pro.maluli.common.entity.MyAccountEntity;
 import com.pro.maluli.common.utils.CashierInputFilter;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.StringUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.myself.myAccount.withdraw.base.presenter.IWithdrawContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.base.presenter.WithdrawPresenter;
@@ -57,6 +56,19 @@ public class WithdrawAct extends BaseMvpActivity<IWithdrawContraction.View, With
     @BindView(R.id.subTiXianTv)
     TextView subTiXianTv;
     String numberBk;
+    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
+        @Override
+        public void onTick(long l) {
+            getCodeTv.setText(String.valueOf(l / 1000) + "S后重新获取");
+            getCodeTv.setEnabled(false);
+        }
+
+        @Override
+        public void onFinish() {
+            getCodeTv.setText("获取验证码");
+            getCodeTv.setEnabled(true);
+        }
+    };
 
     @Override
     public WithdrawPresenter initPresenter() {
@@ -85,7 +97,6 @@ public class WithdrawAct extends BaseMvpActivity<IWithdrawContraction.View, With
         inputWithdrawTv.setFilters(filters);
     }
 
-
     @Override
     public void doBusiness() {
         presenter.getMyAccount();
@@ -104,20 +115,6 @@ public class WithdrawAct extends BaseMvpActivity<IWithdrawContraction.View, With
     public void getCodeSuccess() {
         mTimer.start();
     }
-
-    CountDownTimer mTimer = new CountDownTimer(60000, 1000) {
-        @Override
-        public void onTick(long l) {
-            getCodeTv.setText(String.valueOf(l / 1000) + "S后重新获取");
-            getCodeTv.setEnabled(false);
-        }
-
-        @Override
-        public void onFinish() {
-            getCodeTv.setText("获取验证码");
-            getCodeTv.setEnabled(true);
-        }
-    };
 
     @Override
     protected void onDestroy() {

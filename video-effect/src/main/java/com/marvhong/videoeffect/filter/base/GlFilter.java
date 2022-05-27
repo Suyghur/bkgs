@@ -5,7 +5,9 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.util.Log;
+
 import com.marvhong.videoeffect.utils.OpenGlUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -25,32 +27,22 @@ public class GlFilter {
     private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
 
     private final float[] triangleVerticesData = {
-        // X, Y, Z, U, V
-        -1.0f, -1.0f, 0, 0.f, 0.f,
-        1.0f, -1.0f, 0, 1.f, 0.f,
-        -1.0f, 1.0f, 0, 0.f, 1.f,
-        1.0f, 1.0f, 0, 1.f, 1.f,
+            // X, Y, Z, U, V
+            -1.0f, -1.0f, 0, 0.f, 0.f,
+            1.0f, -1.0f, 0, 1.f, 0.f,
+            -1.0f, 1.0f, 0, 0.f, 1.f,
+            1.0f, 1.0f, 0, 1.f, 1.f,
     };
-    private FloatBuffer triangleVertices;
-
-    private String vertexShaderSource;
-
-    private String fragmentShaderSource;
-
-    private int program;
-
-    private int textureID = -12345;
-
-    protected float[] clearColor = new float[]{0f, 0f, 0f, 1f};
-
     private final HashMap<String, Integer> handleMap = new HashMap<>();
-
-    protected int mOutputWidth;
-
-    protected int mOutputHeight;
-
     private final LinkedList<Runnable> mRunOnDraw;
-
+    protected float[] clearColor = new float[]{0f, 0f, 0f, 1f};
+    protected int mOutputWidth;
+    protected int mOutputHeight;
+    private FloatBuffer triangleVertices;
+    private String vertexShaderSource;
+    private String fragmentShaderSource;
+    private int program;
+    private int textureID = -12345;
     private boolean mChangeProgram = false;
 
     public GlFilter() {
@@ -67,16 +59,16 @@ public class GlFilter {
         this.mRunOnDraw = new LinkedList<>();
 
         triangleVertices = ByteBuffer.allocateDirect(
-                triangleVerticesData.length * FLOAT_SIZE_BYTES)
+                        triangleVerticesData.length * FLOAT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         triangleVertices.put(triangleVerticesData).position(0);
     }
 
     public void setUpSurface() {
         final int vertexShader = OpenGlUtils
-            .loadShader(vertexShaderSource, GLES20.GL_VERTEX_SHADER);
+                .loadShader(vertexShaderSource, GLES20.GL_VERTEX_SHADER);
         final int fragmentShader = OpenGlUtils
-            .loadShader(fragmentShaderSource, GLES20.GL_FRAGMENT_SHADER);
+                .loadShader(fragmentShaderSource, GLES20.GL_FRAGMENT_SHADER);
         program = OpenGlUtils.createProgram(vertexShader, fragmentShader);
         if (program == 0) {
             throw new RuntimeException("failed creating program");
@@ -93,13 +85,13 @@ public class GlFilter {
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureID);
         OpenGlUtils.checkGlError("glBindTexture textureID");
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_LINEAR);
+                GLES20.GL_LINEAR);
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_LINEAR);
+                GLES20.GL_LINEAR);
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S,
-            GLES20.GL_CLAMP_TO_EDGE);
+                GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T,
-            GLES20.GL_CLAMP_TO_EDGE);
+                GLES20.GL_CLAMP_TO_EDGE);
         OpenGlUtils.checkGlError("glTexParameter");
     }
 
@@ -116,9 +108,9 @@ public class GlFilter {
 
         if (mChangeProgram) {
             final int vertexShader = OpenGlUtils
-                .loadShader(vertexShaderSource, GLES20.GL_VERTEX_SHADER);
+                    .loadShader(vertexShaderSource, GLES20.GL_VERTEX_SHADER);
             final int fragmentShader = OpenGlUtils
-                .loadShader(fragmentShaderSource, GLES20.GL_FRAGMENT_SHADER);
+                    .loadShader(fragmentShaderSource, GLES20.GL_FRAGMENT_SHADER);
             program = OpenGlUtils.createProgram(vertexShader, fragmentShader);
             mChangeProgram = false;
             Log.e(TAG, "change---program:" + program);
@@ -194,12 +186,12 @@ public class GlFilter {
         return fragmentShaderSource;
     }
 
-    public void setChangeProgram(boolean changeProgram) {
-        mChangeProgram = changeProgram;
-    }
-
     public boolean isChangeProgram() {
         return mChangeProgram;
+    }
+
+    public void setChangeProgram(boolean changeProgram) {
+        mChangeProgram = changeProgram;
     }
 
     public void release() {

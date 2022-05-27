@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,9 +27,9 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.AppIdConstants;
-import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.entity.PayInfoEntity;
 import com.pro.maluli.common.entity.RechargeEntity;
+import com.pro.maluli.common.entity.WechatpayEntity;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.ToolUtils;
@@ -57,8 +56,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @date 2021/6/15
  */
 public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, RechargePresenter> implements IRechargeContraction.View {
+    private static final int SDK_PAY_FLAG = 1;
     RechargePayTypeAdapter adapter;
-
     @BindView(R.id.payTypeRlv)
     RecyclerView payTypeRlv;
     @BindView(R.id.avatarWithdrawCiv)
@@ -85,9 +84,38 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
     TextView nowPayTv;
     @BindView(R.id.xieyiTv)
     TextView xieyiTv;
-    private int selectPosition;
     List<RechargeEntity.PayBean> entities;
+    private int selectPosition;
     private int selectId = -1;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressWarnings("unused")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SDK_PAY_FLAG: {
+                    @SuppressWarnings("unchecked")
+                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
+                    /**
+                     * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为9000则代表支付成功
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+                        ToastUtils.showShort("充值成功，稍后到账");
+                    } else {
+                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        ;
+    };
 
     @Override
     public RechargePresenter initPresenter() {
@@ -142,7 +170,7 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(str);
-        final int start = str.indexOf("《")+1;//第一个出现的位置
+        final int start = str.indexOf("《") + 1;//第一个出现的位置
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -166,7 +194,6 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
         xieyiTv.setText(ssb, TextView.BufferType.SPANNABLE);
     }
 
-
     @Override
     public void doBusiness() {
         presenter.getPayInfo();
@@ -182,38 +209,6 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
         adapter.notifyDataSetChanged();
 
     }
-
-    private static final int SDK_PAY_FLAG = 1;
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @SuppressWarnings("unused")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SDK_PAY_FLAG: {
-                    @SuppressWarnings("unchecked")
-                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
-                    /**
-                     * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
-                     */
-                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
-                    String resultStatus = payResult.getResultStatus();
-                    // 判断resultStatus 为9000则代表支付成功
-                    if (TextUtils.equals(resultStatus, "9000")) {
-                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                        ToastUtils.showShort("充值成功，稍后到账");
-                    } else {
-                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-
-        ;
-    };
 
     @Override
     public void setOrderInfo(PayInfoEntity data) {
@@ -286,9 +281,9 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
                 }
                 if (alipayIv.isSelected()) {
                     presenter.subAlipay("2", String.valueOf(selectId));
-                } else if (wechatIv.isSelected()){
+                } else if (wechatIv.isSelected()) {
                     presenter.subWechatPay("1", String.valueOf(selectId));
-                }else {
+                } else {
                     ToastUtils.showShort("请选择支付方式");
                 }
                 break;

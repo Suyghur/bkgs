@@ -1,31 +1,16 @@
 package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 
-import com.blankj.utilcode.util.BarUtils;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.utils.ToolUtils;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -36,7 +21,7 @@ import java.util.List;
 public class SelectClassificationDialog extends DialogFragment implements View.OnClickListener {
     private Dialog mDetailDialog;
     private LinearLayout dismissLL, oneToMoreLL, oneToOneLL;
-
+    private OnLiveTypeListener onLiveTypeListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -61,14 +46,8 @@ public class SelectClassificationDialog extends DialogFragment implements View.O
         return mDetailDialog;
     }
 
-    private OnLiveTypeListener onLiveTypeListener;
-
     public void setOnTimeListener(OnLiveTypeListener onLiveTypeListener) {
         this.onLiveTypeListener = onLiveTypeListener;
-    }
-
-    public interface OnLiveTypeListener {
-        void confirmSuccess(int type);
     }
 
     @Override
@@ -78,14 +57,14 @@ public class SelectClassificationDialog extends DialogFragment implements View.O
                 mDetailDialog.dismiss();
                 break;
             case R.id.oneToMoreLL:
-                if (onLiveTypeListener!=null){
+                if (onLiveTypeListener != null) {
                     onLiveTypeListener.confirmSuccess(1);
                 }
                 mDetailDialog.dismiss();
 
                 break;
             case R.id.oneToOneLL:
-                if (onLiveTypeListener!=null){
+                if (onLiveTypeListener != null) {
                     onLiveTypeListener.confirmSuccess(2);
                 }
                 mDetailDialog.dismiss();
@@ -94,5 +73,9 @@ public class SelectClassificationDialog extends DialogFragment implements View.O
 
                 break;
         }
+    }
+
+    public interface OnLiveTypeListener {
+        void confirmSuccess(int type);
     }
 }

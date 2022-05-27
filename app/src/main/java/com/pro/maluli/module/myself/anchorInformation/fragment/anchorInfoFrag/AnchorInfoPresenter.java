@@ -10,10 +10,12 @@ import com.pro.maluli.common.networkRequest.SuccessConsumer;
 import io.reactivex.functions.Consumer;
 
 public class AnchorInfoPresenter extends BasePresenter<IAnchorInfoContraction.View> implements IAnchorInfoContraction.Presenter {
+    public String anchorID;
+
     public AnchorInfoPresenter(Context context) {
         super(context);
     }
-    public String anchorID;
+
     @Override
     public void getAnchorInfo() {
 

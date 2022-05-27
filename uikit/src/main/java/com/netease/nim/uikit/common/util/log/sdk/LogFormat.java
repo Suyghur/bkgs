@@ -22,6 +22,13 @@ class LogFormat {
     private static final String MESSAGE_FORMAT = "MM-dd HH:mm:ss.SSS";
     private static final DateFormat messageFormat = new SimpleDateFormat(MESSAGE_FORMAT, Locale.getDefault());
     private static final Date date = new Date(); // 复用
+    /**
+     * ******************************* date file format *****************************
+     */
+
+    private static final String SUFFIX = ".log";
+    private static final String FILE_FORMAT = "yyyyMMdd";
+    private static final DateFormat fileNameFormat = new SimpleDateFormat(FILE_FORMAT, Locale.getDefault());
     private static long lastTime;
     private static String lastTimeStr;
 
@@ -58,14 +65,6 @@ class LogFormat {
 
         return sb.toString();
     }
-
-    /**
-     * ******************************* date file format *****************************
-     */
-
-    private static final String SUFFIX = ".log";
-    private static final String FILE_FORMAT = "yyyyMMdd";
-    private static final DateFormat fileNameFormat = new SimpleDateFormat(FILE_FORMAT, Locale.getDefault());
 
     static String getLogFileName(String prefix) {
         // nim_20170911.log or 20170911.log

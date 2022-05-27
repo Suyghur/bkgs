@@ -11,6 +11,7 @@ public interface IWatchListContraction extends BaseView {
 
         void setRemoveLikeSuccess(int id);
     }
+
     interface Presenter extends IClear {
 
         void getWatchListInfo();

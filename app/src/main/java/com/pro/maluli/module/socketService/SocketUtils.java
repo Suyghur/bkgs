@@ -7,8 +7,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pro.maluli.common.entity.OnTwoOneSocketEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
-import com.pro.maluli.toolkit.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
@@ -18,39 +18,13 @@ import java.net.URI;
 
 public enum SocketUtils {
     INSTANCE;
-    private WebSocketClient mWebSocketClient;//唯一
-    public boolean isRunning = false;
-    public String socketUrl;
-    boolean isFinish = false;
-
-
-    public interface SocketListener {
-        void OnTwoOneYY(OnTwoOneSocketEntity entity);
-    }
-
     //    -------------------------------------websocket心跳检测------------------------------------------------
     private static final long HEART_BEAT_RATE = 10 * 1000;//每隔10秒进行一次对长连接的心跳检测
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private final Runnable heartBeatRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Logger.e("心跳包检测websocket连接状态");
-            if (isFinish) {
-                return;
-            }
-            if (mWebSocketClient != null) {
-                if (mWebSocketClient.isClosed()) {
-                    reconnectWs();
-                }
-            } else {
-                //如果client已为空，重新初始化连接
-                mWebSocketClient = null;
-                initSocket(socketUrl);
-            }
-            //每隔一定的时间，对长连接进行一次心跳检测
-            mHandler.postDelayed(this, HEART_BEAT_RATE);
-        }
-    };
+    public boolean isRunning = false;
+    public String socketUrl;
+    boolean isFinish = false;
+    private WebSocketClient mWebSocketClient;//唯一
 
     public void onStartCommand(String url) {
         initSocket(url);
@@ -73,7 +47,26 @@ public enum SocketUtils {
                 }
             }
         }.start();
-    }
+    }    private final Runnable heartBeatRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Logger.e("心跳包检测websocket连接状态");
+            if (isFinish) {
+                return;
+            }
+            if (mWebSocketClient != null) {
+                if (mWebSocketClient.isClosed()) {
+                    reconnectWs();
+                }
+            } else {
+                //如果client已为空，重新初始化连接
+                mWebSocketClient = null;
+                initSocket(socketUrl);
+            }
+            //每隔一定的时间，对长连接进行一次心跳检测
+            mHandler.postDelayed(this, HEART_BEAT_RATE);
+        }
+    };
 
     public void initSocket(String url) {
         this.socketUrl = url;
@@ -130,7 +123,6 @@ public enum SocketUtils {
         }
     }
 
-
     /**
      * 连接websocket
      */
@@ -164,4 +156,11 @@ public enum SocketUtils {
             mWebSocketClient = null;
         }
     }
+
+
+    public interface SocketListener {
+        void OnTwoOneYY(OnTwoOneSocketEntity entity);
+    }
+
+
 }

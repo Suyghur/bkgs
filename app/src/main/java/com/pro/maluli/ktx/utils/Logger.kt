@@ -1,4 +1,4 @@
-package com.pro.maluli.toolkit
+package com.pro.maluli.ktx.utils
 
 import android.app.Application
 import com.dolin.zap.Zap

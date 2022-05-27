@@ -25,87 +25,34 @@ import java.util.List;
  */
 public class ClearScreenLayout extends ViewGroup {
 
-    private static final String TAG = "ClearScreenLayout";
-
-    private final ViewDragHelper mViewDragHelper;
-
-    private List<DragListener> mListeners;
-
-    private int mDragState;
-
-    private float mInitialMotionX;
-
-    private float mInitialMotionY;
-
-    private float mLastMotionX;
-
-    private float mLastMotionY;
-
-    private int mTouchSlop;
-
-    private int mActivePointerId = INVALID_POINTER;
-
-    private static final float RIGHT_RANG_SIZE = 0.2f;
-
-    private static final float LEFT_RANG_SIZE = 0.8f;
-
-    /**
-     * 负值表示当前无活动指针
-     */
-    private static final int INVALID_POINTER = -1;
-
     /**
      * 表示当前滑动闲置
      */
     public static final int STATE_IDLE = ViewDragHelper.STATE_IDLE;
-
     /**
      * 表示当前正被用户拖动
      */
     public static final int STATE_DRAGGING = ViewDragHelper.STATE_DRAGGING;
-
     /**
      * 表示当前正被放置在最终位置
      */
     public static final int STATE_SETTLING = ViewDragHelper.STATE_SETTLING;
-
-    @IntDef({STATE_IDLE, STATE_DRAGGING, STATE_SETTLING})
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface State {
-
-    }
-
-    public interface DragListener {
-
-        /**
-         * 当遮罩层拖动时调用
-         *
-         * @param dragView    被拖动的View
-         * @param slideOffset 滑动的偏移量
-         */
-        void onDragging(@NonNull View dragView, float slideOffset);
-
-        /**
-         * 当遮罩层被拖动至屏幕外时调用
-         *
-         * @param dragView 被拖动的View
-         */
-        void onDragToOut(@NonNull View dragView);
-
-        /**
-         * 当遮罩层被拖动至屏幕内时调用
-         *
-         * @param dragView 被拖动的View
-         */
-        void onDragToIn(@NonNull View dragView);
-
-        /**
-         * 当拖动状态改变时回调
-         *
-         * @param newState 被拖动的View
-         */
-        void onDragStateChanged(@State int newState);
-    }
+    private static final String TAG = "ClearScreenLayout";
+    private static final float RIGHT_RANG_SIZE = 0.2f;
+    private static final float LEFT_RANG_SIZE = 0.8f;
+    /**
+     * 负值表示当前无活动指针
+     */
+    private static final int INVALID_POINTER = -1;
+    private final ViewDragHelper mViewDragHelper;
+    private List<DragListener> mListeners;
+    private int mDragState;
+    private float mInitialMotionX;
+    private float mInitialMotionY;
+    private float mLastMotionX;
+    private float mLastMotionY;
+    private int mTouchSlop;
+    private int mActivePointerId = INVALID_POINTER;
 
     public ClearScreenLayout(Context context) {
         this(context, null);
@@ -384,8 +331,8 @@ public class ClearScreenLayout extends ViewGroup {
         return p instanceof LayoutParams
                 ? new LayoutParams((LayoutParams) p)
                 : p instanceof MarginLayoutParams
-                        ? new LayoutParams((MarginLayoutParams) p)
-                        : new LayoutParams(p);
+                ? new LayoutParams((MarginLayoutParams) p)
+                : new LayoutParams(p);
     }
 
     @Override
@@ -443,6 +390,84 @@ public class ClearScreenLayout extends ViewGroup {
         return ((LayoutParams) dragView.getLayoutParams()).isSlideOut;
     }
 
+    @IntDef({STATE_IDLE, STATE_DRAGGING, STATE_SETTLING})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {
+
+    }
+
+    public interface DragListener {
+
+        /**
+         * 当遮罩层拖动时调用
+         *
+         * @param dragView    被拖动的View
+         * @param slideOffset 滑动的偏移量
+         */
+        void onDragging(@NonNull View dragView, float slideOffset);
+
+        /**
+         * 当遮罩层被拖动至屏幕外时调用
+         *
+         * @param dragView 被拖动的View
+         */
+        void onDragToOut(@NonNull View dragView);
+
+        /**
+         * 当遮罩层被拖动至屏幕内时调用
+         *
+         * @param dragView 被拖动的View
+         */
+        void onDragToIn(@NonNull View dragView);
+
+        /**
+         * 当拖动状态改变时回调
+         *
+         * @param newState 被拖动的View
+         */
+        void onDragStateChanged(@State int newState);
+    }
+
+    public static class LayoutParams extends MarginLayoutParams {
+
+        public boolean isDrag;
+
+        public boolean isSlideOut;
+
+        public float onScreen = 1;
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+            TypedArray a = null;
+            try {
+                a = c.obtainStyledAttributes(attrs, R.styleable.ClearScreenLayout_Layout);
+                isDrag = a.getBoolean(
+                        R.styleable.ClearScreenLayout_Layout_layout_dragEnable,
+                        false
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (a != null) {
+                    a.recycle();
+                }
+            }
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(@NonNull MarginLayoutParams source) {
+            super(source);
+        }
+
+    }
+
     private class ViewDragCallback extends ViewDragHelper.Callback {
 
         private ViewDragHelper mDragger;
@@ -496,7 +521,7 @@ public class ClearScreenLayout extends ViewGroup {
 
         @Override
         public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx,
-                int dy) {
+                                          int dy) {
             final int childWidth = changedView.getWidth();
             final int width = getWidth();
             float offset = (float) (width - left) / childWidth;
@@ -509,45 +534,5 @@ public class ClearScreenLayout extends ViewGroup {
         public void onViewDragStateChanged(int state) {
             updateDragState(state, mDragger.getCapturedView());
         }
-    }
-
-    public static class LayoutParams extends MarginLayoutParams {
-
-        public boolean isDrag;
-
-        public boolean isSlideOut;
-
-        public float onScreen = 1;
-
-        public LayoutParams(Context c, AttributeSet attrs) {
-            super(c, attrs);
-            TypedArray a = null;
-            try {
-                a = c.obtainStyledAttributes(attrs, R.styleable.ClearScreenLayout_Layout);
-                isDrag = a.getBoolean(
-                        R.styleable.ClearScreenLayout_Layout_layout_dragEnable,
-                        false
-                );
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (a != null) {
-                    a.recycle();
-                }
-            }
-        }
-
-        public LayoutParams(int width, int height) {
-            super(width, height);
-        }
-
-        public LayoutParams(ViewGroup.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(@NonNull MarginLayoutParams source) {
-            super(source);
-        }
-
     }
 }

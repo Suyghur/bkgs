@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +29,7 @@ public class NoticeDialog extends DialogFragment implements View.OnClickListener
     private ProgressWebView tipsWv;
     private TextView submitTv;
     private UserInfoEntity.NoticeBean bean;
+    private OnNoticeListener onNoticeListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -51,18 +51,17 @@ public class NoticeDialog extends DialogFragment implements View.OnClickListener
         bean = (UserInfoEntity.NoticeBean) getArguments().getSerializable("NOTIC_ENTITY");
 
         tipsWv.loadDataWithBaseURL(null, bean.getContent(), "text/html", "utf-8", null);
-        mDetailDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
-        {
+        mDetailDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode, KeyEvent arg2) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     if (onNoticeListener != null) {
-                        onNoticeListener.confirm(bean.getId(),false);
+                        onNoticeListener.confirm(bean.getId(), false);
                     }
                     dismiss();
                     return true;
-                }else if(keyCode == KeyEvent.KEYCODE_MENU) {
+                } else if (keyCode == KeyEvent.KEYCODE_MENU) {
                     return true;
                 }
                 return false;
@@ -73,14 +72,8 @@ public class NoticeDialog extends DialogFragment implements View.OnClickListener
         return mDetailDialog;
     }
 
-    private OnNoticeListener onNoticeListener;
-
     public void setOnConfirmListener(OnNoticeListener onNoticeListener) {
         this.onNoticeListener = onNoticeListener;
-    }
-
-    public interface OnNoticeListener {
-        void confirm(int type,boolean isFinish);//0去申述，2去绑定
     }
 
     @Override
@@ -88,7 +81,7 @@ public class NoticeDialog extends DialogFragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.dismissLL:
                 if (onNoticeListener != null) {
-                    onNoticeListener.confirm(bean.getId(),false);
+                    onNoticeListener.confirm(bean.getId(), false);
                 }
                 if (mDetailDialog != null) {
                     mDetailDialog.dismiss();
@@ -96,12 +89,16 @@ public class NoticeDialog extends DialogFragment implements View.OnClickListener
                 break;
             case R.id.submitTv:
                 if (onNoticeListener != null) {
-                    onNoticeListener.confirm(bean.getId(),true);
+                    onNoticeListener.confirm(bean.getId(), true);
                 }
                 if (mDetailDialog != null) {
                     mDetailDialog.dismiss();
                 }
                 break;
         }
+    }
+
+    public interface OnNoticeListener {
+        void confirm(int type, boolean isFinish);//0去申述，2去绑定
     }
 }

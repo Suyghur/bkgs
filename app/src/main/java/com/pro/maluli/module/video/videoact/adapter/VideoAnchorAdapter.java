@@ -7,8 +7,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.VideoEntity;
-import com.pro.maluli.module.video.fragment.VideoFragment;
 import com.pro.maluli.module.video.videoact.fragment.VideoAnchorFragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +28,7 @@ public final class VideoAnchorAdapter extends FragmentStateAdapter {
     @NotNull
     @Override
     public Fragment createFragment(int position) {
-        return (Fragment) VideoAnchorFragment.getNewInstance(list.get(position),anchorId);
+        return (Fragment) VideoAnchorFragment.getNewInstance(list.get(position), anchorId);
     }
 
     @Override

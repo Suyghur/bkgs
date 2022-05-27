@@ -69,6 +69,8 @@ public class LiveListEntity implements Serializable {
             private String image;
             private int type;
             private int is_live;
+            private int room_id;
+            private List<String> tags;
 
             public int getRoom_id() {
                 return room_id;
@@ -77,9 +79,6 @@ public class LiveListEntity implements Serializable {
             public void setRoom_id(int room_id) {
                 this.room_id = room_id;
             }
-
-            private int room_id;
-            private List<String> tags;
 
             public int getId() {
                 return id;

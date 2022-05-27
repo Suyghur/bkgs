@@ -40,6 +40,7 @@ import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.dialogview.ShareVideoDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
 import com.pro.maluli.common.view.myselfView.StarBar;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
@@ -49,7 +50,6 @@ import com.pro.maluli.module.myself.anchorInformation.base.presenter.IAnchorInfo
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.AnchorImageFrag;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.AnchorInfoFrag;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.base.AnchorVideoFrag;
-import com.pro.maluli.toolkit.Logger;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoView;
 
@@ -133,15 +133,54 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
     ImageView topMoreIv;
     @BindView(R.id.moreIv)
     ImageView moreIv;
-    private boolean isLike;//是否关注
     MyPagerAdapter mAdapter;
+    AnchorInfoEntity anchorInfoEntity;
+    UserInfoEntity userInfoEntity;
+    //    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//
+//        int height=huadogn.getHeight();
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_UP:
+//                offset=offset-(int)event.getY();
+//                if (offset>200){
+//                    linearParams.height=400;
+//                    huadogn.setLayoutParams(linearParams);
+//                }else if (offset<-200){
+//                    linearParams.height=800;
+//                    huadogn.setLayoutParams(linearParams);
+//                }
+//
+//                break;
+//            case MotionEvent.ACTION_DOWN:
+//                offset=(int) event.getY();
+//                break;
+//        }
+//        return super.onTouchEvent(event);
+//    }
+//要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 0:
+                    ToastUtils.showShort("分享失败");
+                    break;
+                //微信登录
+                case 1:
+                    ToastUtils.showShort("分享成功");
+                    break;
+            }
+        }
+    };
+    private boolean isLike;//是否关注
     private List<String> title = new ArrayList<>();
     private String anchorID;
     private boolean isFrist;
     private String webUrl, accidAnchor, new_video;
-    AnchorInfoEntity anchorInfoEntity;
-    UserInfoEntity userInfoEntity;
     private int selectPosition = 0;
+    private int offset;
 
     @Override
     public AnchorInformationPresenter initPresenter() {
@@ -224,7 +263,6 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
         title.add("主播图片");
         title.add("小视频");
     }
-
 
     @Override
     public void doBusiness() {
@@ -375,69 +413,6 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
     public void setAboutMeInfo(AboutMeEntity data) {
 //        imgUrl = data.getShare().getImage();
     }
-
-
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return title.get(position);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-    }
-
-    private int offset;
-
-    //    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//
-//        int height=huadogn.getHeight();
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_UP:
-//                offset=offset-(int)event.getY();
-//                if (offset>200){
-//                    linearParams.height=400;
-//                    huadogn.setLayoutParams(linearParams);
-//                }else if (offset<-200){
-//                    linearParams.height=800;
-//                    huadogn.setLayoutParams(linearParams);
-//                }
-//
-//                break;
-//            case MotionEvent.ACTION_DOWN:
-//                offset=(int) event.getY();
-//                break;
-//        }
-//        return super.onTouchEvent(event);
-//    }
-//要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 0:
-                    ToastUtils.showShort("分享失败");
-                    break;
-                //微信登录
-                case 1:
-                    ToastUtils.showShort("分享成功");
-                    break;
-            }
-        }
-    };
 
     @OnClick({R.id.oneTomoreLl, R.id.likeAnchorLL, R.id.oneToOneLL, R.id.moreIv, R.id.topMoreIv,
             R.id.leftImg_ly, R.id.shareAppLL, R.id.finishIv, R.id.messageLL, R.id.anchorAvaterCiv})
@@ -602,10 +577,30 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
         videoPlayer.getCurrentPlayer().onVideoPause();
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         videoPlayer.getCurrentPlayer().release();
+    }
+
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return title.get(position);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
     }
 }

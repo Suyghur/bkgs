@@ -21,12 +21,12 @@ import org.json.JSONObject;
  */
 
 public class LinkElement extends ElementGroup<Element> {
+    public static final String TYPE_BLOCK = "block";
+    public static final String TYPE_URL = "url";
     private String type;
     private String style;
     private String target;
     private String params;
-    public static final String TYPE_BLOCK = "block";
-    public static final String TYPE_URL = "url";
 
     @Override
     public void parse(JSONObject rootJsonObject) throws JSONException {

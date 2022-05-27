@@ -2,10 +2,6 @@ package com.netease.nim.uikit.common.fragment;
 
 public abstract class TabFragment extends TFragment {
 
-    public interface State {
-        public boolean isCurrent(TabFragment fragment);
-    }
-
     private State state;
 
     public void setState(State state) {
@@ -48,5 +44,9 @@ public abstract class TabFragment extends TFragment {
 
     public void onCurrentTabDoubleTap() {
         // NO OP
+    }
+
+    public interface State {
+        public boolean isCurrent(TabFragment fragment);
     }
 }

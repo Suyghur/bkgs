@@ -11,14 +11,14 @@ import com.marvhong.videoeffect.utils.OpenGlUtils;
 public class ContrastEffect extends GlFilter {
 
     private static final String FRAGMENT_SHADER =
-        "#extension GL_OES_EGL_image_external : require\n"
-        + "precision mediump float;\n"
-        + "uniform samplerExternalOES sTexture;\n"
-        + " float contrast;\n" + "varying vec2 vTextureCoord;\n"
-        + "void main() {\n" + "  contrast =" + 2.0f + ";\n"
-        + "  vec4 color = texture2D(sTexture, vTextureCoord);\n"
-        + "  color -= 0.5;\n" + "  color *= contrast;\n"
-        + "  color += 0.5;\n" + "  gl_FragColor = color;\n" + "}\n";
+            "#extension GL_OES_EGL_image_external : require\n"
+                    + "precision mediump float;\n"
+                    + "uniform samplerExternalOES sTexture;\n"
+                    + " float contrast;\n" + "varying vec2 vTextureCoord;\n"
+                    + "void main() {\n" + "  contrast =" + 2.0f + ";\n"
+                    + "  vec4 color = texture2D(sTexture, vTextureCoord);\n"
+                    + "  color -= 0.5;\n" + "  color *= contrast;\n"
+                    + "  color += 0.5;\n" + "  gl_FragColor = color;\n" + "}\n";
 
     private float contrast;
 

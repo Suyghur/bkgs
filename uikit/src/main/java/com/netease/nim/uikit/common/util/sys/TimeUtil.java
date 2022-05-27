@@ -12,6 +12,7 @@ import java.util.TimeZone;
 public class TimeUtil {
 
     public static final int MIN_IN_MS = 60 * 1000;
+    public static final int DAY = 86400000;
 
     public static boolean isEarly(int days, long time) {
         return (currentTimeMillis() - time) > (days * 24 * 3600 * 1000);
@@ -60,10 +61,10 @@ public class TimeUtil {
 
         return null;
     }
-    public static final int DAY  = 86400000;
 
     /**
      * 判断是否是今天
+     *
      * @param millis
      * @return
      */
@@ -71,6 +72,7 @@ public class TimeUtil {
         long wee = getWeeOfToday();
         return millis >= wee && millis < wee + DAY;
     }
+
     private static long getWeeOfToday() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -79,6 +81,7 @@ public class TimeUtil {
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTimeInMillis();
     }
+
     public static String getNowDatetime() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return (formatter.format(new Date()));

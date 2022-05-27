@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dismissTopRl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    android:id="@+id/dismissTopRl"
     android:orientation="vertical">
 
     <LinearLayout
@@ -24,10 +24,10 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_centerInParent="true"
                 android:id="@+id/toptipsTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:text="特邀列表"
                 android:textColor="@color/c_342C33"
@@ -53,10 +53,11 @@
             </LinearLayout>
 
         </RelativeLayout>
+
         <TextView
-            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:text="以下用户为非正常结束用户"
             android:textColor="@color/c_958f94"
@@ -107,7 +108,7 @@
             android:text="暂无数据"
             android:textColor="@color/c_342C33"
             android:textSize="@dimen/sp_18"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </LinearLayout>
 </RelativeLayout>

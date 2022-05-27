@@ -50,10 +50,11 @@ public class PlayerManagerImpl {
 
     /**
      * 获取SDK信息
+     *
      * @return SDK信息实例
      */
-    public static SDKInfo getSDKInfo(Context context){
-        if(NELivePlayer.getSDKInfo(context) == null) {
+    public static SDKInfo getSDKInfo(Context context) {
+        if (NELivePlayer.getSDKInfo(context) == null) {
             return null;
         }
         SDKInfo sdkInfo = new SDKInfo();
@@ -89,9 +90,9 @@ public class PlayerManagerImpl {
     /**
      * 构造播放器实例对象
      *
-     * @param context   上下文
+     * @param context         上下文
      * @param mediaDataSource 视频资源,需要实现 NEMediaDataSource 自定义数据源
-     * @param options   播放选项
+     * @param options         播放选项
      * @return 播放器实例对象
      */
     public static VodPlayer buildVodPlayer(Context context, NEMediaDataSource mediaDataSource, VideoOptions options) {
@@ -121,7 +122,7 @@ public class PlayerManagerImpl {
     /**
      * 查询预加载拉流链接地址的结果信息
      *
-     * @return Map<String,  Integer> String是链接地址，Integer是状态,状态码参考 {@link com.netease.neliveplayer.playerkit.sdk.constant.PreloadStatusType}
+     * @return Map<String, Integer> String是链接地址，Integer是状态,状态码参考 {@link com.netease.neliveplayer.playerkit.sdk.constant.PreloadStatusType}
      */
     public static Map<String, Integer> queryPreloadUrls() {
         return NELivePlayer.queryPreloadUrls();
@@ -130,7 +131,7 @@ public class PlayerManagerImpl {
     /**
      * 刷新全部拉流地址预加载信息
      */
-    public static void refreshPreloadUrls(){
+    public static void refreshPreloadUrls() {
         NELivePlayer.refreshPreloadUrls();
     }
 

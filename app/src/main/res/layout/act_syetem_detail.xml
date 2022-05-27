@@ -45,10 +45,11 @@
                 android:layout_marginTop="@dimen/dp_10"
                 android:layout_marginBottom="@dimen/dp_10"
                 android:background="@color/c_dcdcdc" />
+
             <WebView
                 android:id="@+id/contentWb"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </ScrollView>
 

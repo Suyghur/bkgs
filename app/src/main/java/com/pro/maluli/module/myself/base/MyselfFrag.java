@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.base;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,15 +14,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.constant.ACEConstant;
-import com.pro.maluli.common.entity.SeeLiveUserEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
-import com.pro.maluli.common.eventBus.SettingSeeView;
 import com.pro.maluli.common.utils.ACache;
-import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.PackageUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
 import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.myself.base.presenter.IMyselfContraction;
 import com.pro.maluli.module.myself.base.presenter.MyselfPresenter;
@@ -38,8 +33,6 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -95,6 +88,7 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
     TextView userIdTips;
     @BindView(R.id.myselfSrl)
     SmartRefreshLayout myselfSrl;
+    UserInfoEntity userInfoEntity;
     private String anchorId;
 
     @Override
@@ -226,8 +220,6 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
         }
     }
 
-    UserInfoEntity userInfoEntity;
-
     /**
      * 获取首页数据成功
      *
@@ -274,7 +266,7 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
         fansTv.setText(response.getFans() + "");
         subscriptionTv.setText(response.getSubs() + "");
 
-        if (!PackageUtils.getVersionName(getActivity()).equalsIgnoreCase(response.getAndroid_version())||response.getNew_report()==1) {
+        if (!PackageUtils.getVersionName(getActivity()).equalsIgnoreCase(response.getAndroid_version()) || response.getNew_report() == 1) {
             hasMessageImg.setVisibility(View.VISIBLE);
         } else {
             hasMessageImg.setVisibility(View.GONE);

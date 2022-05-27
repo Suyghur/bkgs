@@ -89,8 +89,8 @@
     </LinearLayout>
 
     <View
-        android:layout_marginHorizontal="@dimen/dp_15"
-        android:background="@color/c_dcdcdc"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_0_5" />
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:background="@color/c_dcdcdc" />
 </LinearLayout>

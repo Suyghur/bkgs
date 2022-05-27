@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.BKRecordEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
@@ -12,13 +11,11 @@ import com.pro.maluli.common.networkRequest.SuccessConsumer;
 import io.reactivex.functions.Consumer;
 
 public class SearchRewardPresenter extends BasePresenter<ISearchRewardContraction.View> implements ISearchRewardContraction.Presenter {
+    public int page;
+    public String end_time, start_time, date, flow_type, keyword;
     public SearchRewardPresenter(Context context) {
         super(context);
     }
-
-    public int page;
-    public String end_time, start_time, date, flow_type, keyword;
-
 
     @Override
     public void getBkDetail() {

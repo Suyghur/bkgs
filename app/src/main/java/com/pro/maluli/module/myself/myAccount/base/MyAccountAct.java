@@ -17,7 +17,6 @@ import com.pro.maluli.common.entity.MyAccountEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
 import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.FreezeTipsDialog;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.myAccount.base.presenter.IMyAccountContraction;
@@ -147,13 +146,13 @@ public class MyAccountAct extends BaseMvpActivity<IMyAccountContraction.View, My
                 dialogFragment.setOnConfirmListener(new FreezeTipsDialog.OnFreezeTipsListener() {
                     @Override
                     public void gotoAppeal(int type) {
-                        Bundle bundle2 =new Bundle();
-                        bundle2.putString("SUB_TYPE","4");
-                        gotoActivity(AppealAct.class,false,bundle2);
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putString("SUB_TYPE", "4");
+                        gotoActivity(AppealAct.class, false, bundle2);
                     }
                 });
 
-            } else if (data.getCode().equalsIgnoreCase("3003")){//待审核
+            } else if (data.getCode().equalsIgnoreCase("3003")) {//待审核
                 FreezeTipsDialog dialogFragment = new FreezeTipsDialog();
                 Bundle bundle = new Bundle();
                 bundle.putString("showTips", "申诉已提交,请耐心等待审核");
@@ -164,24 +163,24 @@ public class MyAccountAct extends BaseMvpActivity<IMyAccountContraction.View, My
                 dialogFragment.setOnConfirmListener(new FreezeTipsDialog.OnFreezeTipsListener() {
                     @Override
                     public void gotoAppeal(int type) {
-                        Bundle bundle2 =new Bundle();
-                        bundle2.putString("SUB_TYPE","4");
-                        gotoActivity(AppealAct.class,false,bundle2);
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putString("SUB_TYPE", "4");
+                        gotoActivity(AppealAct.class, false, bundle2);
                     }
                 });
-            }else if (data.getCode().equalsIgnoreCase("3004")){//审核回复
+            } else if (data.getCode().equalsIgnoreCase("3004")) {//审核回复
                 FreezeTipsDialog dialogFragment = new FreezeTipsDialog();
                 Bundle bundle = new Bundle();
-                bundle.putString("showTips", "审核回复："+data.getReason());
+                bundle.putString("showTips", "审核回复：" + data.getReason());
                 dialogFragment.setArguments(bundle);
                 dialogFragment.setCancelable(true);
                 dialogFragment.show(getSupportFragmentManager(), "SelectTimeDialog");
                 dialogFragment.setOnConfirmListener(new FreezeTipsDialog.OnFreezeTipsListener() {
                     @Override
                     public void gotoAppeal(int type) {
-                        Bundle bundle2 =new Bundle();
-                        bundle2.putString("SUB_TYPE","4");
-                        gotoActivity(AppealAct.class,false,bundle2);
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putString("SUB_TYPE", "4");
+                        gotoActivity(AppealAct.class, false, bundle2);
                     }
                 });
             }

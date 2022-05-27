@@ -1,5 +1,8 @@
 package com.netease.nim.uikit.common.media.imagepicker.camera;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -17,11 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-
 public class CameraUtils {
     private static final String TAG = CameraUtils.class.getSimpleName();
+    private static float DEFAULT_IMAGE_SIZE = 1920 * 1080;
 
     public static File getOutputMediaFile(int mediaType, String name) {
         String filePath;
@@ -40,7 +41,9 @@ public class CameraUtils {
         return new File(filePath);
     }
 
-    /** A safe way to get an instance of the Camera object. */
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
     public static Pair<Camera, Integer> getCameraInstance(boolean front) {
         Camera c = null;
 
@@ -57,8 +60,7 @@ public class CameraUtils {
                     return new Pair<>(Camera.open(i), i);
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
 
@@ -106,7 +108,6 @@ public class CameraUtils {
         }
     }
 
-    private static float DEFAULT_IMAGE_SIZE = 1920 * 1080;
     public static Size choosePictureSize(List<Camera.Size> choices) {
         float diff = Float.MAX_VALUE;
         Size chosenSize = null;
@@ -176,13 +177,15 @@ public class CameraUtils {
         return rotation;
     }
 
-    public static class Size{
+    public static class Size {
         public int width;
         public int height;
+
         public Size(int w, int h) {
             width = w;
             height = h;
         }
+
         public int getWidth() {
             return width;
         }

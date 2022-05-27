@@ -1,8 +1,9 @@
 package com.netease.nim.uikit.common.media.imagepicker.adapter.vh;
 
-import androidx.annotation.CallSuper;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.CallSuper;
 
 import com.netease.nim.uikit.common.adapter.AdvancedAdapter;
 import com.netease.nim.uikit.common.media.imagepicker.ImagePicker;
@@ -11,6 +12,7 @@ import com.netease.nim.uikit.common.media.model.GLImage;
 
 
 /**
+ *
  */
 
 public class ImageItemViewHolder extends ItemViewHolder {

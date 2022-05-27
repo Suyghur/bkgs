@@ -351,6 +351,11 @@
             android:name=".module.main.base.presenter.DialogActivity"
             android:launchMode="singleTop"
             android:theme="@style/ActDialogStyle" />
+
+        <provider
+            android:name=".ktx.installer.BKGSInstaller"
+            android:authorities="${applicationId}.bkgs-installer"
+            android:exported="false" />
     </application>
 
 </manifest>

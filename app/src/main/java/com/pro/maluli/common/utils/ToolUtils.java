@@ -22,9 +22,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.other.login.LoginAct;
-import com.pro.maluli.toolkit.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +37,16 @@ import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
 
 public class ToolUtils {
+    /**
+     * 防止多次点击
+     *
+     * @return
+     */
+    // 两次点击按钮接口之间的点击间隔不能少于1000毫秒
+    private static final int MIN_CLICK_DELAY_TIME = 1000;
+    public static int WRITE_PERMISSION_REQ_CODE = 100;
+    private static long lastClickTime;
+
     public static String getMacAddress() {
 
         String macAddress = null;
@@ -288,6 +298,41 @@ public class ToolUtils {
         platform.share(sp);
     }
 
+    public static void shareVideoUrl(Handler handler,String type,String url,String desc,String imgUrl){
+        Platform.ShareParams sp = new Platform.ShareParams();
+        sp.setShareType(Platform.SHARE_WEBPAGE);
+        sp.setText(desc);
+        sp.setImageUrl(imgUrl);
+        sp.setUrl(url);
+        sp.setTitle("百科高手");
+//        sp.setSite("发布分享的网站名称");
+//        sp.setSiteUrl("发布分享网站的地址");
+        Platform platform = ShareSDK.getPlatform(type);
+        Logger.e("type: " + type);
+// 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
+        platform.setPlatformActionListener(new PlatformActionListener() {
+            public void onError(Platform arg0, int arg1, Throwable arg2) {
+                // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
+                Message message = new Message();
+                message.what = 0;
+                handler.sendMessage(message);
+            }
+
+            public void onComplete(Platform arg0, int arg1, HashMap arg2) {
+                // 分享成功的回调
+                Message message = new Message();
+                message.what = 1;
+                handler.sendMessage(message);
+            }
+
+            public void onCancel(Platform arg0, int arg1) {
+                // 取消分享的回调
+            }
+        });
+// 执行图文分享
+        platform.share(sp);
+    }
+
     /**
      * 分享视频
      */
@@ -327,15 +372,6 @@ public class ToolUtils {
         platform.share(sp);
     }
 
-    /**
-     * 防止多次点击
-     *
-     * @return
-     */
-    // 两次点击按钮接口之间的点击间隔不能少于1000毫秒
-    private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private static long lastClickTime;
-
     public static boolean isFastClick() {
         boolean flag = false;
         long curClickTime = System.currentTimeMillis();
@@ -345,7 +381,6 @@ public class ToolUtils {
         lastClickTime = curClickTime;
         return flag;
     }
-
 
     /**
      * 是否安装微信
@@ -364,8 +399,6 @@ public class ToolUtils {
         }
         return bHas;
     }
-
-    public static int WRITE_PERMISSION_REQ_CODE = 100;
 
     public static boolean checkPublishPermission(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {

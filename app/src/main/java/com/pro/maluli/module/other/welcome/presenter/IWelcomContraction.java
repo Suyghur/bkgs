@@ -8,6 +8,7 @@ public interface IWelcomContraction extends BaseView {
     interface View extends BaseView {
         void setWelcomInfo(WelcomInfoEntity welcomInfo);
     }
+
     interface Presenter extends IClear {
         void getWelcomInfo();
 

@@ -2,10 +2,7 @@ package com.pro.maluli.module.socketService.jgService;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-
-import com.pro.maluli.module.myself.setting.base.SettingAct;
 
 import cn.jpush.android.api.CmdMessage;
 import cn.jpush.android.api.CustomMessage;
@@ -28,7 +25,7 @@ public class PushMessageReceiver extends JPushMessageReceiver {
     @Override
     public void onNotifyMessageOpened(Context context, NotificationMessage message) {
         Log.e(TAG, "[onNotifyMessageOpened] " + message);
-        try{
+        try {
             //打开自定义的Activity
 //            Intent i = new Intent(context, SettingAct.class);
 //            Bundle bundle = new Bundle();
@@ -37,7 +34,7 @@ public class PushMessageReceiver extends JPushMessageReceiver {
 //            i.putExtras(bundle);
 //            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
 //            context.startActivity(i);
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
 
         }
     }
@@ -93,25 +90,25 @@ public class PushMessageReceiver extends JPushMessageReceiver {
 
     @Override
     public void onTagOperatorResult(Context context, JPushMessage jPushMessage) {
-        TagAliasOperatorHelper.getInstance().onTagOperatorResult(context,jPushMessage);
+        TagAliasOperatorHelper.getInstance().onTagOperatorResult(context, jPushMessage);
         super.onTagOperatorResult(context, jPushMessage);
     }
 
     @Override
     public void onCheckTagOperatorResult(Context context, JPushMessage jPushMessage) {
-        TagAliasOperatorHelper.getInstance().onCheckTagOperatorResult(context,jPushMessage);
+        TagAliasOperatorHelper.getInstance().onCheckTagOperatorResult(context, jPushMessage);
         super.onCheckTagOperatorResult(context, jPushMessage);
     }
 
     @Override
     public void onAliasOperatorResult(Context context, JPushMessage jPushMessage) {
-        TagAliasOperatorHelper.getInstance().onAliasOperatorResult(context,jPushMessage);
+        TagAliasOperatorHelper.getInstance().onAliasOperatorResult(context, jPushMessage);
         super.onAliasOperatorResult(context, jPushMessage);
     }
 
     @Override
     public void onMobileNumberOperatorResult(Context context, JPushMessage jPushMessage) {
-        TagAliasOperatorHelper.getInstance().onMobileNumberOperatorResult(context,jPushMessage);
+        TagAliasOperatorHelper.getInstance().onMobileNumberOperatorResult(context, jPushMessage);
         super.onMobileNumberOperatorResult(context, jPushMessage);
     }
 

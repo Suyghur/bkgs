@@ -12,12 +12,12 @@ public class RobotLinkViewStyle {
         return background;
     }
 
-    public int getRobotTextColor() {
-        return robotTextColor;
-    }
-
     public void setBackground(int background) {
         this.background = background;
+    }
+
+    public int getRobotTextColor() {
+        return robotTextColor;
     }
 
     public void setRobotTextColor(int robotTextColor) {

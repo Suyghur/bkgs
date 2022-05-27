@@ -1,11 +1,8 @@
 package com.pro.maluli.module.myself.myAccount.recharge.adapter;
 
-import android.view.View;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.PayInfoEntity;
 import com.pro.maluli.common.entity.RechargeEntity;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +35,6 @@ public class RechargePayTypeAdapter extends BaseQuickAdapter<RechargeEntity.PayB
 //            }
 //        });
         baseViewHolder.setText(R.id.bKTv, entity.getBk_money() + "高手币");
-        baseViewHolder.setText(R.id.moneyTv, entity.getMoney()+"");
+        baseViewHolder.setText(R.id.moneyTv, entity.getMoney() + "");
     }
 }

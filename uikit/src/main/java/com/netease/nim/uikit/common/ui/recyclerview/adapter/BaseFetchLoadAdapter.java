@@ -1,13 +1,9 @@
 package com.netease.nim.uikit.common.ui.recyclerview.adapter;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 import android.animation.Animator;
 import android.content.Context;
-import androidx.annotation.IntDef;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.LayoutParams;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +11,13 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+
+import androidx.annotation.IntDef;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.LayoutParams;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.netease.nim.uikit.common.ui.recyclerview.animation.AlphaInAnimation;
 import com.netease.nim.uikit.common.ui.recyclerview.animation.BaseAnimation;
@@ -32,77 +35,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-
 public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends RecyclerView.Adapter<K> implements IRecyclerView {
-
-    private static final String TAG = BaseFetchLoadAdapter.class.getSimpleName();
-
-    // fetch more
-    public interface RequestFetchMoreListener {
-        void onFetchMoreRequested();
-    }
-
-    protected RecyclerView mRecyclerView;
-
-    private boolean mFetching = false;
-    private boolean mFetchMoreEnable = false;
-    private boolean mNextFetchEnable = false;
-    private boolean mFirstFetchSuccess = true;
-    private int mAutoFetchMoreSize = 1; // 距离顶部多少条就开始拉取数据了
-    private RequestFetchMoreListener mRequestFetchMoreListener;
-    private LoadMoreView mFetchMoreView = new SimpleLoadMoreView();
-
-    //load more
-    public interface RequestLoadMoreListener {
-        void onLoadMoreRequested();
-    }
-
-    private boolean mLoading = false;
-    private boolean mNextLoadEnable = false;
-    private boolean mLoadMoreEnable = false;
-    private boolean mFirstLoadSuccess = true;
-    private int mAutoLoadMoreSize = 1; // 距离底部多少条就开始加载数据了
-    private RequestLoadMoreListener mRequestLoadMoreListener;
-    private LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
-
-    // animation
-    private boolean mAnimationShowFirstOnly = true;
-    private boolean mOpenAnimationEnable = false;
-    private Interpolator mInterpolator = new LinearInterpolator();
-    private int mAnimationDuration = 200;
-    private int mLastPosition = -1;
-
-    // @AnimationType
-    private BaseAnimation mCustomAnimation;
-    private BaseAnimation mSelectAnimation = new AlphaInAnimation();
-
-    // empty
-    private FrameLayout mEmptyView;
-    private boolean mIsUseEmpty = true;
-
-    // basic
-    protected Context mContext;
-    protected int mLayoutResId;
-    protected LayoutInflater mLayoutInflater;
-    protected List<T> mData;
-    private boolean isScrolling = false;
-
-    /**
-     * Implement this method and use the helper to adapt the view to the given item.
-     *
-     * @param helper      A fully initialized helper.
-     * @param item        the item that needs to be displayed.
-     * @param position    the item position
-     * @param isScrolling RecyclerView is scrolling
-     */
-    protected abstract void convert(K helper, T item, int position, boolean isScrolling);
-
-
-    @IntDef({ALPHAIN, SCALEIN, SLIDEIN_BOTTOM, SLIDEIN_LEFT, SLIDEIN_RIGHT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface AnimationType {
-    }
 
     /**
      * Use with {@link #openLoadAnimation}
@@ -124,8 +57,41 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
      * Use with {@link #openLoadAnimation}
      */
     public static final int SLIDEIN_RIGHT = 0x00000005;
-
-
+    private static final String TAG = BaseFetchLoadAdapter.class.getSimpleName();
+    protected RecyclerView mRecyclerView;
+    // basic
+    protected Context mContext;
+    protected int mLayoutResId;
+    protected LayoutInflater mLayoutInflater;
+    protected List<T> mData;
+    private boolean mFetching = false;
+    private boolean mFetchMoreEnable = false;
+    private boolean mNextFetchEnable = false;
+    private boolean mFirstFetchSuccess = true;
+    private int mAutoFetchMoreSize = 1; // 距离顶部多少条就开始拉取数据了
+    private RequestFetchMoreListener mRequestFetchMoreListener;
+    private LoadMoreView mFetchMoreView = new SimpleLoadMoreView();
+    private boolean mLoading = false;
+    private boolean mNextLoadEnable = false;
+    private boolean mLoadMoreEnable = false;
+    private boolean mFirstLoadSuccess = true;
+    private int mAutoLoadMoreSize = 1; // 距离底部多少条就开始加载数据了
+    private RequestLoadMoreListener mRequestLoadMoreListener;
+    private LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
+    // animation
+    private boolean mAnimationShowFirstOnly = true;
+    private boolean mOpenAnimationEnable = false;
+    private Interpolator mInterpolator = new LinearInterpolator();
+    private int mAnimationDuration = 200;
+    private int mLastPosition = -1;
+    // @AnimationType
+    private BaseAnimation mCustomAnimation;
+    private BaseAnimation mSelectAnimation = new AlphaInAnimation();
+    // empty
+    private FrameLayout mEmptyView;
+    private boolean mIsUseEmpty = true;
+    private boolean isScrolling = false;
+    private SpanSizeLookup mSpanSizeLookup;
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
      * some initialization data.
@@ -153,6 +119,16 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
          */
         RecyclerViewUtil.changeItemAnimation(recyclerView, false);
     }
+
+    /**
+     * Implement this method and use the helper to adapt the view to the given item.
+     *
+     * @param helper      A fully initialized helper.
+     * @param item        the item that needs to be displayed.
+     * @param position    the item position
+     * @param isScrolling RecyclerView is scrolling
+     */
+    protected abstract void convert(K helper, T item, int position, boolean isScrolling);
 
     @Override
     public int getHeaderLayoutCount() {
@@ -421,7 +397,6 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
         notifyItemChanged(getFetchMoreViewCount() + mData.size());
     }
 
-
     /**
      * Set the enabled state of load more.
      *
@@ -452,10 +427,6 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
     public boolean isLoadMoreEnable() {
         return mLoadMoreEnable;
     }
-
-    /**
-     * *********************************** 数据源管理 ***********************************
-     */
 
     /**
      * setting up a new instance to data;
@@ -500,6 +471,10 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
         mLastPosition = -1;
         notifyDataSetChanged();
     }
+
+    /**
+     * *********************************** 数据源管理 ***********************************
+     */
 
     /**
      * insert  a item associated with the specified position of adapter
@@ -814,16 +789,6 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
         }
     }
 
-    private SpanSizeLookup mSpanSizeLookup;
-
-    public interface SpanSizeLookup {
-        int getSpanSize(GridLayoutManager gridLayoutManager, int position);
-    }
-
-    /**
-     * *********************************** EmptyView ***********************************
-     */
-
     /**
      * if mEmptyView will be return 1 or not will be return 0
      *
@@ -840,23 +805,6 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
             return 0;
         }
         return 1;
-    }
-
-    public void setEmptyView(View emptyView) {
-        boolean insert = false;
-        if (mEmptyView == null) {
-            mEmptyView = new FrameLayout(emptyView.getContext());
-            mEmptyView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
-            insert = true;
-        }
-        mEmptyView.removeAllViews();
-        mEmptyView.addView(emptyView);
-        mIsUseEmpty = true;
-        if (insert) {
-            if (getEmptyViewCount() == 1) {
-                notifyItemInserted(0);
-            }
-        }
     }
 
     /**
@@ -879,8 +827,25 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
         return mEmptyView;
     }
 
+    public void setEmptyView(View emptyView) {
+        boolean insert = false;
+        if (mEmptyView == null) {
+            mEmptyView = new FrameLayout(emptyView.getContext());
+            mEmptyView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
+            insert = true;
+        }
+        mEmptyView.removeAllViews();
+        mEmptyView.addView(emptyView);
+        mIsUseEmpty = true;
+        if (insert) {
+            if (getEmptyViewCount() == 1) {
+                notifyItemInserted(0);
+            }
+        }
+    }
+
     /**
-     * *********************************** 动画 ***********************************
+     * *********************************** EmptyView ***********************************
      */
 
     /**
@@ -940,6 +905,10 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
     }
 
     /**
+     * *********************************** 动画 ***********************************
+     */
+
+    /**
      * {@link #addAnimation(RecyclerView.ViewHolder)}
      *
      * @param firstOnly true just show anim when first loading false show anim when load the data every time
@@ -988,5 +957,24 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
     protected void startAnim(Animator anim, int index) {
         anim.setDuration(mAnimationDuration).start();
         anim.setInterpolator(mInterpolator);
+    }
+
+    // fetch more
+    public interface RequestFetchMoreListener {
+        void onFetchMoreRequested();
+    }
+
+    //load more
+    public interface RequestLoadMoreListener {
+        void onLoadMoreRequested();
+    }
+
+    @IntDef({ALPHAIN, SCALEIN, SLIDEIN_BOTTOM, SLIDEIN_LEFT, SLIDEIN_RIGHT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AnimationType {
+    }
+
+    public interface SpanSizeLookup {
+        int getSpanSize(GridLayoutManager gridLayoutManager, int position);
     }
 }

@@ -17,18 +17,14 @@ import com.pro.maluli.R;
 
 /**
  * 验证码输入框,重写EditText的绘制方法实现。
+ *
  * @author kingsley
  */
 public class CodeEditText extends AppCompatEditText {
 
 
+    private final Rect mRect = new Rect();
     private int mTextColor;
-
-    public interface OnTextFinishListener {
-
-        void onTextFinish(CharSequence text, int length);
-    }
-
     // 输入的最大长度
     private int mMaxLength = 4;
     // 边框宽度
@@ -37,22 +33,15 @@ public class CodeEditText extends AppCompatEditText {
     private int mStrokeHeight;
     // 边框之间的距离
     private int mStrokePadding = 20;
-
-
-    private final Rect mRect = new Rect();
-
-
     /**
      * 输入结束监听
      */
     private OnTextFinishListener mOnInputFinishListener;
-
     // 方框的背景
     private Drawable mStrokeDrawable;
 
     /**
      * 构造方法
-     *
      */
     public CodeEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -94,10 +83,6 @@ public class CodeEditText extends AppCompatEditText {
         return false;
     }
 
-//    private int px(int size) {
-//        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, getResources().getDisplayMetrics());
-//    }
-
     /**
      * 设置最大长度
      */
@@ -108,6 +93,10 @@ public class CodeEditText extends AppCompatEditText {
             setFilters(new InputFilter[0]);
         }
     }
+
+//    private int px(int size) {
+//        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, getResources().getDisplayMetrics());
+//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -147,7 +136,6 @@ public class CodeEditText extends AppCompatEditText {
         drawText(canvas);
     }
 
-
     /**
      * 重绘背景
      */
@@ -181,7 +169,6 @@ public class CodeEditText extends AppCompatEditText {
         mStrokeDrawable.draw(canvas);
 
     }
-
 
     /**
      * 重绘文本
@@ -221,7 +208,6 @@ public class CodeEditText extends AppCompatEditText {
 
     }
 
-
     public void hideSoftInput() {
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null)
@@ -233,6 +219,11 @@ public class CodeEditText extends AppCompatEditText {
      */
     public void setOnTextFinishListener(OnTextFinishListener onInputFinishListener) {
         this.mOnInputFinishListener = onInputFinishListener;
+    }
+
+    public interface OnTextFinishListener {
+
+        void onTextFinish(CharSequence text, int length);
     }
 
 }

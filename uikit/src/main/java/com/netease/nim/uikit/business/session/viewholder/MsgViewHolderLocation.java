@@ -15,13 +15,16 @@ import com.netease.nimlib.sdk.msg.attachment.LocationAttachment;
  */
 public class MsgViewHolderLocation extends MsgViewHolderBase {
 
+    public MsgThumbImageView mapView;
+    public TextView addressText;
+
     public MsgViewHolderLocation(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }
 
-    public MsgThumbImageView mapView;
-
-    public TextView addressText;
+    public static int getLocationDefEdge() {
+        return (int) (0.5 * ScreenUtil.screenWidth);
+    }
 
     @Override
     public int getContentResId() {
@@ -55,9 +58,5 @@ public class MsgViewHolderLocation extends MsgViewHolderBase {
             LocationAttachment location = (LocationAttachment) message.getAttachment();
             NimUIKitImpl.getLocationProvider().openMap(context, location.getLongitude(), location.getLatitude(), location.getAddress());
         }
-    }
-
-    public static int getLocationDefEdge() {
-        return (int) (0.5 * ScreenUtil.screenWidth);
     }
 }

@@ -1,5 +1,7 @@
 package com.pro.maluli.module.other.login.presenter;
 
+import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
+
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -7,7 +9,6 @@ import com.google.gson.Gson;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.networkRequest.ResponseCode;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 import com.pro.maluli.common.utils.AcacheUtil;
 
@@ -19,8 +20,6 @@ import java.util.Map;
 import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-
-import static com.pro.maluli.common.utils.preferences.Preferences.saveLoginInfo;
 
 public class LoginPresenter extends BasePresenter<ILoginContraction.View> implements ILoginContraction.Presenter {
     public LoginPresenter(Context context) {

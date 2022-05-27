@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.jakewharton.butterknife'
     id 'com.mob.sdk'
+    id 'org.jetbrains.kotlin.android'
 }
 
 MobSDK {
@@ -104,6 +105,10 @@ android {
     packagingOptions {
         pickFirst 'lib/arm64-v8a/libc++_shared.so'
         pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
@@ -234,7 +239,15 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:4.6.6'
     implementation 'cn.jiguang.sdk:jcore:3.2.4'
 
-    implementation project(':toolkit')
+    implementation "io.github.suyghur.dolin:zap:1.0.0"
+//    implementation 'com.tencent:mmkv-static:1.2.10'
+
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-java:3.3.5'
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
+//    implementation 'xyz.doikki.android.dkplayer:player-exo:3.3.5'
+//    implementation 'xyz.doikki.android.dkplayer:videocache:3.3.5'
+
+//    implementation project(':toolkit')
     implementation project(':uikit')
     implementation project(':playerkit')
     implementation project(':video-effect')

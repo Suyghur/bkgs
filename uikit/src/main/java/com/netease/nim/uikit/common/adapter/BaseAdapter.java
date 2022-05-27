@@ -1,15 +1,17 @@
 package com.netease.nim.uikit.common.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
  */
 public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
 
@@ -27,6 +29,31 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
      * constructor view holder delegate
      */
     private BaseDelegate delegate;
+    private View.OnClickListener mClickListenerMediator = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (listener != null) {
+                int pos = getViewHolderAdapterPosition(v);
+                if (pos < 0) {
+                    return;
+                }
+                listener.onClick(v, pos, getData(pos));
+            }
+        }
+    };
+    private View.OnLongClickListener mLongClickListenerMediator = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (listener != null) {
+                int pos = getViewHolderAdapterPosition(v);
+                if (pos < 0) {
+                    return false;
+                }
+                return listener.onLongClick(v, pos, getData(pos));
+            }
+            return false;
+        }
+    };
 
     /**
      * constructor
@@ -46,6 +73,16 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
     public BaseAdapter(List<T> dataList, OnItemClickListener listener) {
         checkData(dataList);
         this.listener = listener;
+    }
+
+    static int getViewHolderAdapterPosition(View v) {
+        if (v != null) {
+            ViewParent parent = v.getParent();
+            if (parent instanceof RecyclerView) {
+                return ((RecyclerView) parent).getChildAdapterPosition(v);
+            }
+        }
+        return -1;
     }
 
     /**
@@ -169,45 +206,8 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
         return delegate.getItemViewType(dataList.get(position), position);
     }
 
-    private View.OnClickListener mClickListenerMediator = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (listener != null) {
-                int pos = getViewHolderAdapterPosition(v);
-                if (pos < 0) {
-                    return;
-                }
-                listener.onClick(v, pos, getData(pos));
-            }
-        }
-    };
-
-    private View.OnLongClickListener mLongClickListenerMediator = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (listener != null) {
-                int pos = getViewHolderAdapterPosition(v);
-                if (pos < 0) {
-                    return false;
-                }
-                return listener.onLongClick(v, pos, getData(pos));
-            }
-            return false;
-        }
-    };
-
     protected T getData(int pos) {
         return pos >= 0 ? dataList.get(pos) : null;
-    }
-
-    static int getViewHolderAdapterPosition(View v) {
-        if (v != null) {
-            ViewParent parent = v.getParent();
-            if (parent instanceof RecyclerView) {
-                return ((RecyclerView) parent).getChildAdapterPosition(v);
-            }
-        }
-        return -1;
     }
 
     public void removeItem(int position) {

@@ -20,12 +20,12 @@
 
         <ImageView
             android:id="@+id/cat"
-            android:visibility="gone"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerInParent="true"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_bk" />
+            android:src="@mipmap/ic_bk"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/eye_left"
@@ -67,12 +67,12 @@
         android:id="@+id/graduallyTextView"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignBottom="@id/loadingTop_ly"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-10dp"
         android:text="L O A D I N G ..."
         android:textColor="#ffffffff"
         android:textSize="8sp"
-        android:layout_marginBottom="-10dp"
         android:textStyle="bold" />
 
 

@@ -9,10 +9,14 @@ public class GoSettingEvent {
     public String link;//不为空，调用接口子再次预约
     public boolean isGoRecharge;//跳转到充值页面；
     public boolean isScore;//评价窗口
-    public  boolean isSeeNotic;//只是获取聊天公告信息
+    public boolean isSeeNotic;//只是获取聊天公告信息
     private boolean isCanScore;//检查是否能评价
     private boolean isGoAnchorInfo;//跳转到主播信息页
-    private int ablitityNumber,serviceNumber;
+    private int ablitityNumber, serviceNumber;
+
+    public GoSettingEvent(String accid) {
+        this.accid = accid;
+    }
 
     public boolean isGoAnchorInfo() {
         return isGoAnchorInfo;
@@ -78,7 +82,6 @@ public class GoSettingEvent {
         isGoRecharge = goRecharge;
     }
 
-
     public String getLink() {
         return link;
     }
@@ -95,18 +98,12 @@ public class GoSettingEvent {
         this.listBean = listBean;
     }
 
-
     public boolean isSendGift() {
         return isSendGift;
     }
 
     public void setSendGift(boolean sendGift) {
         isSendGift = sendGift;
-    }
-
-
-    public GoSettingEvent(String accid) {
-        this.accid = accid;
     }
 
     public String getAccid() {

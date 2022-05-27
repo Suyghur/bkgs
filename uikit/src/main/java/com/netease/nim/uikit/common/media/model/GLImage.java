@@ -1,11 +1,19 @@
 package com.netease.nim.uikit.common.media.model;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
 public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
+    public static final String KEY_NAME = "name";
+    public static final String KEY_PATH = "path";
+    public static final String KEY_SIZE = "size";
+    public static final String KEY_WIDTH = "width";
+    public static final String KEY_HEIGHT = "height";
+    public static final String KEY_MIMETYPE = "mimeType";
+    public static final String KEY_ADDTIME = "addTime";
     private String name;       //图片的名字
     private String path;       //图片的路径
     private long size;         //图片的大小
@@ -13,7 +21,6 @@ public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
     private int height;       //图片的高度
     private String mimeType;   //图片的类型
     private long addTime;      //图片的创建时间
-
     private long id;
     private long duration;
 
@@ -105,6 +112,37 @@ public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
 
     }
 
+    /**
+     * 图片的路径相同就认为是同一张图片，拍照回来时的照片是当前时间，和插入数据库后的时间有一点偏差
+     * 但是要求自动选中，所以这两张图需要被视为相等
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GLImage)) {
+            return false;
+        }
+
+        GLImage other = (GLImage) o;
+        return this.path.equalsIgnoreCase(other.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return path != null ? path.hashCode() : 0;
+    }
+
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putString("name", name);
+        bundle.putString("path", path);
+        bundle.putLong("size", size);
+        bundle.putInt("width", width);
+        bundle.putInt("height", height);
+        bundle.putString("mimeType", mimeType);
+        bundle.putLong("addTime", addTime);
+        return bundle;
+    }
+
     public static final class Builder {
         private long id;
         private long duration;
@@ -126,7 +164,7 @@ public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
 
         public static Builder newBuilder(GLImage GLImage) {
             return new Builder().setId(GLImage.getId()).setName(GLImage.getName()).setPath(GLImage.getPath())
-                                .setSize(GLImage.getSize()).setWidth(GLImage.getWidth()).setHeight(
+                    .setSize(GLImage.getSize()).setWidth(GLImage.getWidth()).setHeight(
                             GLImage.getHeight()).setMimeType(GLImage.getMimeType()).setAddTime(
                             GLImage.getAddTime());
         }
@@ -182,45 +220,5 @@ public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
             GLImage.setDuration(duration);
             return GLImage;
         }
-    }
-
-
-    /**
-     * 图片的路径相同就认为是同一张图片，拍照回来时的照片是当前时间，和插入数据库后的时间有一点偏差
-     * 但是要求自动选中，所以这两张图需要被视为相等
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof GLImage)) {
-            return false;
-        }
-
-        GLImage other = (GLImage) o;
-        return this.path.equalsIgnoreCase(other.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return path != null ? path.hashCode() : 0;
-    }
-
-    public static final String KEY_NAME = "name";
-    public static final String KEY_PATH = "path";
-    public static final String KEY_SIZE = "size";
-    public static final String KEY_WIDTH = "width";
-    public static final String KEY_HEIGHT = "height";
-    public static final String KEY_MIMETYPE = "mimeType";
-    public static final String KEY_ADDTIME = "addTime";
-
-    public Bundle toBundle() {
-        Bundle bundle = new Bundle();
-        bundle.putString("name", name);
-        bundle.putString("path", path);
-        bundle.putLong("size", size);
-        bundle.putInt("width", width);
-        bundle.putInt("height", height);
-        bundle.putString("mimeType", mimeType);
-        bundle.putLong("addTime", addTime);
-        return bundle;
     }
 }

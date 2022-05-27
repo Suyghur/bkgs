@@ -2,25 +2,18 @@ package com.pro.maluli.module.home.base.fragment.rechild;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.flyco.tablayout.SlidingTabLayout;
-import com.google.android.material.transition.platform.FadeProvider;
-import com.netease.nim.uikit.common.ToastHelper;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.LiveListEntity;
@@ -28,12 +21,6 @@ import com.pro.maluli.module.home.base.fragment.rechild.adapter.HomeLiveAdapter;
 import com.pro.maluli.module.home.base.fragment.rechild.presenter.ChildLiveListPresenter;
 import com.pro.maluli.module.home.base.fragment.rechild.presenter.IChildLiveListContraction;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 

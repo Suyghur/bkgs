@@ -9,15 +9,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -26,8 +23,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.luck.picture.lib.tools.ScreenUtils;
 import com.pro.maluli.R;
-import com.pro.maluli.common.utils.ToolUtils;
-import com.pro.maluli.common.view.dialogview.SendCommentDialogFragment;
 import com.pro.maluli.common.view.myselfView.HackyViewPager;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,15 +36,16 @@ import java.util.ArrayList;
  */
 
 public class CheckBigPictureDialog extends DialogFragment implements View.OnClickListener {
-    private Dialog mDetailDialog;
-    private static final String STATE_POSITION = "STATE_POSITION";
     public static final String EXTRA_IMAGE_INDEX = "image_index";
     public static final String EXTRA_IMAGE_URLS = "image_urls";
+    private static final String STATE_POSITION = "STATE_POSITION";
+    private Dialog mDetailDialog;
     private FrameLayout ousideDismissFl;
     private HackyViewPager mPager;
     private int pagerPosition;
     private TextView indicator;
     private View mContentView;
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -69,6 +65,7 @@ public class CheckBigPictureDialog extends DialogFragment implements View.OnClic
 
         return mDetailDialog;
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,9 +73,9 @@ public class CheckBigPictureDialog extends DialogFragment implements View.OnClic
         mContentView = inflater.inflate(R.layout.dialog_big_picture, container, false);
 
 
-
         return mContentView;
     }
+
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         mPager = (HackyViewPager) view.findViewById(R.id.pager);
@@ -123,10 +120,11 @@ public class CheckBigPictureDialog extends DialogFragment implements View.OnClic
         mPager.setCurrentItem(pagerPosition);
 
     }
+
     @Override
     public void onResume() {
-        int screenWidth = ScreenUtils.getScreenWidth(getActivity())-ScreenUtils.dip2px(getContext(),30);
-        int screenHidth =screenWidth*3/2;
+        int screenWidth = ScreenUtils.getScreenWidth(getActivity()) - ScreenUtils.dip2px(getContext(), 30);
+        int screenHidth = screenWidth * 3 / 2;
         WindowManager.LayoutParams params = getDialog().getWindow()
                 .getAttributes();
         params.gravity = Gravity.CENTER;
@@ -146,14 +144,9 @@ public class CheckBigPictureDialog extends DialogFragment implements View.OnClic
 
         super.onResume();
     }
-    private OnFreezeTipsListener onFreezeTipsListener;
 
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @SuppressLint("MissingSuperCall")
@@ -175,6 +168,10 @@ public class CheckBigPictureDialog extends DialogFragment implements View.OnClic
         if (mDetailDialog != null) {
             mDetailDialog.dismiss();
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     private class ImagePagerAdapter extends FragmentStatePagerAdapter {

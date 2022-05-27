@@ -4,44 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pro.maluli.R;
-import com.pro.maluli.common.view.popwindow.Solve7PopupWindow;
-import com.pro.maluli.common.view.popwindow.adapter.PayTypeAllAdapter;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SelectChatWindow {
+    public PayTypeAllListener payTypeAllListener;
     private View inView;
     private Context context;
     private PopupWindow mPopWindow;
-
-    public interface PayTypeAllListener {
-        void onSelectItem(int position);
-    }
-
-    public PayTypeAllListener payTypeAllListener;
-
-    public PayTypeAllListener getPayTypeAllListener() {
-        return payTypeAllListener;
-    }
-
-    public void setPayTypeAllListener(PayTypeAllListener payTypeAllListener) {
-        this.payTypeAllListener = payTypeAllListener;
-    }
 
     public SelectChatWindow(Context context, View view, PayTypeAllListener listener) {
         this.inView = view;
@@ -50,6 +24,13 @@ public class SelectChatWindow {
         initPopup();
     }
 
+    public PayTypeAllListener getPayTypeAllListener() {
+        return payTypeAllListener;
+    }
+
+    public void setPayTypeAllListener(PayTypeAllListener payTypeAllListener) {
+        this.payTypeAllListener = payTypeAllListener;
+    }
 
     //PopupWindow菜单详细内容显示
     //区域
@@ -72,7 +53,7 @@ public class SelectChatWindow {
         emailTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (payTypeAllListener!=null){
+                if (payTypeAllListener != null) {
                     payTypeAllListener.onSelectItem(1);
                 }
                 mPopWindow.dismiss();
@@ -81,7 +62,7 @@ public class SelectChatWindow {
         mobileTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (payTypeAllListener!=null){
+                if (payTypeAllListener != null) {
                     payTypeAllListener.onSelectItem(0);
                 }
                 mPopWindow.dismiss();
@@ -89,6 +70,11 @@ public class SelectChatWindow {
         });
 
 
+    }
+
+
+    public interface PayTypeAllListener {
+        void onSelectItem(int position);
     }
 
 }

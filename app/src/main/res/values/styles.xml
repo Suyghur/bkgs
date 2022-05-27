@@ -9,7 +9,7 @@
     </style>
 
     <style name="ThemeSplash" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen">
-<!--        <item name="android:background">@drawable/splash_screen</item>-->
+        <!--        <item name="android:background">@drawable/splash_screen</item>-->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="windowActionBar">false</item>
@@ -81,7 +81,8 @@
         <item name="android:windowEnterAnimation">@anim/pop_show</item>
         <item name="android:windowExitAnimation">@anim/pop_hide</item>
     </style>
-    <style name="Dividing_line_layout" >
+
+    <style name="Dividing_line_layout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/dp_1</item>
         <item name="android:background">@color/c_ebebeb</item>
@@ -122,9 +123,11 @@
         <item name="android:windowEnterAnimation">@anim/popumenu_animation_show</item>
         <item name="android:windowExitAnimation">@anim/popumenu_animation_hide</item>
     </style>
+
     <style name="checkBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/selector_check_check</item>
     </style>
+
     <style name="dialog" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -145,7 +148,7 @@
         <item name="android:windowExitAnimation">@anim/exit_bottom_menu</item>
 
     </style>
-<!--弹出自定义dialogActiviy-->
+    <!--弹出自定义dialogActiviy-->
     <style name="dialogstyle">
         <!--设置dialog的背景-->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -164,6 +167,7 @@
         <!--背景是否模糊显示-->
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
     <style name="ActDialogStyle" parent="@android:style/Theme.Dialog">
         <!-- 边框 -->
         <item name="android:windowFrame">@null</item>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_size_68"
-                android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_size_68"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/iv_cover"
@@ -12,7 +12,7 @@
         android:layout_marginLeft="@dimen/dp_size_15"
         android:layout_marginRight="@dimen/dp_size_15"
         android:scaleType="centerCrop"
-        android:src="@drawable/nim_placeholder_normal_impl"/>
+        android:src="@drawable/nim_placeholder_normal_impl" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:singleLine="true"
             android:text="@string/all_images"
             android:textColor="@color/color_222222"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_image_count"
@@ -39,7 +39,7 @@
             android:layout_marginLeft="@dimen/dp_size_2"
             android:text="(12222)"
             android:textColor="@color/color_999999"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 
     <View

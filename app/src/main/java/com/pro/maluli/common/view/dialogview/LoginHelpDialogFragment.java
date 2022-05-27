@@ -14,20 +14,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
 
 import org.jetbrains.annotations.NotNull;
-
-import static com.luck.picture.lib.tools.ScreenUtils.getScreenHeight;
 
 
 /**
@@ -35,6 +30,7 @@ import static com.luck.picture.lib.tools.ScreenUtils.getScreenHeight;
  */
 public class LoginHelpDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    public OnSelectGoldenListener onSelectGoldenListener;
     private Dialog mDetailDialog;
 
     @Override
@@ -60,14 +56,8 @@ public class LoginHelpDialogFragment extends DialogFragment implements View.OnCl
         return mDetailDialog;
     }
 
-    public OnSelectGoldenListener onSelectGoldenListener;
-
     public void setOnConfirmListener(OnSelectGoldenListener onSelectGoldenListener) {
         this.onSelectGoldenListener = onSelectGoldenListener;
-    }
-
-    public interface OnSelectGoldenListener {
-        void goldenSelect();
     }
 
     public void show() {
@@ -104,12 +94,16 @@ public class LoginHelpDialogFragment extends DialogFragment implements View.OnCl
                 ToastUtils.showShort("复制成功");
                 break;
             case R.id.dismissImg:
-                if (mDetailDialog!=null){
+                if (mDetailDialog != null) {
                     mDetailDialog.dismiss();
                 }
                 break;
 
         }
+    }
+
+    public interface OnSelectGoldenListener {
+        void goldenSelect();
     }
 }
 

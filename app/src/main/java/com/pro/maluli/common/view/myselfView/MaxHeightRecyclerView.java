@@ -24,20 +24,18 @@ public class MaxHeightRecyclerView extends RecyclerView {
 
     public MaxHeightRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        TypedArray typedArray=getContext().obtainStyledAttributes(attrs, R.styleable.MaxRecyclerView);
-        maxHeight= (int) typedArray.getDimension(R.styleable.MaxRecyclerView_limit_maxHeight, SizeUtils.dp2px(200));
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MaxRecyclerView);
+        maxHeight = (int) typedArray.getDimension(R.styleable.MaxRecyclerView_limit_maxHeight, SizeUtils.dp2px(200));
         typedArray.recycle();
 
     }
-
-
 
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
         boolean needLimit = false;
-        if (maxHeight >= 0 ) {
+        if (maxHeight >= 0) {
             needLimit = true;
         }
         if (needLimit) {

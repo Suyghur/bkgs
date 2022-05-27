@@ -3,7 +3,6 @@ package com.pro.maluli.common.view.popwindow.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.RechargeEntity;
 
 import org.jetbrains.annotations.NotNull;
 

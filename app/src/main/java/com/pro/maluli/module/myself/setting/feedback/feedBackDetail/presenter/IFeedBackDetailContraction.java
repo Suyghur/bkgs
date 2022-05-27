@@ -8,6 +8,7 @@ public interface IFeedBackDetailContraction extends BaseView {
     interface View extends BaseView {
         void setDetail(FeedBackDetailEntity data);
     }
+
     interface Presenter extends IClear {
 
         void getFeedbackDetail(String id);

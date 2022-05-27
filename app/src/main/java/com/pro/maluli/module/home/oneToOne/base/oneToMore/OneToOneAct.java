@@ -51,6 +51,7 @@ import butterknife.OnClick;
  * @date 2021/6/15
  */
 public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneToOnePresenter> implements IOneToOneContraction.View {
+    private static final int PERMISSION_REQUEST_CODE = 100;
     @BindView(R.id.finishIv)
     ImageView finishIv;
     @BindView(R.id.subImgLiveBgLL)
@@ -66,7 +67,6 @@ public class OneToOneAct extends BaseMvpActivity<IOneToOneContraction.View, OneT
     @BindView(R.id.startLiveTv)
     TextView startLiveTv;
     private String imgUrl;
-    private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
 
     @Override

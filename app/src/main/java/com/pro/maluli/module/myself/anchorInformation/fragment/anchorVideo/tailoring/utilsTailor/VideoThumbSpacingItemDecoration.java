@@ -26,7 +26,7 @@ public class VideoThumbSpacingItemDecoration extends RecyclerView.ItemDecoration
 
     @Override
     public void getItemOffsets(@NonNull @NotNull Rect outRect, @NonNull @NotNull View view, @NonNull @NotNull RecyclerView parent, @NonNull @NotNull RecyclerView.State state) {
-                int position = parent.getChildAdapterPosition(view);
+        int position = parent.getChildAdapterPosition(view);
         //第一个与最后一个添加空白间距
         if (position == 0) {
             outRect.left = mSpace;

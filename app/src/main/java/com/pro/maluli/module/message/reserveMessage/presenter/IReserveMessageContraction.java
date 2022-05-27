@@ -4,7 +4,6 @@ import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.ReserveDetailEntity;
 import com.pro.maluli.common.entity.ReserveMessageEntity;
-import com.pro.maluli.common.entity.SystemMsgEntity;
 
 public interface IReserveMessageContraction extends BaseView {
     interface View extends BaseView {
@@ -16,6 +15,7 @@ public interface IReserveMessageContraction extends BaseView {
 
         void deleteSuccess();
     }
+
     interface Presenter extends IClear {
 
 

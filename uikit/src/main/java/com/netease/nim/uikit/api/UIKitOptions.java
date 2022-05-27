@@ -11,7 +11,7 @@ public class UIKitOptions {
 
     /**
      * 配置 APP 保存图片/语音/文件/log等数据缓存的目录(一般配置在SD卡目录)
-     *
+     * <p>
      * 默认为 /sdcard/{packageName}/
      */
     public String appCacheDir;
@@ -147,6 +147,7 @@ public class UIKitOptions {
 
     /**
      * 返回默认的针对独立模式聊天室的 UIKitOptions
+     *
      * @return
      */
 

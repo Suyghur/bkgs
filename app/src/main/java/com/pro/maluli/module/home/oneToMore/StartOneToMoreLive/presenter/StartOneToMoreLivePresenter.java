@@ -1,6 +1,5 @@
 package com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
@@ -12,10 +11,7 @@ import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
 import com.pro.maluli.common.entity.JoinLiveEntity;
 import com.pro.maluli.common.entity.ShareLiveEntity;
-import com.pro.maluli.common.networkRequest.ResponseCode;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-
-import javax.crypto.interfaces.PBEKey;
 
 import io.reactivex.functions.Consumer;
 
@@ -25,9 +21,11 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
     public String ancharId;
     public String liveBgShareImg;
     public GiftForMeEntity giftForMeEntity;
+
     public StartOneToMoreLivePresenter(Context context) {
         super(context);
     }
+
     @Override
     public void anchorSub() {
         add(mService.removeLike(ancharId)
@@ -64,6 +62,7 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
                     }
                 }));
     }
+
     @Override
     public void closeLive() {
         add(mService.getCloseLive()
@@ -92,8 +91,8 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
                         String myJson = gson.toJson(response);
                         JSONObject jsonObject = JSONObject.parseObject(myJson);
                         String data = jsonObject.getString("data");
-                            JoinLiveEntity entity = JSONObject.parseObject(data, JoinLiveEntity.class);
-                            mView.setJoinLiveSuccess(entity);
+                        JoinLiveEntity entity = JSONObject.parseObject(data, JoinLiveEntity.class);
+                        mView.setJoinLiveSuccess(entity);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -145,9 +144,9 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
                     public void onSuccess(BaseResponse<Object> response) {
-                        if (response.getCode()==200){
+                        if (response.getCode() == 200) {
                             mView.sendGiftSuccess(giftId);
-                        }else if (response.getCode()==1005){
+                        } else if (response.getCode() == 1005) {
                             mView.setNomomey();
                         }
                     }
@@ -170,7 +169,7 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
                     @Override
                     public void onSuccess(BaseResponse<GiftForMeEntity> response) {
 //                        mView.sendGiftSuccess(giftId);
-                        giftForMeEntity=response.getData();
+                        giftForMeEntity = response.getData();
                         mView.giftFormeSuccess(giftForMeEntity);
                     }
                 }, new Consumer<Throwable>() {

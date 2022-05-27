@@ -3,12 +3,12 @@ package com.pro.maluli.common.utils.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 import com.netease.nimlib.push.net.lbs.IPVersion;
 import com.netease.nimlib.push.packet.asymmetric.AsymmetricType;
 import com.netease.nimlib.push.packet.symmetry.SymmetryType;
 import com.netease.nimlib.sdk.NimHandshakeType;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
 
 /**
  * Created by hzxuwen on 2015/4/13.

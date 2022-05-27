@@ -17,6 +17,7 @@ public interface IMessageSettingContraction extends BaseView {
         void removeBlackSuccess();
 
     }
+
     interface Presenter extends IClear {
 
         void getMessageCanScore(String accid);

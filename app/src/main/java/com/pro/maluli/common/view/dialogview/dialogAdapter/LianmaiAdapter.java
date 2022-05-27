@@ -10,7 +10,6 @@ import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.LianmaiEntity;
-import com.pro.maluli.toolkit.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,19 +17,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LianmaiAdapter extends BaseQuickAdapter<ChatRoomMember, LianmaiAdapter.ViewHolder> {
     private List<LianmaiEntity> entitiesList;
     private Context context;
     private String anchorAccid;
-
-    @NotNull
-    @Override
-    protected LianmaiAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
-        return new ViewHolder(view);
-    }
 
     public LianmaiAdapter(List<ChatRoomMember> data, String anchorAccid, Context context) {
         super(R.layout.item_lianmai, data);
@@ -43,6 +35,12 @@ public class LianmaiAdapter extends BaseQuickAdapter<ChatRoomMember, LianmaiAdap
         this.context = context;
         this.anchorAccid = anchorAccid;
         this.entitiesList = entities;
+    }
+
+    @NotNull
+    @Override
+    protected LianmaiAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
+        return new ViewHolder(view);
     }
 
     @Override

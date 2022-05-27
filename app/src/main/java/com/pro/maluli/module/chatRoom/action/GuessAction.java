@@ -1,12 +1,12 @@
 package com.pro.maluli.module.chatRoom.action;
 
 import com.netease.nim.uikit.business.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
 import com.netease.nimlib.sdk.chatroom.ChatRoomMessageBuilder;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.pro.maluli.R;
-import com.netease.nim.uikit.business.session.myCustom.extension.GuessAttachment;
 
 /**
  * Created by hzxuwen on 2015/6/11.

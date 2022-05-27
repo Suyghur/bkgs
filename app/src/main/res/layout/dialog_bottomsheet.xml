@@ -60,10 +60,10 @@
     </LinearLayout>
 
     <TextView
-        android:layout_below="@+id/anchorLL"
         android:id="@+id/nodataView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_300"
+        android:layout_below="@+id/anchorLL"
         android:gravity="center"
         android:text="暂时没有评论哦"
         android:visibility="gone" />

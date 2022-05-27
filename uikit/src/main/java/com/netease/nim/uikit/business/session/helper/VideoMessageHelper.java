@@ -41,10 +41,6 @@ public class VideoMessageHelper {
         this.listener = listener;
     }
 
-    public interface VideoMessageHelperListener {
-        void onVideoPicked(File file, String md5);
-    }
-
     /**
      * 显示视频拍摄或从本地相册中选取
      */
@@ -68,8 +64,6 @@ public class VideoMessageHelper {
         dialog.show();
     }
 
-    /************************************************* 视频操作S *******************************************/
-
     /**
      * 拍摄视频
      */
@@ -78,11 +72,13 @@ public class VideoMessageHelper {
             return;
         }
         videoFilePath = StorageUtil.getWritePath(activity, StringUtil.get36UUID() + C.FileSuffix.MP4,
-                                                 StorageType.TYPE_TEMP);
+                StorageType.TYPE_TEMP);
         videoFile = new File(videoFilePath);
         // 启动视频录制
         CaptureVideoActivity.start(activity, videoFilePath, captureRequestCode);
     }
+
+    /************************************************* 视频操作S *******************************************/
 
     /**
      * 从本地相册中选择视频
@@ -124,8 +120,6 @@ public class VideoMessageHelper {
         }
     }
 
-    /****************************视频选中后回调操作********************************************/
-
     /**
      * 获取本地相册视频回调操作
      */
@@ -151,6 +145,8 @@ public class VideoMessageHelper {
             ToastHelper.showToast(activity, R.string.video_exception);
         }
     }
+
+    /****************************视频选中后回调操作********************************************/
 
     /**
      * 拍摄视频后回调操作
@@ -230,6 +226,10 @@ public class VideoMessageHelper {
             return false;
         }
         return true;
+    }
+
+    public interface VideoMessageHelperListener {
+        void onVideoPicked(File file, String md5);
     }
 
 }

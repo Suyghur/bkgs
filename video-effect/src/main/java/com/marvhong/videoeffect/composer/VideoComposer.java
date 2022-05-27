@@ -1,14 +1,15 @@
-
 package com.marvhong.videoeffect.composer;
 
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+
 import com.marvhong.videoeffect.FillMode;
 import com.marvhong.videoeffect.FillModeCustomItem;
 import com.marvhong.videoeffect.Resolution;
 import com.marvhong.videoeffect.Rotation;
 import com.marvhong.videoeffect.filter.base.GlFilter;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -26,6 +27,7 @@ class VideoComposer {
     private final MediaFormat outputFormat;
     private final MuxRender muxRender;
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+    private final int timeScale;
     private MediaCodec decoder;
     private MediaCodec encoder;
     private ByteBuffer[] decoderInputBuffers;
@@ -39,7 +41,6 @@ class VideoComposer {
     private boolean decoderStarted;
     private boolean encoderStarted;
     private long writtenPresentationTimeUs;
-    private final int timeScale;
 
     VideoComposer(MediaExtractor mediaExtractor, int trackIndex,
                   MediaFormat outputFormat, MuxRender muxRender, int timeScale) {

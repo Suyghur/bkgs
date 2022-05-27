@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/shape_ffffff_10"
     android:gravity="center"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="@dimen/dp_78"
@@ -16,15 +15,15 @@
         android:orientation="vertical">
 
 
-
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/selectImgRiv"
-            android:layout_alignParentBottom="true"
-            android:scaleType="fitXY"
             android:layout_width="@dimen/dp_78"
             android:layout_height="@dimen/dp_78"
+            android:layout_alignParentBottom="true"
+            android:scaleType="fitXY"
             android:src="@mipmap/ic_add_img"
             app:riv_corner_radius="@dimen/dp_12" />
+
         <ImageView
             android:id="@+id/deleteImg"
             android:layout_width="@dimen/dp_24"

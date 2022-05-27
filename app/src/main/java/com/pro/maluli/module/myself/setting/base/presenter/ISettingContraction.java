@@ -10,6 +10,7 @@ public interface ISettingContraction extends BaseView {
 
         void setSuccessBind(String msg);
     }
+
     interface Presenter extends IClear {
         void getUserInfo();
 

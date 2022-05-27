@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Handler;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ui.imageview.CheckedImageButton;
@@ -47,9 +48,14 @@ public class EmoticonPickerView extends LinearLayout implements IEmoticonCategor
     private HorizontalScrollView scrollView;
 
     private LinearLayout tabView;
-
+    // 添加各个tab按钮
+    OnClickListener tabCheckListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onEmoticonBtnChecked(v.getId());
+        }
+    };
     private int categoryIndex;
-
     private Handler uiHandler;
 
     public EmoticonPickerView(Context context) {
@@ -117,14 +123,6 @@ public class EmoticonPickerView extends LinearLayout implements IEmoticonCategor
 
         findViewById(R.id.top_divider_line).setVisibility(View.VISIBLE);
     }
-
-    // 添加各个tab按钮
-    OnClickListener tabCheckListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onEmoticonBtnChecked(v.getId());
-        }
-    };
 
     private void loadStickers() {
         if (!withSticker) {
@@ -224,6 +222,7 @@ public class EmoticonPickerView extends LinearLayout implements IEmoticonCategor
 
         gifView.showStickers(index);
     }
+
     //该方法为自定义表情框的方法不需要
     private void showEmojiView() {
         if (gifView == null) {

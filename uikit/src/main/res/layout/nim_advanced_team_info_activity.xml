@@ -40,10 +40,10 @@
                 android:id="@+id/team_info_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dip"
                 android:layout_marginLeft="25dip"
+                android:layout_marginTop="20dip"
                 android:layout_marginRight="15dip"
-                android:layout_marginTop="20dip">
+                android:layout_marginBottom="20dip">
 
                 <com.netease.nim.uikit.common.ui.imageview.HeadImageView
                     android:id="@+id/team_head_image"
@@ -66,8 +66,8 @@
                     android:id="@+id/team_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/team_name"
                     android:layout_below="@id/team_name"
+                    android:layout_alignLeft="@id/team_name"
                     android:layout_marginTop="8dip"
                     android:text="creator"
                     android:textColor="@color/color_grey_999999"
@@ -128,17 +128,17 @@
                 android:background="@color/white"
                 android:gravity="center"
                 android:numColumns="5"
-                android:paddingBottom="25dip"
                 android:paddingLeft="12dip"
-                android:paddingRight="12dip"
                 android:paddingTop="16dip"
+                android:paddingRight="12dip"
+                android:paddingBottom="25dip"
                 android:verticalSpacing="16dip"></com.netease.nim.uikit.business.team.ui.TeamInfoGridView>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:orientation="vertical">
 
                 <include

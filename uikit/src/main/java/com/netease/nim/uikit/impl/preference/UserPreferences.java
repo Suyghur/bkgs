@@ -12,12 +12,12 @@ public class UserPreferences {
 
     private final static String KEY_EARPHONE_MODE = "KEY_EARPHONE_MODE";
 
-    public static void setEarPhoneModeEnable(boolean on) {
-        saveBoolean(KEY_EARPHONE_MODE, on);
-    }
-
     public static boolean isEarPhoneModeEnable() {
         return getBoolean(KEY_EARPHONE_MODE, true);
+    }
+
+    public static void setEarPhoneModeEnable(boolean on) {
+        saveBoolean(KEY_EARPHONE_MODE, on);
     }
 
     private static boolean getBoolean(String key, boolean value) {

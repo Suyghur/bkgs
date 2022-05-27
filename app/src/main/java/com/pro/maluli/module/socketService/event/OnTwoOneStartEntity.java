@@ -19,6 +19,7 @@ public class OnTwoOneStartEntity implements Serializable {
     private int type;
     private int special_count;
     private int now_appoint_num;
+    private List<SpecialListBean> special_list;
 
     public int getPlay_time() {
         return play_time;
@@ -27,8 +28,6 @@ public class OnTwoOneStartEntity implements Serializable {
     public void setPlay_time(int play_time) {
         this.play_time = play_time;
     }
-
-    private List<SpecialListBean> special_list;
 
     public int getNow_appoint_num() {
         return now_appoint_num;
@@ -148,6 +147,28 @@ public class OnTwoOneStartEntity implements Serializable {
 
     public void setSpecial_list(List<SpecialListBean> special_list) {
         this.special_list = special_list;
+    }
+
+    @Override
+    public String toString() {
+        return "OnTwoOneStartEntity{" +
+                "is_self=" + is_self +
+                ", is_sub=" + is_sub +
+                ", anchor_no='" + anchor_no + '\'' +
+                ", anchor_accid='" + anchor_accid + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", level='" + level + '\'' +
+                ", appoint_num=" + appoint_num +
+                ", report_num=" + report_num +
+                ", now_time=" + now_time +
+                ", play_time=" + play_time +
+                ", set_time=" + set_time +
+                ", type=" + type +
+                ", special_count=" + special_count +
+                ", now_appoint_num=" + now_appoint_num +
+                ", special_list=" + special_list +
+                '}';
     }
 
     public static class SpecialListBean implements Serializable {
@@ -277,27 +298,5 @@ public class OnTwoOneStartEntity implements Serializable {
                     ", images=" + images +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "OnTwoOneStartEntity{" +
-                "is_self=" + is_self +
-                ", is_sub=" + is_sub +
-                ", anchor_no='" + anchor_no + '\'' +
-                ", anchor_accid='" + anchor_accid + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", level='" + level + '\'' +
-                ", appoint_num=" + appoint_num +
-                ", report_num=" + report_num +
-                ", now_time=" + now_time +
-                ", play_time=" + play_time +
-                ", set_time=" + set_time +
-                ", type=" + type +
-                ", special_count=" + special_count +
-                ", now_appoint_num=" + now_appoint_num +
-                ", special_list=" + special_list +
-                '}';
     }
 }

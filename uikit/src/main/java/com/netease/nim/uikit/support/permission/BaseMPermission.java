@@ -4,8 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
+
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +14,6 @@ import java.util.List;
 public class BaseMPermission {
 
     private static final String TAG = "MPermission";
-
-    public enum MPermissionResultEnum {
-        GRANTED, DENIED, DENIED_NEVER_ASK_AGAIN
-    }
 
     static boolean isOverMarshmallow() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
@@ -200,5 +197,9 @@ public class BaseMPermission {
         sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
+    }
+
+    public enum MPermissionResultEnum {
+        GRANTED, DENIED, DENIED_NEVER_ASK_AGAIN
     }
 }

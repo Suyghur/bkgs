@@ -19,22 +19,18 @@ import java.util.List;
 public class FloatingViewManager implements View.OnTouchListener {
 
     private static final String TAG = "FloatingViewManager";
-
-    /**
-     * 上下文
-     */
-    private Context mContext;
-
-    /**
-     * 悬浮窗监听器
-     */
-    private FloatingViewListener mFloatingViewListener;
-
     /**
      * WindowManager
      */
     private final WindowManager mWindowManager;
-
+    /**
+     * 上下文
+     */
+    private Context mContext;
+    /**
+     * 悬浮窗监听器
+     */
+    private FloatingViewListener mFloatingViewListener;
     /**
      * 悬浮窗集合
      */

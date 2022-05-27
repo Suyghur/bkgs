@@ -2,9 +2,6 @@ package com.netease.nim.uikit.common.media.imagepicker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +9,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ToastHelper;
@@ -106,35 +107,6 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         }
         return -1;
     }
-
-    private class ChooseViewHolder extends BaseViewHolder<GLImage> {
-
-        private ImageView chooseItem;
-
-        private View maskItem;
-
-        public ChooseViewHolder(ViewGroup parent) {
-            super(parent, R.layout.nim_image_preview_item);
-        }
-
-        @Override
-        public void findViews() {
-            chooseItem = itemView.findViewById(R.id.choose_item);
-            maskItem = itemView.findViewById(R.id.mask_item);
-        }
-
-        @Override
-        protected void onBindViewHolder(GLImage data) {
-            if (data.equals(mGLImages.get(mCurrentPosition))) {
-                maskItem.setVisibility(View.VISIBLE);
-            } else {
-                maskItem.setVisibility(View.GONE);
-            }
-            imagePicker.getImageLoader().displayImage(ImagePreviewActivity.this, data.getPath(), chooseItem, imageSize,
-                    imageSize);
-        }
-    }
-
 
     /**
      * 初始化当前页面的状态
@@ -290,6 +262,34 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
             mBtnOk.setText(R.string.send);
         } else {
             mBtnOk.setText(mBtnOk.getContext().getString(R.string.send_d, count));
+        }
+    }
+
+    private class ChooseViewHolder extends BaseViewHolder<GLImage> {
+
+        private ImageView chooseItem;
+
+        private View maskItem;
+
+        public ChooseViewHolder(ViewGroup parent) {
+            super(parent, R.layout.nim_image_preview_item);
+        }
+
+        @Override
+        public void findViews() {
+            chooseItem = itemView.findViewById(R.id.choose_item);
+            maskItem = itemView.findViewById(R.id.mask_item);
+        }
+
+        @Override
+        protected void onBindViewHolder(GLImage data) {
+            if (data.equals(mGLImages.get(mCurrentPosition))) {
+                maskItem.setVisibility(View.VISIBLE);
+            } else {
+                maskItem.setVisibility(View.GONE);
+            }
+            imagePicker.getImageLoader().displayImage(ImagePreviewActivity.this, data.getPath(), chooseItem, imageSize,
+                    imageSize);
         }
     }
 }

@@ -2,12 +2,13 @@ package com.netease.nim.uikit.business.session.module.list;
 
 import android.content.Context;
 import android.os.Handler;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.emoji.MoonUtil;
@@ -31,6 +32,13 @@ public class IncomingMsgPrompt {
     private RecyclerView messageListView;
     private BaseFetchLoadAdapter adapter;
     private Handler uiHandler;
+    private Runnable showNewMessageTipLayoutRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            newMessageTipLayout.setVisibility(View.GONE);
+        }
+    };
 
     public IncomingMsgPrompt(Context context, View view, RecyclerView messageListView, BaseFetchLoadAdapter adapter,
                              Handler uiHandler) {
@@ -80,14 +88,6 @@ public class IncomingMsgPrompt {
         newMessageTipTextView = (TextView) newMessageTipLayout.findViewById(R.id.new_message_tip_text_view);
         newMessageTipHeadImageView = (HeadImageView) newMessageTipLayout.findViewById(R.id.new_message_tip_head_image_view);
     }
-
-    private Runnable showNewMessageTipLayoutRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            newMessageTipLayout.setVisibility(View.GONE);
-        }
-    };
 
     private void removeHandlerCallback() {
         if (showNewMessageTipLayoutRunnable != null) {

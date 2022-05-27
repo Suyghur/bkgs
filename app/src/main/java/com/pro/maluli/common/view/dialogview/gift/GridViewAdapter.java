@@ -77,7 +77,7 @@ public class GridViewAdapter extends BaseAdapter {
          */
         GiftEntity.ListBean model = getItem(position);
         viewHolder.tv.setText(model.getTitle());
-        viewHolder.moneyTv.setText(model.getMoney()+"");
+        viewHolder.moneyTv.setText(model.getMoney() + "");
         GlideUtils.loadImage(mContext, model.getLogo(), viewHolder.iv);
         return convertView;
     }

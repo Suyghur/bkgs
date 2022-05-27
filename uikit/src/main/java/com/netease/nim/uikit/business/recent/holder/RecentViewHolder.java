@@ -33,38 +33,26 @@ import com.netease.nimlib.sdk.team.model.Team;
 
 public abstract class RecentViewHolder extends RecyclerViewHolder<BaseQuickAdapter, BaseViewHolder, RecentContact> {
 
+    private static Integer labelWidth;
+    protected FrameLayout portraitPanel;
+    protected HeadImageView imgHead;
+    protected TextView tvNickname;
+    protected TextView tvMessage;
+    protected TextView tvDatetime;
+    // 消息发送错误状态标记，目前没有逻辑处理
+    protected ImageView imgMsgStatus;
+    protected View bottomLine;
+    protected View topLine;
+    // 未读红点（一个占坑，一个全屏动画）
+    protected DropFake tvUnread;
+    protected TextView tvOnlineState;
+    private int lastUnreadCount = 0;
+    private ImageView imgUnreadExplosion;
+    private ImageView quiteTv;
+
     public RecentViewHolder(BaseQuickAdapter adapter) {
         super(adapter);
     }
-
-    private int lastUnreadCount = 0;
-
-    protected FrameLayout portraitPanel;
-
-    protected HeadImageView imgHead;
-
-    protected TextView tvNickname;
-
-    protected TextView tvMessage;
-
-    protected TextView tvDatetime;
-
-    // 消息发送错误状态标记，目前没有逻辑处理
-    protected ImageView imgMsgStatus;
-
-    protected View bottomLine;
-
-    protected View topLine;
-
-    // 未读红点（一个占坑，一个全屏动画）
-    protected DropFake tvUnread;
-
-    private ImageView imgUnreadExplosion;
-
-    protected TextView tvOnlineState;
-    private ImageView quiteTv;
-
-    private static Integer labelWidth;
 
     // 子类覆写
     protected abstract String getContent(RecentContact recent);

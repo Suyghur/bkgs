@@ -377,11 +377,9 @@ public interface Api {
      *
      * @return
      */
-
     @FormUrlEncoded
     @POST("live/reward")
-    Observable<BaseResponse<Object>> sendGift(@Field("id") String id,
-                                              @Field("gift_id") String gift_id);
+    Observable<BaseResponse<Object>> sendGift(@Field("id") String id, @Field("gift_id") String gift_id);
 
     /**
      * 设置一对一直播时间
@@ -619,8 +617,6 @@ public interface Api {
 
     /**
      * 获取聊天是否可以评分信息页面
-     *
-     * @return
      */
     @GET("message/chat")
     Observable<BaseResponse<MessageCanScoreEntity>> getMessageScore(@Query("accid") String accid);
@@ -632,8 +628,7 @@ public interface Api {
      */
     @FormUrlEncoded
     @POST("user/back_anchor")
-    Observable<BaseResponse<Object>> addBlack(@Field("accid") String accid,
-                                              @Field("anchor_id") String anchor_id);
+    Observable<BaseResponse<Object>> addBlack(@Field("accid") String accid, @Field("anchor_id") String anchor_id);
 
     /**
      * 移除黑名单

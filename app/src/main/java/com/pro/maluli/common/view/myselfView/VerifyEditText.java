@@ -10,10 +10,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 
 import com.blankj.utilcode.util.KeyboardUtils;
@@ -46,6 +44,47 @@ public class VerifyEditText extends EditText {
     private int lineColor;
     //输入文字的颜色
     private int textColor;
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            sb.delete(0, sb.length());
+            if (!TextUtils.isEmpty(s.toString())) {
+                //TODO 只能输入指定totalCount个数的字多出的需要删除
+                if (s.toString().length() > totalCount) {
+                    s.delete(totalCount, s.length());
+                    return;
+                }
+                sb.append(s);
+                if (s.toString().length() == totalCount && listener != null) {
+                    listener.onCompleteInput(sb.toString());
+                }
+
+            }
+            int paddingLeft;
+            /**
+             * 计算验证码输入之后光标显示的位置
+             * 如果已经输完验证码则光标需要显示在最后一个字符的后面而不是下一个文字输入框
+             * */
+            if (sb.length() < totalCount) {
+                paddingLeft = (int) ((textLineLength + intervalLength) * sb.length()
+                        + textLineLength / 2 - getPaint().measureText(!TextUtils.isEmpty(sb.toString()) ? sb.toString() : ""));
+
+            } else {
+                paddingLeft = (int) ((textLineLength + intervalLength) * (sb.length() - 1)
+                        + (mTextPaint.measureText(sb.substring(sb.length() - 2, sb.length() - 1)) / 2)
+                        + textLineLength / 2 - getPaint().measureText(!TextUtils.isEmpty(sb.toString()) ? sb.toString() : ""));
+            }
+            setPadding(paddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        }
+    };
 
     public VerifyEditText(Context context) {
         this(context, null);
@@ -139,52 +178,6 @@ public class VerifyEditText extends EditText {
         }
     }
 
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            sb.delete(0, sb.length());
-            if (!TextUtils.isEmpty(s.toString())) {
-                //TODO 只能输入指定totalCount个数的字多出的需要删除
-                if (s.toString().length() > totalCount) {
-                    s.delete(totalCount, s.length());
-                    return;
-                }
-                sb.append(s);
-                if (s.toString().length() == totalCount && listener != null) {
-                    listener.onCompleteInput(sb.toString());
-                }
-
-            }
-            int paddingLeft;
-            /**
-             * 计算验证码输入之后光标显示的位置
-             * 如果已经输完验证码则光标需要显示在最后一个字符的后面而不是下一个文字输入框
-             * */
-            if (sb.length() < totalCount) {
-                paddingLeft = (int) ((textLineLength + intervalLength) * sb.length()
-                        + textLineLength / 2 - getPaint().measureText(!TextUtils.isEmpty(sb.toString()) ? sb.toString() : ""));
-
-            } else {
-                paddingLeft = (int) ((textLineLength + intervalLength) * (sb.length() - 1)
-                        + (mTextPaint.measureText(sb.substring(sb.length() - 2, sb.length() - 1)) / 2)
-                        + textLineLength / 2 - getPaint().measureText(!TextUtils.isEmpty(sb.toString()) ? sb.toString() : ""));
-            }
-            setPadding(paddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-        }
-    };
-
-    public interface OnVerifyInputCompleteListener {
-        void onCompleteInput(String input);
-    }
-
     /**
      * 设置输入完成监听
      */
@@ -212,5 +205,9 @@ public class VerifyEditText extends EditText {
     public int sp2px(float spValue) {
         final float fontScale = getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    public interface OnVerifyInputCompleteListener {
+        void onCompleteInput(String input);
     }
 }

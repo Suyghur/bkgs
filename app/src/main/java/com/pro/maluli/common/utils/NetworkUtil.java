@@ -16,15 +16,13 @@ import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class NetworkUtil
-{
-    private static String TAG = "MicroMsg.NetworkUtil";
-
+public class NetworkUtil {
     public static final int GET_TOKEN = 1;
     public static final int CHECK_TOKEN = 2;
     public static final int REFRESH_TOKEN = 3;
     public static final int GET_INFO = 4;
     public static final int GET_IMG = 5;
+    private static String TAG = "MicroMsg.NetworkUtil";
 
     public static void sendWxAPI(Handler handler, String url, int msgTag) {
         HttpsThread httpsThread = new HttpsThread(handler, url, msgTag);
@@ -46,6 +44,38 @@ public class NetworkUtil
             this.handler = handler;
             this.httpsUrl = url;
             this.msgTag = msgTag;
+        }
+
+        private static byte[] httpURLConnectionGet(String url) throws Exception {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            if (connection == null) {
+                Log.i(TAG, "open connection failed.");
+            }
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 300) {
+                connection.disconnect();
+                Log.w(TAG, "dz[httpURLConnectionGet 300]");
+                return null;
+            }
+
+            InputStream is = connection.getInputStream();
+            byte[] data = readStream(is);
+            connection.disconnect();
+
+            return data;
+        }
+
+        private static byte[] readStream(InputStream inStream) throws IOException {
+            byte[] buffer = new byte[1024];
+            int len = -1;
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+            byte[] data = outStream.toByteArray();
+            outStream.close();
+            inStream.close();
+            return data;
         }
 
         @Override
@@ -101,38 +131,6 @@ public class NetworkUtil
                     Log.e(TAG, e.getMessage());
                 }
             }
-        }
-
-        private static byte[] httpURLConnectionGet(String url) throws Exception {
-            HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
-            if(connection == null){
-                Log.i(TAG,"open connection failed.");
-            }
-            int responseCode = connection.getResponseCode();
-            if (responseCode >= 300) {
-                connection.disconnect();
-                Log.w(TAG, "dz[httpURLConnectionGet 300]");
-                return null;
-            }
-
-            InputStream is = connection.getInputStream();
-            byte[] data = readStream(is);
-            connection.disconnect();
-
-            return data;
-        }
-
-        private static byte[] readStream(InputStream inStream) throws IOException {
-            byte[] buffer = new byte[1024];
-            int len = -1;
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            while ((len = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
-            byte[] data = outStream.toByteArray();
-            outStream.close();
-            inStream.close();
-            return data;
         }
     }
 }

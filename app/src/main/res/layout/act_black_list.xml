@@ -12,7 +12,7 @@
         android:layout_height="match_parent" />
 
     <include
-        android:visibility="gone"
         android:id="@+id/nodataView"
-        layout="@layout/no_data_layout"></include>
+        layout="@layout/no_data_layout"
+        android:visibility="gone"></include>
 </LinearLayout>

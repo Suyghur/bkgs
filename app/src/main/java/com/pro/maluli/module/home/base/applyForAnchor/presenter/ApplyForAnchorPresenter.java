@@ -7,10 +7,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.ApplyLimitEntity;
-import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.entity.UserInfoEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
 import java.io.File;
@@ -67,7 +65,7 @@ public class ApplyForAnchorPresenter extends BasePresenter<IApplyForAnchorContra
                                   String holding_card_image, String certificate_image) {
 
         add(mService.submitApplyForAnchor(String.valueOf(classificationId), realname, phone, card_id, desc,
-                font_card_image, back_card_image, holding_card_image, certificate_image)
+                        font_card_image, back_card_image, holding_card_image, certificate_image)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<UserInfoEntity>>(mView) {
                     @Override
@@ -84,6 +82,7 @@ public class ApplyForAnchorPresenter extends BasePresenter<IApplyForAnchorContra
                 }));
 
     }
+
     @Override
     public void getVideoCanTime() {
         add(mService.subApplyLimit()

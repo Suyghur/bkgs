@@ -52,6 +52,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
 //                .uploadImage(map)
 //                .compose(RxSchedulers.handleResult());
     }
+
     /**
      * 意见反馈
      */
@@ -93,6 +94,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
                     }
                 }));
     }
+
     /**
      * 直播举报
      */
@@ -113,6 +115,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
                     }
                 }));
     }
+
     /**
      * 冻结申诉
      */

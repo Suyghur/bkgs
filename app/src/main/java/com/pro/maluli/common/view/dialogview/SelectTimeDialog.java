@@ -5,16 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.material.transition.FadeProvider;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.zyyoona7.picker.DatePickerView;
@@ -25,9 +22,7 @@ import com.zyyoona7.picker.ex.YearWheelView;
 import com.zyyoona7.picker.listener.OnDateSelectedListener;
 import com.zyyoona7.wheel.WheelView;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -43,6 +38,7 @@ public class SelectTimeDialog extends DialogFragment implements View.OnClickList
     private DatePickerView dpv_custom_2;
     private int timeType;//0 开始时间，1 结束时间
     private String startTime, endTime;
+    private OnSelectTimeListener onSelectTimeListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -117,14 +113,8 @@ public class SelectTimeDialog extends DialogFragment implements View.OnClickList
         return mDetailDialog;
     }
 
-    private OnSelectTimeListener onSelectTimeListener;
-
     public void setOnTimeListener(OnSelectTimeListener onSelectGenderListener) {
         this.onSelectTimeListener = onSelectGenderListener;
-    }
-
-    public interface OnSelectTimeListener {
-        void confirmSuccess(int timeType, String startTime, String endTiem);
     }
 
     @Override
@@ -164,7 +154,7 @@ public class SelectTimeDialog extends DialogFragment implements View.OnClickList
                     startTime = timeStartTv.getText().toString().trim();
                     endTime = timeEndTv.getText().toString().trim();
                 } else {
-                    startTime = dpv_custom_2.getSelectedDate().substring(0,dpv_custom_2.getSelectedDate().lastIndexOf("-"));
+                    startTime = dpv_custom_2.getSelectedDate().substring(0, dpv_custom_2.getSelectedDate().lastIndexOf("-"));
                 }
                 if (onSelectTimeListener != null) {
                     onSelectTimeListener.confirmSuccess(timeType, startTime, endTime);
@@ -177,5 +167,9 @@ public class SelectTimeDialog extends DialogFragment implements View.OnClickList
 
                 break;
         }
+    }
+
+    public interface OnSelectTimeListener {
+        void confirmSuccess(int timeType, String startTime, String endTiem);
     }
 }

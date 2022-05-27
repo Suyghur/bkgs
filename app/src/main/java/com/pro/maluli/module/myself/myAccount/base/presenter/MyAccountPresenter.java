@@ -2,7 +2,6 @@ package com.pro.maluli.module.myself.myAccount.base.presenter;
 
 import android.content.Context;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.MyAccountEntity;
@@ -36,6 +35,7 @@ public class MyAccountPresenter extends BasePresenter<IMyAccountContraction.View
                     }
                 }));
     }
+
     @Override
     public void getMyAccount() {
         add(mService.myAccountInfo()
@@ -52,6 +52,7 @@ public class MyAccountPresenter extends BasePresenter<IMyAccountContraction.View
                     }
                 }));
     }
+
     @Override
     public void getCashOutInfo() {
         add(mService.bkWithdrawalDetail()

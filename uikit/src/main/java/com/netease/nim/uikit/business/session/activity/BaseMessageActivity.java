@@ -35,15 +35,31 @@ import java.util.List;
  */
 public abstract class BaseMessageActivity extends UI {
 
+    public RelativeLayout leftImg_ly, rl_right;
+    public TextView title;
     protected String sessionId;
-
     private SessionCustomization customization;
-
     private MessageFragment messageFragment;
-
     private SensorManager sensorManager;
-
     private Sensor proximitySensor;
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float[] dis = event.values;
+            if (0.0f == dis[0]) {
+                //靠近，设置为听筒模式
+                MessageAudioControl.getInstance(BaseMessageActivity.this).setEarPhoneModeEnable(true);
+            } else {
+                //离开，复原
+                MessageAudioControl.getInstance(BaseMessageActivity.this).setEarPhoneModeEnable(UserPreferences.isEarPhoneModeEnable());
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 
     protected abstract MessageFragment fragment();
 
@@ -55,9 +71,6 @@ public abstract class BaseMessageActivity extends UI {
      * 是否开启距离传感器
      */
     protected abstract boolean enableSensor();
-
-    public RelativeLayout leftImg_ly, rl_right;
-    public TextView title;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,26 +172,6 @@ public abstract class BaseMessageActivity extends UI {
 
         toolbar.addView(buttonContainer, new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.RIGHT | Gravity.CENTER));
     }
-
-
-    private SensorEventListener sensorEventListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float[] dis = event.values;
-            if (0.0f == dis[0]) {
-                //靠近，设置为听筒模式
-                MessageAudioControl.getInstance(BaseMessageActivity.this).setEarPhoneModeEnable(true);
-            } else {
-                //离开，复原
-                MessageAudioControl.getInstance(BaseMessageActivity.this).setEarPhoneModeEnable(UserPreferences.isEarPhoneModeEnable());
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
 
     private void initSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

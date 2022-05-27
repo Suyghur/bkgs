@@ -3,43 +3,34 @@ package com.pro.maluli.module.home.base.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.BannerModel;
 import com.pro.maluli.common.entity.HomeInfoEntity;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
-import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 
 public class BannerViewAdapter extends PagerAdapter {
 
+    public BannerListener bannerListener;
+    CoustormGsyVideoPlayer jcVideoPlayer;
     private Context context;
     private List<HomeInfoEntity.BannerBean> listBean;
     private String url;
     private boolean isFristVideo;
-    CoustormGsyVideoPlayer jcVideoPlayer;
     private boolean isMute;
 
     public BannerViewAdapter(Activity context, List<HomeInfoEntity.BannerBean> list) {
@@ -51,11 +42,13 @@ public class BannerViewAdapter extends PagerAdapter {
             this.listBean = list;
         }
     }
+
     @Override
     public int getItemPosition(Object object) {
         // 最简单解决 notifyDataSetChanged() 页面不刷新问题的方法
         return POSITION_NONE;
     }
+
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
         HomeInfoEntity.BannerBean bannerBean = listBean.get(position);
@@ -82,8 +75,8 @@ public class BannerViewAdapter extends PagerAdapter {
             jcVideoPlayer = view.findViewById(R.id.jcVideoPlayer);
             jcVideoPlayer.onVideoPause();
             jcVideoPlayer.onVideoReset();
-            int adf=jcVideoPlayer.getAudioManger().getStreamVolume(AudioManager.STREAM_MUSIC);
-            if (adf== 0) {
+            int adf = jcVideoPlayer.getAudioManger().getStreamVolume(AudioManager.STREAM_MUSIC);
+            if (adf == 0) {
                 jcVideoPlayer.setMute(true);
             } else {
                 jcVideoPlayer.setMute(false);
@@ -274,21 +267,19 @@ public class BannerViewAdapter extends PagerAdapter {
         return view == (View) object;
     }
 
-    public interface BannerListener {
-        void imgClick(int position);
-
-        void videoIsStart();
-
-        void videoStop();
-    }
-
-    public BannerListener bannerListener;
-
     public BannerListener getBannerListener() {
         return bannerListener;
     }
 
     public void setBannerListener(BannerListener bannerListener) {
         this.bannerListener = bannerListener;
+    }
+
+    public interface BannerListener {
+        void imgClick(int position);
+
+        void videoIsStart();
+
+        void videoStop();
     }
 }

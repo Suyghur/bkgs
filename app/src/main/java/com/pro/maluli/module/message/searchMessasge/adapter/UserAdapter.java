@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.TimeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;

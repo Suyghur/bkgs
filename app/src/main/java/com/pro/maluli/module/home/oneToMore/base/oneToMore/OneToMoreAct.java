@@ -14,13 +14,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -39,9 +37,6 @@ import com.pro.maluli.common.utils.WindowSoftModeAdjustResizeExecutor;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
-import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
-import com.pro.maluli.module.home.startLive.StartLiveAct;
-import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailAct;
 import com.yalantis.ucrop.view.OverlayView;
 
@@ -59,6 +54,7 @@ import butterknife.OnClick;
 public class OneToMoreAct extends BaseMvpActivity<IOneToMoreContraction.View, OneToMorePresenter> implements IOneToMoreContraction.View {
 
 
+    private static final int PERMISSION_REQUEST_CODE = 100;
     @BindView(R.id.finishIv)
     ImageView finishIv;
     @BindView(R.id.subImgLiveBgLL)
@@ -82,7 +78,6 @@ public class OneToMoreAct extends BaseMvpActivity<IOneToMoreContraction.View, On
     @BindView(R.id.inputMoneyEt)
     EditText inputMoneyEt;
     private String imgUrl;
-    private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean isGranted = true;
 
     @Override

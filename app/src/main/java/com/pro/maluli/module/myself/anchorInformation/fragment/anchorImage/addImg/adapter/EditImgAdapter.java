@@ -9,8 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.AnchorImgEntity;
-import com.pro.maluli.common.entity.AnchorLabelEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +25,7 @@ public class EditImgAdapter extends BaseQuickAdapter<AnchorImgEntity.PictureBean
 
     @Override
     protected void convert(@NotNull BaseViewHolder baseViewHolder, AnchorImgEntity.PictureBean listBean) {
-        Glide.with(context).load( listBean.getUrl()).into((ImageView) baseViewHolder.getView(R.id.anchorListRiv));
+        Glide.with(context).load(listBean.getUrl()).into((ImageView) baseViewHolder.getView(R.id.anchorListRiv));
 //        GlideUtils.loadImage(context, listBean.getUrl(), baseViewHolder.getView(R.id.anchorListRiv));
         if (isCanDelete) {
             baseViewHolder.getView(R.id.deleteImg).setVisibility(View.VISIBLE);

@@ -26,13 +26,22 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class NimUserInfoCache {
 
+    private Map<String, NimUserInfo> account2UserMap = new ConcurrentHashMap<>();
+    private Map<String, List<RequestCallback<NimUserInfo>>> requestUserInfoMap = new ConcurrentHashMap<>(); // 重复请求处理
+    private Observer<List<NimUserInfo>> userInfoUpdateObserver = new Observer<List<NimUserInfo>>() {
+
+        @Override
+        public void onEvent(List<NimUserInfo> users) {
+            if (users == null || users.isEmpty()) {
+                return;
+            }
+            addOrUpdateUsers(users, true);
+        }
+    };
+
     public static NimUserInfoCache getInstance() {
         return InstanceHolder.instance;
     }
-
-    private Map<String, NimUserInfo> account2UserMap = new ConcurrentHashMap<>();
-
-    private Map<String, List<RequestCallback<NimUserInfo>>> requestUserInfoMap = new ConcurrentHashMap<>(); // 重复请求处理
 
     /**
      * 构建缓存与清理
@@ -138,7 +147,7 @@ public class NimUserInfoCache {
     public NimUserInfo getUserInfo(String account) {
         if (TextUtils.isEmpty(account) || account2UserMap == null) {
             LogUtil.e(UIKitLogTag.USER_CACHE,
-                      "getUserInfo null, account=" + account + ", account2UserMap=" + account2UserMap);
+                    "getUserInfo null, account=" + account + ", account2UserMap=" + account2UserMap);
             return null;
         }
         return account2UserMap.get(account);
@@ -147,19 +156,18 @@ public class NimUserInfoCache {
     private boolean hasUser(String account) {
         if (TextUtils.isEmpty(account) || account2UserMap == null) {
             LogUtil.e(UIKitLogTag.USER_CACHE,
-                      "hasUser null, account=" + account + ", account2UserMap=" + account2UserMap);
+                    "hasUser null, account=" + account + ", account2UserMap=" + account2UserMap);
             return false;
         }
         return account2UserMap.containsKey(account);
     }
-
+    /**
+     * ************************************ 用户资料变更监听(监听SDK) *****************************************
+     */
 
     private void clearUserCache() {
         account2UserMap.clear();
     }
-    /**
-     * ************************************ 用户资料变更监听(监听SDK) *****************************************
-     */
 
     /**
      * 在Application的onCreate中向SDK注册用户资料变更观察者
@@ -167,17 +175,6 @@ public class NimUserInfoCache {
     public void registerObservers(boolean register) {
         NIMClient.getService(UserServiceObserve.class).observeUserInfoUpdate(userInfoUpdateObserver, register);
     }
-
-    private Observer<List<NimUserInfo>> userInfoUpdateObserver = new Observer<List<NimUserInfo>>() {
-
-        @Override
-        public void onEvent(List<NimUserInfo> users) {
-            if (users == null || users.isEmpty()) {
-                return;
-            }
-            addOrUpdateUsers(users, true);
-        }
-    };
 
     /**
      * *************************************** User缓存管理与变更通知 ********************************************

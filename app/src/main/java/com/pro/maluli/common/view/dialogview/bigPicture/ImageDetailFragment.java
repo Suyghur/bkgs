@@ -1,23 +1,15 @@
 package com.pro.maluli.common.view.dialogview.bigPicture;
 
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.luck.picture.lib.photoview.PhotoView;
 import com.luck.picture.lib.photoview.PhotoViewAttacher;
-import com.makeramen.roundedimageview.RoundedImageView;
-//import com.nostra13.universalimageloader.core.ImageLoader;
-//import com.nostra13.universalimageloader.core.assist.FailReason;
-//import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
@@ -30,7 +22,7 @@ import com.pro.maluli.common.utils.glideImg.GlideUtils;
  */
 public class ImageDetailFragment extends Fragment {
     private String mImageUrl;
-//    private RoundedImageView mImageView;
+    //    private RoundedImageView mImageView;
     private PhotoViewAttacher mAttacher;
     private PhotoView mImageView;
 
@@ -81,7 +73,7 @@ public class ImageDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        GlideUtils.loadRectImage(getActivity(),mImageUrl,mImageView,20);
+        GlideUtils.loadRectImage(getActivity(), mImageUrl, mImageView, 20);
 //        ImageLoader.getInstance().displayImage(mImageUrl, mImageView,
 //                new SimpleImageLoadingListener() {
 //                    @Override

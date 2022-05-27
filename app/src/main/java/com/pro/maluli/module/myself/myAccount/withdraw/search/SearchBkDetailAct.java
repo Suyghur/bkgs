@@ -28,9 +28,7 @@ import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.ISearchB
 import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.SearchBkDetailPresenter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
@@ -61,9 +59,19 @@ public class SearchBkDetailAct extends BaseMvpActivity<ISearchBkDetailContractio
     TextView noSearchTv;
     @BindView(R.id.nodataTipsTv)
     TextView nodataTipsTv;
+    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
+        @Override
+        public void onSoftInputChanged(int height) {
+            if (height == 0) {
+//                isSHowHistory(false);
+            } else {
+                isSHowHistory(true);
+
+            }
+        }
+    };
     private List<BKRecordEntity.ListBean> entities = new ArrayList<>();
     private List<SearchEntity.ListBean> lableList = new ArrayList<>();
-
 
     @Override
     public SearchBkDetailPresenter initPresenter() {
@@ -197,18 +205,6 @@ public class SearchBkDetailAct extends BaseMvpActivity<ISearchBkDetailContractio
                 break;
         }
     }
-
-    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
-        @Override
-        public void onSoftInputChanged(int height) {
-            if (height == 0) {
-//                isSHowHistory(false);
-            } else {
-                isSHowHistory(true);
-
-            }
-        }
-    };
 
     @Override
     public void doBusiness() {

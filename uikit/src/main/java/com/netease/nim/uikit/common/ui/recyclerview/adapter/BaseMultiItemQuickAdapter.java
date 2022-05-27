@@ -1,9 +1,10 @@
 package com.netease.nim.uikit.common.ui.recyclerview.adapter;
 
-import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.netease.nim.uikit.common.ui.recyclerview.holder.BaseViewHolder;
 import com.netease.nim.uikit.common.ui.recyclerview.holder.RecyclerViewHolder;
@@ -30,6 +31,10 @@ public abstract class BaseMultiItemQuickAdapter<T, K extends BaseViewHolder> ext
      */
     private Map<Integer, Map<String, RecyclerViewHolder>> multiTypeViewHolders;
 
+    public BaseMultiItemQuickAdapter(RecyclerView recyclerView, List<T> data) {
+        super(recyclerView, data);
+    }
+
     /**
      * get view type from data item
      *
@@ -45,10 +50,6 @@ public abstract class BaseMultiItemQuickAdapter<T, K extends BaseViewHolder> ext
      * @return
      */
     protected abstract String getItemKey(T item);
-
-    public BaseMultiItemQuickAdapter(RecyclerView recyclerView, List<T> data) {
-        super(recyclerView, data);
-    }
 
     /**
      * add viewType->layoutResId, viewType->ViewHolder.class

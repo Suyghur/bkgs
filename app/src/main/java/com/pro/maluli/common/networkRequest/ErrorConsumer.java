@@ -3,7 +3,6 @@ package com.pro.maluli.common.networkRequest;
 import com.google.gson.JsonParseException;
 import com.pro.maluli.common.base.BaseView;
 
-
 import org.json.JSONException;
 
 import java.net.ConnectException;

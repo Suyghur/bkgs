@@ -3,7 +3,6 @@ package com.pro.maluli.module.myself.anchorInformation.fragment.anchorImage.addI
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.AnchorImgEntity;
-import com.pro.maluli.common.entity.AnchorLabelEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 
 import java.io.File;
@@ -18,14 +17,16 @@ public interface IEditImgContraction extends BaseView {
 
         void setImageSuccess(AnchorImgEntity data);
     }
+
     interface Presenter extends IClear {
 
         void subImg(List<File> files);
+
         void getImg();
 
         void deleteImage(int id);
 
-        void subMitImg(String url,String mark);
+        void subMitImg(String url, String mark);
 
         void subSortImg(String sortImg);
     }

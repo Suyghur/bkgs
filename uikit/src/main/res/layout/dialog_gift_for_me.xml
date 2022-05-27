@@ -64,14 +64,14 @@
                 android:visibility="visible" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/nodataTv"
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_size_200"
+                android:gravity="center"
                 android:text="暂时没有收到礼物哦"
                 android:textColor="@color/black"
-                android:textSize="@dimen/dp_size_18" />
+                android:textSize="@dimen/dp_size_18"
+                android:visibility="gone" />
         </LinearLayout>
 
 

@@ -6,74 +6,6 @@ import android.view.ViewGroup;
 public class HybridAdapter extends BaseAdapter {
     private final Hybrid[] hybrids;
 
-    public static abstract class Hybrid<T> {
-        protected static final int VIEW_TYPE_INVALID = -1;
-
-        private OnItemClickListener listener;
-
-        private boolean disabled;
-
-        public Hybrid() {
-            this(null);
-        }
-
-        public Hybrid(OnItemClickListener listener) {
-            this.listener = listener;
-        }
-
-        public abstract DataFreeViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType);
-
-        public abstract void onBindViewHolder(DataFreeViewHolder<T> holder, int position);
-
-        public abstract int getItemCount();
-
-        public abstract int getItemViewType(int position);
-
-        public abstract T getData(int position);
-
-        protected void bindViewHolder(DataFreeViewHolder<T> holder, T data) {
-            holder.bindViewHolder(data);
-        }
-
-        public boolean isEmpty() {
-            return getItemCount() == 0;
-        }
-
-        public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-            this.listener = onItemClickListener;
-        }
-
-        public final void enable(boolean enable) {
-            this.disabled = !enable;
-        }
-
-        private void handleClick(boolean longClick, View v, int pos, Object data) {
-            if (listener == null) {
-                return;
-            }
-            if (longClick) {
-                listener.onLongClick(v, pos, data);
-            } else {
-                listener.onClick(v, pos, data);
-            }
-        }
-    }
-
-    protected static Hybrid[] make(Hybrid main, Hybrid[] before, Hybrid[] after) {
-        int count = 1 + (before != null ? before.length : 0) + (after != null ? after.length : 0);
-        Hybrid[] hybrids = new Hybrid[count];
-        int index = 0;
-        if (before != null) {
-            System.arraycopy(before, 0, hybrids, 0, before.length);
-            index += before.length;
-        }
-        hybrids[index++] = main;
-        if (after != null) {
-            System.arraycopy(after, 0, hybrids, index, after.length);
-        }
-        return hybrids;
-    }
-
     public HybridAdapter(final Hybrid... hybrids) {
         super(null);
 
@@ -109,6 +41,21 @@ public class HybridAdapter extends BaseAdapter {
                 return 0;
             }
         });
+    }
+
+    protected static Hybrid[] make(Hybrid main, Hybrid[] before, Hybrid[] after) {
+        int count = 1 + (before != null ? before.length : 0) + (after != null ? after.length : 0);
+        Hybrid[] hybrids = new Hybrid[count];
+        int index = 0;
+        if (before != null) {
+            System.arraycopy(before, 0, hybrids, 0, before.length);
+            index += before.length;
+        }
+        hybrids[index++] = main;
+        if (after != null) {
+            System.arraycopy(after, 0, hybrids, index, after.length);
+        }
+        return hybrids;
     }
 
     @Override
@@ -201,6 +148,59 @@ public class HybridAdapter extends BaseAdapter {
                 return;
             }
             pos -= count;
+        }
+    }
+
+    public static abstract class Hybrid<T> {
+        protected static final int VIEW_TYPE_INVALID = -1;
+
+        private OnItemClickListener listener;
+
+        private boolean disabled;
+
+        public Hybrid() {
+            this(null);
+        }
+
+        public Hybrid(OnItemClickListener listener) {
+            this.listener = listener;
+        }
+
+        public abstract DataFreeViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType);
+
+        public abstract void onBindViewHolder(DataFreeViewHolder<T> holder, int position);
+
+        public abstract int getItemCount();
+
+        public abstract int getItemViewType(int position);
+
+        public abstract T getData(int position);
+
+        protected void bindViewHolder(DataFreeViewHolder<T> holder, T data) {
+            holder.bindViewHolder(data);
+        }
+
+        public boolean isEmpty() {
+            return getItemCount() == 0;
+        }
+
+        public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+            this.listener = onItemClickListener;
+        }
+
+        public final void enable(boolean enable) {
+            this.disabled = !enable;
+        }
+
+        private void handleClick(boolean longClick, View v, int pos, Object data) {
+            if (listener == null) {
+                return;
+            }
+            if (longClick) {
+                listener.onLongClick(v, pos, data);
+            } else {
+                listener.onClick(v, pos, data);
+            }
         }
     }
 }

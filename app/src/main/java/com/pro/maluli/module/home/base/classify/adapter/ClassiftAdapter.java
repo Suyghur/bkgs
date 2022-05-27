@@ -9,8 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.HomeInfoEntity;
-import com.pro.maluli.common.entity.WatchListEntity;
-import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,18 +16,16 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ClassiftAdapter extends BaseQuickAdapter<HomeInfoEntity.CategoryBean.ListBean, ClassiftAdapter.ViewHolder> {
+    public onItemOnclickListener onItemOnclickListener;
     private Context context;
     private int selectPosition;
 
-    public interface onItemOnclickListener {
-        void onItemClick(int position);
+    public ClassiftAdapter(List<HomeInfoEntity.CategoryBean.ListBean> data, Context context) {
+        super(R.layout.item_classift, data);
+        this.context = context;
     }
-
-    public onItemOnclickListener onItemOnclickListener;
 
     public ClassiftAdapter.onItemOnclickListener getOnItemOnclickListener() {
         return onItemOnclickListener;
@@ -45,11 +41,6 @@ public class ClassiftAdapter extends BaseQuickAdapter<HomeInfoEntity.CategoryBea
         return new ViewHolder(view);
     }
 
-    public ClassiftAdapter(List<HomeInfoEntity.CategoryBean.ListBean> data, Context context) {
-        super(R.layout.item_classift, data);
-        this.context = context;
-    }
-
     @Override
     protected void convert(@NotNull ClassiftAdapter.ViewHolder baseViewHolder, HomeInfoEntity.CategoryBean.ListBean listBean) {
 //        GlideUtils.loadImage(context, listBean.getAvatar(), baseViewHolder.watchCiv);
@@ -58,6 +49,9 @@ public class ClassiftAdapter extends BaseQuickAdapter<HomeInfoEntity.CategoryBea
 
     }
 
+    public interface onItemOnclickListener {
+        void onItemClick(int position);
+    }
 
     public class ViewHolder extends BaseViewHolder {
         @BindView(R.id.titleTv)

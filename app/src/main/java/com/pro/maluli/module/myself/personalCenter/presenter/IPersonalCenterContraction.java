@@ -16,8 +16,10 @@ public interface IPersonalCenterContraction extends BaseView {
 
         void setUpdateSuccess(String msg);
     }
+
     interface Presenter extends IClear {
         void getUserinfo();
+
         void subImg(List<File> files);
 
         void changerUserInfo(String imgUrl, int genderType, String trim);

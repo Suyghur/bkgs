@@ -23,18 +23,29 @@ import java.util.List;
 
 public class WheelView extends ScrollView {
     public static final String TAG = WheelView.class.getSimpleName();
-
-    public static class OnWheelViewListener {
-        public void onSelected(int selectedIndex, String item) {
-        }
-    }
-
-
-    private Context context;
+    public static final int OFF_SET_DEFAULT = 1;
+    private static final int SCROLL_DIRECTION_UP = 0;
 //    private ScrollView scrollView;
-
+    private static final int SCROLL_DIRECTION_DOWN = 1;
+    //    String[] items;
+    List<String> items;
+    int offset = OFF_SET_DEFAULT; // 偏移量（需要在最前面和最后面补全）
+    int displayItemCount; // 每页显示的数量
+    int selectedIndex = 1;
+    int initialY;
+    Runnable scrollerTask;
+    int newCheck = 50;
+    int itemHeight = 0;
+    /**
+     * 获取选中区域的边界
+     */
+    int[] selectedAreaBorder;
+    Paint paint;
+    int viewWidth;
+    private Context context;
     private LinearLayout views;
-
+    private int scrollDirection = -1;
+    private OnWheelViewListener onWheelViewListener;
     public WheelView(Context context) {
         super(context);
         init(context);
@@ -49,9 +60,6 @@ public class WheelView extends ScrollView {
         super(context, attrs, defStyle);
         init(context);
     }
-
-    //    String[] items;
-    List<String> items;
 
     private List<String> getItems() {
         return items;
@@ -74,10 +82,6 @@ public class WheelView extends ScrollView {
 
     }
 
-
-    public static final int OFF_SET_DEFAULT = 1;
-    int offset = OFF_SET_DEFAULT; // 偏移量（需要在最前面和最后面补全）
-
     public int getOffset() {
         return offset;
     }
@@ -85,11 +89,6 @@ public class WheelView extends ScrollView {
     public void setOffset(int offset) {
         this.offset = offset;
     }
-
-    int displayItemCount; // 每页显示的数量
-
-    int selectedIndex = 1;
-
 
     private void init(Context context) {
         this.context = context;
@@ -153,11 +152,6 @@ public class WheelView extends ScrollView {
 
     }
 
-    int initialY;
-
-    Runnable scrollerTask;
-    int newCheck = 50;
-
     public void startScrollerTask() {
 
         initialY = getScrollY();
@@ -173,8 +167,6 @@ public class WheelView extends ScrollView {
 
         refreshItemView(0);
     }
-
-    int itemHeight = 0;
 
     private TextView createView(String item) {
         TextView tv = new TextView(context);
@@ -194,7 +186,6 @@ public class WheelView extends ScrollView {
         }
         return tv;
     }
-
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
@@ -283,11 +274,6 @@ public class WheelView extends ScrollView {
         }
     }
 
-    /**
-     * 获取选中区域的边界
-     */
-    int[] selectedAreaBorder;
-
     private int[] obtainSelectedAreaBorder() {
         if (null == selectedAreaBorder) {
             selectedAreaBorder = new int[2];
@@ -296,14 +282,6 @@ public class WheelView extends ScrollView {
         }
         return selectedAreaBorder;
     }
-
-
-    private int scrollDirection = -1;
-    private static final int SCROLL_DIRECTION_UP = 0;
-    private static final int SCROLL_DIRECTION_DOWN = 1;
-
-    Paint paint;
-    int viewWidth;
 
     @Override
     public void setBackgroundDrawable(Drawable background) {
@@ -400,8 +378,6 @@ public class WheelView extends ScrollView {
         return super.onTouchEvent(ev);
     }
 
-    private OnWheelViewListener onWheelViewListener;
-
     public OnWheelViewListener getOnWheelViewListener() {
         return onWheelViewListener;
     }
@@ -420,6 +396,11 @@ public class WheelView extends ScrollView {
         int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2, MeasureSpec.AT_MOST);
         view.measure(width, expandSpec);
         return view.getMeasuredHeight();
+    }
+
+    public static class OnWheelViewListener {
+        public void onSelected(int selectedIndex, String item) {
+        }
     }
 
 }

@@ -40,6 +40,15 @@ public class HomeInfoEntity implements Serializable {
         this.banner = banner;
     }
 
+    @Override
+    public String toString() {
+        return "HomeInfoEntity{" +
+                "notice=" + notice +
+                ", category=" + category +
+                ", banner=" + banner +
+                '}';
+    }
+
     public static class NoticeBean implements Serializable {
         private int id;
         private String title;
@@ -152,6 +161,12 @@ public class HomeInfoEntity implements Serializable {
             private String title;
             private int is_teenager;
             private boolean isSelect;
+            private List<ChildBean> children;
+
+            public static ListBean objectFromData(String str) {
+
+                return new Gson().fromJson(str, ListBean.class);
+            }
 
             public boolean isSelect() {
                 return isSelect;
@@ -159,13 +174,6 @@ public class HomeInfoEntity implements Serializable {
 
             public void setSelect(boolean select) {
                 isSelect = select;
-            }
-
-            private List<ChildBean> children;
-
-            public static ListBean objectFromData(String str) {
-
-                return new Gson().fromJson(str, ListBean.class);
             }
 
             public int getId() {
@@ -196,9 +204,24 @@ public class HomeInfoEntity implements Serializable {
                 return children;
             }
 
+            public void setChildren(List<ChildBean> children) {
+                this.children = children;
+            }
+
             @Override
             public String getPickerViewText() {
                 return title;
+            }
+
+            @Override
+            public String toString() {
+                return "ListBean{" +
+                        "id=" + id +
+                        ", title='" + title + '\'' +
+                        ", is_teenager=" + is_teenager +
+                        ", isSelect=" + isSelect +
+                        ", children=" + children +
+                        '}';
             }
 
             public static class ChildBean implements Serializable, IPickerViewData {
@@ -248,21 +271,6 @@ public class HomeInfoEntity implements Serializable {
                             ", is_teenager=" + is_teenager +
                             '}';
                 }
-            }
-
-            public void setChildren(List<ChildBean> children) {
-                this.children = children;
-            }
-
-            @Override
-            public String toString() {
-                return "ListBean{" +
-                        "id=" + id +
-                        ", title='" + title + '\'' +
-                        ", is_teenager=" + is_teenager +
-                        ", isSelect=" + isSelect +
-                        ", children=" + children +
-                        '}';
             }
         }
     }
@@ -339,14 +347,5 @@ public class HomeInfoEntity implements Serializable {
                     ", created_at='" + created_at + '\'' +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "HomeInfoEntity{" +
-                "notice=" + notice +
-                ", category=" + category +
-                ", banner=" + banner +
-                '}';
     }
 }

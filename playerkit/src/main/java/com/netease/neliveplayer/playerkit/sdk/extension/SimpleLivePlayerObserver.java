@@ -7,6 +7,7 @@ import com.netease.neliveplayer.playerkit.sdk.model.MediaInfo;
 /**
  * 播放器状态回调观察者
  * <p>
+ *
  * @author netease
  */
 
@@ -52,7 +53,7 @@ public abstract class SimpleLivePlayerObserver implements LivePlayerObserver {
     }
 
     @Override
-    public void onVideoDecoderOpen(int value){
+    public void onVideoDecoderOpen(int value) {
 
     }
 }

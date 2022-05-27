@@ -22,23 +22,21 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.UUID;
 
 public class DonwloadSaveImg {
+    private final static String TAG = "PictureActivity";
     private static Context context;
     private static String filePath;
     private static Bitmap mBitmap;
     private static String mSaveMessage = "失败";
-    private final static String TAG = "PictureActivity";
     private static ProgressDialog mSaveDialog = null;
-
-    public static void donwloadImg(Context contexts, String filePaths) {
-        context = contexts;
-        filePath = filePaths;
-        mSaveDialog = ProgressDialog.show(context, "保存图片", "图片正在保存中，请稍等...", true);
-        new Thread(saveFileRunnable).start();
-    }
-
+    private static Handler messageHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mSaveDialog.dismiss();
+            Toast.makeText(context, mSaveMessage, Toast.LENGTH_SHORT).show();
+        }
+    };
     private static Runnable saveFileRunnable = new Runnable() {
         @Override
         public void run() {
@@ -64,19 +62,20 @@ public class DonwloadSaveImg {
         }
     };
 
-    private static Handler messageHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mSaveDialog.dismiss();
-            Toast.makeText(context, mSaveMessage, Toast.LENGTH_SHORT).show();
-        }
-    };
+    public static void donwloadImg(Context contexts, String filePaths) {
+        context = contexts;
+        filePath = filePaths;
+        mSaveDialog = ProgressDialog.show(context, "保存图片", "图片正在保存中，请稍等...", true);
+        new Thread(saveFileRunnable).start();
+    }
+
     /**
      * 保存图片
+     *
      * @param bm
      * @throws IOException
      */
-    public static void saveFile(Bitmap bm ) throws IOException {
+    public static void saveFile(Bitmap bm) throws IOException {
         File dirFile = new File(Environment.getExternalStorageDirectory().getPath());
         if (!dirFile.exists()) {
             dirFile.mkdir();

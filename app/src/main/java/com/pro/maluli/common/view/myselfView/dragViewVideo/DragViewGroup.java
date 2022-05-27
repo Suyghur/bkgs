@@ -3,7 +3,6 @@ package com.pro.maluli.common.view.myselfView.dragViewVideo;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -14,11 +13,6 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
-import com.pro.maluli.R;
 
 /**
  * @author gexinyu
@@ -39,14 +33,10 @@ public class DragViewGroup extends FrameLayout implements View.OnClickListener {
 
     private OnVideoDragListener onVideoDragListener;//拖动监听
 
-    public void setOnVideoDragListener(OnVideoDragListener onVideoDragListener) {
-        this.onVideoDragListener = onVideoDragListener;
-    }
-
-
     public DragViewGroup(@NonNull Context context) {
         this(context, null);
     }
+
 
     public DragViewGroup(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
@@ -58,6 +48,10 @@ public class DragViewGroup extends FrameLayout implements View.OnClickListener {
         minTouchSlop = ViewConfiguration.get(mContext).getScaledTouchSlop();
 
 
+    }
+
+    public void setOnVideoDragListener(OnVideoDragListener onVideoDragListener) {
+        this.onVideoDragListener = onVideoDragListener;
     }
 
     @Override
@@ -89,7 +83,8 @@ public class DragViewGroup extends FrameLayout implements View.OnClickListener {
                         mRootMeasuredWidth = mViewGroup.getMeasuredWidth();
                         int top = mViewGroup.getTop();
                         //获取父布局顶点的坐标
-                        mRootTopY = mViewGroup.getTop();;
+                        mRootTopY = mViewGroup.getTop();
+                        ;
                         mHasMeasuredParent = true;
                     }
                 }

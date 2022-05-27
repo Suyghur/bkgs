@@ -31,6 +31,29 @@ import java.util.Map;
  * Created by hzxuwen on 2015/3/25.
  */
 public class TeamHelper {
+    private static Map<TeamMemberType, Integer> teamMemberLevelMap = new HashMap<>(4);
+    public static Comparator<TeamMember> teamMemberComparator = new Comparator<TeamMember>() {
+        @Override
+        public int compare(TeamMember l, TeamMember r) {
+            if (l == null) {
+                return 1;
+            }
+
+            if (r == null) {
+                return -1;
+            }
+
+            return teamMemberLevelMap.get(l.getType()) - teamMemberLevelMap.get(r.getType());
+        }
+    };
+
+    static {
+        teamMemberLevelMap.put(TeamMemberType.Owner, 0);
+        teamMemberLevelMap.put(TeamMemberType.Manager, 1);
+        teamMemberLevelMap.put(TeamMemberType.Normal, 2);
+        teamMemberLevelMap.put(TeamMemberType.Apply, 3);
+    }
+
     public static VerifyTypeEnum getVerifyTypeEnum(String name) {
         VerifyTypeEnum type = null;
 
@@ -112,7 +135,7 @@ public class TeamHelper {
         }
         if (name.equals(NimUIKit.getContext().getString(R.string.team_mute))) {
             return true;
-        } else if(name.equals(NimUIKit.getContext().getString(R.string.team_no_mute))) {
+        } else if (name.equals(NimUIKit.getContext().getString(R.string.team_no_mute))) {
             return false;
         } else {
             return null;
@@ -251,15 +274,6 @@ public class TeamHelper {
         return option;
     }
 
-    private static Map<TeamMemberType, Integer> teamMemberLevelMap = new HashMap<>(4);
-
-    static {
-        teamMemberLevelMap.put(TeamMemberType.Owner, 0);
-        teamMemberLevelMap.put(TeamMemberType.Manager, 1);
-        teamMemberLevelMap.put(TeamMemberType.Normal, 2);
-        teamMemberLevelMap.put(TeamMemberType.Apply, 3);
-    }
-
     /**
      * 邀请的成员，所在群数量已经超限
      *
@@ -280,22 +294,6 @@ public class TeamHelper {
             ToastHelper.showToast(context, tipContent.toString());
         }
     }
-
-    public static Comparator<TeamMember> teamMemberComparator = new Comparator<TeamMember>() {
-        @Override
-        public int compare(TeamMember l, TeamMember r) {
-            if (l == null) {
-                return 1;
-            }
-
-            if (r == null) {
-                return -1;
-            }
-
-            return teamMemberLevelMap.get(l.getType()) - teamMemberLevelMap.get(r.getType());
-        }
-    };
-
 
     public static String getTeamName(String teamId) {
         Team team = NimUIKit.getTeamProvider().getTeamById(teamId);

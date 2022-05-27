@@ -221,6 +221,36 @@ public class UserInfoEntity implements Serializable {
         this.notice = notice;
     }
 
+    @Override
+    public String toString() {
+        return "UserInfoEntity{" +
+                "id=" + id +
+                ", is_anchor=" + is_anchor +
+                ", avatar='" + avatar + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", sex='" + sex + '\'' +
+                ", money='" + money + '\'' +
+                ", fans=" + fans +
+                ", subs=" + subs +
+                ", phone='" + phone + '\'' +
+                ", bind_wx='" + bind_wx + '\'' +
+                ", bind_qq='" + bind_qq + '\'' +
+                ", bind_alipay='" + bind_alipay + '\'' +
+                ", is_read_conceal=" + is_read_conceal +
+                ", is_teenager=" + is_teenager +
+                ", new_video=" + new_video +
+                ", new_message=" + new_message +
+                ", new_report=" + new_report +
+                ", android_version='" + android_version + '\'' +
+                ", ios_version='" + ios_version + '\'' +
+                ", anchor_money='" + anchor_money + '\'' +
+                ", anchor_level='" + anchor_level + '\'' +
+                ", anchor_no='" + anchor_no + '\'' +
+                ", anchor_id=" + anchor_id +
+                ", notice=" + notice +
+                '}';
+    }
+
     public static class NoticeBean implements Serializable {
         private int id;
         private String title;
@@ -258,35 +288,5 @@ public class UserInfoEntity implements Serializable {
                     ", content='" + content + '\'' +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "UserInfoEntity{" +
-                "id=" + id +
-                ", is_anchor=" + is_anchor +
-                ", avatar='" + avatar + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", sex='" + sex + '\'' +
-                ", money='" + money + '\'' +
-                ", fans=" + fans +
-                ", subs=" + subs +
-                ", phone='" + phone + '\'' +
-                ", bind_wx='" + bind_wx + '\'' +
-                ", bind_qq='" + bind_qq + '\'' +
-                ", bind_alipay='" + bind_alipay + '\'' +
-                ", is_read_conceal=" + is_read_conceal +
-                ", is_teenager=" + is_teenager +
-                ", new_video=" + new_video +
-                ", new_message=" + new_message +
-                ", new_report=" + new_report +
-                ", android_version='" + android_version + '\'' +
-                ", ios_version='" + ios_version + '\'' +
-                ", anchor_money='" + anchor_money + '\'' +
-                ", anchor_level='" + anchor_level + '\'' +
-                ", anchor_no='" + anchor_no + '\'' +
-                ", anchor_id=" + anchor_id +
-                ", notice=" + notice +
-                '}';
     }
 }

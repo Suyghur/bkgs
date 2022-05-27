@@ -42,30 +42,44 @@ public class NetworkUtil {
     public static final byte CURRENT_NETWORK_TYPE_CUC = 11;// uniwap,3gwap,uninet,3gnet
 
     public static final byte CURRENT_NETWORK_TYPE_CM = 12;// cmwap,cmnet
-
+    /**
+     * 网络类型
+     */
+    public static final int NETWORK_CLASS_UNKNOWN = 0;
+    public static final int NETWORK_CLASS_2_G = 1;
+    public static final int NETWORK_CLASS_3_G = 2;
+    public static final int NETWORK_CLASS_4_G = 3;
+    public static final int NETWORK_CLASS_WIFI = 10;
+    //中国电信
+    public static final int ISP_CTCC = 0;
+    //中国联通
+    public static final int ISP_CUCC = 1;
+    //中国移动
+    public static final int ISP_CMCC = 2;
+    //中国铁通
+    public static final int ISP_CTT = 3;
+    //其他
+    public static final int ISP_OTHERS = -1;
     /**
      * apn值
      */
     private static final String CONNECT_TYPE_WIFI = "wifi";
-
     private static final String CONNECT_TYPE_CTNET = "ctnet";
-
     private static final String CONNECT_TYPE_CTWAP = "ctwap";
 
+    /**
+     * 判断APNTYPE
+     *
+     * @param context
+     * @return
+     */
     private static final String CONNECT_TYPE_CMNET = "cmnet";
-
     private static final String CONNECT_TYPE_CMWAP = "cmwap";
-
     private static final String CONNECT_TYPE_UNIWAP = "uniwap";
-
     private static final String CONNECT_TYPE_UNINET = "uninet";
-
     private static final String CONNECT_TYPE_UNI3GWAP = "3gwap";
-
     private static final String CONNECT_TYPE_UNI3GNET = "3gnet";
-
     private static final Uri PREFERRED_APN_URI = Uri.parse("content://telephony/carriers/preferapn");
-
     public static byte curNetworkType = CURRENT_NETWORK_TYPE_NONE;
 
     /*
@@ -80,7 +94,6 @@ public class NetworkUtil {
         } else
             return networkInfo.getType();
     }
-
 
     /**
      * 判断当前网络类型。WIFI,NET,WAP
@@ -147,12 +160,6 @@ public class NetworkUtil {
         return type;
     }
 
-    /**
-     * 判断APNTYPE
-     *
-     * @param context
-     * @return
-     */
     /**
      * @deprecated 4.0
      * doc:
@@ -557,23 +564,6 @@ public class NetworkUtil {
         return info;
     }
 
-    public enum NetworkSpeedMode {
-        LOW, NORMAL, HIGH, UNKNOWN
-    }
-
-    /**
-     * 网络类型
-     */
-    public static final int NETWORK_CLASS_UNKNOWN = 0;
-
-    public static final int NETWORK_CLASS_2_G = 1;
-
-    public static final int NETWORK_CLASS_3_G = 2;
-
-    public static final int NETWORK_CLASS_4_G = 3;
-
-    public static final int NETWORK_CLASS_WIFI = 10;
-
     /**
      * 仅判断Mobile网络的慢速.蓝牙等其他网络不做判断.
      *
@@ -768,17 +758,6 @@ public class NetworkUtil {
         }
     }
 
-    //中国电信
-    public static final int ISP_CTCC = 0;
-    //中国联通
-    public static final int ISP_CUCC = 1;
-    //中国移动
-    public static final int ISP_CMCC = 2;
-    //中国铁通
-    public static final int ISP_CTT = 3;
-    //其他
-    public static final int ISP_OTHERS = -1;
-
     public static String getSimOperator(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null) {
@@ -793,16 +772,6 @@ public class NetworkUtil {
             return tm.getNetworkOperator();
         }
         return null;
-    }
-
-
-    public interface LinkNetWorkType {
-        public static final int UNKNOWN = 0;
-        public static final int WIFI = 1;
-        public static final int WWAN = 2;
-        public static final int _2G = 3;
-        public static final int _3G = 4;
-        public static final int _4G = 5;
     }
 
     public static int getNetworkTypeForLink(Context context) {
@@ -843,5 +812,19 @@ public class NetworkUtil {
             return LinkNetWorkType.UNKNOWN;
         }
         return LinkNetWorkType.UNKNOWN;
+    }
+
+
+    public enum NetworkSpeedMode {
+        LOW, NORMAL, HIGH, UNKNOWN
+    }
+
+    public interface LinkNetWorkType {
+        public static final int UNKNOWN = 0;
+        public static final int WIFI = 1;
+        public static final int WWAN = 2;
+        public static final int _2G = 3;
+        public static final int _3G = 4;
+        public static final int _4G = 5;
     }
 }

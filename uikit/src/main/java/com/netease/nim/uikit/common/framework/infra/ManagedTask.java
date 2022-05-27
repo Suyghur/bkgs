@@ -16,6 +16,49 @@ public abstract class ManagedTask extends ObservableTask {
     private TaskManager taskManager;
 
     private TaskObserver taskObserver;
+    private ArrayList<ManagedTask> links = new ArrayList<ManagedTask>();
+
+    /**
+     * make task key
+     *
+     * @param task
+     * @param params
+     * @return
+     */
+    /*package*/
+    static final String makeTaskKey(ManagedTask task, Object... params) {
+        String tag = task.getTaskTag();
+        String id = task.getTaskId();
+        String extraId = task.getTaskExtraId(params);
+
+        StringBuilder sb = new StringBuilder();
+
+        // tag
+        sb.append("T");
+        sb.append(ENCLOSURE.charAt(0));
+        sb.append(tag);
+        sb.append(ENCLOSURE.charAt(1));
+
+        // id
+        sb.append("I");
+        sb.append(ENCLOSURE.charAt(0));
+        sb.append(id);
+        sb.append(ENCLOSURE.charAt(1));
+
+        // extra id
+        if (!TextUtils.isEmpty(extraId)) {
+            sb.append("E");
+            sb.append(ENCLOSURE.charAt(0));
+            sb.append(extraId);
+            sb.append(ENCLOSURE.charAt(1));
+        }
+
+        return sb.toString();
+    }
+
+    private static final void trace(String msg) {
+        LogUtil.d(TAG, msg);
+    }
 
     private final TaskObserver getTaskObserver() {
         if (taskObserver == null) {
@@ -38,8 +81,6 @@ public abstract class ManagedTask extends ObservableTask {
 
         return taskObserver;
     }
-
-    private ArrayList<ManagedTask> links = new ArrayList<ManagedTask>();
 
     /**
      * on task result
@@ -139,44 +180,6 @@ public abstract class ManagedTask extends ObservableTask {
     }
 
     /**
-     * make task key
-     *
-     * @param task
-     * @param params
-     * @return
-     */
-	/*package*/
-    static final String makeTaskKey(ManagedTask task, Object... params) {
-        String tag = task.getTaskTag();
-        String id = task.getTaskId();
-        String extraId = task.getTaskExtraId(params);
-
-        StringBuilder sb = new StringBuilder();
-
-        // tag
-        sb.append("T");
-        sb.append(ENCLOSURE.charAt(0));
-        sb.append(tag);
-        sb.append(ENCLOSURE.charAt(1));
-
-        // id
-        sb.append("I");
-        sb.append(ENCLOSURE.charAt(0));
-        sb.append(id);
-        sb.append(ENCLOSURE.charAt(1));
-
-        // extra id
-        if (!TextUtils.isEmpty(extraId)) {
-            sb.append("E");
-            sb.append(ENCLOSURE.charAt(0));
-            sb.append(extraId);
-            sb.append(ENCLOSURE.charAt(1));
-        }
-
-        return sb.toString();
-    }
-
-    /**
      * get task tag
      *
      * @return task tag
@@ -251,9 +254,5 @@ public abstract class ManagedTask extends ObservableTask {
         synchronized (links) {
             links.add(task);
         }
-    }
-
-    private static final void trace(String msg) {
-        LogUtil.d(TAG, msg);
     }
 }

@@ -25,18 +25,17 @@ public class SelectLianmaiAdapter extends BaseQuickAdapter<ChatRoomMember, Selec
     private Context context;
     private String anchorAccid;
 
-    @NotNull
-    @Override
-    protected SelectLianmaiAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
-        return new ViewHolder(view);
-    }
-
-
     public SelectLianmaiAdapter(List<ChatRoomMember> data, String anchorAccid, Context context, List<LianmaiEntity> entities) {
         super(R.layout.item_lianmai, data);
         this.context = context;
         this.anchorAccid = anchorAccid;
         this.entitiesList = entities;
+    }
+
+    @NotNull
+    @Override
+    protected SelectLianmaiAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
+        return new ViewHolder(view);
     }
 
     @Override

@@ -41,22 +41,32 @@ public class BarrageSurfaceView extends SurfaceViewTemplate {
     private static final int MESSAGE_END = 0x02;
 
     private static final String MESSAGE_DATA_LINE = "LINE";
-
+    // 执行者管理（多线程访问）
+    private final List<BarrageTextTask> tasks = new LinkedList<>();
     private Random random;
-
     // 配置管理
     private BarrageConfig config;
-
     // 轨道管理
     private Set<Integer> linesUnavailable = new HashSet<>();
     private int lineCount;
     private int lineHeight;
-
     // 字幕管理
     private Queue<String> textCache = new LinkedList<>();
-
-    // 执行者管理（多线程访问）
-    private final List<BarrageTextTask> tasks = new LinkedList<>();
+    private Handler mHandler = new Handler(getContext().getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_FREE_LINE:
+                    onLineAvailable(msg.getData().getInt(MESSAGE_DATA_LINE));
+                    break;
+                case MESSAGE_END:
+                    onTextBarrageDone(msg.getData().getInt(MESSAGE_DATA_LINE));
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    };
 
     public BarrageSurfaceView(Context context) {
         super(context);
@@ -166,22 +176,6 @@ public class BarrageSurfaceView extends SurfaceViewTemplate {
 
         return new BarrageTextTask(text, line, color, size, duration, x, y, deltaX);
     }
-
-    private Handler mHandler = new Handler(getContext().getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_FREE_LINE:
-                    onLineAvailable(msg.getData().getInt(MESSAGE_DATA_LINE));
-                    break;
-                case MESSAGE_END:
-                    onTextBarrageDone(msg.getData().getInt(MESSAGE_DATA_LINE));
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    };
 
     private void onLineAvailable(final int line) {
         log("free line, line=" + line);

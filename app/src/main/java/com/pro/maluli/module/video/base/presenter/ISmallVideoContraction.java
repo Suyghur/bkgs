@@ -13,6 +13,7 @@ public interface ISmallVideoContraction extends BaseView {
 
         void setNoSeeVideo(String msg);
     }
+
     interface Presenter extends IClear {
 
         void getVideo();

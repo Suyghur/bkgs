@@ -65,6 +65,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View, PreviewLivePresenter> implements IPreviewLiveContraction.View {
 
+    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
     PreviewLiveAdapter previewLiveAdapter;
     @BindView(R.id.anchorAvaterCiv)
     CircleImageView anchorAvaterCiv;
@@ -104,6 +105,8 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
     ImageView closeIv;
     @BindView(R.id.bottomLL)
     LinearLayout bottomLL;
+    //    List<List<AnchorInfoEntity.PictureBean>> pictureBeanList = new ArrayList<>();
+    List<AnchorInfoEntity.PictureBean> pictureBeanList = new ArrayList<>();
     private String anchorId = "";
     private AnchorInfoEntity anchorInfoEntity;
     private boolean isSHowImg = true;
@@ -137,7 +140,6 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
         ToolUtils.checkPublishPermission(this);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -157,8 +159,6 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
         }
         presenter.getAnchorInfo(anchorId);
     }
-
-    public static final int REQUEST_VIDEO_PERMISSIONS = 1;
 
     private boolean hasPermissionsGranted(String[] permissions) {
         for (String permission : permissions) {
@@ -294,9 +294,6 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
         }
 
     }
-
-    //    List<List<AnchorInfoEntity.PictureBean>> pictureBeanList = new ArrayList<>();
-    List<AnchorInfoEntity.PictureBean> pictureBeanList = new ArrayList<>();
 
     @Override
     public void setAnchorInfo(AnchorInfoEntity data) {

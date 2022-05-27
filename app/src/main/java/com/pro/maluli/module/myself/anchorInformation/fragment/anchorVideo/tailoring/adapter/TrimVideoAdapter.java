@@ -50,13 +50,18 @@ public class TrimVideoAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         VideoHolder viewHolder = (VideoHolder) holder;
         Glide.with(context)
-            .load(lists.get(position).path)
-            .into(viewHolder.img);
+                .load(lists.get(position).path)
+                .into(viewHolder.img);
     }
 
     @Override
     public int getItemCount() {
         return lists.size();
+    }
+
+    public void addItemVideoInfo(VideoEditInfo info) {
+        lists.add(info);
+        notifyItemInserted(lists.size());
     }
 
     private final class VideoHolder extends RecyclerView.ViewHolder {
@@ -67,14 +72,9 @@ public class TrimVideoAdapter extends RecyclerView.Adapter {
             super(itemView);
             img = itemView.findViewById(R.id.thumb);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) img
-                .getLayoutParams();
+                    .getLayoutParams();
             layoutParams.width = itemW;
             img.setLayoutParams(layoutParams);
         }
-    }
-
-    public void addItemVideoInfo(VideoEditInfo info) {
-        lists.add(info);
-        notifyItemInserted(lists.size());
     }
 }

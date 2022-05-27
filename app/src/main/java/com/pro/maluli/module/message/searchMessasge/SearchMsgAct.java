@@ -2,7 +2,6 @@ package com.pro.maluli.module.message.searchMessasge;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,24 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.msg.model.MsgSearchOption;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
-import com.pro.maluli.common.entity.LiveListEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.myselfView.LabelsView;
-import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.message.searchMessasge.adapter.SearchMsgAdapter;
 import com.pro.maluli.module.message.searchMessasge.presenter.ISearchMsgContraction;
 import com.pro.maluli.module.message.searchMessasge.presenter.SearchMsgPresenter;
@@ -76,9 +67,19 @@ public class SearchMsgAct extends BaseMvpActivity<ISearchMsgContraction.View, Se
     TextView noSearchTv;
     @BindView(R.id.nodataTipsTv)
     TextView nodataTipsTv;
+    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
+        @Override
+        public void onSoftInputChanged(int height) {
+            if (height == 0) {
+//                isSHowHistory(false);
+            } else {
+                isSHowHistory(true);
+
+            }
+        }
+    };
     private List<IMMessage> entities = new ArrayList<>();
     private List<SearchEntity.ListBean> lableList = new ArrayList<>();
-
     private List<SearchContentEntity> searchContentEntities = new ArrayList<>();
 
     @Override
@@ -226,18 +227,6 @@ public class SearchMsgAct extends BaseMvpActivity<ISearchMsgContraction.View, Se
         }
     }
 
-    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
-        @Override
-        public void onSoftInputChanged(int height) {
-            if (height == 0) {
-//                isSHowHistory(false);
-            } else {
-                isSHowHistory(true);
-
-            }
-        }
-    };
-
     @Override
     public void doBusiness() {
 //        presenter.page = 1;
@@ -264,13 +253,13 @@ public class SearchMsgAct extends BaseMvpActivity<ISearchMsgContraction.View, Se
 //        //第一页直接删除数据然后加载数据
 //        if (presenter.page == 1) {
 //        if (data.size() != 0) {
-            entities.clear();
-            entities.addAll(data);
-            SearchContentEntity entity = new SearchContentEntity();
-            entity.setTypee(1);
-            entity.setMessage(entities);
-            searchContentEntities.add(entity);
-            presenter.page++;
+        entities.clear();
+        entities.addAll(data);
+        SearchContentEntity entity = new SearchContentEntity();
+        entity.setTypee(1);
+        entity.setMessage(entities);
+        searchContentEntities.add(entity);
+        presenter.page++;
 //            bkDetailRv.setVisibility(View.VISIBLE);
 //            nodataView.setVisibility(View.GONE);
 //            adapter.notifyDataSetChanged();
@@ -329,15 +318,15 @@ public class SearchMsgAct extends BaseMvpActivity<ISearchMsgContraction.View, Se
     @Override
     public void setUserNameInfo(List<NimUserInfo> param) {
 //        if (param.size() > 0) {
-            SearchContentEntity entity = new SearchContentEntity();
-            entity.setTypee(2);
-            entity.setUserInfo(param);
-            searchContentEntities.add(entity);
+        SearchContentEntity entity = new SearchContentEntity();
+        entity.setTypee(2);
+        entity.setUserInfo(param);
+        searchContentEntities.add(entity);
 //        }
-        if (searchContentEntities.get(0).getMessage().size()<=0&&searchContentEntities.get(1).getUserInfo().size()<=0){
+        if (searchContentEntities.get(0).getMessage().size() <= 0 && searchContentEntities.get(1).getUserInfo().size() <= 0) {
             bkDetailRv.setVisibility(View.GONE);
             nodataView.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             bkDetailRv.setVisibility(View.VISIBLE);
             nodataView.setVisibility(View.GONE);
             Collections.reverse(searchContentEntities);

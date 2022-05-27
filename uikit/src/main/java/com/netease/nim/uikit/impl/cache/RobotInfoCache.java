@@ -26,15 +26,59 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RobotInfoCache {
 
-    public static RobotInfoCache getInstance() {
-        return InstanceHolder.instance;
-    }
-
+    /**
+     * 拉取机器人信息最短间隔 5min
+     */
+    private static final long MIN_PULL_ROBOT_INTERNAL = 5 * 60 * 1000;
+    private static long lastTime = 0L;
     /**
      * 数据
      */
 
     private Map<String, NimRobotInfo> robotMap = new ConcurrentHashMap<>();
+    /**
+     * 监听机器人变化
+     */
+    private Observer<RobotChangedNotify> robotChangedNotifyObserver = new Observer<RobotChangedNotify>() {
+        @Override
+        public void onEvent(RobotChangedNotify robotChangedNotify) {
+            List<NimRobotInfo> addedOrUpdatedRobots = robotChangedNotify.getAddedOrUpdatedRobots();
+            List<String> addedOrUpdateRobotAccounts = new ArrayList<>(addedOrUpdatedRobots.size());
+            List<String> deletedRobotAccounts = robotChangedNotify.getDeletedRobots();
+
+            String account;
+            for (NimRobotInfo f : addedOrUpdatedRobots) {
+                account = f.getAccount();
+                robotMap.put(account, f);
+                addedOrUpdateRobotAccounts.add(account);
+            }
+
+            // 通知机器人变更
+            if (!addedOrUpdateRobotAccounts.isEmpty()) {
+                // log
+                DataCacheManager.Log(addedOrUpdateRobotAccounts, "on add robot", UIKitLogTag.ROBOT_CACHE);
+            }
+
+            // 处理被删除的机器人
+            if (!deletedRobotAccounts.isEmpty()) {
+                // update cache
+                for (String a : deletedRobotAccounts) {
+                    robotMap.remove(a);
+                }
+
+                // log
+                DataCacheManager.Log(deletedRobotAccounts, "on delete robots", UIKitLogTag.FRIEND_CACHE);
+            }
+        }
+    };
+
+    public static RobotInfoCache getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    /**
+     * ****************************** 聊天室独立模式，拉取机器人信息逻辑 ******************************
+     */
 
     /**
      * 初始化&清理
@@ -64,17 +108,6 @@ public class RobotInfoCache {
     }
 
     /**
-     * ****************************** 聊天室独立模式，拉取机器人信息逻辑 ******************************
-     */
-
-    /**
-     * 拉取机器人信息最短间隔 5min
-     */
-    private static final long MIN_PULL_ROBOT_INTERNAL = 5 * 60 * 1000;
-
-    private static long lastTime = 0L;
-
-    /**
      * 独立模式进入聊天室之后调用
      * <p>
      * 最短时间间隔 MIN_PULL_ROBOT_INTERNAL
@@ -83,7 +116,7 @@ public class RobotInfoCache {
      */
     public void pullRobotListIndependent(String roomId, final SimpleCallback<List<NimRobotInfo>> callback) {
         if (System.currentTimeMillis() - lastTime < MIN_PULL_ROBOT_INTERNAL) {
-            if (callback != null){
+            if (callback != null) {
                 callback.onResult(true, getAllRobotAccounts(), 200);
             }
             return;
@@ -140,6 +173,10 @@ public class RobotInfoCache {
         return new ArrayList<>(robotMap.values());
     }
 
+    /**
+     * ****************************** 缓存机器人变更监听&通知 ******************************
+     */
+
     public NimRobotInfo getRobotByAccount(String account) {
         if (TextUtils.isEmpty(account)) {
             return null;
@@ -149,51 +186,11 @@ public class RobotInfoCache {
     }
 
     /**
-     * ****************************** 缓存机器人变更监听&通知 ******************************
-     */
-
-    /**
      * 缓存监听SDK
      */
     public void registerObservers(boolean register) {
         NIMClient.getService(RobotServiceObserve.class).observeRobotChangedNotify(robotChangedNotifyObserver, register);
     }
-
-    /**
-     * 监听机器人变化
-     */
-    private Observer<RobotChangedNotify> robotChangedNotifyObserver = new Observer<RobotChangedNotify>() {
-        @Override
-        public void onEvent(RobotChangedNotify robotChangedNotify) {
-            List<NimRobotInfo> addedOrUpdatedRobots = robotChangedNotify.getAddedOrUpdatedRobots();
-            List<String> addedOrUpdateRobotAccounts = new ArrayList<>(addedOrUpdatedRobots.size());
-            List<String> deletedRobotAccounts = robotChangedNotify.getDeletedRobots();
-
-            String account;
-            for (NimRobotInfo f : addedOrUpdatedRobots) {
-                account = f.getAccount();
-                robotMap.put(account, f);
-                addedOrUpdateRobotAccounts.add(account);
-            }
-
-            // 通知机器人变更
-            if (!addedOrUpdateRobotAccounts.isEmpty()) {
-                // log
-                DataCacheManager.Log(addedOrUpdateRobotAccounts, "on add robot", UIKitLogTag.ROBOT_CACHE);
-            }
-
-            // 处理被删除的机器人
-            if (!deletedRobotAccounts.isEmpty()) {
-                // update cache
-                for (String a : deletedRobotAccounts) {
-                    robotMap.remove(a);
-                }
-
-                // log
-                DataCacheManager.Log(deletedRobotAccounts, "on delete robots", UIKitLogTag.FRIEND_CACHE);
-            }
-        }
-    };
 
     /**
      * ************************************ 单例 **********************************************

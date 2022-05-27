@@ -3,13 +3,10 @@ package com.pro.maluli.module.myself.setting.changeBindMobile.presenter;
 import android.app.Activity;
 import android.content.Context;
 
-import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.gson.Gson;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
-import com.pro.maluli.common.utils.AcacheUtil;
 
 import io.reactivex.functions.Consumer;
 
@@ -19,9 +16,9 @@ public class ChangeBindMobilePresenter extends BasePresenter<IChangeBindMobileCo
     }
 
     @Override
-    public void getVerifiCationCode(String mobile,String codeType) {
+    public void getVerifiCationCode(String mobile, String codeType) {
         showLoading(mContext);
-        add(mService.getVerificationCode(mobile,codeType)
+        add(mService.getVerificationCode(mobile, codeType)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

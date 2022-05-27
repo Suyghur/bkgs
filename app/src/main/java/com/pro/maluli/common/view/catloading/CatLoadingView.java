@@ -20,6 +20,19 @@ import com.pro.maluli.R;
 public class CatLoadingView extends DialogFragment {
 
     public static CatLoadingView catLoadingView;
+    /**
+     * 消失延迟时间 ms
+     */
+    public long dismissDelayTime = 100;
+    /**
+     * 最长等待时间
+     */
+    public long timeOutTime = -1;
+    private Animation operatingAnim, eye_left_Anim, eye_right_Anim;
+    private Dialog mDialog;
+    private View mouse, eye_left, eye_right;
+    private EyelidView eyelid_left, eyelid_right;
+    private GraduallyTextView mGraduallyTextView;
 
     public CatLoadingView() {
     }
@@ -37,25 +50,6 @@ public class CatLoadingView extends DialogFragment {
         }
         return catLoadingView;
     }
-
-    /**
-     * 消失延迟时间 ms
-     */
-    public long dismissDelayTime = 100;
-    /**
-     * 最长等待时间
-     */
-    public long timeOutTime = -1;
-
-    private Animation operatingAnim, eye_left_Anim, eye_right_Anim;
-
-    private Dialog mDialog;
-
-    private View mouse, eye_left, eye_right;
-
-    private EyelidView eyelid_left, eyelid_right;
-
-    private GraduallyTextView mGraduallyTextView;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

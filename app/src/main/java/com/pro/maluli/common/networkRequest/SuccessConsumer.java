@@ -20,10 +20,10 @@ public abstract class SuccessConsumer<T> implements Consumer<T> {
         BaseResponse baseResponse = (BaseResponse) response;
         int code = baseResponse.getCode();
         if (code == ResponseCode.SUCCESS
-                ||code == ResponseCode.NO_LOGIN_PWD
-                || code==ResponseCode.BIND_MOBILE
-                ||code==ResponseCode.PAY_LIVE
-                ||code==ResponseCode.NO_MONEY) {
+                || code == ResponseCode.NO_LOGIN_PWD
+                || code == ResponseCode.BIND_MOBILE
+                || code == ResponseCode.PAY_LIVE
+                || code == ResponseCode.NO_MONEY) {
             onSuccess(response);
         } else if (code == ResponseCode.NO_LOGIN) {
             AcacheUtil.loginOut(BKGSApplication.getApp());

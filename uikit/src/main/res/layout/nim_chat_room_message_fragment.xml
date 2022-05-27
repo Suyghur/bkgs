@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/messageActivityLayout"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/messageActivityLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent">
 
     <LinearLayout
         android:id="@+id/messageActivityBottomLayout"
@@ -15,15 +15,15 @@
         <include
             android:id="@+id/layout_reply"
             layout="@layout/nim_message_activity_reply_layout"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <include layout="@layout/nim_message_activity_text_layout"/>
+        <include layout="@layout/nim_message_activity_text_layout" />
 
         <com.netease.nim.uikit.business.session.emoji.EmoticonPickerView
             android:id="@+id/emoticon_picker_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 
     <FrameLayout
@@ -36,8 +36,7 @@
             android:id="@+id/messageListView"
             style="@style/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/layoutPlayAudio"
@@ -54,7 +53,7 @@
                 android:layout_gravity="center"
                 android:text="@string/timer_default"
                 android:textColor="@color/white"
-                android:textSize="45sp"/>
+                android:textSize="45sp" />
 
             <LinearLayout
                 android:id="@+id/timer_tip_container"
@@ -70,7 +69,7 @@
                     android:layout_gravity="center"
                     android:text="@string/recording_cancel"
                     android:textColor="@color/white"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
             </LinearLayout>
         </FrameLayout>
     </FrameLayout>

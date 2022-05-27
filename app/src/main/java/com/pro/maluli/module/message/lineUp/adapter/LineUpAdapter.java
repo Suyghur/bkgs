@@ -9,7 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.entity.LineUpEntity;
-import com.pro.maluli.common.entity.ReserveMessageEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +22,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LineUpAdapter extends BaseQuickAdapter<LineUpEntity.ListBean, LineUpAdapter.ViewHolder> {
     private Context context;
 
+    public LineUpAdapter(List<LineUpEntity.ListBean> data, Context context) {
+        super(R.layout.item_line_up, data);
+        this.context = context;
+    }
+
     @NotNull
     @Override
     protected ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public LineUpAdapter(List<LineUpEntity.ListBean> data, Context context) {
-        super(R.layout.item_line_up, data);
-        this.context = context;
     }
 
     @Override

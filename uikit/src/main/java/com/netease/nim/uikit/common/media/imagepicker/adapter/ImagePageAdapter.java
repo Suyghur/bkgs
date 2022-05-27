@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.viewpager.widget.PagerAdapter;
-import com.github.chrisbanes.photoview.PhotoView;
 
+import androidx.viewpager.widget.PagerAdapter;
+
+import com.github.chrisbanes.photoview.PhotoView;
 import com.netease.nim.uikit.common.media.imagepicker.ImagePicker;
 import com.netease.nim.uikit.common.media.imagepicker.Utils;
 import com.netease.nim.uikit.common.media.model.GLImage;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 
 public abstract class ImagePageAdapter extends PagerAdapter {
 
-    private int screenWidth;
-    private int screenHeight;
+    public PhotoViewClickListener listener;
     protected ArrayList<GLImage> images;
     protected Activity mActivity;
-    public PhotoViewClickListener listener;
+    private int screenWidth;
+    private int screenHeight;
 
     public ImagePageAdapter(Activity activity, ArrayList<GLImage> images) {
         this.mActivity = activity;

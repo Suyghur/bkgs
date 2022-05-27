@@ -24,6 +24,14 @@ public class ReserveEntity implements Serializable {
         this.banner = banner;
     }
 
+    @Override
+    public String toString() {
+        return "ReserveEntity{" +
+                "info=" + info +
+                ", banner=" + banner +
+                '}';
+    }
+
     public static class InfoBean implements Serializable {
         private int is_live;
         private int is_report;
@@ -179,6 +187,29 @@ public class ReserveEntity implements Serializable {
             this.appoint_list = appoint_list;
         }
 
+        @Override
+        public String toString() {
+            return "InfoBean{" +
+                    "is_live=" + is_live +
+                    ", is_report=" + is_report +
+                    ", is_appoint=" + is_appoint +
+                    ", is_self=" + is_self +
+                    ", is_sub=" + is_sub +
+                    ", anchor_no='" + anchor_no + '\'' +
+                    ", avatar='" + avatar + '\'' +
+                    ", nickname='" + nickname + '\'' +
+                    ", level='" + level + '\'' +
+                    ", appoint_desc='" + appoint_desc + '\'' +
+                    ", is_progress=" + is_progress +
+                    ", progress_text='" + progress_text + '\'' +
+                    ", appoint_time='" + appoint_time + '\'' +
+                    ", appoint_num=" + appoint_num +
+                    ", report_num=" + report_num +
+                    ", live=" + live +
+                    ", appoint_list=" + appoint_list +
+                    '}';
+        }
+
         public static class LiveBean implements Serializable {
             private int id;
             private int type;
@@ -316,29 +347,6 @@ public class ReserveEntity implements Serializable {
                         '}';
             }
         }
-
-        @Override
-        public String toString() {
-            return "InfoBean{" +
-                    "is_live=" + is_live +
-                    ", is_report=" + is_report +
-                    ", is_appoint=" + is_appoint +
-                    ", is_self=" + is_self +
-                    ", is_sub=" + is_sub +
-                    ", anchor_no='" + anchor_no + '\'' +
-                    ", avatar='" + avatar + '\'' +
-                    ", nickname='" + nickname + '\'' +
-                    ", level='" + level + '\'' +
-                    ", appoint_desc='" + appoint_desc + '\'' +
-                    ", is_progress=" + is_progress +
-                    ", progress_text='" + progress_text + '\'' +
-                    ", appoint_time='" + appoint_time + '\'' +
-                    ", appoint_num=" + appoint_num +
-                    ", report_num=" + report_num +
-                    ", live=" + live +
-                    ", appoint_list=" + appoint_list +
-                    '}';
-        }
     }
 
     public static class BannerBean implements Serializable {
@@ -408,13 +416,5 @@ public class ReserveEntity implements Serializable {
                     ", created_at='" + created_at + '\'' +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ReserveEntity{" +
-                "info=" + info +
-                ", banner=" + banner +
-                '}';
     }
 }

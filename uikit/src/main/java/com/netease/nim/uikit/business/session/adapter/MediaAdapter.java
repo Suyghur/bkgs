@@ -1,11 +1,12 @@
 package com.netease.nim.uikit.business.session.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.netease.nim.uikit.R;
@@ -32,41 +33,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private Context context;
     private List<MediaItem> mediaItems;
-
-    public static class MediaItem {
-        private boolean isDate;
-        private IMMessage message;
-        private long time;
-
-        public MediaItem(IMMessage message, boolean isDate) {
-            this.isDate = isDate;
-            this.message = message;
-        }
-
-        public boolean isDate() {
-            return isDate;
-        }
-
-        public void setDate(boolean date) {
-            isDate = date;
-        }
-
-        public IMMessage getMessage() {
-            return message;
-        }
-
-        public void setMessage(IMMessage message) {
-            this.message = message;
-        }
-
-        public void setTime(long time) {
-            this.time = time;
-        }
-
-        public long getTime() {
-            return time;
-        }
-    }
 
     public MediaAdapter(Context context, List<MediaItem> mediaItems) {
         this.context = context;
@@ -139,5 +105,40 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public boolean isDateType(int position) {
         return getItemViewType(position) == ITEM_VIEW_TYPE_DATE;
+    }
+
+    public static class MediaItem {
+        private boolean isDate;
+        private IMMessage message;
+        private long time;
+
+        public MediaItem(IMMessage message, boolean isDate) {
+            this.isDate = isDate;
+            this.message = message;
+        }
+
+        public boolean isDate() {
+            return isDate;
+        }
+
+        public void setDate(boolean date) {
+            isDate = date;
+        }
+
+        public IMMessage getMessage() {
+            return message;
+        }
+
+        public void setMessage(IMMessage message) {
+            this.message = message;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
     }
 }

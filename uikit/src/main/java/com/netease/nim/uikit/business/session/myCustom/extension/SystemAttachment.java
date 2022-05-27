@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class SystemAttachment extends CustomAttachment {
 
-    private String tips;//  提示信息
-
     private static final String TIPS = "tips";
+    private String tips;//  提示信息
 
     public SystemAttachment() {
         super(CustomAttachmentType.SystemMsg);

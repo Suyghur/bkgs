@@ -19,15 +19,10 @@ public class RobotResponseContent implements Serializable {
     public static final String FLAG_FAQ = "faq";
 
     // 机器人下行消息实体，xml 格式
-
-    private String flag;
-
-    private String s;
-
-    private List<RobotBotContent> botContents;
-
-    private List<RobotFaqContent> faqContents;
-
+    public static final String RES_TYPE_BOT_TEXT = "01";
+    public static final String RES_TYPE_BOT_IMAGE = "02";
+    public static final String RES_TYPE_BOT_QUICK = "03";
+    public static final String RES_TYPE_BOT_COMP = "11";
     private static final String KEY_MSG = "message";
     private static final String KEY_CONTENT = "content";
     private static final String KEY_FLAG = "flag";
@@ -40,40 +35,10 @@ public class RobotResponseContent implements Serializable {
     private static final String KEY_ANSWER_TYPE = "answer_type";
     private static final String QUERY = "query";
     private static final String KEY_SCORE = "score";
-
-    public static final String RES_TYPE_BOT_TEXT = "01";
-    public static final String RES_TYPE_BOT_IMAGE = "02";
-    public static final String RES_TYPE_BOT_QUICK = "03";
-    public static final String RES_TYPE_BOT_COMP = "11";
-
-    public String getFlag() {
-        return flag;
-    }
-
-    public List<RobotBotContent> getBotContents() {
-        return botContents;
-    }
-
-    public List<RobotFaqContent> getFaqContents() {
-        return faqContents;
-    }
-
-    public String getMaxScoreFaqContent() {
-        if (faqContents == null) {
-            return null;
-        }
-        int maxScore = -1;
-        RobotFaqContent result = null;
-
-        for (RobotFaqContent faqContent : faqContents) {
-            if (faqContent.getScore() > maxScore) {
-                result = faqContent;
-                maxScore = result.getScore();
-            }
-        }
-
-        return result == null ? null : result.getFaqMsg();
-    }
+    private String flag;
+    private String s;
+    private List<RobotBotContent> botContents;
+    private List<RobotFaqContent> faqContents;
 
     public RobotResponseContent(String jsonString) {
         if (jsonString == null) {
@@ -115,5 +80,34 @@ public class RobotResponseContent implements Serializable {
                 }
             }
         }
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public List<RobotBotContent> getBotContents() {
+        return botContents;
+    }
+
+    public List<RobotFaqContent> getFaqContents() {
+        return faqContents;
+    }
+
+    public String getMaxScoreFaqContent() {
+        if (faqContents == null) {
+            return null;
+        }
+        int maxScore = -1;
+        RobotFaqContent result = null;
+
+        for (RobotFaqContent faqContent : faqContents) {
+            if (faqContent.getScore() > maxScore) {
+                result = faqContent;
+                maxScore = result.getScore();
+            }
+        }
+
+        return result == null ? null : result.getFaqMsg();
     }
 }

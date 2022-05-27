@@ -3,33 +3,21 @@ package com.pro.maluli.common.view.dialogview;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.ProtocolDetailEntity;
 import com.pro.maluli.common.entity.YouthEntity;
-import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.myselfView.ProgressWebView;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
-import com.pro.maluli.module.myself.userAgreement.protocolDetail.ProtocolDetailAct;
 
 
 /**
@@ -46,6 +34,7 @@ public class TeenagerDialog extends DialogFragment implements View.OnClickListen
     private LinearLayout gotoTeenagerLL;
     private YouthEntity youthEntity;
     private RoundedImageView bottomImg;
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -80,14 +69,8 @@ public class TeenagerDialog extends DialogFragment implements View.OnClickListen
         return mDetailDialog;
     }
 
-    private OnFreezeTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -110,5 +93,9 @@ public class TeenagerDialog extends DialogFragment implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 }

@@ -2,10 +2,8 @@ package com.pro.maluli.common.view.dialogview;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,6 +23,7 @@ public class DeleteDialog extends DialogFragment implements View.OnClickListener
     private Dialog mDetailDialog;
     private RelativeLayout finishRl;
     private TextView deleteCommentTv, cancelTv;
+    private OnBaseTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -50,16 +49,9 @@ public class DeleteDialog extends DialogFragment implements View.OnClickListener
         return mDetailDialog;
     }
 
-    private OnBaseTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnBaseTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
     }
-
-    public interface OnBaseTipsListener {
-        void comfirm();//0去申述，2去绑定
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -75,5 +67,10 @@ public class DeleteDialog extends DialogFragment implements View.OnClickListener
                 }
                 break;
         }
+    }
+
+
+    public interface OnBaseTipsListener {
+        void comfirm();//0去申述，2去绑定
     }
 }

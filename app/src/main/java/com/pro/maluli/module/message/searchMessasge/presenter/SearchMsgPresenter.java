@@ -2,9 +2,6 @@ package com.pro.maluli.module.message.searchMessasge.presenter;
 
 import android.content.Context;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.netease.nimlib.sdk.InvocationFuture;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
@@ -15,7 +12,6 @@ import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
-import com.pro.maluli.common.entity.LiveListEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 
@@ -24,13 +20,11 @@ import java.util.List;
 import io.reactivex.functions.Consumer;
 
 public class SearchMsgPresenter extends BasePresenter<ISearchMsgContraction.View> implements ISearchMsgContraction.Presenter {
+    public int page;
+    public String keyword;
     public SearchMsgPresenter(Context context) {
         super(context);
     }
-
-    public int page;
-    public String  keyword;
-
 
     @Override
     public void getBkDetail() {
@@ -41,7 +35,7 @@ public class SearchMsgPresenter extends BasePresenter<ISearchMsgContraction.View
         option.setLimit(100);
 
         NIMClient.getService(MsgService.class).searchAllMessage(option)
-                .setCallback(new RequestCallbackWrapper<List<IMMessage>>(){
+                .setCallback(new RequestCallbackWrapper<List<IMMessage>>() {
                     @Override
                     public void onResult(int code, List<IMMessage> result, Throwable exception) {
                         mView.setBkDetailSuccess(result);
@@ -52,12 +46,13 @@ public class SearchMsgPresenter extends BasePresenter<ISearchMsgContraction.View
 //        InvocationFuture<List<NimUserInfo>> searchUserInfosByKeyword(keyword);
 
     }
+
     @Override
     public void searchUser() {
         NIMClient.getService(UserService.class).searchUserInfosByKeyword(keyword).setCallback(new RequestCallback<List<NimUserInfo>>() {
             @Override
             public void onSuccess(List<NimUserInfo> param) {
-               mView.setUserNameInfo(param);
+                mView.setUserNameInfo(param);
             }
 
             @Override
@@ -73,7 +68,7 @@ public class SearchMsgPresenter extends BasePresenter<ISearchMsgContraction.View
     }
 
     //    message/search
-    public  void search(String searchKeyword){
+    public void search(String searchKeyword) {
         add(mService.searchMSg(searchKeyword)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {

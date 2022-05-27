@@ -24,59 +24,56 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.util.Log;
+
 import com.marvhong.videoeffect.filter.base.GPUVideoFilter;
 import com.marvhong.videoeffect.utils.TextureRotationUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 @TargetApi(11)
-public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailableListener {
+public class GPUVideoRenderer implements Renderer, SurfaceTexture.OnFrameAvailableListener {
 
+    public static final int NO_VIDEO = -1;
+    private static final String TAG = GPUVideoRenderer.class.getSimpleName();
     private final float[] vertexData = {
-        1f, -1f, 0f,
-        -1f, -1f, 0f,
-        1f, 1f, 0f,
-        -1f, 1f, 0f
+            1f, -1f, 0f,
+            -1f, -1f, 0f,
+            1f, 1f, 0f,
+            -1f, 1f, 0f
     };
     private final float[] textureVertexData = {
-        1f, 0f,
-        0f, 0f,
-        1f, 1f,
-        0f, 1f
+            1f, 0f,
+            0f, 0f,
+            1f, 1f,
+            0f, 1f
     };
-
-    private static final String TAG = GPUVideoRenderer.class.getSimpleName();
-    public static final int NO_VIDEO = -1;
-    private GPUVideoFilter mFilter;
-    private int mGLTextureId = NO_VIDEO;
-    private SurfaceTexture mSurfaceTexture = null;
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
     private final FloatBuffer mGlTextureVertexBuffer;
-    private IntBuffer mGLRgbBuffer;
-    private boolean mUpdateSurface = false;
-
-    private int mOutputWidth;
-    private int mOutputHeight;
-
     private final Queue<Runnable> mRunOnDraw;
     private final Queue<Runnable> mRunOnDrawEnd;
-
-    private float mBackgroundRed = 0;
-    private float mBackgroundGreen = 0;
-    private float mBackgroundBlue = 0;
-
-    private IVideoSurface mVideoSurface;
-
     private final float[] mStMatrix = new float[16];
     private final float[] mMVPMatrix = new float[16];
     private final float[] projectionMatrix = new float[16];
+    private GPUVideoFilter mFilter;
+    private int mGLTextureId = NO_VIDEO;
+    private SurfaceTexture mSurfaceTexture = null;
+    private IntBuffer mGLRgbBuffer;
+    private boolean mUpdateSurface = false;
+    private int mOutputWidth;
+    private int mOutputHeight;
+    private float mBackgroundRed = 0;
+    private float mBackgroundGreen = 0;
+    private float mBackgroundBlue = 0;
+    private IVideoSurface mVideoSurface;
 
     public GPUVideoRenderer(final GPUVideoFilter filter, IVideoSurface videoSurface) {
         mFilter = filter;
@@ -94,9 +91,9 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
                 .put(vertexData);
 
         mGlTextureVertexBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_NO_ROTATION.length * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(TextureRotationUtil.TEXTURE_NO_ROTATION);
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(TextureRotationUtil.TEXTURE_NO_ROTATION);
 
         mVideoSurface = videoSurface;
     }
@@ -110,7 +107,7 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
         mSurfaceTexture.setOnFrameAvailableListener(this); //监听是否有新的一帧数据到来
         mFilter.init();
 
-        if(mVideoSurface != null) {
+        if (mVideoSurface != null) {
             mVideoSurface.onCreated(mSurfaceTexture);
         }
 
@@ -167,9 +164,9 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
     /**
      * Sets the background color
      *
-     * @param red red color value
+     * @param red   red color value
      * @param green green color value
-     * @param blue red color value
+     * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
         mBackgroundRed = red;
@@ -185,6 +182,9 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
         }
     }
 
+    public GPUVideoFilter getFilter() {
+        return mFilter;
+    }
 
     public void setFilter(final GPUVideoFilter filter) {
         runOnDraw(new Runnable() {
@@ -203,11 +203,6 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
         });
     }
 
-    public GPUVideoFilter getFilter(){
-        return mFilter;
-    }
-
-
     protected int getFrameWidth() {
         return mOutputWidth;
     }
@@ -215,7 +210,6 @@ public class GPUVideoRenderer implements Renderer,SurfaceTexture.OnFrameAvailabl
     protected int getFrameHeight() {
         return mOutputHeight;
     }
-
 
 
     protected void runOnDraw(final Runnable runnable) {

@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class LianmaiEntity implements Serializable {
     private String accid;
     private String avatar;
+    private InvitedEvent invitedEvent;
 
     public InvitedEvent getInvitedEvent() {
         return invitedEvent;
@@ -15,8 +16,6 @@ public class LianmaiEntity implements Serializable {
     public void setInvitedEvent(InvitedEvent invitedEvent) {
         this.invitedEvent = invitedEvent;
     }
-
-    private InvitedEvent invitedEvent;
 
     public String getAccid() {
         return accid;

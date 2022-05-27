@@ -22,7 +22,6 @@ import android.util.AttributeSet;
 import android.util.Pair;
 import android.widget.TextView;
 
-
 import com.pro.maluli.R;
 
 import java.util.ArrayList;

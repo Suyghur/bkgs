@@ -13,10 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.netease.lava.nertc.sdk.NERtcConstants;
-import com.netease.lava.nertc.sdk.NERtcEx;
-import com.netease.lava.nertc.sdk.video.NERtcRemoteVideoStreamType;
-import com.netease.lava.nertc.sdk.video.NERtcVideoView;
 import com.netease.neliveplayer.playerkit.sdk.PlayerManager;
 import com.netease.neliveplayer.playerkit.sdk.VodPlayer;
 import com.netease.neliveplayer.playerkit.sdk.model.SDKOptions;
@@ -27,7 +23,6 @@ import com.netease.neliveplayer.playerkit.sdk.view.AdvanceTextureView;
 import com.netease.neliveplayer.proxy.config.NEPlayerConfig;
 import com.pro.maluli.R;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
-import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewListener;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewManager;
 
@@ -40,11 +35,17 @@ import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.Floati
 public class FloatingViewMoreService extends Service implements FloatingViewListener {
 
     private static final String TAG = "FloatingViewService";
-
+    protected VodPlayer player;
     private FloatingViewManager mFloatingViewManager;
-
     private AdvanceTextureView textureView;
     private Long uid;
+    /**
+     * 拉流播放器
+     *
+     * @return
+     */
+    private SDKOptions config;
+    private CallBack callback;
 
     @Override
     public void onCreate() {
@@ -102,7 +103,6 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -122,25 +122,6 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
     public IBinder onBind(Intent intent) {
         return new MyBinder();
     }
-
-
-    public class MyBinder extends Binder {
-        public FloatingViewMoreService getService() {
-            return FloatingViewMoreService.this;
-        }
-
-
-        public void setData(String url) {//写一个公共方法，用来对data数据赋值。
-            initPlaye2r(url);
-        }
-    }
-    /**
-     * 拉流播放器
-     *
-     * @return
-     */
-    private SDKOptions config;
-    protected VodPlayer player;
     //初始化拉流播放器
 
     private void initPlaye2r(String rtmp_pull_url) {
@@ -168,6 +149,7 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
 //        player.registerPlayerObserver(playerObserver, true);
         player.start();
     }
+
     /**
      * {@inheritDoc}
      */
@@ -197,13 +179,22 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
         Log.d(TAG, "悬浮窗已销毁");
     }
 
-    private CallBack callback;
-
     public void setCallback(CallBack callback) {
         this.callback = callback;
     }
 
     public static interface CallBack {
         void onDataChanged(String data);
+    }
+
+    public class MyBinder extends Binder {
+        public FloatingViewMoreService getService() {
+            return FloatingViewMoreService.this;
+        }
+
+
+        public void setData(String url) {//写一个公共方法，用来对data数据赋值。
+            initPlaye2r(url);
+        }
     }
 }

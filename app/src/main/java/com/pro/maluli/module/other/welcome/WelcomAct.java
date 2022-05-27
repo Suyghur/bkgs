@@ -1,6 +1,5 @@
 package com.pro.maluli.module.other.welcome;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,10 +23,10 @@ import com.pro.maluli.common.entity.WelcomInfoEntity;
 import com.pro.maluli.common.utils.AntiShake;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.myselfView.CustomVideoView;
+import com.pro.maluli.ktx.ext.BrowserExtKt;
 import com.pro.maluli.module.main.base.MainActivity;
 import com.pro.maluli.module.other.welcome.presenter.IWelcomContraction;
 import com.pro.maluli.module.other.welcome.presenter.WelcomPresenter;
-import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.lang.ref.WeakReference;
 
@@ -39,6 +38,7 @@ import butterknife.OnClick;
  * @date 2021/6/15
  */
 public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPresenter> implements View.OnClickListener, IWelcomContraction.View {
+    private static int TIME = 5;
     @BindView(R.id.videoview)
     CustomVideoView videoview;
     @BindView(R.id.startIv)
@@ -49,12 +49,11 @@ public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPr
     TextView checkDetailTv;
     @BindView(R.id.splash_layout)
     RelativeLayout splash_layout;
-    private static int TIME = 5;
-    private String linkUrl;
     /**
      * 获取Looper并传递
      */
     MyHandler handler = new MyHandler(Looper.myLooper(), this);
+    private String linkUrl;
 
     @Override
     public void setWelcomInfo(WelcomInfoEntity welcomInfo) {
@@ -84,46 +83,6 @@ public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPr
             gotoActivity(MainActivity.class, true);
         }
         linkUrl = welcomInfo.getLink();
-    }
-
-
-    /**
-     * 新的handler类要声明成静态类
-     */
-    static class MyHandler extends Handler {
-        WeakReference<WelcomAct> mactivity;
-
-        //构造函数，传来的是外部类的this
-        public MyHandler(@NonNull Looper looper, WelcomAct activity) {
-            super(looper);//调用父类的显式指明的构造函数
-            mactivity = new WeakReference<WelcomAct>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            WelcomAct nactivity = mactivity.get();
-            if (nactivity == null) {
-                return;//avtivity都没了还处理个XXX
-            }
-
-            switch (msg.what) {
-                case 1:
-                    TIME--;
-                    nactivity.mTime.setText("跳过" + TIME + "s");
-                    if (TIME > 0) {
-                        Message message = nactivity.handler.obtainMessage(1);
-                        nactivity.handler.sendMessageDelayed(message, 1000);      // send message
-                    } else {
-                        //跳转到主界面
-                        nactivity.gotoActivity(MainActivity.class, true);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     @Override
@@ -171,17 +130,11 @@ public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPr
                     ToastUtils.showShort("链接错误，无法跳转");
                     return;
                 }
-                try {
-                    //方式一：代码实现跳转
-                    Intent intent = new Intent();
-                    intent.setAction("android.intent.action.VIEW");
-                    Uri content_url = Uri.parse(linkUrl);//此处填链接
-                    intent.setData(content_url);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    ToastUtils.showShort("链接错误，无法跳转");
-                }
 
+                if (!linkUrl.startsWith("http://") && !linkUrl.startsWith("https://")) {
+                    linkUrl = "http://" + linkUrl;
+                }
+                BrowserExtKt.openBrowser(this, linkUrl);
                 break;
         }
     }
@@ -193,10 +146,7 @@ public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPr
             public void run() {
                 presenter.getWelcomInfo();
             }
-        },1000);
-
-
-//        startAnimation();
+        }, 1000);
     }
 
     private void startAnimation() {
@@ -218,5 +168,44 @@ public class WelcomAct extends BaseMvpActivity<IWelcomContraction.View, WelcomPr
             videoview.stopPlayback();
         }
         super.onStop();
+    }
+
+    /**
+     * 新的handler类要声明成静态类
+     */
+    static class MyHandler extends Handler {
+        WeakReference<WelcomAct> mactivity;
+
+        //构造函数，传来的是外部类的this
+        public MyHandler(@NonNull Looper looper, WelcomAct activity) {
+            super(looper);//调用父类的显式指明的构造函数
+            mactivity = new WeakReference<WelcomAct>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            WelcomAct nactivity = mactivity.get();
+            if (nactivity == null) {
+                return;//avtivity都没了还处理个XXX
+            }
+
+            switch (msg.what) {
+                case 1:
+                    TIME--;
+                    nactivity.mTime.setText("跳过" + TIME + "s");
+                    if (TIME > 0) {
+                        Message message = nactivity.handler.obtainMessage(1);
+                        nactivity.handler.sendMessageDelayed(message, 1000);      // send message
+                    } else {
+                        //跳转到主界面
+                        nactivity.gotoActivity(MainActivity.class, true);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

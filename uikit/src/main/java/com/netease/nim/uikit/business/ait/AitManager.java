@@ -33,12 +33,28 @@ public class AitManager implements TextWatcher {
     private boolean ignoreTextChange = false;
 
     private AitTextChangeListener listener;
+    private int editTextStart;
+    private int editTextCount;
+    private int editTextBefore;
+    private boolean delete;
 
     public AitManager(Context context, String tid, boolean robot) {
         this.context = context;
         this.tid = tid;
         this.robot = robot;
         aitContactsModel = new AitContactsModel();
+    }
+
+    // 群昵称 > 用户昵称 > 账号
+    private static String getAitTeamMemberName(TeamMember member) {
+        if (member == null) {
+            return "";
+        }
+        String memberNick = member.getTeamNick();
+        if (!TextUtils.isEmpty(memberNick)) {
+            return memberNick;
+        }
+        return UserInfoHelper.getUserName(member.getAccount());
     }
 
     public void setTextChangeListener(AitTextChangeListener listener) {
@@ -88,18 +104,6 @@ public class AitManager implements TextWatcher {
             }
             insertAitMemberInner(account, name, type, curPos, false);
         }
-    }
-
-    // 群昵称 > 用户昵称 > 账号
-    private static String getAitTeamMemberName(TeamMember member) {
-        if (member == null) {
-            return "";
-        }
-        String memberNick = member.getTeamNick();
-        if (!TextUtils.isEmpty(memberNick)) {
-            return memberNick;
-        }
-        return UserInfoHelper.getUserName(member.getAccount());
     }
 
     public void insertAitRobot(String account, String name, int start) {
@@ -185,11 +189,6 @@ public class AitManager implements TextWatcher {
             aitContactsModel.onInsertText(start, s.toString());
         }
     }
-
-    private int editTextStart;
-    private int editTextCount;
-    private int editTextBefore;
-    private boolean delete;
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {

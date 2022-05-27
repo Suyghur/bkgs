@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,7 +14,6 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -24,13 +21,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.mob.MobSDK;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.constant.ACEConstant;
@@ -77,7 +72,47 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
     TextView xieyiTv;
     @BindView(R.id.successImg)
     ImageView successImg;
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!TextUtils.isEmpty(inputPhoneEt.getText().toString().trim())
+                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
+                loginTv.setSelected(true);
+            } else {
+                loginTv.setSelected(false);
+
+            }
+
+        }
+    };
+    //要用Handler回到主线程操作UI，否则会报错
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                //QQ登陆
+                case 1:
+                    String weChatData = (String) msg.obj;
+                    QQWeChatBind("3", weChatData);
+                    break;
+                //微信登录
+                case 2:
+                    String weChatData1 = (String) msg.obj;
+                    QQWeChatBind("4", weChatData1);
+                    break;
+            }
+        }
+    };
 
     @Override
     public LoginPresenter initPresenter() {
@@ -106,7 +141,7 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(str);
-        final int start = str.indexOf("《")+1;//第一个出现的位置
+        final int start = str.indexOf("《") + 1;//第一个出现的位置
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -129,30 +164,6 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
         xieyiTv.setMovementMethod(LinkMovementMethod.getInstance());
         xieyiTv.setText(ssb, TextView.BufferType.SPANNABLE);
     }
-
-    TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(inputPhoneEt.getText().toString().trim())
-                    && !TextUtils.isEmpty(inputPwdEt.getText().toString().trim())) {
-                loginTv.setSelected(true);
-            } else {
-                loginTv.setSelected(false);
-
-            }
-
-        }
-    };
 
     @Override
     public void doBusiness() {
@@ -199,16 +210,16 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
             case R.id.loginTv:
                 KeyboardUtils.hideSoftInput(LoginAct.this);
                 if (!RegexUtils.isMobileExact(inputPhoneEt.getText().toString().trim())) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请输入正确的手机号码");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请输入正确的手机号码");
                     return;
                 }
                 if (!StringUtils.validatePhonePass(inputPwdEt.getText().toString().trim())) {
 //                    ToastUtils.showShort("请输入正确的密码");
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请输入正确的密码");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请输入正确的密码");
                     return;
                 }
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 presenter.login(inputPhoneEt.getText().toString().trim(),
@@ -220,14 +231,14 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
             case R.id.loginQQLL://qq登录
 
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 ToolUtils.loginQQ(handler, this);
                 break;
             case R.id.loginWechatLL://微信登录
                 if (!successImg.isSelected()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("请勾选并阅读用户协议");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("请勾选并阅读用户协议");
                     return;
                 }
                 ToolUtils.loginWeChat(handler, this);
@@ -241,25 +252,6 @@ public class LoginAct extends BaseMvpActivity<ILoginContraction.View, LoginPrese
                 break;
         }
     }
-
-    //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                //QQ登陆
-                case 1:
-                    String weChatData = (String) msg.obj;
-                    QQWeChatBind("3", weChatData);
-                    break;
-                //微信登录
-                case 2:
-                    String weChatData1 = (String) msg.obj;
-                    QQWeChatBind("4", weChatData1);
-                    break;
-            }
-        }
-    };
 
     private void QQWeChatBind(String weixin, String weChatData) {
         presenter.login("", weixin, "", weChatData);

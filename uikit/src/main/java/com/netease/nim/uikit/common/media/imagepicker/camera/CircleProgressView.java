@@ -5,11 +5,12 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.Nullable;
 
 import com.netease.nim.uikit.R;
 
@@ -39,6 +40,8 @@ public class CircleProgressView extends View {
     // 圆环宽度
     private float strokeWidth;
     private float currentAngle = 0f;
+    private long initTime = -1;//上一次刷新完成后的时间
+    private boolean isStart = false;
 
     public CircleProgressView(Context context) {
         this(context, null);
@@ -84,9 +87,6 @@ public class CircleProgressView extends View {
         backgroundPaint.setStrokeCap(Paint.Cap.ROUND);
         backgroundPaint.setStrokeWidth(strokeWidth);
     }
-
-    private long initTime = -1;//上一次刷新完成后的时间
-    private boolean isStart = false;
 
     @Override
     protected void onDraw(Canvas canvas) {

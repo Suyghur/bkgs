@@ -13,46 +13,37 @@ import com.netease.nimlib.sdk.media.player.OnPlayListener;
 
 abstract public class BaseAudioControl<T> {
 
-    interface AudioControllerState {
-        int stop = 0;
-        int ready = 1;
-        int playing = 2;
-    }
-
-    private int state;
     protected boolean isEarPhoneModeEnable = true; // 是否是听筒模式
-
-    public interface AudioControlListener {
-        //AudioControl准备就绪，已经postDelayed playRunnable，不等同于AudioPlayer已经开始播放
-        public void onAudioControllerReady(Playable playable);
-
-        /**
-         * 结束播放
-         */
-        public void onEndPlay(Playable playable);
-
-        /**
-         * 显示播放过程中的进度条
-         *
-         * @param curPosition 当前进度，如果传-1则自动获取进度
-         */
-        public void updatePlayingProgress(Playable playable, long curPosition);
-    }
-
     protected AudioControlListener audioControlListener;
-
     protected Context mContext;
     protected AudioPlayer currentAudioPlayer;
     protected Playable currentPlayable;
-
     protected boolean needSeek = false;
     protected long seekPosition;
-
+    protected Handler mHandler = new Handler();
+    private int state;
     private MediaPlayer mSuffixPlayer = null;
     private boolean mSuffix = false;
-    protected Handler mHandler = new Handler();
-
     private BasePlayerListener basePlayerListener = null;
+    private int origAudioStreamType;
+    private int currentAudioStreamType;
+    Runnable playRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            if (currentAudioPlayer == null) {
+                LogUtil.audio("playRunnable run when currentAudioPlayer == null");
+                return;
+            }
+
+            currentAudioPlayer.start(currentAudioStreamType);
+        }
+    };
+
+    public BaseAudioControl(Context context, boolean suffix) {
+        this.mContext = context;
+        this.mSuffix = suffix;
+    }
 
     protected void setOnPlayListener(Playable playingPlayable, AudioControlListener audioControlListener) {
         this.audioControlListener = audioControlListener;
@@ -85,11 +76,6 @@ abstract public class BaseAudioControl<T> {
 
     public AudioControlListener getAudioControlListener() {
         return audioControlListener;
-    }
-
-    public BaseAudioControl(Context context, boolean suffix) {
-        this.mContext = context;
-        this.mSuffix = suffix;
     }
 
     protected void playSuffix() {
@@ -150,22 +136,6 @@ abstract public class BaseAudioControl<T> {
 
         return true;
     }
-
-    Runnable playRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            if (currentAudioPlayer == null) {
-                LogUtil.audio("playRunnable run when currentAudioPlayer == null");
-                return;
-            }
-
-            currentAudioPlayer.start(currentAudioStreamType);
-        }
-    };
-
-    private int origAudioStreamType;
-    private int currentAudioStreamType;
 
     public int getCurrentAudioStreamType() {
         return currentAudioStreamType;
@@ -248,6 +218,52 @@ abstract public class BaseAudioControl<T> {
         } else {
             currentAudioStreamType = origAudioStreamType;
         }
+    }
+
+    public void startPlayAudio(
+            T t,
+            AudioControlListener audioControlListener) {
+        startPlayAudio(t, audioControlListener, getUserSettingAudioStreamType());
+    }
+
+    public void startPlayAudio(
+            T t,
+            AudioControlListener audioControlListener,
+            int audioStreamType) {
+        startPlayAudioDelay(0, t, audioControlListener, audioStreamType);
+    }
+
+    public void startPlayAudioDelay(long delayMillis, T t, AudioControlListener audioControlListener) {
+        startPlayAudioDelay(delayMillis, t, audioControlListener, getUserSettingAudioStreamType());
+    }
+
+    ;
+
+    public abstract void startPlayAudioDelay(long delayMillis, T t, AudioControlListener audioControlListener, int audioStreamType);
+
+    public abstract T getPlayingAudio();
+
+    interface AudioControllerState {
+        int stop = 0;
+        int ready = 1;
+        int playing = 2;
+    }
+
+    public interface AudioControlListener {
+        //AudioControl准备就绪，已经postDelayed playRunnable，不等同于AudioPlayer已经开始播放
+        public void onAudioControllerReady(Playable playable);
+
+        /**
+         * 结束播放
+         */
+        public void onEndPlay(Playable playable);
+
+        /**
+         * 显示播放过程中的进度条
+         *
+         * @param curPosition 当前进度，如果传-1则自动获取进度
+         */
+        public void updatePlayingProgress(Playable playable, long curPosition);
     }
 
     public class BasePlayerListener implements OnPlayListener {
@@ -335,27 +351,4 @@ abstract public class BaseAudioControl<T> {
             playSuffix();
         }
     }
-
-    ;
-
-    public void startPlayAudio(
-            T t,
-            AudioControlListener audioControlListener) {
-        startPlayAudio(t, audioControlListener, getUserSettingAudioStreamType());
-    }
-
-    public void startPlayAudio(
-            T t,
-            AudioControlListener audioControlListener,
-            int audioStreamType) {
-        startPlayAudioDelay(0, t, audioControlListener, audioStreamType);
-    }
-
-    public void startPlayAudioDelay(long delayMillis, T t, AudioControlListener audioControlListener) {
-        startPlayAudioDelay(delayMillis, t, audioControlListener, getUserSettingAudioStreamType());
-    }
-
-    public abstract void startPlayAudioDelay(long delayMillis, T t, AudioControlListener audioControlListener, int audioStreamType);
-
-    public abstract T getPlayingAudio();
 }

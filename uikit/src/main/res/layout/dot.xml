@@ -6,5 +6,5 @@
         android:id="@+id/v_dot"
         android:layout_width="@dimen/dp_size_15"
         android:layout_height="2dp"
-        android:background="@drawable/shape_c7c7c7_4"/>
+        android:background="@drawable/shape_c7c7c7_4" />
 </RelativeLayout>

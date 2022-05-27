@@ -15,13 +15,15 @@ import com.netease.nim.uikit.R;
 import java.util.List;
 
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.VidwHolder> {
+    public onItemOnClickListener onItemOnClickListener;
     private Context context;
     private List<String> imgs;
     private LayoutInflater inflater;
-    public onItemOnClickListener onItemOnClickListener;
 
-    public interface onItemOnClickListener {
-        void onItem(int position);
+    public ReservationAdapter(Context context, List<String> imgs) {
+        this.imgs = imgs;
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
     }
 
     public ReservationAdapter.onItemOnClickListener getOnItemOnClickListener() {
@@ -32,16 +34,10 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         this.onItemOnClickListener = onItemOnClickListener;
     }
 
-    public ReservationAdapter(Context context, List<String> imgs) {
-        this.imgs = imgs;
-        this.context = context;
-        this.inflater = LayoutInflater.from(context);
-    }
-
     @NonNull
     @Override
     public VidwHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new VidwHolder(inflater.inflate(R.layout.item_reservation_img, parent,false));
+        return new VidwHolder(inflater.inflate(R.layout.item_reservation_img, parent, false));
     }
 
     @Override
@@ -60,6 +56,10 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     @Override
     public int getItemCount() {
         return imgs == null ? 0 : imgs.size();
+    }
+
+    public interface onItemOnClickListener {
+        void onItem(int position);
     }
 
     public class VidwHolder extends RecyclerView.ViewHolder {

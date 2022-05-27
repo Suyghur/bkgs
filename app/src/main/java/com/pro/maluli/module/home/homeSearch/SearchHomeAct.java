@@ -17,15 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.entity.LiveListEntity;
-import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
-import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.myselfView.LabelsView;
 import com.pro.maluli.module.home.homeSearch.adapter.SearchHomeAdapter;
@@ -67,9 +64,19 @@ public class SearchHomeAct extends BaseMvpActivity<ISearchHomeContraction.View, 
     LabelsView labeleLV;
     @BindView(R.id.noSearchTv)
     TextView noSearchTv;
+    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
+        @Override
+        public void onSoftInputChanged(int height) {
+            if (height == 0) {
+//                isSHowHistory(false);
+            } else {
+                isSHowHistory(true);
+
+            }
+        }
+    };
     private List<LiveListEntity.DataBean.ListBean> entities = new ArrayList<>();
     private List<SearchEntity.ListBean> lableList = new ArrayList<>();
-
 
     @Override
     public SearchHomePresenter initPresenter() {
@@ -216,18 +223,6 @@ public class SearchHomeAct extends BaseMvpActivity<ISearchHomeContraction.View, 
                 break;
         }
     }
-
-    KeyboardUtils.OnSoftInputChangedListener onSoftInputChangedListener = new KeyboardUtils.OnSoftInputChangedListener() {
-        @Override
-        public void onSoftInputChanged(int height) {
-            if (height == 0) {
-//                isSHowHistory(false);
-            } else {
-                isSHowHistory(true);
-
-            }
-        }
-    };
 
     @Override
     public void doBusiness() {

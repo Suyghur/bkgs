@@ -3,7 +3,6 @@ package com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.base
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.AnchorVideoEntity;
 
 public interface IAnchorVideoContraction extends BaseView {
     interface View extends BaseView {
@@ -11,6 +10,7 @@ public interface IAnchorVideoContraction extends BaseView {
 
         void setAnchorInfo(AnchorInfoEntity data);
     }
+
     interface Presenter extends IClear {
         void getAnchorInfo(String anchorID);
 //        void getAnchorVideo();

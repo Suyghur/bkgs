@@ -12,6 +12,7 @@ import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
  */
 public class ContactSelfFilter implements ContactItemFilter {
     private static final long serialVersionUID = -7818895495933185804L;
+
     @Override
     public boolean filter(AbsContactItem item) {
         IContact contact = ((ContactItem) item).getContact();

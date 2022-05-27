@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <include layout="@layout/top_titlebar_layout" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_147"
@@ -37,6 +38,7 @@
             android:textColor="@color/c_958f94"
             android:textSize="@dimen/sp_10" />
     </RelativeLayout>
+
     <TextView
         android:id="@+id/subMitTv"
         android:layout_width="match_parent"

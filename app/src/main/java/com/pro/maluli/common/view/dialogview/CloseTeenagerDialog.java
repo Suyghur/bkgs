@@ -33,7 +33,7 @@ public class CloseTeenagerDialog extends DialogFragment implements View.OnClickL
     private LinearLayout gotoTeenagerLL;
     private YouthEntity youthEntity;
     private RoundedImageView bottomImg;
-
+    private OnFreezeTipsListener onFreezeTipsListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -68,14 +68,8 @@ public class CloseTeenagerDialog extends DialogFragment implements View.OnClickL
         return mDetailDialog;
     }
 
-    private OnFreezeTipsListener onFreezeTipsListener;
-
     public void setOnConfirmListener(OnFreezeTipsListener onFreezeTipsListener) {
         this.onFreezeTipsListener = onFreezeTipsListener;
-    }
-
-    public interface OnFreezeTipsListener {
-        void gotoAppeal(int type);//0去申述，2去绑定
     }
 
     @Override
@@ -98,5 +92,9 @@ public class CloseTeenagerDialog extends DialogFragment implements View.OnClickL
                 }
                 break;
         }
+    }
+
+    public interface OnFreezeTipsListener {
+        void gotoAppeal(int type);//0去申述，2去绑定
     }
 }

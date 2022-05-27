@@ -1,5 +1,7 @@
 package com.pro.maluli.common.view.dialogview;
 
+import static com.luck.picture.lib.tools.ScreenUtils.getScreenHeight;
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,11 +24,8 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.presenter.CommentFragmentPresenter;
 import com.pro.maluli.common.view.dialogview.presenter.ICommentFragmentContraction;
 import com.pro.maluli.common.view.dialogview.presenter.adapter.CommentListAdapter;
-import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 
 import org.jetbrains.annotations.NotNull;
-
-import static com.luck.picture.lib.tools.ScreenUtils.getScreenHeight;
 
 
 /**
@@ -34,10 +33,10 @@ import static com.luck.picture.lib.tools.ScreenUtils.getScreenHeight;
  */
 public class CommentDF extends BottomSheetDialogFragment implements View.OnClickListener {
 
-    private Dialog mDetailDialog;
+    public OnSelectGoldenListener onSelectGoldenListener;
     CommentFragmentPresenter presenter;
+    private Dialog mDetailDialog;
     private String videoId;
-    private CommentListAdapter adapter;
     ICommentFragmentContraction.View view = new ICommentFragmentContraction.View() {
         @Override
         public void setVideoInfo(VideoEntity data) {
@@ -46,7 +45,7 @@ public class CommentDF extends BottomSheetDialogFragment implements View.OnClick
 
         @Override
         public void commentSuccess() {
-            presenter.page=1;
+            presenter.page = 1;
             presenter.getCommentVideo(videoId);
         }
 
@@ -55,6 +54,7 @@ public class CommentDF extends BottomSheetDialogFragment implements View.OnClick
 
         }
     };
+    private CommentListAdapter adapter;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -81,14 +81,8 @@ public class CommentDF extends BottomSheetDialogFragment implements View.OnClick
         return mDetailDialog;
     }
 
-    public OnSelectGoldenListener onSelectGoldenListener;
-
     public void setOnConfirmListener(OnSelectGoldenListener onSelectGoldenListener) {
         this.onSelectGoldenListener = onSelectGoldenListener;
-    }
-
-    public interface OnSelectGoldenListener {
-        void goldenSelect();
     }
 
     @Nullable
@@ -116,7 +110,7 @@ public class CommentDF extends BottomSheetDialogFragment implements View.OnClick
                 dialogFragment.setOnConfirmListener(new SendCommentDialogFragment.OnSendMsgListener() {
                     @Override
                     public void sendMsg(String s) {
-                        presenter.subComment(videoId,s);
+                        presenter.subComment(videoId, s);
                     }
                 });
             }
@@ -153,6 +147,10 @@ public class CommentDF extends BottomSheetDialogFragment implements View.OnClick
 
                 break;
         }
+    }
+
+    public interface OnSelectGoldenListener {
+        void goldenSelect();
     }
 }
 

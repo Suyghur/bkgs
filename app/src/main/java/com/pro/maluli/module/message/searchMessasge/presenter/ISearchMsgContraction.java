@@ -4,7 +4,6 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
-import com.pro.maluli.common.entity.LiveListEntity;
 import com.pro.maluli.common.entity.SearchEntity;
 
 import java.util.List;
@@ -20,6 +19,7 @@ public interface ISearchMsgContraction extends BaseView {
 
         void setUserNameInfo(List<NimUserInfo> param);
     }
+
     interface Presenter extends IClear {
 
         void getBkDetail();

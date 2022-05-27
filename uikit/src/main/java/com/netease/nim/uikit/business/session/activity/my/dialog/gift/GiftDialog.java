@@ -3,14 +3,12 @@ package com.netease.nim.uikit.business.session.activity.my.dialog.gift;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -57,7 +55,7 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
     private int curIndex = 0;
     private GridViewAdapter[] arr = new GridViewAdapter[3];
     private TextView myBlanceTv;
-
+    private OnSelectGiftListener onSelectGiftListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -172,14 +170,8 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
         });
     }
 
-    private OnSelectGiftListener onSelectGiftListener;
-
     public void setSelectGiftListener(OnSelectGiftListener onFreezeTipsListener) {
         this.onSelectGiftListener = onFreezeTipsListener;
-    }
-
-    public interface OnSelectGiftListener {
-        void comfirm(GiftEntity.ListBean id);//0去申述，2去绑定
     }
 
     @Override
@@ -195,5 +187,9 @@ public class GiftDialog extends DialogFragment implements View.OnClickListener {
             EventBus.getDefault().post(goSettingEvent);
             dismiss();
         }
+    }
+
+    public interface OnSelectGiftListener {
+        void comfirm(GiftEntity.ListBean id);//0去申述，2去绑定
     }
 }

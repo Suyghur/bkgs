@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember;
 import com.pro.maluli.R;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
@@ -23,15 +22,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class GuestAdapter extends BaseQuickAdapter<OnTwoOneStartEntity.SpecialListBean, GuestAdapter.ViewHolder> {
     private Context context;
 
+    public GuestAdapter(List<OnTwoOneStartEntity.SpecialListBean> data, Context context) {
+        super(R.layout.item_guest_number, data);
+        this.context = context;
+    }
+
     @NotNull
     @Override
     protected GuestAdapter.ViewHolder createBaseViewHolder(@NotNull View view) {
         return new ViewHolder(view);
-    }
-
-    public GuestAdapter(List<OnTwoOneStartEntity.SpecialListBean> data, Context context) {
-        super(R.layout.item_guest_number, data);
-        this.context = context;
     }
 
     @Override

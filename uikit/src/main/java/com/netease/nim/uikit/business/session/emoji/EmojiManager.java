@@ -8,9 +8,10 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import androidx.collection.LruCache;
 import android.util.DisplayMetrics;
 import android.util.Xml;
+
+import androidx.collection.LruCache;
 
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -32,13 +33,11 @@ public class EmojiManager {
 
     // max cache size
     private static final int CACHE_MAX_SIZE = 1024;
-
-    private static Pattern pattern;
-
     // default entries
     private static final List<Entry> defaultEntries = new ArrayList<Entry>();
     // text to entry
     private static final Map<String, Entry> text2entry = new HashMap<String, Entry>();
+    private static Pattern pattern;
     // asset bitmap cache, key: asset path
     private static LruCache<String, Bitmap> drawableCache;
 
@@ -58,23 +57,13 @@ public class EmojiManager {
         };
     }
 
-    private static class Entry {
-        String text;
-        String assetPath;
-
-        Entry(String text, String assetPath) {
-            this.text = text;
-            this.assetPath = assetPath;
-        }
+    public static final int getDisplayCount() {
+        return defaultEntries.size();
     }
 
     //
     // display
     //
-
-    public static final int getDisplayCount() {
-        return defaultEntries.size();
-    }
 
     public static final Drawable getDisplayDrawable(Context context, int index) {
         String text = (index >= 0 && index < defaultEntries.size() ?
@@ -104,13 +93,13 @@ public class EmojiManager {
         return new BitmapDrawable(context.getResources(), cache);
     }
 
-    //
-    // internal
-    //
-
     private static Pattern makePattern() {
         return Pattern.compile(patternOfDefault());
     }
+
+    //
+    // internal
+    //
 
     private static String patternOfDefault() {
         return "\\[[^\\[]{1,10}\\]";
@@ -146,6 +135,16 @@ public class EmojiManager {
 
     private static final void load(Context context, String xmlPath) {
         new EntryLoader().load(context, xmlPath);
+    }
+
+    private static class Entry {
+        String text;
+        String assetPath;
+
+        Entry(String text, String assetPath) {
+            this.text = text;
+            this.assetPath = assetPath;
+        }
     }
 
     //

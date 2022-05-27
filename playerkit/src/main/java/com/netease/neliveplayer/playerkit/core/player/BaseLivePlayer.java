@@ -23,7 +23,6 @@ import com.netease.neliveplayer.playerkit.sdk.model.MediaInfo;
 import com.netease.neliveplayer.playerkit.sdk.model.StateInfo;
 import com.netease.neliveplayer.playerkit.sdk.model.VideoOptions;
 import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode;
-import com.netease.neliveplayer.proxy.gslb.GlsbSession;
 import com.netease.neliveplayer.proxy.gslb.NEGslbResultListener;
 import com.netease.neliveplayer.proxy.gslb.NEGslbServerModel;
 import com.netease.neliveplayer.sdk.NELivePlayer;
@@ -75,60 +74,34 @@ abstract class BaseLivePlayer extends VodPlayer {
 
     /// constant
     private static final String PLAYER_HANDLER_THREAD_TAG = "LIVE_PLAYER";
-
+    private final Object lock = new Object(); // 保护player的锁
     /// context
     Context context;
-
-    private Handler uiHandler;
-
-    /// input
-    private String videoPath;
-
-    private NEMediaDataSource mediaDataSource;
-
     VideoOptions options;
-
-    private AutoRetryConfig autoRetryConfig;
-
-    /// player
-    private List<LivePlayerObserver> observers = new ArrayList<>(1);
-
-    private long positionCallbackInternal = 0;
-
-    private NELivePlayer.OnCurrentPositionListener positionListener;
-
-    private long realTimeCallbackInternal = 0;
-
-    private NELivePlayer.OnCurrentRealTimeListener realTimeListener;
-
-    private long syncTimeCallbackInternal = 0;
-
-    private NELivePlayer.OnCurrentSyncTimestampListener syncTimeListener;
-
-    private NELivePlayer.OnCurrentSyncContentListener contentTimeListener;
-
-    private IRenderView renderView;
-
     NELivePlayer player;
-
-    private Handler playerHandler; // player专用的异步带looper线程
-
-    private final Object lock = new Object(); // 保护player的锁
-
-    private NELivePlayer.OnSubtitleListener subtitleListener;
-
-    private NEAudioPcmConfig audioPcmConfig;
-
-    private NELivePlayer.OnAudioFrameFilterListener audioFrameFilterListener;
-
-    private int videoFormat;
-
-    private NELivePlayer.OnVideoFrameFilterListener videoFrameFilterListener;
-
-
     /// status
     AtomicBoolean hasReset = new AtomicBoolean(false); // 是否重置了播放器
-
+    private Handler uiHandler;
+    /// input
+    private String videoPath;
+    private NEMediaDataSource mediaDataSource;
+    private AutoRetryConfig autoRetryConfig;
+    /// player
+    private List<LivePlayerObserver> observers = new ArrayList<>(1);
+    private long positionCallbackInternal = 0;
+    private NELivePlayer.OnCurrentPositionListener positionListener;
+    private long realTimeCallbackInternal = 0;
+    private NELivePlayer.OnCurrentRealTimeListener realTimeListener;
+    private long syncTimeCallbackInternal = 0;
+    private NELivePlayer.OnCurrentSyncTimestampListener syncTimeListener;
+    private NELivePlayer.OnCurrentSyncContentListener contentTimeListener;
+    private IRenderView renderView;
+    private Handler playerHandler; // player专用的异步带looper线程
+    private NELivePlayer.OnSubtitleListener subtitleListener;
+    private NEAudioPcmConfig audioPcmConfig;
+    private NELivePlayer.OnAudioFrameFilterListener audioFrameFilterListener;
+    private int videoFormat;
+    private NELivePlayer.OnVideoFrameFilterListener videoFrameFilterListener;
     private STATE currentState = STATE.IDLE; // 当前状态
 
     private int cause; // 切换到当前状态的原因，例如停止的原因code，错误的错误码，其他状态为0
@@ -163,11 +136,395 @@ abstract class BaseLivePlayer extends VodPlayer {
     private int timerIndex = 0;
 
     private LivePlayer mMasterPlayer;
+    /**
+     * ***************************** surface callback *************************
+     */
 
-    /// abstract methods for children
-    abstract void onChildInit();
+    private IRenderView.SurfaceCallback surfaceCallback = new IRenderView.SurfaceCallback() {
 
-    abstract void onChildDestroy();
+        @Override
+        public void onSurfaceCreated(Surface surface) {
+            LogUtil.info("on surface created");
+            setDisplaySurface(surface); // 播放器和显示surface的绑定
+        }
+
+        @Override
+        public void onSurfaceDestroyed(Surface surface) {
+            LogUtil.info("on surface destroyed");
+            setDisplaySurface(null); // 解除播放器和显示Surface的绑定
+        }
+
+        @Override
+        public void onSurfaceSizeChanged(Surface surface, int format, int width, int height) {
+            LogUtil.info("on surface changed, width=" + width + ", height=" + height + ", format=" + format);
+        }
+    };
+    /**
+     * ******************************* player callback ******************************
+     */
+
+    /*
+     * 获取到视频尺寸or视频尺寸发生变化
+     * 最早回调
+     */
+    private NELivePlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new NELivePlayer.OnVideoSizeChangedListener() {
+
+        @Override
+        public void onVideoSizeChanged(NELivePlayer p, int width, int height, int sarNum, int sarDen) {
+            if (videoWidth == p.getVideoWidth() && videoHeight == p.getVideoHeight() &&
+                    ((videoSarNum == sarNum && videoSarDen == sarDen) || sarNum <= 0 || sarDen <= 0)) {
+                return; // the same or invalid sarNum/sarDen
+            }
+            videoWidth = width;
+            videoHeight = height;
+            videoSarNum = sarNum;
+            videoSarDen = sarDen;
+            LogUtil.info("on video size changed, width=" + videoWidth + ", height=" + videoHeight + ", sarNum=" +
+                    videoSarNum + ", sarDen=" + videoSarDen);
+            setVideoSizeToRenderView();
+        }
+    };
+    /*
+     * 视频播放器准备好了，可以开始播放了
+     */
+    private NELivePlayer.OnPreparedListener onPreparedListener = new NELivePlayer.OnPreparedListener() {
+
+        @Override
+        public void onPrepared(NELivePlayer neLivePlayer) {
+            LogUtil.info("on player prepared!");
+            synchronized (lock) {
+                if (player != null) {
+                    setCurrentState(STATE.PREPARED, 0);
+                    if (!options.isAutoStart) {
+                        player.start();
+                    }
+                    // 点播，重新seekTo上次的位置
+                    if (lastPlayPosition > 0) {
+                        player.seekTo(lastPlayPosition);
+                        lastPlayPosition = 0; // 复位
+                    }
+                    if (lastAudioTrack != -1) {
+                        player.setSelectedAudioTrack(lastAudioTrack);
+                        lastAudioTrack = -1;
+                    }
+                    LogUtil.info("player start...");
+                    final MediaInfo mediaInfo = new MediaInfo(player.getMediaInfo(), player.getDuration());
+                    // 点播，开启ticker timer
+                    if (player.getDuration() > 0) {
+                        startVodTimer();
+                    }
+                    // notify
+                    try {
+                        for (LivePlayerObserver observer : getObservers()) {
+                            observer.onPrepared(mediaInfo);
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
+    /*
+     * 视频播放结束：点播资源播放完成，直播推流停止时
+     */
+    private NELivePlayer.OnCompletionListener onCompletionListener = new NELivePlayer.OnCompletionListener() {
+
+        @Override
+        public void onCompletion(NELivePlayer neLivePlayer) {
+            LogUtil.info("on player completion!");
+            // notify
+            try {
+                VodPlayerObserver o;
+                for (LivePlayerObserver observer : getObservers()) {
+                    if (observer instanceof VodPlayerObserver) {
+                        o = (VodPlayerObserver) observer;
+                        o.onCompletion();
+                    }
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            // reset 这里在播放结束重置了播放器，用户也可以调用release释放播放器
+            resetPlayer();
+            // state
+            setCurrentState(STATE.STOPPED, CauseCode.CODE_VIDEO_STOPPED_AS_ON_COMPLETION);
+        }
+    };
+    /*
+     * 播放过程中发生错误
+     */
+    private NELivePlayer.OnErrorListener onErrorListener = new NELivePlayer.OnErrorListener() {
+
+        @Override
+        public boolean onError(NELivePlayer neLivePlayer, final int what, final int extra) {
+            LogUtil.error("on player error!!! what=" + what + ", extra=" + extra);
+            // reset
+            resetPlayer();
+            // notify
+            uiHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        for (LivePlayerObserver observer : getObservers()) {
+                            observer.onError(what, extra);
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+            // state
+            setCurrentState(STATE.ERROR, what);
+            return true;
+        }
+    };
+    /*
+     * 视频状态变化、事件发生
+     */
+    private NELivePlayer.OnInfoListener onInfoListener = new NELivePlayer.OnInfoListener() {
+
+        @Override
+        public boolean onInfo(NELivePlayer neLivePlayer, int what, int extra) {
+            try {
+                if (what == NEPlayStatusType.NELP_BUFFERING_START) {
+                    LogUtil.info("on player info: buffering start");
+                    for (LivePlayerObserver observer : getObservers()) {
+                        observer.onBufferingStart();
+                    }
+
+                } else if (what == NEPlayStatusType.NELP_BUFFERING_END) {
+                    LogUtil.info("on player info: buffering end");
+                    for (LivePlayerObserver observer : getObservers()) {
+                        observer.onBufferingEnd();
+                    }
+
+                } else if (what == NEPlayStatusType.NELP_FIRST_VIDEO_RENDERED) {
+                    LogUtil.info("on player info: first video rendered");
+                    // state
+                    setCurrentState(STATE.PLAYING, 0);
+                    for (LivePlayerObserver observer : getObservers()) {
+                        observer.onFirstVideoRendered();
+                    }
+
+                } else if (what == NEPlayStatusType.NELP_FIRST_AUDIO_RENDERED) {
+                    LogUtil.info("on player info: first audio rendered");
+                    setCurrentState(STATE.PLAYING, 0);
+                    for (LivePlayerObserver observer : getObservers()) {
+                        observer.onFirstAudioRendered();
+                    }
+
+
+                } else if (what == NEPlayStatusType.NELP_AUDIO_VIDEO_UN_SYNC) {
+                    // [点播专用]
+                    LogUtil.info("on player info: audio video un sync");
+                    VodPlayerObserver o;
+                    for (LivePlayerObserver observer : getObservers()) {
+                        if (observer instanceof VodPlayerObserver) {
+                            o = (VodPlayerObserver) observer;
+                            o.onAudioVideoUnsync();
+                        }
+                    }
+
+                } else if (what == NEPlayStatusType.NELP_NET_STATE_BAD) {
+                    // [点播专用]
+                    LogUtil.info("on player info: network state bad tip");
+                    VodPlayerObserver o;
+                    for (LivePlayerObserver observer : getObservers()) {
+                        if (observer instanceof VodPlayerObserver) {
+                            o = (VodPlayerObserver) observer;
+                            o.onNetStateBad();
+                        }
+                    }
+                } else if (what == NEPlayStatusType.NELP_VIDEO_DECODER_OPEN) {
+                    LogUtil.info("on player info: hardware decoder opened");
+                    for (LivePlayerObserver observer : getObservers()) {
+                        observer.onVideoDecoderOpen(extra);
+                    }
+
+                } else {
+                    LogUtil.info("on player info: what=" + what + ", extra=" + extra);
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            return false;
+        }
+    };
+    /*
+     * 视频缓冲百分比更新
+     */
+    private NELivePlayer.OnBufferingUpdateListener onBufferingUpdateListener = new NELivePlayer.OnBufferingUpdateListener() {
+
+        @Override
+        public void onBufferingUpdate(NELivePlayer neLivePlayer, final int percent) {
+            LogUtil.debug("on buffering update, percent=" + percent);
+            try {
+                for (LivePlayerObserver observer : getObservers()) {
+                    observer.onBuffering(percent);
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+    };
+    /*
+     * 拉流http状态信息回调
+     */
+    private NELivePlayer.OnHttpResponseInfoListener onHttpResponseInfoListener = new NELivePlayer.OnHttpResponseInfoListener() {
+
+        @Override
+        public void onHttpResponseInfo(final int code, final String header) {
+            LogUtil.info("onHttpResponseInfo，code：" + code + "，header：" + header);
+            try {
+                for (LivePlayerObserver observer : getObservers()) {
+                    observer.onHttpResponseInfo(code, header);
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+    };
+    /*
+     * 实时播放位置回调
+     */
+    private NELivePlayer.OnCurrentPositionListener onCurrentPositionListener = new NELivePlayer.OnCurrentPositionListener() {
+
+        @Override
+        public void onCurrentPosition(final long l) {
+            if (positionListener == null) {
+                return;
+            }
+            if (lastCallBackPosition == l) {
+                return;
+            }
+            // notify
+            uiHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (positionListener != null) {
+                            positionListener.onCurrentPosition(l);
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+            // save time
+            lastCallBackPosition = l;
+        }
+    };
+    /*
+     * 实时真实时间戳回调
+     */
+    private NELivePlayer.OnCurrentRealTimeListener onCurrentRealTimeListener = new NELivePlayer.OnCurrentRealTimeListener() {
+
+        @Override
+        public void onCurrentRealTime(final long l) {
+            if (realTimeListener == null) {
+                return;
+            }
+            if (lastCallbackRealTime == l) {
+                return;
+            }
+            // notify
+            uiHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (realTimeListener != null) {
+                            realTimeListener.onCurrentRealTime(l);
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+            // save time
+            lastCallbackRealTime = l;
+        }
+    };
+    /*
+     * 实时同步时间戳回调
+     */
+    private NELivePlayer.OnCurrentSyncTimestampListener onCurrentSyncTimeListener = new NELivePlayer.OnCurrentSyncTimestampListener() {
+
+        @Override
+        public void onCurrentSyncTimestamp(final long l) {
+            if (syncTimeListener == null) {
+                return;
+            }
+            if (lastCallbackSyncTime == l) {
+                return;
+            }
+            // notify
+            uiHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (syncTimeListener != null) {
+                            syncTimeListener.onCurrentSyncTimestamp(l);
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+            // save time
+            lastCallbackSyncTime = l;
+        }
+    };
+    /*
+     * [点播专用]点播跳转到指定事件播放回调
+     */
+    private NELivePlayer.OnSeekCompleteListener onSeekCompleteListener = new NELivePlayer.OnSeekCompleteListener() {
+
+        @Override
+        public void onSeekComplete(NELivePlayer neLivePlayer) {
+            LogUtil.info("on seek completed");
+            try {
+                VodPlayerObserver o;
+                for (LivePlayerObserver observer : getObservers()) {
+                    if (observer instanceof VodPlayerObserver) {
+                        o = (VodPlayerObserver) observer;
+                        o.onSeekCompleted();
+                    }
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+    };
+    private NELivePlayer.OnDecryptionListener onDecryptionListener = new NELivePlayer.OnDecryptionListener() {
+
+        @Override
+        public void onDecryption(final int ret) {
+            LogUtil.info("on decryption: " + ret);
+            // notify
+            uiHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        VodPlayerObserver o;
+                        for (LivePlayerObserver observer : getObservers()) {
+                            if (observer instanceof VodPlayerObserver) {
+                                o = (VodPlayerObserver) observer;
+                                o.onDecryption(ret);
+                            }
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
 
     BaseLivePlayer(final Context context, final String videoPath, final VideoOptions options) {
         // input
@@ -182,6 +539,11 @@ abstract class BaseLivePlayer extends VodPlayer {
         //init other
         initBaseLivePlayer(context, options);
     }
+
+    /// abstract methods for children
+    abstract void onChildInit();
+
+    abstract void onChildDestroy();
 
     private void initBaseLivePlayer(Context context, VideoOptions options) {
         // input
@@ -214,7 +576,6 @@ abstract class BaseLivePlayer extends VodPlayer {
             observers.remove(observer);
         }
     }
-
 
     @Override
     public int registerAudioFrameFilterListener(NEAudioPcmConfig config,
@@ -264,7 +625,6 @@ abstract class BaseLivePlayer extends VodPlayer {
         // try bind position listener
         setOnCurrentPositionListener();
     }
-
 
     @Override
     public void registerPlayerCurrentRealTimestampListener(long interval,
@@ -317,7 +677,6 @@ abstract class BaseLivePlayer extends VodPlayer {
         setOnCurrentSyncContentListener();
     }
 
-
     @Override
     public void registerPlayerSubtitleListener(NELivePlayer.OnSubtitleListener listener, boolean register) {
         if (register && listener == null) {
@@ -343,16 +702,6 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     @Override
-    public void setLoopCount(int loopCount) {
-        synchronized (lock) {
-            if (player != null) {
-                player.setLoopCount(loopCount);
-                LogUtil.info("set loop " + loopCount);
-            }
-        }
-    }
-
-    @Override
     public void setBufferSize(int size) {
         synchronized (lock) {
             if (player != null) {
@@ -371,6 +720,16 @@ abstract class BaseLivePlayer extends VodPlayer {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void setLoopCount(int loopCount) {
+        synchronized (lock) {
+            if (player != null) {
+                player.setLoopCount(loopCount);
+                LogUtil.info("set loop " + loopCount);
+            }
+        }
     }
 
     @Override
@@ -455,14 +814,12 @@ abstract class BaseLivePlayer extends VodPlayer {
         });
     }
 
-
     private void reSetupRenderView() {
         // try bind surface holder, case: player reset后、切后台切回前台，原来绑定的surfaceView的被置null了，重新初始化时，要重新绑上去
         if (renderView != null && renderView.getSurface() != null) {
             setupRenderView(renderView, scaleMode);
         }
     }
-
 
     @Override
     public void setupRenderView(IRenderView renderView, VideoScaleMode videoScaleMode) {
@@ -622,7 +979,6 @@ abstract class BaseLivePlayer extends VodPlayer {
         }
     }
 
-
     @Override
     public boolean isPlaying() {
         synchronized (lock) {
@@ -638,7 +994,6 @@ abstract class BaseLivePlayer extends VodPlayer {
     public StateInfo getCurrentState() {
         return new StateInfo(currentState, cause);
     }
-
 
     @Override
     public long getCurrentSyncTimestamp() {
@@ -704,7 +1059,6 @@ abstract class BaseLivePlayer extends VodPlayer {
         }
     }
 
-
     @Override
     public void switchContentUrl(String newVideoPath) {
         synchronized (lock) {
@@ -727,7 +1081,6 @@ abstract class BaseLivePlayer extends VodPlayer {
             }
         }
     }
-
 
     @Override
     public void switchContentUrl(String newVideoPath, DataSourceConfig config) {
@@ -753,7 +1106,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                 NEDataSourceConfig dataSourceConfig = new NEDataSourceConfig();
                 if (config.cacheConfig != null) {
                     dataSourceConfig.cacheConfig = new NECacheConfig(config.cacheConfig.isCache,
-                                                                     config.cacheConfig.cachePath);
+                            config.cacheConfig.cachePath);
                 }
                 if (config.decryptionConfig != null) {
                     if (config.decryptionConfig.decryptionCode == DecryptionConfigCode.CODE_DECRYPTION_INFO) {
@@ -762,7 +1115,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                                 config.decryptionConfig.appKey, config.decryptionConfig.token);
                     } else if (config.decryptionConfig.decryptionCode == DecryptionConfigCode.CODE_DECRYPTION_KEY) {
                         dataSourceConfig.decryptionConfig = new NEDecryptionConfig(config.decryptionConfig.flvKey,
-                                                                                   config.decryptionConfig.flvKeyLen);
+                                config.decryptionConfig.flvKeyLen);
                     } else {
                         LogUtil.error(" player need init dataSourceConfig");
                     }
@@ -777,7 +1130,6 @@ abstract class BaseLivePlayer extends VodPlayer {
             }
         }
     }
-
 
     @Override
     public void setPlaybackSpeed(float speed) {
@@ -910,6 +1262,18 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
+     * 准备阶段超时任务
+     */
+    //    private Runnable preparingTimeoutTask = new Runnable() {
+    //        @Override
+    //        public void run() {
+    //            LogUtil.error("preparing timeout!!! Timeout=" + options.playbackTimeout + "s");
+    //
+    //            onErrorListener.onError(player, CauseCode.CODE_VIDEO_PREPARING_TIMEOUT, 0);
+    //        }
+    //    };
+
+    /*
      * 配置player
      * 在lock下操作player
      */
@@ -964,18 +1328,18 @@ abstract class BaseLivePlayer extends VodPlayer {
                 NEDataSourceConfig dataSourceConfig = new NEDataSourceConfig();
                 if (options.dataSourceConfig.cacheConfig != null) {
                     dataSourceConfig.cacheConfig = new NECacheConfig(options.dataSourceConfig.cacheConfig.isCache,
-                                                                     options.dataSourceConfig.cacheConfig.cachePath);
+                            options.dataSourceConfig.cacheConfig.cachePath);
                 }
                 if (options.dataSourceConfig.decryptionConfig != null) {
                     if (options.dataSourceConfig.decryptionConfig.decryptionCode ==
-                        DecryptionConfigCode.CODE_DECRYPTION_INFO) {
+                            DecryptionConfigCode.CODE_DECRYPTION_INFO) {
                         dataSourceConfig.decryptionConfig = new NEDecryptionConfig(
                                 options.dataSourceConfig.decryptionConfig.transferToken,
                                 options.dataSourceConfig.decryptionConfig.accid,
                                 options.dataSourceConfig.decryptionConfig.appKey,
                                 options.dataSourceConfig.decryptionConfig.token);
                     } else if (options.dataSourceConfig.decryptionConfig.decryptionCode ==
-                               DecryptionConfigCode.CODE_DECRYPTION_KEY) {
+                            DecryptionConfigCode.CODE_DECRYPTION_KEY) {
                         dataSourceConfig.decryptionConfig = new NEDecryptionConfig(
                                 options.dataSourceConfig.decryptionConfig.flvKey,
                                 options.dataSourceConfig.decryptionConfig.flvKeyLen);
@@ -1031,7 +1395,7 @@ abstract class BaseLivePlayer extends VodPlayer {
             if (audioFrameFilterListener != null) {
                 player.setOnAudioFrameFilterListener(audioPcmConfig, audioFrameFilterListener);
                 LogUtil.info("set on audioFrame filter listener=" + audioFrameFilterListener + ", audioPcmConfig=" +
-                             audioPcmConfig);
+                        audioPcmConfig);
             } else {
                 player.setOnAudioFrameFilterListener(null, null);
                 LogUtil.info("set on audioFrame filter listener=null");
@@ -1039,7 +1403,6 @@ abstract class BaseLivePlayer extends VodPlayer {
             return 0;
         }
     }
-
 
     /*
      * 安装实时视频数据回调监听器
@@ -1056,7 +1419,7 @@ abstract class BaseLivePlayer extends VodPlayer {
             if (videoFrameFilterListener != null) {
                 player.setOnVideoFrameFilterListener(videoFormat, videoFrameFilterListener);
                 LogUtil.info("set on videoFrame filter listener=" + videoFrameFilterListener + ", videoFormat=" +
-                             videoFormat);
+                        videoFormat);
             } else {
                 player.setOnVideoFrameFilterListener(0, null);
                 LogUtil.info("set on videoFrame filter listener=null");
@@ -1080,14 +1443,13 @@ abstract class BaseLivePlayer extends VodPlayer {
             if (positionListener != null && positionCallbackInternal > 0) {
                 player.setOnCurrentPositionListener(positionCallbackInternal, onCurrentPositionListener);
                 LogUtil.info("set on current position listener=" + positionListener + ", interval=" +
-                             positionCallbackInternal);
+                        positionCallbackInternal);
             } else {
                 player.setOnCurrentPositionListener(0, null);
                 LogUtil.info("set on current position listener=null");
             }
         }
     }
-
 
     /*
      * 安装实时真实时间戳回调监听器
@@ -1104,7 +1466,7 @@ abstract class BaseLivePlayer extends VodPlayer {
             if (realTimeListener != null && realTimeCallbackInternal > 0) {
                 player.setOnCurrentRealTimeListener(realTimeCallbackInternal, onCurrentRealTimeListener);
                 LogUtil.info("set on current sync time listener=" + syncTimeListener + ", interval=" +
-                             syncTimeCallbackInternal);
+                        syncTimeCallbackInternal);
             } else {
                 player.setOnCurrentRealTimeListener(0, null);
                 LogUtil.info("set on current sync time listener=null");
@@ -1127,7 +1489,7 @@ abstract class BaseLivePlayer extends VodPlayer {
             if (syncTimeListener != null && syncTimeCallbackInternal > 0) {
                 player.setOnCurrentSyncTimestampListener(syncTimeCallbackInternal, onCurrentSyncTimeListener);
                 LogUtil.info("set on current sync time listener=" + syncTimeListener + ", interval=" +
-                             syncTimeCallbackInternal);
+                        syncTimeCallbackInternal);
             } else {
                 player.setOnCurrentSyncTimestampListener(0, null);
                 LogUtil.info("set on current sync time listener=null");
@@ -1156,7 +1518,6 @@ abstract class BaseLivePlayer extends VodPlayer {
             }
         }
     }
-
 
     /*
      * 安装字幕回调监听器
@@ -1253,420 +1614,6 @@ abstract class BaseLivePlayer extends VodPlayer {
         lastPlayPosition = player.getCurrentPosition();
         lastAudioTrack = player.getSelectedAudioTrack();
     }
-
-    /*
-     * 准备阶段超时任务
-     */
-    //    private Runnable preparingTimeoutTask = new Runnable() {
-    //        @Override
-    //        public void run() {
-    //            LogUtil.error("preparing timeout!!! Timeout=" + options.playbackTimeout + "s");
-    //
-    //            onErrorListener.onError(player, CauseCode.CODE_VIDEO_PREPARING_TIMEOUT, 0);
-    //        }
-    //    };
-
-    /**
-     * ***************************** surface callback *************************
-     */
-
-    private IRenderView.SurfaceCallback surfaceCallback = new IRenderView.SurfaceCallback() {
-
-        @Override
-        public void onSurfaceCreated(Surface surface) {
-            LogUtil.info("on surface created");
-            setDisplaySurface(surface); // 播放器和显示surface的绑定
-        }
-
-        @Override
-        public void onSurfaceDestroyed(Surface surface) {
-            LogUtil.info("on surface destroyed");
-            setDisplaySurface(null); // 解除播放器和显示Surface的绑定
-        }
-
-        @Override
-        public void onSurfaceSizeChanged(Surface surface, int format, int width, int height) {
-            LogUtil.info("on surface changed, width=" + width + ", height=" + height + ", format=" + format);
-        }
-    };
-
-    /**
-     * ******************************* player callback ******************************
-     */
-
-    /*
-     * 获取到视频尺寸or视频尺寸发生变化
-     * 最早回调
-     */
-    private NELivePlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new NELivePlayer.OnVideoSizeChangedListener() {
-
-        @Override
-        public void onVideoSizeChanged(NELivePlayer p, int width, int height, int sarNum, int sarDen) {
-            if (videoWidth == p.getVideoWidth() && videoHeight == p.getVideoHeight() &&
-                ((videoSarNum == sarNum && videoSarDen == sarDen) || sarNum <= 0 || sarDen <= 0)) {
-                return; // the same or invalid sarNum/sarDen
-            }
-            videoWidth = width;
-            videoHeight = height;
-            videoSarNum = sarNum;
-            videoSarDen = sarDen;
-            LogUtil.info("on video size changed, width=" + videoWidth + ", height=" + videoHeight + ", sarNum=" +
-                         videoSarNum + ", sarDen=" + videoSarDen);
-            setVideoSizeToRenderView();
-        }
-    };
-
-    /*
-     * 视频播放器准备好了，可以开始播放了
-     */
-    private NELivePlayer.OnPreparedListener onPreparedListener = new NELivePlayer.OnPreparedListener() {
-
-        @Override
-        public void onPrepared(NELivePlayer neLivePlayer) {
-            LogUtil.info("on player prepared!");
-            synchronized (lock) {
-                if (player != null) {
-                    setCurrentState(STATE.PREPARED, 0);
-                    if (!options.isAutoStart) {
-                        player.start();
-                    }
-                    // 点播，重新seekTo上次的位置
-                    if (lastPlayPosition > 0) {
-                        player.seekTo(lastPlayPosition);
-                        lastPlayPosition = 0; // 复位
-                    }
-                    if (lastAudioTrack != -1) {
-                        player.setSelectedAudioTrack(lastAudioTrack);
-                        lastAudioTrack = -1;
-                    }
-                    LogUtil.info("player start...");
-                    final MediaInfo mediaInfo = new MediaInfo(player.getMediaInfo(), player.getDuration());
-                    // 点播，开启ticker timer
-                    if (player.getDuration() > 0) {
-                        startVodTimer();
-                    }
-                    // notify
-                    try {
-                        for (LivePlayerObserver observer : getObservers()) {
-                            observer.onPrepared(mediaInfo);
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            }
-        }
-    };
-
-    /*
-     * 视频播放结束：点播资源播放完成，直播推流停止时
-     */
-    private NELivePlayer.OnCompletionListener onCompletionListener = new NELivePlayer.OnCompletionListener() {
-
-        @Override
-        public void onCompletion(NELivePlayer neLivePlayer) {
-            LogUtil.info("on player completion!");
-            // notify
-            try {
-                VodPlayerObserver o;
-                for (LivePlayerObserver observer : getObservers()) {
-                    if (observer instanceof VodPlayerObserver) {
-                        o = (VodPlayerObserver) observer;
-                        o.onCompletion();
-                    }
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-            // reset 这里在播放结束重置了播放器，用户也可以调用release释放播放器
-            resetPlayer();
-            // state
-            setCurrentState(STATE.STOPPED, CauseCode.CODE_VIDEO_STOPPED_AS_ON_COMPLETION);
-        }
-    };
-
-    /*
-     * 播放过程中发生错误
-     */
-    private NELivePlayer.OnErrorListener onErrorListener = new NELivePlayer.OnErrorListener() {
-
-        @Override
-        public boolean onError(NELivePlayer neLivePlayer, final int what, final int extra) {
-            LogUtil.error("on player error!!! what=" + what + ", extra=" + extra);
-            // reset
-            resetPlayer();
-            // notify
-            uiHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        for (LivePlayerObserver observer : getObservers()) {
-                            observer.onError(what, extra);
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
-            // state
-            setCurrentState(STATE.ERROR, what);
-            return true;
-        }
-    };
-
-    /*
-     * 视频状态变化、事件发生
-     */
-    private NELivePlayer.OnInfoListener onInfoListener = new NELivePlayer.OnInfoListener() {
-
-        @Override
-        public boolean onInfo(NELivePlayer neLivePlayer, int what, int extra) {
-            try {
-                if (what == NEPlayStatusType.NELP_BUFFERING_START) {
-                    LogUtil.info("on player info: buffering start");
-                    for (LivePlayerObserver observer : getObservers()) {
-                        observer.onBufferingStart();
-                    }
-
-                } else if (what == NEPlayStatusType.NELP_BUFFERING_END) {
-                    LogUtil.info("on player info: buffering end");
-                    for (LivePlayerObserver observer : getObservers()) {
-                        observer.onBufferingEnd();
-                    }
-
-                } else if (what == NEPlayStatusType.NELP_FIRST_VIDEO_RENDERED) {
-                    LogUtil.info("on player info: first video rendered");
-                    // state
-                    setCurrentState(STATE.PLAYING, 0);
-                    for (LivePlayerObserver observer : getObservers()) {
-                        observer.onFirstVideoRendered();
-                    }
-
-                } else if (what == NEPlayStatusType.NELP_FIRST_AUDIO_RENDERED) {
-                    LogUtil.info("on player info: first audio rendered");
-                    setCurrentState(STATE.PLAYING, 0);
-                    for (LivePlayerObserver observer : getObservers()) {
-                        observer.onFirstAudioRendered();
-                    }
-
-
-                } else if (what == NEPlayStatusType.NELP_AUDIO_VIDEO_UN_SYNC) {
-                    // [点播专用]
-                    LogUtil.info("on player info: audio video un sync");
-                    VodPlayerObserver o;
-                    for (LivePlayerObserver observer : getObservers()) {
-                        if (observer instanceof VodPlayerObserver) {
-                            o = (VodPlayerObserver) observer;
-                            o.onAudioVideoUnsync();
-                        }
-                    }
-
-                } else if (what == NEPlayStatusType.NELP_NET_STATE_BAD) {
-                    // [点播专用]
-                    LogUtil.info("on player info: network state bad tip");
-                    VodPlayerObserver o;
-                    for (LivePlayerObserver observer : getObservers()) {
-                        if (observer instanceof VodPlayerObserver) {
-                            o = (VodPlayerObserver) observer;
-                            o.onNetStateBad();
-                        }
-                    }
-                } else if (what == NEPlayStatusType.NELP_VIDEO_DECODER_OPEN) {
-                    LogUtil.info("on player info: hardware decoder opened");
-                    for (LivePlayerObserver observer : getObservers()) {
-                        observer.onVideoDecoderOpen(extra);
-                    }
-
-                } else {
-                    LogUtil.info("on player info: what=" + what + ", extra=" + extra);
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-            return false;
-        }
-    };
-
-    /*
-     * 视频缓冲百分比更新
-     */
-    private NELivePlayer.OnBufferingUpdateListener onBufferingUpdateListener = new NELivePlayer.OnBufferingUpdateListener() {
-
-        @Override
-        public void onBufferingUpdate(NELivePlayer neLivePlayer, final int percent) {
-            LogUtil.debug("on buffering update, percent=" + percent);
-            try {
-                for (LivePlayerObserver observer : getObservers()) {
-                    observer.onBuffering(percent);
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-    };
-
-    /*
-     * 拉流http状态信息回调
-     */
-    private NELivePlayer.OnHttpResponseInfoListener onHttpResponseInfoListener = new NELivePlayer.OnHttpResponseInfoListener() {
-
-        @Override
-        public void onHttpResponseInfo(final int code, final String header) {
-            LogUtil.info("onHttpResponseInfo，code：" + code + "，header：" + header);
-            try {
-                for (LivePlayerObserver observer : getObservers()) {
-                    observer.onHttpResponseInfo(code, header);
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-    };
-
-    /*
-     * 实时播放位置回调
-     */
-    private NELivePlayer.OnCurrentPositionListener onCurrentPositionListener = new NELivePlayer.OnCurrentPositionListener() {
-
-        @Override
-        public void onCurrentPosition(final long l) {
-            if (positionListener == null) {
-                return;
-            }
-            if (lastCallBackPosition == l) {
-                return;
-            }
-            // notify
-            uiHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        if (positionListener != null) {
-                            positionListener.onCurrentPosition(l);
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
-            // save time
-            lastCallBackPosition = l;
-        }
-    };
-
-    /*
-     * 实时真实时间戳回调
-     */
-    private NELivePlayer.OnCurrentRealTimeListener onCurrentRealTimeListener = new NELivePlayer.OnCurrentRealTimeListener() {
-
-        @Override
-        public void onCurrentRealTime(final long l) {
-            if (realTimeListener == null) {
-                return;
-            }
-            if (lastCallbackRealTime == l) {
-                return;
-            }
-            // notify
-            uiHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        if (realTimeListener != null) {
-                            realTimeListener.onCurrentRealTime(l);
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
-            // save time
-            lastCallbackRealTime = l;
-        }
-    };
-
-    /*
-     * 实时同步时间戳回调
-     */
-    private NELivePlayer.OnCurrentSyncTimestampListener onCurrentSyncTimeListener = new NELivePlayer.OnCurrentSyncTimestampListener() {
-
-        @Override
-        public void onCurrentSyncTimestamp(final long l) {
-            if (syncTimeListener == null) {
-                return;
-            }
-            if (lastCallbackSyncTime == l) {
-                return;
-            }
-            // notify
-            uiHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        if (syncTimeListener != null) {
-                            syncTimeListener.onCurrentSyncTimestamp(l);
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
-            // save time
-            lastCallbackSyncTime = l;
-        }
-    };
-
-    /*
-     * [点播专用]点播跳转到指定事件播放回调
-     */
-    private NELivePlayer.OnSeekCompleteListener onSeekCompleteListener = new NELivePlayer.OnSeekCompleteListener() {
-
-        @Override
-        public void onSeekComplete(NELivePlayer neLivePlayer) {
-            LogUtil.info("on seek completed");
-            try {
-                VodPlayerObserver o;
-                for (LivePlayerObserver observer : getObservers()) {
-                    if (observer instanceof VodPlayerObserver) {
-                        o = (VodPlayerObserver) observer;
-                        o.onSeekCompleted();
-                    }
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-    };
-
-    private NELivePlayer.OnDecryptionListener onDecryptionListener = new NELivePlayer.OnDecryptionListener() {
-
-        @Override
-        public void onDecryption(final int ret) {
-            LogUtil.info("on decryption: " + ret);
-            // notify
-            uiHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        VodPlayerObserver o;
-                        for (LivePlayerObserver observer : getObservers()) {
-                            if (observer instanceof VodPlayerObserver) {
-                                o = (VodPlayerObserver) observer;
-                                o.onDecryption(ret);
-                            }
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
 
     /*
      * [点播专用] 点播过程中定时回调当前播放进度

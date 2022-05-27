@@ -1,6 +1,7 @@
 package com.netease.nim.uikit.common.media.imagepicker.option;
 
 /**
+ *
  */
 
 public class DefaultImagePickerOption {

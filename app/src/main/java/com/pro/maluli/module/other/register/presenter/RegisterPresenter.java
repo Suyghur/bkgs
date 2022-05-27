@@ -17,7 +17,7 @@ public class RegisterPresenter extends BasePresenter<IRegisterContraction.View> 
     @Override
     public void getVerifiCationCode(String mobile) {
         showLoading(mContext);
-        add(mService.getVerificationCode(mobile,"5")
+        add(mService.getVerificationCode(mobile, "5")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

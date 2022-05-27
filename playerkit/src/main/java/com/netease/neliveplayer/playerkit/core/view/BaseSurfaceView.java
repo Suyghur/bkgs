@@ -37,6 +37,25 @@ public class BaseSurfaceView extends SurfaceView implements IRenderView, Surface
     private ViewGroup.LayoutParams hideLayoutParams;
 
     /**
+     * ******************************** 构造器 ****************************
+     */
+
+    public BaseSurfaceView(Context context) {
+        super(context);
+        init();
+    }
+
+    public BaseSurfaceView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public BaseSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    /**
      * ******************************** IRenderView ****************************
      */
 
@@ -117,25 +136,6 @@ public class BaseSurfaceView extends SurfaceView implements IRenderView, Surface
     @Override
     public Surface getSurface() {
         return mSurfaceHolder != null ? mSurfaceHolder.getSurface() : null;
-    }
-
-    /**
-     * ******************************** 构造器 ****************************
-     */
-
-    public BaseSurfaceView(Context context) {
-        super(context);
-        init();
-    }
-
-    public BaseSurfaceView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public BaseSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
     }
 
     private void init() {

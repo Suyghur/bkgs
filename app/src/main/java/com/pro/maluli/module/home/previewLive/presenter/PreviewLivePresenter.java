@@ -2,10 +2,8 @@ package com.pro.maluli.module.home.previewLive.presenter;
 
 import android.content.Context;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
@@ -40,6 +38,7 @@ public class PreviewLivePresenter extends BasePresenter<IPreviewLiveContraction.
                     }
                 }));
     }
+
     @Override
     public void anchorSub() {
         add(mService.removeLike(anchorId)
@@ -57,6 +56,7 @@ public class PreviewLivePresenter extends BasePresenter<IPreviewLiveContraction.
                     }
                 }));
     }
+
     @Override
     public void joinLive(String roomId) {
         add(mService.joinLive(roomId)

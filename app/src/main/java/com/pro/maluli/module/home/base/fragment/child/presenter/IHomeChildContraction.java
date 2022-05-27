@@ -7,6 +7,7 @@ public interface IHomeChildContraction extends BaseView {
     interface View extends BaseView {
         void setCommission(String commission);
     }
+
     interface Presenter extends IClear {
         void getUserInfo();
 

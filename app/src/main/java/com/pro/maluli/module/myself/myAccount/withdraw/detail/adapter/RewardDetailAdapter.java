@@ -8,9 +8,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.pro.maluli.R;
-import com.pro.maluli.common.entity.BKDetailEntity;
-import com.pro.maluli.common.entity.BKRecordEntity;
-import com.pro.maluli.common.entity.RechargeEntity;
 import com.pro.maluli.common.entity.RewardDetailEntity;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 
@@ -42,16 +39,16 @@ public class RewardDetailAdapter extends BaseQuickAdapter<RewardDetailEntity.Lis
         if (!TextUtils.isEmpty(entity.getGift_title())) {
             giftTypeTv.setVisibility(View.VISIBLE);
             giftTypeTv.setText(entity.getGift_title());
-            giftTypeTv.setPadding((int) context.getResources().getDimension(R.dimen.dp_6),0,0,0);
-        }else {
+            giftTypeTv.setPadding((int) context.getResources().getDimension(R.dimen.dp_6), 0, 0, 0);
+        } else {
             giftTypeTv.setVisibility(View.GONE);
         }
         TextView textView = baseViewHolder.getView(R.id.numberBkTv);
         if (entity.getType() == 0) {//0-收入 1-提现
-            baseViewHolder.setText(R.id.numberBkTv, "+"+entity.getMoney() );
+            baseViewHolder.setText(R.id.numberBkTv, "+" + entity.getMoney());
             textView.setTextColor(context.getResources().getColor(R.color.c_8e1d77));
         } else {
-            baseViewHolder.setText(R.id.numberBkTv, "-"+entity.getMoney());
+            baseViewHolder.setText(R.id.numberBkTv, "-" + entity.getMoney());
             textView.setTextColor(context.getResources().getColor(R.color.c_ffa743));
         }
     }

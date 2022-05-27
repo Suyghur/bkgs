@@ -7,9 +7,6 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.module.GlideModule;
-import com.netease.nim.uikit.common.util.log.LogUtil;
-
-import java.io.File;
 
 /**
  * Created by huangjun on 2017/4/1.

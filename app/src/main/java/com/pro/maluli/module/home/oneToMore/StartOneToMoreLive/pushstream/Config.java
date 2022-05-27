@@ -3,14 +3,13 @@ package com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.pushstream;
 import android.graphics.Color;
 import android.graphics.Rect;
 
-import com.blankj.utilcode.util.ScreenUtils;
 import com.netease.lava.nertc.sdk.live.NERtcLiveStreamImageInfo;
 
 final class Config {
     /**
-     *              2 x 2 layout
-     *
-     *               720x1280
+     * 2 x 2 layout
+     * <p>
+     * 720x1280
      * \---------------------------------\
      * \      320x480        320x480     \
      * \   \----------\   \----------\   \
@@ -28,7 +27,7 @@ final class Config {
 
     private static final Rect rectLayout = new Rect(0, 0, 720, 1280);
     private static final Rect rectUser = new Rect(0, 0, 320, 480);
-//    private static final Rect rectUser = new Rect(0, 0, ScreenUtils.getScreenWidth(), ScreenUtils.getAppScreenHeight());
+    //    private static final Rect rectUser = new Rect(0, 0, ScreenUtils.getScreenWidth(), ScreenUtils.getAppScreenHeight());
     private static final Rect[] rectUsers = new Rect[4];
     private static final Rect rectImage;
     private static final String imageUrl = "https://netease.im/res/image/about/banner.jpg"; // 3840x840
