@@ -5,13 +5,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.netease.lava.nertc.sdk.NERtcConstants;
 import com.netease.lava.nertc.sdk.NERtcEx;
@@ -20,7 +19,7 @@ import com.netease.lava.nertc.sdk.video.NERtcVideoView;
 import com.pro.maluli.R;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
-import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewListener;
+import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingView;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewManager;
 
 
@@ -29,20 +28,16 @@ import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.Floati
  * @describe 悬浮窗Service
  * @date on 2018/11/26
  */
-public class FloatingViewService extends Service implements FloatingViewListener {
-
-    private static final String TAG = "FloatingViewService";
+public class FloatingViewService extends Service implements FloatingView.IFloatingViewCallback {
 
     private FloatingViewManager mFloatingViewManager;
 
     private NERtcVideoView vv_local_user;
-    private Long uid;
-    private CallBack callback;
+    private String liveId;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "onCreate");
         init();
     }
 
@@ -51,15 +46,19 @@ public class FloatingViewService extends Service implements FloatingViewListener
             return;
         }
 
-        Log.e(TAG, "悬浮窗Service已启动");
+        Logger.d("悬浮窗Service已启动");
         View floatView = LayoutInflater.from(this).inflate(R.layout.call_float_view, null, false);
-        vv_local_user = (NERtcVideoView) floatView.findViewById(R.id.vv_local_user);
+        vv_local_user = floatView.findViewById(R.id.vv_local_user);
         floatView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplication(), "点击了悬浮窗", Toast.LENGTH_SHORT).show();
-                //这样启动activity是解决启动延迟的问题
+//                Toast.makeText(getApplication(), "点击了悬浮窗", Toast.LENGTH_SHORT).show();
+                // 这样启动activity是解决启动延迟的问题
+                Logger.d("liveId: " + liveId);
+                Bundle bundle = new Bundle();
+                bundle.putString("liveId", liveId);
                 Intent intent = new Intent(FloatingViewService.this, StartLiveAct.class);
+                intent.putExtras(bundle);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
                 try {
@@ -85,38 +84,27 @@ public class FloatingViewService extends Service implements FloatingViewListener
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
+        liveId = intent.getStringExtra("liveId");
+        Logger.d("liveId: " + liveId);
         return super.onStartCommand(intent, flags, startId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
-
         destroyFloatingView();
-
         super.onDestroy();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public IBinder onBind(Intent intent) {
         return new MyBinder();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onFinishFloatingView() {
         stopSelf();
@@ -130,22 +118,12 @@ public class FloatingViewService extends Service implements FloatingViewListener
             this.mFloatingViewManager.removeAllFloatingView();
             this.mFloatingViewManager = null;
         }
-        Logger.d("悬浮窗已销毁");
-    }
-
-    public void setCallback(CallBack callback) {
-        this.callback = callback;
-    }
-
-    public static interface CallBack {
-        void onDataChanged(String data);
     }
 
     public class MyBinder extends Binder {
         public FloatingViewService getService() {
             return FloatingViewService.this;
         }
-
 
         public void setData(long data) {//写一个公共方法，用来对data数据赋值。
             Logger.d("setData=" + data);

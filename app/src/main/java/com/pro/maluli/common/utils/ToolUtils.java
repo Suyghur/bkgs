@@ -39,8 +39,6 @@ import cn.sharesdk.wechat.friends.Wechat;
 public class ToolUtils {
     /**
      * 防止多次点击
-     *
-     * @return
      */
     // 两次点击按钮接口之间的点击间隔不能少于1000毫秒
     private static final int MIN_CLICK_DELAY_TIME = 1000;
@@ -96,10 +94,7 @@ public class ToolUtils {
     }
 
     public static boolean isLogin(Context context, boolean isGoLogin) {
-        if (!TextUtils.isEmpty(AcacheUtil.getToken(context, isGoLogin))) {
-            return true;
-        }
-        return false;
+        return !TextUtils.isEmpty(AcacheUtil.getToken(context, isGoLogin));
     }
 
     public static boolean isLoginTips(Context context, FragmentManager manager) {
@@ -161,25 +156,24 @@ public class ToolUtils {
         weChat.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, final HashMap<String, Object> hashMap) {
-                Log.e("=====", "onComplete: ");
+                Logger.d("onComplete: ");
                 if (platform.getDb().exportData() != null) {
                     Message message = new Message();
                     message.what = 1;
                     message.obj = platform.getDb().exportData();
                     handler.sendMessage(message);
-                } else {
                 }
             }
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                Log.e("=====", "onError: ");
+                Logger.d( "onError: ");
                 String asda = platform.getDb().exportData();
             }
 
             @Override
             public void onCancel(Platform platform, int i) {
-                Log.e("=====", "onCancel: ");
+                Logger.d( "onCancel: ");
             }
         });
         weChat.SSOSetting(false);
@@ -197,25 +191,24 @@ public class ToolUtils {
         weChat.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, final HashMap<String, Object> hashMap) {
-                Log.e("=====", "onComplete: ");
+                Logger.d( "onComplete: ");
                 if (platform.getDb().exportData() != null) {
                     Message message = new Message();
                     message.what = 2;
                     message.obj = platform.getDb().exportData();
                     handler.sendMessage(message);
-                } else {
                 }
             }
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                Log.e("=====", "onError: ");
+                Logger.d("onError: ");
                 String asda = platform.getDb().exportData();
             }
 
             @Override
             public void onCancel(Platform platform, int i) {
-                Log.e("=====", "onCancel: ");
+                Logger.d("onCancel: ");
             }
         });
         weChat.SSOSetting(false);
@@ -298,7 +291,7 @@ public class ToolUtils {
         platform.share(sp);
     }
 
-    public static void shareVideoUrl(Handler handler,String type,String url,String desc,String imgUrl){
+    public static void shareVideoUrl(Handler handler, String type, String url, String desc, String imgUrl) {
         Platform.ShareParams sp = new Platform.ShareParams();
         sp.setShareType(Platform.SHARE_WEBPAGE);
         sp.setText(desc);
@@ -343,7 +336,7 @@ public class ToolUtils {
         sp.setText(text);
         sp.setTitleUrl(videoUrl);
         sp.setImageUrl(imgUrl);
-        sp.setShareType(Platform.SHARE_WEBPAGE);
+        sp.setShareType(Platform.SHARE_VIDEO);
         sp.setUrl(videoUrl);
 //        sp.setSiteUrl(videoUrl);
         Platform platform = ShareSDK.getPlatform(type);

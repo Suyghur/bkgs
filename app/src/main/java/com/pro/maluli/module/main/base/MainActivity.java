@@ -98,6 +98,12 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     View customerNewTv;
     @BindView(R.id.messageTestLL)
     LinearLayout messageTestLL;
+
+    UserInfoEntity userInfoEntity;
+    NoticeDialog noticeDialog;
+    TeenagerNoSeeDialog teenagerNoSeeDialog;
+    PrivacyDialog privacyDialog;
+
     //收到的邀请参数,reject 用到
 //    private InvitedEvent invitedEvent;
     Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
@@ -145,10 +151,8 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             }
         }
     };
-    UserInfoEntity userInfoEntity;
-    NoticeDialog noticeDialog;
-    TeenagerNoSeeDialog teenagerNoSeeDialog;
-    PrivacyDialog privacyDialog;
+
+
     /**
      * "is_anchor": 1,是否主播 <number>
      * "system_notice_count": 2,系统消息数量 <number>
@@ -191,7 +195,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             }
         }
     };
-    private boolean isSeenotic;
+    private boolean isSeeNotic;
 
     public String getText1() {
         return text;
@@ -243,6 +247,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         registerObserve(true);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -261,37 +266,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     @Override
     protected void onPause() {
         super.onPause();
-//        GSYVideoManager.releaseAllVideos();
-//        try {
-//            GSYVideoManager.instance().getPlayer().release();
-//        } catch (Exception e) {
-//
-//        }
     }
-
-//    /**
-//     * 获取 rtc AppKey
-//     */
-//    private String getRtcAppKey() {
-//        ApplicationInfo appInfo = null;
-//        try {
-//            appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        if (appInfo == null) {
-//            return null;
-//        }
-//        return appInfo.metaData.getString("com.netease.nim.appKey");
-//    }
-//
-//    /**
-//     * 已经登陆过，自动登陆
-//     */
-//    private boolean canAutoLogin() {
-//        LoginInfo loginInfo = Preferences.getLoginInfo();
-//        return loginInfo.valid();
-//    }
 
     private void setNosee() {
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
@@ -324,7 +299,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         }
         if (goSettingEvent.isCanScore()) {
             presenter.getMessageCanScore(goSettingEvent.getAccid());
-            isSeenotic = goSettingEvent.isSeeNotic();
+            isSeeNotic = goSettingEvent.isSeeNotic();
             return;
         }
         if (goSettingEvent.isScore()) {//获取是否能评价
@@ -609,7 +584,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     public void setMessageCanScore(MessageCanScoreEntity data) {
         GiftEvent giftEvent = new GiftEvent();
         giftEvent.setMessageCanScoreEntity(data);
-        giftEvent.setSeeNotic(isSeenotic);
+        giftEvent.setSeeNotic(isSeeNotic);
         EventBus.getDefault().post(giftEvent);
     }
 

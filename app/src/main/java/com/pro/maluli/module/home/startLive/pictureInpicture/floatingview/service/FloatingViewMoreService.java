@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,8 +21,9 @@ import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode;
 import com.netease.neliveplayer.playerkit.sdk.view.AdvanceTextureView;
 import com.netease.neliveplayer.proxy.config.NEPlayerConfig;
 import com.pro.maluli.R;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.StartOneToMoreLiveAct;
-import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewListener;
+import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingView;
 import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.FloatingViewManager;
 
 
@@ -32,34 +32,25 @@ import com.pro.maluli.module.home.startLive.pictureInpicture.floatingview.Floati
  * @describe 悬浮窗Service
  * @date on 2018/11/26
  */
-public class FloatingViewMoreService extends Service implements FloatingViewListener {
+public class FloatingViewMoreService extends Service implements FloatingView.IFloatingViewCallback {
 
-    private static final String TAG = "FloatingViewService";
     protected VodPlayer player;
     private FloatingViewManager mFloatingViewManager;
     private AdvanceTextureView textureView;
-    private Long uid;
     /**
      * 拉流播放器
-     *
-     * @return
      */
     private SDKOptions config;
-    private CallBack callback;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "onCreate");
         init();
     }
 
-    private int init() {
-        if (this.mFloatingViewManager != null) {
-            return START_STICKY;
-        }
+    private void init() {
 
-        Log.e(TAG, "悬浮窗Service已启动");
+        Logger.d("悬浮窗Service已启动");
         View floatView = LayoutInflater.from(this).inflate(R.layout.floating_more, null, false);
         textureView = (AdvanceTextureView) floatView.findViewById(R.id.textureView);
         floatView.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +82,7 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
         configs.animateInitialMove = false;
         this.mFloatingViewManager.addFloatingView(floatView, configs);
 
-        return START_REDELIVER_INTENT;
+//        return START_REDELIVER_INTENT;
     }
 
     /**
@@ -99,7 +90,7 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
+        Logger.d("onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -108,7 +99,7 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
      */
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
+        Logger.d("onDestroy");
 
         destroyFloatingView();
 
@@ -176,16 +167,16 @@ public class FloatingViewMoreService extends Service implements FloatingViewList
             this.mFloatingViewManager = null;
         }
 
-        Log.d(TAG, "悬浮窗已销毁");
+        Logger.d("悬浮窗已销毁");
     }
 
-    public void setCallback(CallBack callback) {
-        this.callback = callback;
-    }
-
-    public static interface CallBack {
-        void onDataChanged(String data);
-    }
+//    public void setCallback(CallBack callback) {
+//        this.callback = callback;
+//    }
+//
+//    public static interface CallBack {
+//        void onDataChanged(String data);
+//    }
 
     public class MyBinder extends Binder {
         public FloatingViewMoreService getService() {

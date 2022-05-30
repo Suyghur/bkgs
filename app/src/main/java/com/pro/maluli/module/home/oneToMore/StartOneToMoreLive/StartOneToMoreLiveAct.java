@@ -326,11 +326,11 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             if (rtmp_pull_url != null) {
                 binder.setData(rtmp_pull_url);
             }
-            binder.getService().setCallback(new FloatingViewMoreService.CallBack() {
-                @Override
-                public void onDataChanged(String data) {
-                }
-            });
+//            binder.getService().setCallback(new FloatingViewMoreService.CallBack() {
+//                @Override
+//                public void onDataChanged(String data) {
+//                }
+//            });
         }
 
         @Override

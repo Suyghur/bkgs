@@ -56,18 +56,10 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
             // 所以这时候就要遍历添加进去的SingleInstanceActivityArray，看是否有存在，有的话并且跟最后一个添加进去的activity是同一个的话就跳转
             // 这里设置了跳转动画，是因为单例模式的跳转动画跟其他的模式不一样，看起来很难受，设置后看起来舒服些，也可以设置别的动画，
             // 退到后台再进来会一闪，十分明显，添加跳转动画看起来也会舒服些
-            if (!ActivityTaskManager.getInstance()
-                    .getLastActivity()
-                    .getClass()
-                    .getName()
-                    .equals(this.getClass().getName())) {
+            if (!ActivityTaskManager.getInstance().getLastActivity().getClass().getName().equals(this.getClass().getName())) {
                 if (ActivityTaskManager.getInstance().getSingleInstanceActivityArray().size() > 0) {
-                    for (Activity activity :
-                            ActivityTaskManager.getInstance().getSingleInstanceActivityArray()) {
-                        if (activity
-                                .getClass()
-                                .getName()
-                                .equals(ActivityTaskManager.getInstance().getLastActivity().getClass().getName())) {
+                    for (Activity activity : ActivityTaskManager.getInstance().getSingleInstanceActivityArray()) {
+                        if (activity.getClass().getName().equals(ActivityTaskManager.getInstance().getLastActivity().getClass().getName())) {
                             ActivityTaskManager.getInstance().removeSingleInstanceActivity(activity);
                             startActivity(
                                     new Intent(this, ActivityTaskManager.getInstance().getLastActivity().getClass()));
@@ -130,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
             TextView title = findViewById(R.id.title);
             title.setText(title_tx);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -146,7 +138,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
                 }
             });
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

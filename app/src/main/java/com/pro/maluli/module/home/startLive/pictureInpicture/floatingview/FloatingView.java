@@ -65,7 +65,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
      * 移动方向 - 不移动
      */
     public static final int MOVE_DIRECTION_NONE = 3;
-    private static final String TAG = "FloatingView";
     /**
      * 不需要移动的最低阈值(dp)
      */
@@ -416,8 +415,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 悬浮窗移动到边缘
-     *
-     * @param withAnimation 是否带动画
      */
     private void moveToEdge(boolean withAnimation) {
         int currentX = getXByTouch();
@@ -427,10 +424,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 悬浮窗移动悬浮窗到边缘
-     *
-     * @param startX
-     * @param startY
-     * @param withAnimation
      */
     private void moveToEdge(int startX, int startY, boolean withAnimation) {
         int goalPositionX = startX;
@@ -448,12 +441,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 移动悬浮窗
-     *
-     * @param currentX
-     * @param currentY
-     * @param goalPositionX
-     * @param goalPositionY
-     * @param withAnimation
      */
     private void moveTo(int currentX, int currentY, int goalPositionX, int goalPositionY, boolean withAnimation) {
         goalPositionX = Math.min(Math.max(this.mPositionLimitRect.left, goalPositionX), this.mPositionLimitRect.right);
@@ -497,8 +484,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 设置悬浮窗边缘的外边距
-     *
-     * @param margin
      */
     public void setOverMargin(int margin) {
         this.mOverMargin = margin;
@@ -506,8 +491,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 设置移动方向
-     *
-     * @param moveDirection
      */
     public void setMoveDirection(int moveDirection) {
         this.mMoveDirection = moveDirection;
@@ -515,8 +498,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 设置悬浮窗移动时是否带动画
-     *
-     * @param animateInitialMove
      */
     public void setAnimateInitialMove(boolean animateInitialMove) {
         this.mAnimateInitialMove = animateInitialMove;
@@ -524,8 +505,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 获取WindowLayoutParams
-     *
-     * @return
      */
     public WindowManager.LayoutParams getWindowLayoutParams() {
         return this.mParams;
@@ -541,9 +520,6 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
 
     /**
      * 更新悬浮窗在屏幕中的位置
-     *
-     * @param x
-     * @param y
      */
     private void updateViewPosition(int x, int y) {
         this.mParams.x = x;
@@ -557,5 +533,13 @@ public class FloatingView extends FrameLayout implements ViewTreeObserver.OnPreD
     @IntDef({MOVE_DIRECTION_DEFAULT, MOVE_DIRECTION_LEFT, MOVE_DIRECTION_RIGHT, MOVE_DIRECTION_NONE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface MoveDirection {
+    }
+
+
+    public interface IFloatingViewCallback {
+        /**
+         * 悬浮窗已终止
+         */
+        void onFinishFloatingView();
     }
 }

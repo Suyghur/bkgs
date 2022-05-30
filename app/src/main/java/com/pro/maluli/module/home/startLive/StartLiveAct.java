@@ -122,6 +122,7 @@ import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.ISlideListener;
 import com.pro.maluli.common.view.slideView.SlideLayout;
 import com.pro.maluli.ktx.utils.Logger;
+import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.pushstream.PushStream;
 import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
@@ -172,16 +173,12 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     ImageView changeCameraIV;
     @BindView(R.id.clearScreenIV)
     TextView clearScreenIV;
-    //    @BindView(R.id.action_real_layout)
-//    RelativeLayout action_real_layout;
     @BindView(R.id.actionShowLayout)
     LinearLayout actionShowLayout;
     @BindView(R.id.comment_list)
     RecyclerView comment_list;
     @BindView(R.id.send)
     View send;
-    //    @BindView(R.id.messageEditText)
-//    EditText messageEditText;
     @BindView(R.id.sendAudioIv)
     Button sendAudioIv;
     /**
@@ -231,6 +228,9 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     Container container;
     boolean isChange;//切换显示布局
     InputTextLiveDialog inputTextLiveDialog;
+
+    private boolean isSmall;
+    private SoftKeyBoardListener mKeyBoardListener;
     /**
      * ---------------------------------------------------------------------------------------------
      */
@@ -306,25 +306,19 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     private AudioInputPanel audioInputPanel;
     private String roomId, liveId;
     private Long uid;//自己uid
-    private Long otherUid = 0l;//别人uid
+    private Long otherUid = 0L;//别人uid
     ServiceConnection mVideoServiceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             // 获取服务的操作对象
             FloatingViewService.MyBinder binder = (FloatingViewService.MyBinder) service;
             binder.getService();
-            //这里测试 设置通话从10秒开始
+            // 这里测试 设置通话从10秒开始
             if (otherUid != null) {
                 binder.setData(otherUid);
             } else {
                 binder.setData(uid);
             }
-            binder.getService().setCallback(new FloatingViewService.CallBack() {
-                @Override
-                public void onDataChanged(String data) {
-                }
-            });
         }
 
         @Override
@@ -370,7 +364,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             if (messages == null || messages.isEmpty()) {
                 return;
             }
-//            ToastUtils.showShort("nihaoya");
             boolean needRefresh = false;
             for (ChatRoomMessage message : messages) {
                 // 保证显示到界面上的消息，来自同一个聊天室
@@ -387,7 +380,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                             messageList.add(message);
                             needRefresh = true;
                         }
-
                     } else {
                         try {
                             if (message.getMsgType() == MsgTypeEnum.custom) {
@@ -425,10 +417,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 //            messageListPanel.onIncomingMessage(messages);
         }
     };
-    // 礼物
-    private int[] GiftIcon = new int[]{R.drawable.down_icon};
-    private boolean isSmall;
-    private SoftKeyBoardListener mKeyBoardListener;
     /**
      * 信令回调
      */
@@ -440,9 +428,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             SignallingEventType eventType = channelCommonEvent.getEventType();
             if (eventType == SignallingEventType.INVITE) {
                 invitedEvent = (InvitedEvent) channelCommonEvent;
-
             }
-
         }
     };
     // -----------------------------------------------------------------悬浮窗————————————————————————————
@@ -477,7 +463,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         if (userInfoEntity != null) {
             uid = Long.valueOf(userInfoEntity.getId());
         }
-
     }
 
     @Override
@@ -495,7 +480,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         switch (view.getId()) {
             case R.id.vv_local_user:
                 //切换布局
-                if (otherUid == 0l) {
+                if (otherUid == 0L) {
                     return;
                 }
                 if (isChange) {
@@ -506,7 +491,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                     NERtcEx.getInstance().setupRemoteVideoCanvas(vv_local_user, otherUid);
                 }
                 isChange = !isChange;
-
                 break;
             case R.id.clearScreenIV:
 //                slide_layout.restoreContent();
@@ -1065,7 +1049,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             setLocalAudioEnable(false);
             setLocalVideoEnable(false);
             ToastExtKt.showToast(this, "为保护您的个人隐私，直播间摄像头与麦克风默认关闭，如有需要可点击打开");
-//            ToastUtils.showShort("为保护您的个人隐私，直播间摄像头与麦克风默认关闭，如有需要可点击打开");
         }
 
         slide_layout.setmListeners(new SlideLayout.DragListener() {
@@ -1077,19 +1060,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
             @Override
             public void onDragToIn(@NonNull @NotNull View dragView) {
-//                int[] location = new int[2];
-//                dragView.getLocationInWindow(location);
-//                int x = location[0];
-//             if (x>200){
-//                if (openStaus==1){
                 clearScreenIV.setVisibility(View.VISIBLE);
-//                }
-
-//             }else {
-//                 clearScreenIV.setVisibility(View.GONE);
-//
-//             }
-
             }
         });
         slide_layout.setSlideListener(new ISlideListener() {
@@ -1114,7 +1085,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     private void create() {
         NIMClient.getService(SignallingService.class).create(ChannelType.CUSTOM, "", "").setCallback(
                 new RequestCallbackWrapper<ChannelBaseInfo>() {
-
                     @Override
                     public void onResult(int i, ChannelBaseInfo channelBaseInfo, Throwable throwable) {
                         if (i == ResponseCode.RES_SUCCESS) {
@@ -1122,14 +1092,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                             joinRoom();
                             ToastHelper.showToast(StartLiveAct.this, "创建成功");
                         } else {
-                            ToastHelper.showToast(StartLiveAct.this, "创建失败， code = " + i +
-                                    (throwable == null ? "" : ", throwable = " +
-                                            throwable.getMessage()));
+                            ToastHelper.showToast(StartLiveAct.this, "创建失败， code = " + i + (throwable == null ? "" : ", throwable = " + throwable.getMessage()));
                         }
                     }
                 });
-
-
     }
 
     private void joinRoom() {
@@ -1137,20 +1103,18 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             return;
         }
         long selfUid = System.nanoTime();
-        NIMClient.getService(SignallingService.class).join(channelInfo.getChannelId(), selfUid, "", false).setCallback(
-                new RequestCallbackWrapper<ChannelFullInfo>() {
-
-                    @Override
-                    public void onResult(int i, ChannelFullInfo channelFullInfo, Throwable throwable) {
-                        if (i == ResponseCode.RES_SUCCESS) {
-                            showToast("加入房间成功");
-                        } else if (i == ResponseCode.RES_CHANNEL_MEMBER_HAS_EXISTS) {
-                            showToast("已经在房间中");
-                        } else {
-                            showToast("加入房间失败 code=" + i);
-                        }
-                    }
-                });
+        NIMClient.getService(SignallingService.class).join(channelInfo.getChannelId(), selfUid, "", false).setCallback(new RequestCallbackWrapper<ChannelFullInfo>() {
+            @Override
+            public void onResult(int i, ChannelFullInfo channelFullInfo, Throwable throwable) {
+                if (i == ResponseCode.RES_SUCCESS) {
+                    showToast("加入房间成功");
+                } else if (i == ResponseCode.RES_CHANNEL_MEMBER_HAS_EXISTS) {
+                    showToast("已经在房间中");
+                } else {
+                    showToast("加入房间失败 code=" + i);
+                }
+            }
+        });
     }
 
     //聊天列表滚动到最下面
@@ -1159,8 +1123,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     }
 
     public boolean isMyMessage(ChatRoomMessage message) {
-        return message.getSessionType() == container.sessionType &&
-                message.getSessionId() != null && message.getSessionId().equals(container.account);
+        return message.getSessionType() == container.sessionType && message.getSessionId() != null && message.getSessionId().equals(container.account);
     }
 
     /**
@@ -1176,7 +1139,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
     }
 
-    public void joinLiaoTianSHi() {
+    public void joinChatRoom() {
         EnterChatRoomData data = new EnterChatRoomData(roomId);
         data.setNick(userInfoEntity.getNickname());
         data.setAvatar(userInfoEntity.getAvatar());
@@ -1210,20 +1173,8 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     }
 
     private void initMessageFragment() {
-
         container = new Container(this, roomId, SessionTypeEnum.ChatRoom, this);
         audioInputPanel = new AudioInputPanel(container, layoutPlayAudio, timer_tip_container, timer, timer_tip, sendAudioIv);
-//        messageListPanel = new ChatRoomMsgListPanelTest(container, comment_list);
-
-
-//        messageFragment = (ChatRoomMessageFragment) getSupportFragmentManager().findFragmentById(
-//                R.id.chat_room_message_fragment);
-//        if (messageFragment != null) {
-//            messageFragment.init(roomId);
-//        } else {
-//            // 如果Fragment还未Create完成，延迟初始化
-//            getHandler().postDelayed(() -> initMessageFragment(), 50);
-//        }
     }
 
     private void setupNERtc() {
@@ -1333,13 +1284,15 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             unregisterReceiver(innerReceiver);
         }
         try {
-            NIMClient.getService(ChatRoomService.class).exitChatRoom(roomId);
-            stopVideoService();
-            SocketLiveUtils.INSTANCE.closeConnect();
-            EventBus.getDefault().unregister(this);
-            registerObservers(false);
-            NERtcEx.getInstance().release();
-            closeChannel();
+            if (!isSmall) {
+                NIMClient.getService(ChatRoomService.class).exitChatRoom(roomId);
+                stopVideoService();
+                SocketLiveUtils.INSTANCE.closeConnect();
+                EventBus.getDefault().unregister(this);
+                registerObservers(false);
+                NERtcEx.getInstance().release();
+                closeChannel();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1373,8 +1326,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
     /**
      * 获取到一对一最新用户
-     *
-     * @param data
      */
     @Override
     public void setSeeLiveInfo(SeeLiveUserEntity data) {
@@ -1397,7 +1348,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
                     inviteOther(accid);
                     if (data.getAppoint() != null) {
-//            inviteOther(data.getAppoint().getAccid());
                         checkMsgDialog = new CheckMsgDialog();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("Message", data.getAppoint());
@@ -1435,7 +1385,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
                     inviteOther(accid);
                     if (data.getAppoint() != null) {
-//            inviteOther(data.getAppoint().getAccid());
                         checkMsgDialog = new CheckMsgDialog();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("Message", data.getAppoint());
@@ -1479,7 +1428,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                 startNetTv.setText("邀请中");
                 startNetTv.setBackground(getResources().getDrawable(R.drawable.shape_8e1d77_32));
                 handler.postDelayed(runnable, 20 * 1000);
-
             }
 
             @Override
@@ -1591,7 +1539,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
         ReserveTv.setSelected(data.getInfo().getIs_appoint() == 1);
         if (!TextUtils.isEmpty(roomId) && !TextUtils.isEmpty(liveId)) {
-            joinLiaoTianSHi();
+            joinChatRoom();
             joinChannel(nertc_token, channelName, uid);
         }
     }
@@ -1882,27 +1830,25 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     }
 
     @Override
-    public void onUserJoined(long l) {
+    public void onUserJoined(long uid) {
         // 已经有订阅，就不要变了
         if (vv_remote_user.getTag() != null) {
             return;
         }
         // 有用户加入，设置Tag，该用户离开前，只订阅和取消订阅此用户
-        vv_remote_user.setTag(l);
-        // 不用等待了
-//        waitHintTv.setVisibility(View.INVISIBLE);
+        vv_remote_user.setTag(uid);
 
-        if (!isCurrentUser(l)) {
+        if (!isCurrentUser(uid)) {
             return;
         }
-        otherUid = l;
+        otherUid = uid;
         if (checkMsgDialog != null) {
             checkMsgDialog.dismiss();
         }
 
-        NERtcEx.getInstance().subscribeRemoteVideoStream(l, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true);
+        NERtcEx.getInstance().subscribeRemoteVideoStream(uid, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true);
         vv_remote_user.setScalingType(NERtcConstants.VideoScalingType.SCALE_ASPECT_BALANCED);
-        NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, l);
+        NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, uid);
 
         // 更新界面
         vv_remote_user.setVisibility(View.VISIBLE);
@@ -1920,7 +1866,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
         }
         if (pushStream != null) {
-            pushStream.update(l, true);
+            pushStream.update(uid, true);
         }
     }
 
@@ -2323,8 +2269,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         stopVideoService();//关闭悬浮窗服务
         // 关闭悬浮窗之后从新设置视频布局
         NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
-        // NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
-        // NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, uid);
         if (otherUid != 0L) {
             NERtcEx.getInstance().setupRemoteVideoCanvas(vv_remote_user, otherUid);
         }
@@ -2389,12 +2333,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         boolean isWork = isServiceWork(this, FloatingViewService.class.getCanonicalName());
         Logger.e("startVideoService-isWork=" + isWork);
         if (!isWork) {
-            Intent intent = new Intent(this, FloatingViewService.class);//开启服务显示悬浮框
-//            startService(intent);
+            Bundle bundle = new Bundle();
+            bundle.putString("liveId", liveId);
+            Intent intent = new Intent(BKGSApplication.getApp(), FloatingViewService.class);//开启服务显示悬浮框
+            intent.putExtras(bundle);
+            startService(intent);
             bindService(intent, mVideoServiceConnection, Context.BIND_AUTO_CREATE);
         }
-        //最小化Activity
-        moveTaskToBack(true);
+        finish();
     }
 
     /**

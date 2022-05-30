@@ -2,7 +2,6 @@ package com.pro.maluli.module.home.startLive.pictureInpicture.floatingview;
 
 import android.content.Context;
 import android.os.Build;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -16,9 +15,7 @@ import java.util.List;
  * @author PengZhenjin
  * @date 2017-6-5
  */
-public class FloatingViewManager implements View.OnTouchListener {
-
-    private static final String TAG = "FloatingViewManager";
+public class FloatingViewManager {
     /**
      * WindowManager
      */
@@ -30,7 +27,7 @@ public class FloatingViewManager implements View.OnTouchListener {
     /**
      * 悬浮窗监听器
      */
-    private FloatingViewListener mFloatingViewListener;
+    private FloatingView.IFloatingViewCallback callback;
     /**
      * 悬浮窗集合
      */
@@ -38,20 +35,12 @@ public class FloatingViewManager implements View.OnTouchListener {
 
     /**
      * 构造方法
-     *
-     * @param context              上下文
-     * @param floatingViewListener 悬浮窗监听器
      */
-    public FloatingViewManager(Context context, FloatingViewListener floatingViewListener) {
+    public FloatingViewManager(Context context, FloatingView.IFloatingViewCallback callback) {
         this.mContext = context;
-        this.mFloatingViewListener = floatingViewListener;
+        this.callback = callback;
         this.mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         this.mFloatingViewList = new ArrayList<>();
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
     }
 
     /**
@@ -63,7 +52,6 @@ public class FloatingViewManager implements View.OnTouchListener {
     public void addFloatingView(View view, Configs configs) {
         // 创建悬浮窗
         FloatingView floatingView = new FloatingView(this.mContext, configs.floatingViewX, configs.floatingViewY);
-        floatingView.setOnTouchListener(this);
         floatingView.setOverMargin(configs.overMargin);
         floatingView.setMoveDirection(configs.moveDirection);
         floatingView.setAnimateInitialMove(configs.animateInitialMove);
@@ -96,8 +84,8 @@ public class FloatingViewManager implements View.OnTouchListener {
             this.mFloatingViewList.remove(matchIndex);
         }
         if (this.mFloatingViewList.isEmpty()) {
-            if (this.mFloatingViewListener != null) {
-                this.mFloatingViewListener.onFinishFloatingView();
+            if (this.callback != null) {
+                this.callback.onFinishFloatingView();
             }
         }
     }

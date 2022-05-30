@@ -237,7 +237,6 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
                 presenter.loveVideo();
                 break;
             case R.id.shareVideoIv:
-
                 //分享
                 ShareVideoDialog dialogFragment = new ShareVideoDialog();
                 Bundle bundle = new Bundle();
