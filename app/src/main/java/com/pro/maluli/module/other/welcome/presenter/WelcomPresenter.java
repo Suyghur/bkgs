@@ -16,7 +16,7 @@ public class WelcomPresenter extends BasePresenter<IWelcomContraction.View> impl
 
     @Override
     public void getWelcomInfo() {
-        add(mService.GetWelcomInfo()
+        add(mService.GetWelcomeInfo()
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<WelcomInfoEntity>>(mView) {
                     @Override

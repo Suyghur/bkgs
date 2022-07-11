@@ -38,10 +38,8 @@ public class ActionsPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        int end = (position + 1) * ITEM_COUNT_PER_GRID_VIEW > actions.size() ? actions
-                .size() : (position + 1) * ITEM_COUNT_PER_GRID_VIEW;
-        List<BaseAction> subBaseActions = actions.subList(position
-                * ITEM_COUNT_PER_GRID_VIEW, end);
+        int end = (position + 1) * ITEM_COUNT_PER_GRID_VIEW > actions.size() ? actions.size() : (position + 1) * ITEM_COUNT_PER_GRID_VIEW;
+        List<BaseAction> subBaseActions = actions.subList(position * ITEM_COUNT_PER_GRID_VIEW, end);
 
         GridView gridView = new GridView(context);
         gridView.setAdapter(new ActionsGridviewAdapter(context, subBaseActions));
@@ -76,7 +74,6 @@ public class ActionsPagerAdapter extends PagerAdapter {
         gridView.setGravity(Gravity.CENTER);
         gridView.setTag(Integer.valueOf(position));
         gridView.setOnItemClickListener(new GridView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int index = ((Integer) parent.getTag()) * ITEM_COUNT_PER_GRID_VIEW + position;

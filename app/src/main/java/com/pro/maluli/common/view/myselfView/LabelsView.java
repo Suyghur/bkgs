@@ -63,15 +63,18 @@ public class LabelsView extends ViewGroup implements View.OnClickListener {
     private ArrayList<Integer> mCompulsorys = new ArrayList<>();
     private OnLabelClickListener mLabelClickListener;
     private OnLabelSelectChangeListener mLabelSelectChangeListener;
+
     public LabelsView(Context context) {
         super(context);
         mContext = context;
     }
+
     public LabelsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         getAttrs(context, attrs);
     }
+
     public LabelsView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;

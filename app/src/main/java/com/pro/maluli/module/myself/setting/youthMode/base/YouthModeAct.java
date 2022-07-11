@@ -24,7 +24,6 @@ import butterknife.OnClick;
  */
 public class YouthModeAct extends BaseMvpActivity<IYouthModeContraction.View, YouthModePresenter> implements IYouthModeContraction.View {
 
-
     @BindView(R.id.youthWv)
     WebView youthWv;
     @BindView(R.id.startYouthTv)

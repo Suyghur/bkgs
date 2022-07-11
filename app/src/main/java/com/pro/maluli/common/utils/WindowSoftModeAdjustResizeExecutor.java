@@ -14,6 +14,7 @@ public class WindowSoftModeAdjustResizeExecutor {
     private View mChildOfContent;
     private int usableHeightPrevious;
     private FrameLayout.LayoutParams frameLayoutParams;
+
     private WindowSoftModeAdjustResizeExecutor(Activity activity) {
         FrameLayout content = (FrameLayout) activity.findViewById(android.R.id.content);
         mChildOfContent = content.getChildAt(0);

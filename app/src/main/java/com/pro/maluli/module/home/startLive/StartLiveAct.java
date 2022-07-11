@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -54,7 +55,6 @@ import com.netease.lava.nertc.sdk.video.NERtcRemoteVideoStreamType;
 import com.netease.lava.nertc.sdk.video.NERtcVideoStreamType;
 import com.netease.lava.nertc.sdk.video.NERtcVideoView;
 import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nim.uikit.business.chatroom.fragment.ChatRoomMessageFragment;
 import com.netease.nim.uikit.business.chatroom.helper.ChatRoomHelper;
 import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomViewHolderHelper;
 import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
@@ -107,7 +107,6 @@ import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.AcacheUtil;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
-import com.pro.maluli.common.utils.preferences.Preferences;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.CanFinishDialog;
 import com.pro.maluli.common.view.dialogview.EditLiveTimeDialog;
@@ -228,15 +227,12 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     Container container;
     boolean isChange;//切换显示布局
     InputTextLiveDialog inputTextLiveDialog;
-
-    private boolean isSmall;
-    private SoftKeyBoardListener mKeyBoardListener;
     /**
      * ---------------------------------------------------------------------------------------------
      */
 
     //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -251,7 +247,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             }
         }
     };
-    int openStaus = 0;
+    int openStatus = 0;
     InnerReceiver innerReceiver;//监听home键
     ChannelBaseInfo channelInfo;
     Observer<CdnRequestData> cdnReqData = new Observer<CdnRequestData>() {
@@ -299,10 +295,11 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      */
     OnTwoOneStartEntity socketEntity;
     BaseTipsDialog liveEndDialog;
-    boolean isShowEndliveDialog;
-    boolean ishasPingfen;
-    //    @BindView(R.id.clear_screen)
-//    ClearScreenLayout clear_screen;
+    boolean isShowEndLiveDialog;
+    boolean isHasPingfen;
+    private boolean isSmall;
+    private SoftKeyBoardListener mKeyBoardListener;
+    private String invitedRequestId = "";
     private AudioInputPanel audioInputPanel;
     private String roomId, liveId;
     private Long uid;//自己uid
@@ -328,18 +325,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     private boolean joinedChannel = false;
     private boolean enableLocalVideo = true;
     private boolean enableLocalAudio = true;
-    private String WyToken = "";
     //    private PanelSwitchHelper mHelper;
     private StartLiveAdapter adapter;
-    /**
-     * 898
-     * 子页面
-     */
-    private ChatRoomMessageFragment messageFragment;
     private AbortableFuture<EnterChatRoomResultData> enterRequest;
     private List<ChatRoomMessage> messageList;
-    private SeeLiveUserEntity seeliveEntity;
-    private boolean touched = false; // 是否按着
     private boolean isAnchor = true;//判断是否是主播,
     private GiftEntity giftEntity;
     /**
@@ -357,7 +346,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     private TranslateAnimation inAnim;
     private NumberAnim giftNumberAnim;
     //聊天信息回调liaotian11
-    Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
+    private Observer<List<ChatRoomMessage>> incomingChatRoomMsg = new Observer<List<ChatRoomMessage>>() {
         @Override
         public void onEvent(List<ChatRoomMessage> messages) {
             // 处理新收到的消息
@@ -381,31 +370,30 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                             needRefresh = true;
                         }
                     } else {
-                        try {
-                            if (message.getMsgType() == MsgTypeEnum.custom) {
+                        if (message.getMsgType() == MsgTypeEnum.custom) {
+                            try {
                                 String allData = message.getAttachStr();
                                 Logger.d(allData);
                                 JSONObject jsonObjectTop = JSONObject.parseObject(allData);
                                 int type = jsonObjectTop.getInteger("type");
-                                try {
-                                    switch (type) {
-                                        case CustomAttachmentType.RedPacket:
-                                            showGift(message);
-                                            messageList.add(message);
-                                            needRefresh = true;
-                                            break;
-                                        case CustomAttachmentType.SystemMsgOut:
-                                            break;
-                                        default:
-                                            messageList.add(message);
-                                            needRefresh = true;
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                switch (type) {
+                                    case CustomAttachmentType.RedPacket:
+                                        showGift(message);
+                                        messageList.add(message);
+                                        needRefresh = true;
+                                        break;
+                                    case CustomAttachmentType.SystemMsgOut:
+                                        break;
+                                    default:
+                                        messageList.add(message);
+                                        needRefresh = true;
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+                            messageList.add(message);
+                            needRefresh = true;
                         }
                     }
                 }
@@ -449,7 +437,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     @Override
     public void baseInitialization() {
         BarUtils.transparentStatusBar(this);
-//        WindowSoftModeAdjustResizeExecutor.assistActivity(this);
         messageList = new ArrayList<>();
         EventBus.getDefault().register(this);
         liveId = getIntent().getStringExtra("liveId");
@@ -457,7 +444,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         //保持屏幕长时间亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         isAnchor = getIntent().getBooleanExtra("isAnchor", true);
-        WyToken = Preferences.getLoginInfo().getToken();
         userInfoEntity = (UserInfoEntity) ACache.get(this).getAsObject(ACEConstant.USERINFO);
         uid = getIntent().getLongExtra("UID", 0);
         if (userInfoEntity != null) {
@@ -615,7 +601,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
                 } else if (startNetTv.getText().equals("下一位")) {
                     presenter.getSeeLiveUserInfo();
-                    isShowEndliveDialog = false;
+                    isShowEndLiveDialog = false;
                 }
                 break;
 
@@ -667,7 +653,9 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
     private void dismissInputDialog() {
         if (inputTextLiveDialog != null) {
-            if (inputTextLiveDialog.isShowing()) inputTextLiveDialog.dismiss();
+            if (inputTextLiveDialog.isShowing()) {
+                inputTextLiveDialog.dismiss();
+            }
             inputTextLiveDialog.cancel();
             inputTextLiveDialog = null;
         }
@@ -1066,7 +1054,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         slide_layout.setSlideListener(new ISlideListener() {
             @Override
             public void onPositionChanged(float percent) {
-                openStaus = (int) percent;
+                openStatus = (int) percent;
                 if (percent == 1.0) {
                     clearScreenIV.setVisibility(View.VISIBLE);
                 } else {
@@ -1132,8 +1120,9 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      * @param userID 用户ID
      * @param roomID 房间ID
      */
-    private void joinChannel(String nertc_token, String roomID, long userID) {
-        NERtcEx.getInstance().joinChannel(nertc_token, roomID, userID);
+    private void joinChannel(String nertcToken, String roomID, long userID) {
+        Logger.d("joinChannel");
+        NERtcEx.getInstance().joinChannel(nertcToken, roomID, userID);
         vv_local_user.setZOrderMediaOverlay(true);
         vv_local_user.setScalingType(NERtcConstants.VideoScalingType.SCALE_ASPECT_BALANCED);
         NERtcEx.getInstance().setupLocalVideoCanvas(vv_local_user);
@@ -1149,6 +1138,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             public void onSuccess(EnterChatRoomResultData result) {
                 initMessageFragment();
                 if (container != null) {
+                    if (joinLiveEntity.getInfo().getChat_notice() != null) {
+                        for (String tips : joinLiveEntity.getInfo().getChat_notice()) {
+                            SystemAttachment systemAttachment = new SystemAttachment();
+                            systemAttachment.setTips(tips);
+                            ChatRoomMessage message = ChatRoomMessageBuilder.createChatRoomCustomMessage(container.account, systemAttachment);
+                            messageList.add(message);
+                        }
+                    }
                     SystemAttachment systemAttachment = new SystemAttachment();
                     systemAttachment.setTips(joinLiveEntity.getInfo().getChat().getAnnouncement());
                     ChatRoomMessage message = ChatRoomMessageBuilder.createChatRoomCustomMessage(container.account, systemAttachment);
@@ -1284,14 +1281,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             unregisterReceiver(innerReceiver);
         }
         try {
+            SocketLiveUtils.INSTANCE.closeConnect();
+            registerObservers(false);
+            EventBus.getDefault().unregister(this);
+            closeChannel();
             if (!isSmall) {
                 NIMClient.getService(ChatRoomService.class).exitChatRoom(roomId);
                 stopVideoService();
-                SocketLiveUtils.INSTANCE.closeConnect();
-                EventBus.getDefault().unregister(this);
-                registerObservers(false);
                 NERtcEx.getInstance().release();
-                closeChannel();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1310,10 +1307,9 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     public void onPause() {
         super.onPause();
         if (!isSmall) {
-            carmerIv.setSelected(false);
-            setLocalVideoEnable(true);
+            carmerIv.setSelected(true);
+            setLocalVideoEnable(false);
         }
-
         if (audioInputPanel != null) {
             audioInputPanel.onPause();
         }
@@ -1329,8 +1325,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      */
     @Override
     public void setSeeLiveInfo(SeeLiveUserEntity data) {
-        this.seeliveEntity = data;
-//        当前状态: 1-正常下一位用户 2-进行中用户 3-异常退出用户,弹窗提示跳过/继续邀请
+        // 当前状态: 1-正常下一位用户 2-进行中用户 3-异常退出用户,弹窗提示跳过/继续邀请
         if (data.getStatus_code() == 3 || data.getStatus_code() == 2) {
             BaseTipsDialog baseTipsDialog = new BaseTipsDialog();
             Bundle bundle1 = new Bundle();
@@ -1418,7 +1413,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         map.put("liveClassify", joinLiveEntity.getInfo().getCate_one() + "_" + joinLiveEntity.getInfo().getCate());
         map.put("consulationID", userInfoEntity.getIs_read_conceal());
         String callInformation = JSON.toJSONString(map);
-        String invitedRequestId = System.currentTimeMillis() + "_id";
+        invitedRequestId = System.currentTimeMillis() + "_id";
         InviteParamBuilder param = new InviteParamBuilder(channelInfo.getChannelId(), account, invitedRequestId);
         param.customInfo(callInformation);
         param.offlineEnabled(true);
@@ -1432,19 +1427,41 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
             @Override
             public void onFailed(int code) {
-                showConcectFailView();
+                showConnectFailView();
                 if (checkMsgDialog != null) {
                     checkMsgDialog.dismiss();
                 }
             }
 
             @Override
-            public void onException(Throwable exception) {
+            public void onException(Throwable t) {
+                t.printStackTrace();
             }
         });
     }
 
-    private void showConcectFailView() {
+    private void cancelInvite(String account) {
+        InviteParamBuilder param = new InviteParamBuilder(channelInfo.getChannelId(), account, invitedRequestId);
+        param.offlineEnabled(true);
+        NIMClient.getService(SignallingService.class).cancelInvite(param).setCallback(new RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void param) {
+                Logger.d("cancelInvite onSuccess");
+            }
+
+            @Override
+            public void onFailed(int code) {
+                Logger.d("cancelInvite onFailed");
+            }
+
+            @Override
+            public void onException(Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void showConnectFailView() {
         BaseTipsDialog baseTipsDialog = new BaseTipsDialog();
         Bundle bundle1 = new Bundle();
         bundle1.putString("showContent", "当前排队用户暂时无法接听");
@@ -1489,7 +1506,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         startNetTv.setBackground(getResources().getDrawable(R.drawable.shape_ffa743_23));
         endliveTv.setBackground(getResources().getDrawable(R.drawable.shape_fc595e_26));
         endliveTv.setText("结束");
-        isShowEndliveDialog = false;
+        isShowEndLiveDialog = false;
     }
 
     /**
@@ -1497,7 +1514,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
      */
     @Override
     public void addTimeSucess() {
-        isShowEndliveDialog = false;
+        isShowEndLiveDialog = false;
 //        startNetTv.setText("下一位");
 //        startNetTv.setBackground(getResources().getDrawable(R.drawable.shape_8e1d77_32));
 //        endliveTv.setBackground(getResources().getDrawable(R.drawable.shape_ffa743_23));
@@ -2068,7 +2085,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
     protected void onResume() {
         super.onResume();
         if (!TextUtils.isEmpty(liveId)) {
-//            SocketLiveUtils.INSTANCE.closeConnect();
             String lasdak = AcacheUtil.getToken(StartLiveAct.this, false).substring(7);
             String url = Url.SOCKET_URL + "room?room_id=" + liveId + "&token=" + lasdak;
             SocketLiveUtils.INSTANCE.onStartCommand(url);
@@ -2105,14 +2121,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                             }
                         }
                         if (socketEntity.getNow_time() > 0) {
-                            isShowEndliveDialog = false;
+                            isShowEndLiveDialog = false;
                         }
                         //-1-未开始直播 0-直播已结束 1-直播中
                         if (socketEntity.getType() == 0) {
                             if (liveEndDialog != null && liveEndDialog.getDialog() != null && liveEndDialog.getDialog().isShowing()) {
 
                             } else {
-                                if (!isShowEndliveDialog) {
+                                if (!isShowEndLiveDialog) {
                                     liveEndDialog = new BaseTipsDialog();
                                     Bundle bundle2 = new Bundle();
                                     if (isAnchor) {
@@ -2125,7 +2141,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                                     liveEndDialog.setArguments(bundle2);
                                     liveEndDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
                                 }
-                                isShowEndliveDialog = true;
+                                isShowEndLiveDialog = true;
                             }
                         }
                         if (socketEntity.getSpecial_count() > 0 && "特邀".equalsIgnoreCase(endliveTv.getText().toString()) && isAnchor) {
@@ -2146,7 +2162,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!ishasPingfen) {
+                                if (!isHasPingfen) {
                                     exit();
                                 }
                             }
@@ -2156,7 +2172,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                     break;
                 case 6:
                     if (!isAnchor) {
-                        ishasPingfen = true;
+                        isHasPingfen = true;
                         LiveAssessDialog2 liveAssessDialog = new LiveAssessDialog2(StartLiveAct.this);
                         liveAssessDialog.setCanceledOnTouchOutside(false);
                         liveAssessDialog.setCancelable(false);
@@ -2335,6 +2351,8 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         if (!isWork) {
             Bundle bundle = new Bundle();
             bundle.putString("liveId", liveId);
+            bundle.putBoolean("isAnchor", isAnchor);
+            bundle.putLong("UID", uid);
             Intent intent = new Intent(BKGSApplication.getApp(), FloatingViewService.class);//开启服务显示悬浮框
             intent.putExtras(bundle);
             startService(intent);

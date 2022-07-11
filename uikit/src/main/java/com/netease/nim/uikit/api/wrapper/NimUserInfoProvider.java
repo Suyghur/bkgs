@@ -12,6 +12,7 @@ import com.netease.nim.uikit.business.team.helper.TeamHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.nos.NosService;
 import com.netease.nimlib.sdk.superteam.SuperTeam;
 import com.netease.nimlib.sdk.team.model.Team;
@@ -90,8 +91,12 @@ public class NimUserInfoProvider implements UserInfoProvider {
     }
 
     @Override
-    public String getDisplayNameForMessageNotifier(String account, String sessionId,
-                                                   SessionTypeEnum sessionType) {
+    public String getDisplayTitleForMessageNotifier(IMMessage message) {
+        return null;
+    }
+
+    @Override
+    public String getDisplayNameForMessageNotifier(String account, String sessionId, SessionTypeEnum sessionType) {
         String nick = null;
         if (sessionType == SessionTypeEnum.P2P) {
             nick = NimUIKit.getContactProvider().getAlias(account);

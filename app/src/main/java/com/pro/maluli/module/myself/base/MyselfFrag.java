@@ -229,7 +229,7 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
     public void setUserInfoSuccess(UserInfoEntity response) {
         userInfoEntity = response;
         anchorId = String.valueOf(response.getAnchor_id());
-        ACache.get(mContext).put(ACEConstant.USERINFO, response);
+        ACache.get(requireActivity()).put(ACEConstant.USERINFO, response);
         GlideUtils.loadHeardImg(getActivity(), response.getAvatar(), avatarCiv);
         GlideUtils.loadImageNoImage(getActivity(), response.getAnchor_level(), levelImg);
         userNameTv.setText(response.getNickname());

@@ -18,7 +18,6 @@ public class ChildLiveListPresenter extends BasePresenter<IChildLiveListContract
         super(context);
     }
 
-    //List<LiveListEntity>
     @Override
     public void getHomeLiveList(String id) {
         add(mService.getHomeLiveList(id, String.valueOf(page), "10")

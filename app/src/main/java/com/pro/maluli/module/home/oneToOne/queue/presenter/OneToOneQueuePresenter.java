@@ -2,12 +2,15 @@ package com.pro.maluli.module.home.oneToOne.queue.presenter;
 
 import android.content.Context;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.gson.Gson;
 import com.pro.maluli.common.base.BasePresenter;
 import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.OneToOneLiveEntity;
 import com.pro.maluli.common.entity.ReserveEntity;
+import com.pro.maluli.common.entity.StatusCodeEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
 import com.pro.maluli.common.utils.StringUtils;
@@ -106,13 +109,27 @@ public class OneToOneQueuePresenter extends BasePresenter<IOneToOneQueueContract
                     public void onSuccess(BaseResponse<Object> response) {
 //                        mView.setLikeAnNoLike(response.getMsg());
 //                        getReserveInfo();
-                        mView.setReserveSuccess();
+//                        Logger.d(response.toString());
+//                        Logger.d(response.getData().toString());
+//                        if (response.getData().getStatus_code().equals("0")) {
+//                            mView.setReserveSuccess();
+//                        } else {
+//                            mView.setReserveFailed(response);
+//                        }
+                        Gson gson = new Gson();
+                        String myJson = gson.toJson(response);
+                        JSONObject jsonObject = JSONObject.parseObject(myJson);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        if (data == null || data.toString().equals("{}")) {
+                            mView.setReserveSuccess();
+                        } else {
+                            mView.setReserveFailed(response);
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         throwable.printStackTrace();
-
                     }
                 }));
     }
@@ -121,9 +138,9 @@ public class OneToOneQueuePresenter extends BasePresenter<IOneToOneQueueContract
     public void anchorSub() {
         add(mService.removeLike(anchor_id)
                 .compose(getTransformer())
-                .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
+                .subscribe(new SuccessConsumer<BaseResponse<StatusCodeEntity>>(mView) {
                     @Override
-                    public void onSuccess(BaseResponse<Object> response) {
+                    public void onSuccess(BaseResponse<StatusCodeEntity> response) {
                         mView.setLikeAnNoLike(response.getMsg());
                     }
                 }, new Consumer<Throwable>() {

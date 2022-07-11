@@ -1,5 +1,6 @@
 package com.pro.maluli.module.home.oneToOne.queue.presenter;
 
+import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.OneToOneEntity;
@@ -21,6 +22,9 @@ public interface IOneToOneQueueContraction extends BaseView {
         void setDqLiveInfo(OneToOneLiveEntity data);
 
         void setReserveSuccess();
+
+        void setReserveFailed(BaseResponse<Object> response);
+
     }
 
     interface Presenter extends IClear {

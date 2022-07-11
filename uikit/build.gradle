@@ -43,8 +43,8 @@ android {
 dependencies {
     api files('libs/fastjson-1.1.71.android.jar')
     api files('libs/java-json.jar')
-    api files('libs/nim-lucene-8.7.0.jar')
-    api files('libs/nim-superteam-8.7.0.jar')
+    api files('libs/nim-lucene-9.2.5.jar')
+    api files('libs/nim-superteam-9.2.5.jar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -64,10 +64,10 @@ dependencies {
      * 网易云信即时通讯
      */
     // 基础功能 (必需)
-    api 'com.netease.nimlib:basesdk:8.7.0'
+    api 'com.netease.nimlib:basesdk:9.2.5'
 
     // 聊天室需要
-    api 'com.netease.nimlib:chatroom:8.7.0'
+    api 'com.netease.nimlib:chatroom:9.2.5'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     api 'org.greenrobot:eventbus:3.0.0'
     //api 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1' // if you want to use the Glide GPU Filters

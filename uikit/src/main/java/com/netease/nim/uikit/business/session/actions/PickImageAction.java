@@ -38,29 +38,19 @@ public abstract class PickImageAction extends BaseAction {
      * 打开图片选择器
      */
     private void showSelector(int titleId, final int requestCode, final boolean multiSelect) {
-        ImagePickerOption option = DefaultImagePickerOption.getInstance().setShowCamera(true).setPickType(
-                ImagePickerOption.PickType.Image).setMultiMode(multiSelect).setSelectMax(PICK_IMAGE_COUNT);
+        ImagePickerOption option = DefaultImagePickerOption.getInstance().setShowCamera(true).setPickType(ImagePickerOption.PickType.Image).setMultiMode(multiSelect).setSelectMax(PICK_IMAGE_COUNT);
         ImagePickerLauncher.selectImage(getActivity(), requestCode, option, titleId);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case RequestCode.PICK_IMAGE:
-                onPickImageActivityResult(requestCode, data);
-                break;
+        if (requestCode == RequestCode.PICK_IMAGE) {
+            if (data == null) {
+                ToastHelper.showToastLong(getActivity(), R.string.picker_image_error);
+                return;
+            }
+            sendImageAfterSelfImagePicker(data);
         }
-    }
-
-    /**
-     * 图片选取回调
-     */
-    private void onPickImageActivityResult(int requestCode, Intent data) {
-        if (data == null) {
-            ToastHelper.showToastLong(getActivity(), R.string.picker_image_error);
-            return;
-        }
-        sendImageAfterSelfImagePicker(data);
     }
 
 
@@ -69,11 +59,9 @@ public abstract class PickImageAction extends BaseAction {
      */
     private void sendImageAfterSelfImagePicker(final Intent data) {
         SendImageHelper.sendImageAfterSelfImagePicker(getActivity(), data, new SendImageHelper.Callback() {
-
             @Override
             public void sendImage(File file, boolean isOrig) {
                 onPicked(file);
-
             }
         });
     }

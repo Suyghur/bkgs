@@ -1,9 +1,5 @@
 package com.netease.nim.uikit.common.media.imagepicker;
 
-/**
- *
- */
-
 public class Constants {
 
     public static final int GRIDVIEW_COLUMN = 4;

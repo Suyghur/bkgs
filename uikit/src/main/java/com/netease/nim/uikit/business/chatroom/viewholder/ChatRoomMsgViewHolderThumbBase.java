@@ -25,6 +25,7 @@ public abstract class ChatRoomMsgViewHolderThumbBase extends ChatRoomMsgViewHold
     protected MsgThumbImageView thumbnail;
     protected View progressCover;
     protected TextView progressLabel;
+
     public ChatRoomMsgViewHolderThumbBase(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }

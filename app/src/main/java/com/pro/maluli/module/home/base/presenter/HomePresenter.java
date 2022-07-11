@@ -27,7 +27,6 @@ public class HomePresenter extends BasePresenter<IHomeContraction.View> implemen
                     @Override
                     public void onSuccess(BaseResponse<HomeInfoEntity> response) {
                         response.getData();
-//                        mView.userInfo();
                         mView.setHomeInfo(response.getData());
                     }
                 }, new Consumer<Throwable>() {

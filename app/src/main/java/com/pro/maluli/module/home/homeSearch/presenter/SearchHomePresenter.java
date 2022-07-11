@@ -15,6 +15,7 @@ import io.reactivex.functions.Consumer;
 public class SearchHomePresenter extends BasePresenter<ISearchHomeContraction.View> implements ISearchHomeContraction.Presenter {
     public int page;
     public String keyword;
+
     public SearchHomePresenter(Context context) {
         super(context);
     }

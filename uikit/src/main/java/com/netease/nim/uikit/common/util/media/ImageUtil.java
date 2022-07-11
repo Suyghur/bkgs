@@ -245,7 +245,8 @@ public class ImageUtil {
         String tempFilePath = getTempFilePath(FileUtil.getExtensionName(filePath));
         File tempImageFile = AttachmentStore.create(tempFilePath);
         if (tempImageFile == null) {
-            return null;
+            tempFilePath = getTempFilePath2(FileUtil.getExtensionName(filePath));
+            tempImageFile = AttachmentStore.create(tempFilePath);
         }
         CompressFormat compressFormat = CompressFormat.JPEG;
         // 压缩数值由第三方开发者自行决定
@@ -259,8 +260,12 @@ public class ImageUtil {
     }
 
     private static String getTempFilePath(String extension) {
-        return StorageUtil.getWritePath(NimUIKit.getContext(), "temp_image_" + StringUtil.get36UUID() + "." + extension,
-                StorageType.TYPE_TEMP);
+        return StorageUtil.getWritePath(NimUIKit.getContext(), "temp_image_" + StringUtil.get36UUID() + "." + extension, StorageType.TYPE_TEMP);
+    }
+
+    private static String getTempFilePath2(String extension) {
+        return NimUIKit.getContext().getExternalFilesDir("temp").getAbsolutePath() + "temp_image_" + StringUtil.get36UUID() + "." + extension;
+//        return StorageUtil.getWritePath(NimUIKit.getContext(), "temp_image_" + StringUtil.get36UUID() + "." + extension, StorageType.TYPE_TEMP);
     }
 
     /**

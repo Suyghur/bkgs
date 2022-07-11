@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.business.session.constant.Extras;
@@ -42,10 +43,8 @@ public class SendImageHelper {
 
                 // 把缩略图移到按原图计算的新md5目录下
                 String thumbFilename = FileUtil.getFileNameFromPath(imageFilepath);
-                String thumbMD5Path = StorageUtil.getReadPath(thumbFilename,
-                        StorageType.TYPE_THUMB_IMAGE);
-                String origThumbMD5Path = StorageUtil.getWritePath(origMD5 + "." + extension,
-                        StorageType.TYPE_THUMB_IMAGE);
+                String thumbMD5Path = StorageUtil.getReadPath(thumbFilename, StorageType.TYPE_THUMB_IMAGE);
+                String origThumbMD5Path = StorageUtil.getWritePath(origMD5 + "." + extension, StorageType.TYPE_THUMB_IMAGE);
                 AttachmentStore.move(thumbMD5Path, origThumbMD5Path);
 
                 if (callback != null) {
@@ -61,16 +60,16 @@ public class SendImageHelper {
 
     public static void sendImageAfterSelfImagePicker(Context context, Intent data, final Callback callback) {
         boolean isOrig = data.getBooleanExtra(Extras.EXTRA_IS_ORIGINAL, false);
-
         ArrayList<GLImage> images = (ArrayList<GLImage>) data.getSerializableExtra(Constants.EXTRA_RESULT_ITEMS);
-        if (images == null) {
+
+        if (images == null || images.isEmpty()) {
+            Log.d("bkgs_app", "images == null || images.isEmpty()");
             ToastHelper.showToastLong(context, R.string.picker_image_error);
             return;
         }
 
         for (GLImage photoInfo : images) {
             new SendImageTask(context, isOrig, photoInfo, new Callback() {
-
                 @Override
                 public void sendImage(File file, boolean isOrig) {
                     if (callback != null) {
@@ -134,6 +133,7 @@ public class SendImageHelper {
                     new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d("bkgs_app", "doInBackground, imageFile == null");
                             ToastHelper.showToastLong(context, R.string.picker_image_error);
                         }
                     });

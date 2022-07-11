@@ -5,7 +5,6 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import com.pro.maluli.ktx.utils.Logger
 import com.shuyu.gsyvideoplayer.cache.CacheFactory
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import com.tencent.bugly.Bugly
@@ -19,7 +18,7 @@ import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 class BKGSInstaller : ContentProvider() {
     override fun onCreate(): Boolean {
         val application = context!!.applicationContext as Application
-        Logger.initZap(application)
+//        Logger.initZap(application)
         Bugly.init(application, "dd30375eac", false)
         PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
         CacheFactory.setCacheManager(ExoPlayerCacheManager::class.java)

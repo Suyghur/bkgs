@@ -13,6 +13,7 @@ import io.reactivex.functions.Consumer;
 public class SearchRewardPresenter extends BasePresenter<ISearchRewardContraction.View> implements ISearchRewardContraction.Presenter {
     public int page;
     public String end_time, start_time, date, flow_type, keyword;
+
     public SearchRewardPresenter(Context context) {
         super(context);
     }

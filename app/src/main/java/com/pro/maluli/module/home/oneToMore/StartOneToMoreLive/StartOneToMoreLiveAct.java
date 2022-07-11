@@ -326,11 +326,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             if (rtmp_pull_url != null) {
                 binder.setData(rtmp_pull_url);
             }
-//            binder.getService().setCallback(new FloatingViewMoreService.CallBack() {
-//                @Override
-//                public void onDataChanged(String data) {
-//                }
-//            });
         }
 
         @Override
@@ -414,10 +409,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                 if (isMyMessage(message) && message.getMsgType() != MsgTypeEnum.notification) {
                     if (message.getMsgType() == MsgTypeEnum.custom) {
                         String allData = message.getAttachStr();
-                        Logger.d(allData);
                         JSONObject jsonObjectTop = JSONObject.parseObject(allData);
                         int type = jsonObjectTop.getInteger("type");
-
                         try {
                             switch (type) {
                                 case CustomAttachmentType.RedPacket:
@@ -428,7 +421,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                                 case CustomAttachmentType.lianmai:
                                     JSONObject jsonObject = jsonObjectTop.getJSONObject("data");
                                     String anchorPhoto = jsonObject.getString("playingStatus");//1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
-                                    showTipisPlaying(anchorPhoto);
+                                    showTipsPlaying(anchorPhoto);
                                     break;
                                 case CustomAttachmentType.SystemMsg:
                                     // 有人进入直播间了
@@ -455,6 +448,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    } else {
+                        messageList.add(message);
+                        needRefresh = true;
                     }
                 } else {
                     try {
@@ -497,7 +493,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         e.printStackTrace();
                     }
                 }
-
             }
             if (needRefresh) {
                 adapter.setList(messageList);
@@ -506,7 +501,11 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 //            messageListPanel.onIncomingMessage(messages);
         }
     };    //这里直播可以用 LivePlayerObserver 点播用 VodPlayerObserver bofagnqi
-    private LivePlayerObserver playerObserver = new LivePlayerObserver() {
+
+    @Override
+    public StartOneToMoreLivePresenter initPresenter() {
+        return new StartOneToMoreLivePresenter(this);
+    }    private final LivePlayerObserver playerObserver = new LivePlayerObserver() {
 
         @Override
         public void onPreparing() {
@@ -520,43 +519,31 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
         @Override
         public void onError(int code, int extra) {
-            Log.e("haode", extra + "a------a" + code);
             if (code == CauseCode.CODE_VIDEO_PARSER_ERROR) {
                 showToast("视频解析出错");
             } else if (code == CauseCode.CODE_BUFFERING_ERROR) {
                 initPlayer();
                 player.switchContentUrl(rtmp_pull_url);
-//                if (chronometer != null) {
-//                    chronometer.stop();
-//                }
-//                anchorLeave();
+
             } else if (code == CauseCode.CODE_RTMP_CONNECT_ERROR) {
                 stopLiveDialog();
-//                showToast("本场直播已被停播，去其他直播间看看");
             }
-
         }
 
         @Override
         public void onFirstVideoRendered() {
-//            showToast("视频第一帧已解析");
-            Log.e("haode", "a---onFirstVideoRendered---a");
         }
 
         @Override
         public void onFirstAudioRendered() {
-            //            showToast("音频第一帧已解析");
-            Log.e("haode", "a---onFirstAudioRendered---a");
         }
 
         @Override
         public void onBufferingStart() {
-            Log.e("haode", "a---onBufferingStart---a");
         }
 
         @Override
         public void onBufferingEnd() {
-            Log.e("haode", "a---onBufferingStart---a");
         }
 
         @Override
@@ -565,13 +552,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
         @Override
         public void onVideoDecoderOpen(int value) {
-//            showToast("使用解码类型：" + (value == 1 ? "硬件解码" : "软解解码"));
-            Log.e("haode", "a---onVideoDecoderOpen---a" + value);
         }
 
         @Override
         public void onStateChanged(StateInfo stateInfo) {
-            Log.e("haode", "a---onStateChanged---a");
             if (stateInfo != null && stateInfo.getCauseCode() == CauseCode.CODE_VIDEO_STOPPED_AS_NET_UNAVAILABLE) {
                 showToast("网络已断开");
             }
@@ -582,13 +566,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             Log.e("haode", "a---header---a");
         }
     };
-    // 礼物
-    private int[] GiftIcon = new int[]{R.drawable.down_icon};
-
-    @Override
-    public StartOneToMoreLivePresenter initPresenter() {
-        return new StartOneToMoreLivePresenter(this);
-    }
 
     @Override
     protected void onStart() {
@@ -619,29 +596,14 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     public void viewInitialization() {
         bPermission = ToolUtils.checkPublishPermission(this);
-        /**   6.0权限申请     **/
-        // 尽量在请求权限后再初始化450405024
-        if (bPermission) {
-//            initPlayer();
-        }
-
         setupNERtc();
         setupLocalVideo(vv_local_user);
-//        if (!TextUtils.isEmpty(roomId)) {
-//            joinLiaoTianSHi();
-//            if (isAvater){
-//                joinChannel(WyToken, roomId, uid);
-//            }
-//        }
         adapter = new StartLiveAdapter();
         comment_list.setLayoutManager(new LinearLayoutManager(this));
         comment_list.setAdapter(adapter);
 
         checkImg.setVisibility(View.GONE);
         registerObservers(true);
-//        if (isAvater){
-//        create();
-//        }
 
         anchorImgRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         anchorImgRv.setVisibility(View.GONE);
@@ -677,17 +639,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         rtmp_pull_url = data.getInfo().getRtmp_pull_url();
         userAccid = data.getInfo().getAccid();
 
-        if (data.getInfo().getIs_appoint() == 1) {
-            ReserveTv.setSelected(true);
-        } else {
-            ReserveTv.setSelected(false);
-        }
+        ReserveTv.setSelected(data.getInfo().getIs_appoint() == 1);
         if (lianmaiEntities != null && lianmaiEntities.size() > 0) {
         } else {
             if (isAvater) {
                 joinChannel(nertc_token, channelName, uid);
             }
-            joinLiaoTianSHi();
+            joinChatRoom();
             initPlayer();
         }
 
@@ -811,12 +769,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                 bundle.putInt(CheckBigPictureDialog.EXTRA_IMAGE_INDEX, position);
                 bigPictureDialog.setArguments(bundle);
                 bigPictureDialog.show(getSupportFragmentManager(), "CheckBigPictureDialog");
-
-
             }
         });
-
-
     }
 
     @Override
@@ -824,12 +778,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         super.onResume();
         userInfoEntity = (UserInfoEntity) ACache.get(this).getAsObject(ACEConstant.USERINFO);
         if (!TextUtils.isEmpty(liveId)) {
-//            SocketLiveUtils.INSTANCE.closeConnect();
             String lasdak = AcacheUtil.getToken(StartOneToMoreLiveAct.this, false).substring(7);
             String url = Url.SOCKET_URL + "many?room_id=" + liveId + "&token=" + lasdak;
             SocketLiveUtils.INSTANCE.onStartCommand(url);
         }
-//        presenter.getGiftInfo();
     }
 
     @Override
@@ -842,22 +794,17 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 100:
-
-                for (int ret : grantResults) {
-                    if (ret != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                }
-                bPermission = true;
-                if (TextUtils.isEmpty(rtmp_pull_url)) {
+        if (requestCode == 100) {
+            for (int ret : grantResults) {
+                if (ret != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                initPlayer();
-                break;
-            default:
-                break;
+            }
+            bPermission = true;
+            if (TextUtils.isEmpty(rtmp_pull_url)) {
+                return;
+            }
+            initPlayer();
         }
     }
 
@@ -877,7 +824,32 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         initPlaye2r();
     }
 
-    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
+    private void initPlaye2r() {
+        config = new SDKOptions();
+        config.privateConfig = new NEPlayerConfig();
+        PlayerManager.init(this, config);
+        VideoOptions options = new VideoOptions();
+        options.hardwareDecode = false;
+        options.isPlayLongTimeBackground = true;
+        options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER;
+        player = PlayerManager.buildVodPlayer(this, rtmp_pull_url, options);
+        //NONE：无缩放(原始大小)
+        //FIT：等比例缩放至长边充满容器，短边可能填充黑边
+        //FILL：拉伸至充满容器，画面可能会变形
+        //FULL：等比例缩放至短边充满容器，长边可能会被裁剪
+        player.setVideoScaleMode(VideoScaleMode.FIT);
+        start();
+        if (textureView != null) {
+            vv_local_user.setVisibility(View.GONE);
+            textureView.setVisibility(View.VISIBLE);
+            player.setupRenderView(textureView, VideoScaleMode.FIT);
+        }
+    }
+
+    private void start() {
+        player.registerPlayerObserver(playerObserver, true);
+        player.start();
+    }    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
         @Override
         public void onEvent(ChannelCommonEvent channelCommonEvent) {
             SignallingEventType eventType = channelCommonEvent.getEventType();
@@ -993,8 +965,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         }
                     }
                     //更新列表数据
-                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
-                            && lianmaiDialogPD.getDialog().isShowing()) {
+                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null && lianmaiDialogPD.getDialog().isShowing()) {
                         lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
                     }
                     if (lianmaiEntities.size() > 1) {
@@ -1028,33 +999,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
         }
     };
-
-    private void initPlaye2r() {
-        config = new SDKOptions();
-        config.privateConfig = new NEPlayerConfig();
-        PlayerManager.init(this, config);
-        VideoOptions options = new VideoOptions();
-        options.hardwareDecode = false;
-        options.isPlayLongTimeBackground = true;
-        options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER;
-        player = PlayerManager.buildVodPlayer(this, rtmp_pull_url, options);
-        //NONE：无缩放(原始大小)
-        //FIT：等比例缩放至长边充满容器，短边可能填充黑边
-        //FILL：拉伸至充满容器，画面可能会变形
-        //FULL：等比例缩放至短边充满容器，长边可能会被裁剪
-        player.setVideoScaleMode(VideoScaleMode.FIT);
-        start();
-        if (textureView != null) {
-            vv_local_user.setVisibility(View.GONE);
-            textureView.setVisibility(View.VISIBLE);
-            player.setupRenderView(textureView, VideoScaleMode.FIT);
-        }
-    }
-
-    private void start() {
-        player.registerPlayerObserver(playerObserver, true);
-        player.start();
-    }
 
     //聊天列表滚动到最下面
     private void doScrollToBottom() {
@@ -1589,9 +1533,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         } else {
             accid = anchorAccid;
         }
-        NIMClient.getService(SignallingService.class).sendControl(channelId,
-                accid,
-                "断开连麦").setCallback(new RequestCallback<Void>() {
+        NIMClient.getService(SignallingService.class).sendControl(channelId, accid, "断开连麦").setCallback(new RequestCallback<Void>() {
             @Override
             public void onSuccess(Void param) {
                 connectLL.setVisibility(View.GONE);
@@ -1798,7 +1740,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     /**
      * 接收到主播关闭打开麦克风和摄像头 //1打开麦克风，2关闭麦克风，3打开摄像头，4关闭摄像头
      */
-    private void showTipisPlaying(String anchorPhoto) {
+    private void showTipsPlaying(String anchorPhoto) {
         switch (anchorPhoto) {
             case "1":
             case "3":
@@ -1837,7 +1779,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         textureView.setVisibility(View.GONE);
     }
 
-    public void joinLiaoTianSHi() {
+    public void joinChatRoom() {
         if (isJoinChatroom) {
             return;
         }
@@ -1854,14 +1796,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         String avatar = (String) remote.get("avatar");
                         if (connectLL.isShown() || avatar.equals("1")) {
                         } else if (!"1".equalsIgnoreCase(avatar)) {
-
                             showLianmaiView(avatar, !avatar.equals("1"));
                         }
 
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
-
                 }
                 isJoinChatroom = true;
                 initMessageFragment();
@@ -1875,9 +1815,8 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         }
 
                         adapter.setList(messageList);
-                        doScrollToBottom();
                     }
-
+                    doScrollToBottom();
                 } else {
                     ToastUtils.showShort("进入聊天室失败!");
                 }
@@ -1910,8 +1849,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         Map<String, Object> extension = new HashMap<>();
         extension.put("avatar", avatar);
         chatRoomUpdateInfo.setExtension(extension);
-        NIMClient.getService(ChatRoomService.class).updateRoomInfo(roomId, chatRoomUpdateInfo,
-                true, extension).setCallback(new RequestCallback<Void>() {
+        NIMClient.getService(ChatRoomService.class).updateRoomInfo(roomId, chatRoomUpdateInfo, true, extension).setCallback(new RequestCallback<Void>() {
             @Override
             public void onSuccess(Void param) {
 
@@ -2102,7 +2040,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         NIMClient.getService(ChatRoomServiceObserver.class).observeReceiveMessage(incomingChatRoomMsg, register);
         NIMClient.getService(ChatRoomServiceObserver.class).observeCdnRequestData(cdnReqData, register);
         NIMClient.getService(SignallingServiceObserver.class).observeOnlineNotification(nimOnlineObserver, register);
-
     }
 
     @Override
@@ -2130,18 +2067,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             audioInputPanel.onDestroy();
         }
     }
-
-//    @Override
-//    public void setSeeLiveInfo(SeeLiveUserEntity data) {
-//        this.seeliveEntity = data;
-//    }
-//
-//    @Override
-//    public void setDqLiveInfo(OneToOneLiveEntity data) {
-//        roomId = String.valueOf(data.getChat().getRoomid());
-//        joinLiaoTianSHi();
-//        joinChannel(WyToken, roomId, uid);
-//    }
 
     /**
      * 关闭频道
@@ -2183,6 +2108,18 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         player = null;
 
     }
+
+//    @Override
+//    public void setSeeLiveInfo(SeeLiveUserEntity data) {
+//        this.seeliveEntity = data;
+//    }
+//
+//    @Override
+//    public void setDqLiveInfo(OneToOneLiveEntity data) {
+//        roomId = String.valueOf(data.getChat().getRoomid());
+//        joinLiaoTianSHi();
+//        joinChannel(WyToken, roomId, uid);
+//    }
 
     @Override
     public void onPause() {
@@ -2297,9 +2234,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     public boolean sendMessage(IMMessage msg) {
         ChatRoomMessage message = (ChatRoomMessage) msg;
-        Logger.e("sendMessage");
         // 检查是否转换成机器人消息
-//      message = changeToRobotMsg(message);
         ChatRoomHelper.buildMemberTypeInRemoteExt(message, roomId);
         NIMClient.getService(ChatRoomService.class).sendMessage(message, false)
                 .setCallback(new RequestCallback<Void>() {
@@ -2803,13 +2738,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         Bundle bundle1 = new Bundle();
         bundle1.putString("showContent", "是否确定退出直播间？");
         bundle1.putString("TITLE_DIO", "退出直播间");
-        bundle1.putString("comfirm", "取消");
         if (isAvater) {
-//            bundle1.putString("comfirm", "退出");
             bundle1.putString("cancel", "结束直播");
+            bundle1.putString("comfirm", "取消");
         } else {
             bundle1.putString("cancel", "最小化");
-
+            bundle1.putString("comfirm", "退出");
         }
         baseTipsDialog.setArguments(bundle1);
         baseTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
@@ -3013,6 +2947,10 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             animSet.start();
         }
     }
+
+
+
+
 
 
 }

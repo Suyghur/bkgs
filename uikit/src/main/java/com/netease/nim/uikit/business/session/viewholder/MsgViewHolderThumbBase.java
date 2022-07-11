@@ -29,6 +29,7 @@ public abstract class MsgViewHolderThumbBase extends MsgViewHolderBase {
     protected MsgThumbImageView thumbnail;
     protected View progressCover;
     protected TextView progressLabel;
+
     public MsgViewHolderThumbBase(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }

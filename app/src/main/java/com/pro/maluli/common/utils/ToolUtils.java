@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.text.format.Time;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
@@ -167,13 +166,13 @@ public class ToolUtils {
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                Logger.d( "onError: ");
+                Logger.d("onError: ");
                 String asda = platform.getDb().exportData();
             }
 
             @Override
             public void onCancel(Platform platform, int i) {
-                Logger.d( "onCancel: ");
+                Logger.d("onCancel: ");
             }
         });
         weChat.SSOSetting(false);
@@ -191,7 +190,7 @@ public class ToolUtils {
         weChat.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, final HashMap<String, Object> hashMap) {
-                Logger.d( "onComplete: ");
+                Logger.d("onComplete: ");
                 if (platform.getDb().exportData() != null) {
                     Message message = new Message();
                     message.what = 2;

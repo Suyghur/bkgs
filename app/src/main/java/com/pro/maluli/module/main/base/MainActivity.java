@@ -62,6 +62,7 @@ import com.pro.maluli.common.view.dialogview.NoticeDialog;
 import com.pro.maluli.common.view.dialogview.PrivacyDialog;
 import com.pro.maluli.common.view.dialogview.TeenagerDialog;
 import com.pro.maluli.common.view.dialogview.TeenagerNoSeeDialog;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.home.base.HomeFrag;
 import com.pro.maluli.module.home.oneToOne.answerPhone.AnswerPhoneAct;
@@ -91,6 +92,7 @@ import butterknife.BindView;
  * @date 2021/6/15
  */
 public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPresenter> implements IMainContraction.View {
+    public static boolean hasShowAnswerPage = false;
     public GiftEntity.ListBean giftBean;
     @BindView(R.id.haveNews_iv)
     TextView haveNews_iv;
@@ -98,18 +100,18 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     View customerNewTv;
     @BindView(R.id.messageTestLL)
     LinearLayout messageTestLL;
-
     UserInfoEntity userInfoEntity;
     NoticeDialog noticeDialog;
     TeenagerNoSeeDialog teenagerNoSeeDialog;
     PrivacyDialog privacyDialog;
-
     //收到的邀请参数,reject 用到
 //    private InvitedEvent invitedEvent;
     Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
         @Override
         public void onEvent(ChannelCommonEvent channelCommonEvent) {
             SignallingEventType eventType = channelCommonEvent.getEventType();
+            Logger.d("onEvent: " + eventType.toString());
+
             switch (eventType) {
                 case CLOSE:
                     ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
@@ -123,10 +125,16 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
                     String customInfo = invitedEvent.getCustomInfo();
                     JSONObject json = JSONObject.parseObject(customInfo);
                     String type = json.getString("type");
+
+                    if (hasShowAnswerPage) {
+                        Logger.d("已经拉起AnswerPhoneAct");
+                        return;
+                    }
                     if (!TextUtils.isEmpty(type) && "1".equals(type)) {//判断是一对一通话邀请
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("LIVE_INFO", invitedEvent);
                         gotoActivity(AnswerPhoneAct.class, false, bundle);
+                        hasShowAnswerPage = true;
                     }
                     break;
                 case CANCEL_INVITE:
@@ -269,6 +277,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     }
 
     private void setNosee() {
+//        NIMClient.getService(MsgService.class).\
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
         unreadNum = unreadNum + systemNews;
         if (unreadNum > 0 && ToolUtils.isLogin(this, false)) {

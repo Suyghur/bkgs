@@ -31,6 +31,7 @@ public class HomeTopVideoFrg extends Fragment {
     HomeInfoEntity.BannerBean bannerBean;
     CoustormGsyVideoPlayer jcVideoPlayer;
     View mainView;
+
     /**
      * Fragment的View加载完毕的标记
      */
@@ -275,9 +276,7 @@ public class HomeTopVideoFrg extends Fragment {
      * 第三步:在lazyLoad()方法中进行双重标记判断,通过后即可进行数据加载
      */
     private void lazyLoad() {
-        if (getUserVisibleHint() && isPrepared /*&& !isLazyLoaded*/) {
-            //界面可见
-            Logger.e("lazyLoad");
+        if (getUserVisibleHint() && isPrepared) {
             startVideo();
             try {
                 new Handler().postDelayed(new Runnable() {
@@ -344,7 +343,7 @@ public class HomeTopVideoFrg extends Fragment {
     }
 
     private void setMuteStatus() {
-        if (jcVideoPlayer == null) {
+        if (jcVideoPlayer == null || PlayerFactory.getPlayManager().getMediaPlayer() == null) {
             return;
         }
         if (ACache.get(getActivity()).getAsString("MUTE").equalsIgnoreCase("1")) {

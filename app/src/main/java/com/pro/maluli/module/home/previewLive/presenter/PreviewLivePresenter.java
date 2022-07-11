@@ -24,7 +24,7 @@ public class PreviewLivePresenter extends BasePresenter<IPreviewLiveContraction.
 
     @Override
     public void getAnchorInfo(String anchorID) {
-        add(mService.getAnchorInfomation(anchorID)
+        add(mService.getAnchorInformation(anchorID)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorInfoEntity>>(mView) {
                     @Override

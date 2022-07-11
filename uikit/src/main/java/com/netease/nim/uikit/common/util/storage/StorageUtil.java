@@ -100,9 +100,6 @@ public class StorageUtil {
     /**
      * 获取文件保存路径，空间不足时有toast提示
      *
-     * @param context
-     * @param fileName
-     * @param fileType
      * @return 可用的保存路径或者null
      */
     public static String getWritePath(Context context, String fileName, StorageType fileType) {

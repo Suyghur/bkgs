@@ -18,7 +18,7 @@ public class AnchorImagePresenter extends BasePresenter<IAnchorImageContraction.
 
     @Override
     public void getAnchorInfo() {
-        add(mService.getAnchorInfomation(anchorId)
+        add(mService.getAnchorInformation(anchorId)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorInfoEntity>>(mView) {
                     @Override

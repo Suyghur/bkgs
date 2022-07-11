@@ -36,6 +36,7 @@ import butterknife.ButterKnife;
  * @author 23203
  */
 public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction.View, ChildLiveListPresenter> implements IChildLiveListContraction.View {
+
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     @BindView(R.id.liveRlv)
@@ -61,7 +62,6 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
 
     @Override
     public void onWakeBusiness() {
-//        presenter.getUserInfo();
     }
 
     @Override
@@ -87,64 +87,30 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
         homeLiveAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull @NotNull BaseQuickAdapter adapter, @NonNull @NotNull View view, int position) {
-//       type 直播间类型 (1:一对一, 2:一对多,3:接受预约,4:闲置中)
+                // type 直播间类型 (1:一对一, 2:一对多,3:接受预约,4:闲置中)
                 Bundle bundle = new Bundle();
                 bundle.putString("ANCHOR_ID", String.valueOf(dataBeans.get(position).getAnchor_id()));
                 bundle.putString("ROOM_ID", String.valueOf(dataBeans.get(position).getRoom_id()));
                 gotoActivity(PreviewLiveAct.class, false, bundle);
             }
         });
-//        /**
-//         * 加载更多
-//         */
-//        liveSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//                liveSfl.finishLoadMore(1000);
-//            }
-//        });
 
         // 打开或关闭加载更多功能（默认为true）
         homeLiveAdapter.getLoadMoreModule().setEnableLoadMore(true);
-
-// 是否自定加载下一页（默认为true）
+        // 是否自定加载下一页（默认为true）
         homeLiveAdapter.getLoadMoreModule().setAutoLoadMore(false);
-
-// 当数据不满一页时，是否继续自动加载（默认为true）
+        // 当数据不满一页时，是否继续自动加载（默认为true）
         homeLiveAdapter.getLoadMoreModule().setEnableLoadMoreIfNotFullPage(true);
-
-// 所有数据加载完成后，是否允许点击（默认为false）
+        // 所有数据加载完成后，是否允许点击（默认为false）
         homeLiveAdapter.getLoadMoreModule().setEnableLoadMoreEndClick(true);
         // 设置加载更多监听事件
         homeLiveAdapter.getLoadMoreModule().setOnLoadMoreListener(new com.chad.library.adapter.base.listener.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-//                ToastHelper.showToast(getContext(), "sdfasdf");
                 presenter.getHomeLiveList(category_id);
-
-//                homeLiveAdapter.getLoadMoreModule().loadMoreEnd();
             }
         });
-//        /**
-//         * 下拉刷新
-//         */
-//        liveSfl.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//                presenter.page = 1;
-//                liveSfl.finishRefresh(1000);
-//            }
-//        });
-
     }
-
-//    @OnClick({R.id.iv})
-//    public void onViewClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.iv:
-//                break;
-//        }
-//    }
 
     @Override
     public void onError(int code, String msg) {
@@ -159,15 +125,38 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
 
     @Override
     public void doBusiness() {
-//        if (!TextUtils.isEmpty(category_id)) {
         presenter.page = 1;
         presenter.getHomeLiveList(category_id);
-//        }
     }
+
+//    private void lazyLoad() {
+//        if (getUserVisibleHint() && isPrepared) {
+//            startVideo();
+//            try {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setMuteStatus();
+//                    }
+//                }, 300);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            isLazyLoaded = true;
+//        } else {
+//            //当视图已经对用户不可见并且加载过数据，如果需要在切换到其他页面时停止加载数据，可以覆写此方法
+//            if (isLazyLoaded) {
+//                if (isVideo()) {
+//                    GSYVideoManager.releaseAllVideos();
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void setHomeLiveListData(LiveListEntity entity) {
-        //第一页直接删除数据然后加载数据
+        // 第一页直接删除数据然后加载数据
         if (presenter.page == 1) {
             if (entity.getData().getList().size() != 0) {
                 dataBeans.clear();
@@ -181,7 +170,8 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
                 liveRlv.setVisibility(View.GONE);
             }
             homeLiveAdapter.getLoadMoreModule().loadMoreComplete();
-        } else {//不是第一页直接添加数据更新列表
+        } else {
+            // 不是第一页直接添加数据更新列表
             if (entity.getData().getList().size() == 0) {
                 homeLiveAdapter.getLoadMoreModule().loadMoreEnd();
             } else {
@@ -190,7 +180,16 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
                 dataBeans.addAll(entity.getData().getList());
                 homeLiveAdapter.notifyDataSetChanged();
             }
-
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

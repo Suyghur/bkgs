@@ -218,7 +218,7 @@ dependencies {
 //
 //    // 聊天室需要
 //    api 'com.netease.nimlib:chatroom:8.7.0'
-    implementation 'com.netease.nimlib:avsignalling:8.7.0'
+    implementation 'com.netease.nimlib:avsignalling:9.2.5'
     /**
      * socket连接
      */
@@ -239,7 +239,7 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:4.6.6'
     implementation 'cn.jiguang.sdk:jcore:3.2.4'
 
-    implementation 'io.github.suyghur.dolin:zap:1.0.0'
+//    implementation 'io.github.suyghur.dolin:zap:1.0.0'
 //    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
 //    implementation 'com.tencent:mmkv-static:1.2.10'
 

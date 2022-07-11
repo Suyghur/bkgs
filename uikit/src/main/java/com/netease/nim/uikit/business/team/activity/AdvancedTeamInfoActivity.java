@@ -1542,9 +1542,6 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
 
     /**
      * 是否设置了管理员刷新界面
-     *
-     * @param isSetAdmin
-     * @param account
      */
     private void refreshAdmin(boolean isSetAdmin, String account) {
         if (isSetAdmin) {
@@ -1586,11 +1583,7 @@ public class AdvancedTeamInfoActivity extends UI implements TAdapterDelegate, Te
             return;
         }
         File file = new File(path);
-        if (file == null) {
-            return;
-        }
         DialogMaker.showProgressDialog(this, null, null, true, new DialogInterface.OnCancelListener() {
-
             @Override
             public void onCancel(DialogInterface dialog) {
                 cancelUpload(R.string.team_update_cancel);

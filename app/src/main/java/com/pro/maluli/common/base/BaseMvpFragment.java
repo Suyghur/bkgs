@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 public abstract class BaseMvpFragment<V extends BaseView, P extends BasePresenter<V>> extends BaseFragment {
 
-
     //是否执行唤醒监听
     public boolean wakeListener = true;
     public boolean isHidden = true;
@@ -45,7 +44,6 @@ public abstract class BaseMvpFragment<V extends BaseView, P extends BasePresente
         if (!isHidden && wakeListener) {
             onWakeBusiness();
         }
-
     }
 
     @Override

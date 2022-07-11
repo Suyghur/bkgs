@@ -171,12 +171,7 @@ public class ViewDragHelper {
      */
     public static ViewDragHelper create(@NonNull ViewGroup forParent, @NonNull Callback cb) {
         return new ViewDragHelper(forParent.getContext(), forParent, EDGE_SIZE, cb);
-    }    private final Runnable mSetIdleRunnable = new Runnable() {
-        @Override
-        public void run() {
-            setDragState(STATE_IDLE);
-        }
-    };
+    }
 
     /**
      * Factory method to create a new ViewDragHelper.
@@ -189,7 +184,12 @@ public class ViewDragHelper {
     public static ViewDragHelper create(@NonNull ViewGroup forParent, float edgeSize,
                                         @NonNull Callback cb) {
         return new ViewDragHelper(forParent.getContext(), forParent, edgeSize, cb);
-    }
+    }    private final Runnable mSetIdleRunnable = new Runnable() {
+        @Override
+        public void run() {
+            setDragState(STATE_IDLE);
+        }
+    };
 
     /**
      * Factory method to create a new ViewDragHelper.
@@ -1525,6 +1525,8 @@ public class ViewDragHelper {
             return 0;
         }
     }
+
+
 
 
 }

@@ -14,6 +14,7 @@ public class PullToRefreshLayout extends SuperSwipeRefreshLayout {
     private CustomLoadingLayout loadingLayoutDown;
     private CustomLoadingLayout loadingLayoutUp;
     private OnRefreshListener listener;
+
     public PullToRefreshLayout(Context context) {
         super(context);
         initLoadingView(true, true);

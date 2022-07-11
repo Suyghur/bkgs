@@ -1,7 +1,5 @@
 package com.pro.maluli.common.base;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 public abstract class BaseFragment extends Fragment implements BaseView {
     public View mainView;
-    protected Context mContext;
+    //    protected Context mContext;
     protected BasePresenter basePresenter;
     Toast mToast;
 
@@ -50,15 +48,16 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         if (mainView == null) {
             mainView = inflater.inflate(setR_Layout(), container, false);
             viewInitialization();
+            doBusiness();
         }
         return mainView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        doBusiness();
-    }
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        doBusiness();
+//    }
 
     @Override
     public void onDetach() {
@@ -76,27 +75,10 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         mToast.show();
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mContext = activity;
-    }
-
     @Override
     public void onDestroyView() {
-        if (basePresenter != null) {
-//            basePresenter.clear();
-        }
         super.onDestroyView();
     }
-
 
     @Override
     public void onError(int code, String msg) {
@@ -118,7 +100,7 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         }
         startActivity(intent);
         if (isCloseCurrentActivity) {
-            getActivity().finish();
+            requireActivity().finish();
         }
     }
 }

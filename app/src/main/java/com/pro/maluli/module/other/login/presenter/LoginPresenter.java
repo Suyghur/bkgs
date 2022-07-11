@@ -29,7 +29,7 @@ public class LoginPresenter extends BasePresenter<ILoginContraction.View> implem
     @Override
     public void getWelcomInfo() {
         showLoading(mContext);
-        add(mService.GetWelcomInfo()
+        add(mService.GetWelcomeInfo()
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

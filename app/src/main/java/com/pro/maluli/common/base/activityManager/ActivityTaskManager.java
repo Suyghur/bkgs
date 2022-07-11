@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
+import com.pro.maluli.ktx.utils.Logger;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -27,6 +29,7 @@ public class ActivityTaskManager {
     }
 
     public void put(@NonNull Activity targetActivity) {
+        Logger.d(targetActivity.toString());
         boolean hasActivity = false;
         for (Activity activity : ACTIVITY_ARRAY) {
             if (targetActivity == activity) {

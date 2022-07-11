@@ -43,7 +43,10 @@ public class GLMediaPlayer {
     private int playerWidth;
 
     private int playerHeight;
-    private int mStatus = PLAYER_INIT;    private Runnable progressRunnable = new Runnable() {
+    private int mStatus = PLAYER_INIT;
+    public GLMediaPlayer(Handler mainHandler) {
+        this.handler = mainHandler;
+    }    private Runnable progressRunnable = new Runnable() {
         @Override
         public void run() {
             handler.removeCallbacks(progressRunnable);
@@ -57,10 +60,6 @@ public class GLMediaPlayer {
             }
         }
     };
-
-    public GLMediaPlayer(Handler mainHandler) {
-        this.handler = mainHandler;
-    }
 
     // in ms
     public void pendingSeek(int position) {
@@ -343,6 +342,8 @@ public class GLMediaPlayer {
 
         void onPlayProgressChanged(int current, int duration);
     }
+
+
 
 
 }

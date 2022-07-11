@@ -1,7 +1,6 @@
 package com.pro.maluli.module.socketService;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -40,38 +39,14 @@ public enum SocketLiveUtils {
             @Override
             public void run() {
                 try {
-                    Log.e("JWebSocketClientService", "开启重连");
+                    Logger.d("开启重连");
                     mWebSocketClient.reconnectBlocking();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }.start();
-    }    private Runnable heartBeatRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Logger.e("心跳包检测websocket连接状态");
-            if (isFinish) {
-                closeConnect();
-                return;
-            }
-            if (mWebSocketClient != null) {
-                if (mWebSocketClient.isClosed()) {
-//                    reconnectWs();
-                    mWebSocketClient = null;
-                    initSocket(socketUrl);
-                }
-            } else {
-                //如果client已为空，重新初始化连接
-                mWebSocketClient = null;
-                initSocket(socketUrl);
-            }
-
-
-            //每隔一定的时间，对长连接进行一次心跳检测
-            mHandler.postDelayed(this, HEART_BEAT_RATE);
-        }
-    };
+    }
 
     public void initSocket(String url) {
         this.socketUrl = url;
@@ -144,7 +119,31 @@ public enum SocketLiveUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }    private Runnable heartBeatRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Logger.e("心跳包检测websocket连接状态");
+            if (isFinish) {
+                closeConnect();
+                return;
+            }
+            if (mWebSocketClient != null) {
+                if (mWebSocketClient.isClosed()) {
+//                    reconnectWs();
+                    mWebSocketClient = null;
+                    initSocket(socketUrl);
+                }
+            } else {
+                //如果client已为空，重新初始化连接
+                mWebSocketClient = null;
+                initSocket(socketUrl);
+            }
+
+
+            //每隔一定的时间，对长连接进行一次心跳检测
+            mHandler.postDelayed(this, HEART_BEAT_RATE);
+        }
+    };
 
     /**
      * 连接websocket
@@ -183,10 +182,12 @@ public enum SocketLiveUtils {
         }
     }
 
-
     public interface SocketListener {
         void OnTwoOneYY(OnTwoOneSocketEntity entity);
     }
+
+
+
 
 
 }

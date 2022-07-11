@@ -27,6 +27,7 @@ public class MenuDialog extends Dialog implements View.OnClickListener {
     private int selectIndex = -1; // 要勾选的项
     private int invalidSelectIndex = -1; // 不能勾选的项目
     private int preSelectIndex = -1; // 之前勾选的项目
+
     public MenuDialog(Context context, List<String> btnNames, MenuDialogOnButtonClickListener listener) {
         super(context, R.style.dialog_default_style);
         this.context = context;

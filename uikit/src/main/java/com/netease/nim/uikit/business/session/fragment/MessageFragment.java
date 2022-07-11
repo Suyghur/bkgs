@@ -96,6 +96,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     private GiftEntity entity;
     private GiftForMeEntity giftForMeEntity;
     private ImageView sendGiftIV;
+
     /**
      * 已读回执观察者
      */
@@ -331,7 +332,8 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         super.onResume();
         messageListPanel.onResume();
         NIMClient.getService(MsgService.class).setChattingAccount(sessionId, sessionType);
-        getActivity().setVolumeControlStream(AudioManager.STREAM_VOICE_CALL); // 默认使用听筒播放
+        // 默认使用听筒播放
+        getActivity().setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
 
         GoSettingEvent goSettingEvent = new GoSettingEvent(sessionId);
         goSettingEvent.setCanScore(true);

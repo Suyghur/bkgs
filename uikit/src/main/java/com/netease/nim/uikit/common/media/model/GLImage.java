@@ -28,8 +28,7 @@ public class GLImage implements GLMedia, Serializable, Comparable<GLImage> {
         this.path = path;
     }
 
-    private GLImage(long id, String name, String path, long size, int width, int height, String mimeType,
-                    long addTime) {
+    private GLImage(long id, String name, String path, long size, int width, int height, String mimeType, long addTime) {
         this.name = name;
         this.path = path;
         this.size = size;

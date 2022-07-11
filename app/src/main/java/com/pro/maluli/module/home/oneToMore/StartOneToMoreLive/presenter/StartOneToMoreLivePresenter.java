@@ -121,7 +121,7 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
 
     @Override
     public void getAnchorInfo() {
-        add(mService.getAnchorInfomation(ancharId)
+        add(mService.getAnchorInformation(ancharId)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorInfoEntity>>(mView) {
                     @Override

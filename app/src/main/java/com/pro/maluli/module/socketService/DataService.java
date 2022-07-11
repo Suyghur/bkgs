@@ -76,17 +76,7 @@ public class DataService extends Service {
         mBinder = new DataServiceBinder();
         socketHandler.sendMessage(socketHandler.obtainMessage());
         Log.i(TAG, " 服务创建");
-    }    public Handler socketHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            if (!isRunning) {
-//                initSocket();
-            }
-            isRunning = false;
-            socketHandler.sendMessageDelayed(socketHandler.obtainMessage(), 5 * 1000);
-            return false;
-        }
-    });
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -98,7 +88,17 @@ public class DataService extends Service {
 //            initSocket();
 //        }
         return super.onStartCommand(intent, flags, startId);
-    }
+    }    public Handler socketHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            if (!isRunning) {
+//                initSocket();
+            }
+            isRunning = false;
+            socketHandler.sendMessageDelayed(socketHandler.obtainMessage(), 5 * 1000);
+            return false;
+        }
+    });
 
     @Nullable
     @Override
@@ -192,7 +192,6 @@ public class DataService extends Service {
             return DataService.this;
         }
     }
-
 
 
 

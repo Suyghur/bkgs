@@ -12,6 +12,7 @@ import io.reactivex.functions.Consumer;
 public class RewardDetailPresenter extends BasePresenter<IRewardDetailContraction.View> implements IRewardDetailContraction.Presenter {
     public int page;
     public String end_time, start_time, date, flow_type, keyword = "";
+
     public RewardDetailPresenter(Context context) {
         super(context);
     }

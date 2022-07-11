@@ -40,6 +40,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpActivity;
+import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.constant.AppIdConstants;
 import com.pro.maluli.common.entity.OneToOneEntity;
 import com.pro.maluli.common.entity.OneToOneLiveEntity;
@@ -64,6 +65,7 @@ import com.pro.maluli.module.home.oneToOne.queue.presenter.OneToOneQueuePresente
 import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.socketService.SocketUtils;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
+import com.pro.maluli.toolkit.ToastExtKt;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -425,6 +427,11 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
                 tips[i].setBackgroundResource(R.drawable.shape_yuan_000000_2);
             }
         }
+    }
+
+    @Override
+    public void doBusiness() {
+        presenter.getReserveInfo();
     }    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -438,11 +445,6 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
             }
         }
     };
-
-    @Override
-    public void doBusiness() {
-        presenter.getReserveInfo();
-    }
 
     @OnClick({R.id.editGGTv, R.id.canReserveTv, R.id.startLiveTv, R.id.editReserveNumberTv, R.id.attentionTv})
     public void onClick(View view) {
@@ -548,7 +550,6 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Override
     public void setQueueSuccess(ReserveEntity data) {
-        Logger.e("setQueueSuccess");
         this.reserveEntity = data;
         if (data.getInfo().getIs_live() == 1) {
             LiveingLL.setVisibility(View.VISIBLE);
@@ -733,25 +734,36 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
 
     @Override
     public void setReserveSuccess() {
-        reserveTipsDialog = new BaseTipsDialog();
-        Bundle bundle = new Bundle();
-        bundle.putString("showContent", "预约成功，请打开手机声音、视频、通话、通知等相关权限，并尽量保留在本APP页面，避免错过主播来电邀请");
-        bundle.putString("comfirm", "知道了");
-        bundle.putBoolean("CANCEL_SEE", true);
-        reserveTipsDialog.setArguments(bundle);
-        reserveTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
-        reserveTipsDialog.setOnConfirmListener(new BaseTipsDialog.OnBaseTipsListener() {
-            @Override
-            public void comfirm() {
-                if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
-                    requestVideoPermissions();
-                    if (reserveTipsDialog != null) {
-                        reserveTipsDialog.dismiss();
-                        reserveTipsDialog = null;
+//        if (response.getCode())
+        try {
+
+            reserveTipsDialog = new BaseTipsDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString("showContent", "预约成功，请打开手机声音、视频、通话、通知等相关权限，并尽量保留在本APP页面，避免错过主播来电邀请");
+            bundle.putString("comfirm", "知道了");
+            bundle.putBoolean("CANCEL_SEE", true);
+            reserveTipsDialog.setArguments(bundle);
+            reserveTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
+            reserveTipsDialog.setOnConfirmListener(new BaseTipsDialog.OnBaseTipsListener() {
+                @Override
+                public void comfirm() {
+                    if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
+                        requestVideoPermissions();
+                        if (reserveTipsDialog != null) {
+                            reserveTipsDialog.dismiss();
+                            reserveTipsDialog = null;
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setReserveFailed(BaseResponse<Object> response) {
+        ToastExtKt.showToast(this, response.getMsg());
     }
 
     @Override
@@ -781,6 +793,8 @@ public class OneToOneQueueAct extends BaseMvpActivity<IOneToOneQueueContraction.
             return topVideoFragment.get(position);
         }
     }
+
+
 
 
 }

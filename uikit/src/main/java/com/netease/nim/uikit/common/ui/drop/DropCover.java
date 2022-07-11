@@ -54,6 +54,7 @@ public class DropCover extends View {
     private int explosionAnimWidth; // 爆裂动画帧的宽度
     private int explosionAnimHeight; // 爆裂动画帧的高度
     private List<IDropCompletedListener> dropCompletedListeners; // 拖拽动作完成，回调
+
     /**
      * ************************* 绘制 *************************
      */

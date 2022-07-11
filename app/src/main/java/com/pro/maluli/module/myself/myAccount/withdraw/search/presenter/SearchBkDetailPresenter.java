@@ -13,6 +13,7 @@ import io.reactivex.functions.Consumer;
 public class SearchBkDetailPresenter extends BasePresenter<ISearchBkDetailContraction.View> implements ISearchBkDetailContraction.Presenter {
     public int page;
     public String end_time, start_time, date, flow_type, keyword;
+
     public SearchBkDetailPresenter(Context context) {
         super(context);
     }

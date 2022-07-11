@@ -66,6 +66,7 @@ public class ViewDragHelper {
     private OverScroller mScroller;
     private View mCapturedView;
     private boolean mReleaseInProgress;
+
     private ViewDragHelper(@NonNull Context context, @NonNull ViewGroup forParent, @NonNull Callback cb) {
         if (forParent == null) {
             throw new IllegalArgumentException("Parent view may not be null");
@@ -82,16 +83,16 @@ public class ViewDragHelper {
             this.mMinVelocity = (float) vc.getScaledMinimumFlingVelocity();
             this.mScroller = new OverScroller(context, sInterpolator);
         }
+    }
+
+    public static ViewDragHelper create(@NonNull ViewGroup forParent, @NonNull Callback cb) {
+        return new ViewDragHelper(forParent.getContext(), forParent, cb);
     }    private final Runnable mSetIdleRunnable = new Runnable() {
         @Override
         public void run() {
             ViewDragHelper.this.setDragState(0);
         }
     };
-
-    public static ViewDragHelper create(@NonNull ViewGroup forParent, @NonNull Callback cb) {
-        return new ViewDragHelper(forParent.getContext(), forParent, cb);
-    }
 
     public static ViewDragHelper create(@NonNull ViewGroup forParent, float sensitivity, @NonNull Callback cb) {
         ViewDragHelper helper = create(forParent, cb);
@@ -920,6 +921,8 @@ public class ViewDragHelper {
             return 0;
         }
     }
+
+
 
 
 }

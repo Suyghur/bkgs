@@ -12,6 +12,7 @@ import io.reactivex.functions.Consumer;
 public class BkDetailPresenter extends BasePresenter<IBkDetailContraction.View> implements IBkDetailContraction.Presenter {
     public int page;
     public String end_time, start_time, date, flow_type, keyword = "";
+
     public BkDetailPresenter(Context context) {
         super(context);
     }

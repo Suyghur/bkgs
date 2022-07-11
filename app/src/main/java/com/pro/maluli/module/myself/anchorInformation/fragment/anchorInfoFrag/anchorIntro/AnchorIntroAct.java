@@ -2,6 +2,7 @@ package com.pro.maluli.module.myself.anchorInformation.fragment.anchorInfoFrag.a
 
 import android.graphics.Color;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -46,7 +47,6 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
         StatusbarUtils.setStatusBarView(this);
         desc = getIntent().getStringExtra("JIAN_JIE");
         maxDesc = Integer.parseInt(getIntent().getStringExtra("max_desc"));
-
     }
 
     @Override
@@ -62,10 +62,9 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
             editIntroEt.setText(desc);
             inputMaxTv.setText(desc.length() + "/" + maxDesc);
         }
+        editIntroEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxDesc)});
         editIntroEt.addTextChangedListener(new TextWatcher() {
             private CharSequence wordNum;//记录输入的字数
-            private int selectionStart;
-            private int selectionEnd;
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -79,23 +78,9 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s.toString())) {
-                    subMitTv.setSelected(false);
-                } else {
-                    subMitTv.setSelected(true);
-                }
-                //TextView显示剩余字数
+                subMitTv.setSelected(!TextUtils.isEmpty(s.toString()));
+                // TextView显示剩余字数
                 inputMaxTv.setText(s.length() + "/" + maxDesc);
-                selectionStart = editIntroEt.getSelectionStart();
-                selectionEnd = editIntroEt.getSelectionEnd();
-                if (wordNum.length() > maxDesc) {
-                    //删除多余输入的字（不会显示出来）
-                    s.delete(selectionStart - 1, selectionEnd);
-                    int tempSelection = selectionEnd;
-                    editIntroEt.setText(s);
-                    editIntroEt.setSelection(tempSelection);//设置光标在最后
-                }
-
             }
         });
     }
@@ -103,8 +88,6 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
 
     @Override
     public void doBusiness() {
-
-
     }
 
     @Override
@@ -114,19 +97,12 @@ public class AnchorIntroAct extends BaseMvpActivity<IAnchorIntroContraction.View
 
     @OnClick({R.id.subMitTv})
     public void onClick(View view) {
-//        if (!ToolUtils.isFastClick()) {
-//            return;
-//        }
-        switch (view.getId()) {
-            case R.id.subMitTv:
-                if (TextUtils.isEmpty(editIntroEt.getText().toString().trim())) {
-                    ToastUtils.showShort("请输入主播简介");
-                    return;
-                }
-                presenter.changeAnchorDesc(editIntroEt.getText().toString().trim());
-                break;
+        if (view.getId() == R.id.subMitTv) {
+            if (TextUtils.isEmpty(editIntroEt.getText().toString().trim())) {
+                ToastUtils.showShort("请输入主播简介");
+                return;
+            }
+            presenter.changeAnchorDesc(editIntroEt.getText().toString().trim());
         }
-
     }
-
 }

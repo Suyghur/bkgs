@@ -13,6 +13,9 @@ import com.pro.maluli.common.entity.YouthEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.ForgetPwdDialog;
 import com.pro.maluli.common.view.myselfView.VerifyEditText;
+import com.pro.maluli.ktx.bus.BusKey;
+import com.pro.maluli.ktx.bus.LiveDataBus;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.presenter.IYouthPasswordContraction;
 import com.pro.maluli.module.myself.setting.youthMode.YouthPassword.presenter.YouthPasswordPresenter;
@@ -115,6 +118,8 @@ public class YouthPasswordAct extends BaseMvpActivity<IYouthPasswordContraction.
 
     @Override
     public void setYouthSuccess(YouthEntity data) {
+        Logger.d("setYouthSuccess");
+        LiveDataBus.get().with(BusKey.EVENT_UPDATE_HOME_DATA).postValue(1);
     }
 
     @Override

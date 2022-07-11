@@ -18,7 +18,7 @@ public class WatchListPresenter extends BasePresenter<IWatchListContraction.View
 
     @Override
     public void getWatchListInfo() {
-        add(mService.getWacthList(String.valueOf(page), "10")
+        add(mService.getWatchList(String.valueOf(page), "10")
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<WatchListEntity>>(mView) {
                     @Override

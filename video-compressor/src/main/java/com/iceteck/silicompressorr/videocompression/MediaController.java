@@ -270,9 +270,7 @@ public class MediaController {
         int bitrate = outBitrate > 0 ? outBitrate : DEFAULT_VIDEO_BITRATE;
         int rotateRender = 0;
 
-        File cacheFile = new File(destDir,
-                "VIDEO_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ".mp4"
-        );
+        File cacheFile = new File(destDir, "VIDEO_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ".mp4");
 
         if (Build.VERSION.SDK_INT < 18 && resultHeight > resultWidth && resultWidth != originalWidth && resultHeight != originalHeight) {
             int temp = resultHeight;
@@ -285,8 +283,8 @@ public class MediaController {
 //                int temp = resultHeight;
 //                resultHeight = resultWidth;
 //                resultWidth = temp;
-//                rotationValue = 0;
-//                rotateRender = 270;
+                rotationValue = 0;
+                rotateRender = 90;
             } else if (rotationValue == 180) {
                 rotateRender = 180;
                 rotationValue = 0;

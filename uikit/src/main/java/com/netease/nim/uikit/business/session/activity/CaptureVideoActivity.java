@@ -104,7 +104,25 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         intent.putExtra(EXTRA_DATA_FILE_NAME, videoFilePath);
         activity.startActivityForResult(intent, captureCode);
     }    // 录制时间计数
-    private Runnable runnable = new Runnable() {
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().setFormat(PixelFormat.TRANSLUCENT); // 使得窗口支持透明度
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.nim_capture_video_activity);
+        setTitle(R.string.video_record);
+        parseIntent();
+        findViews();
+        initActionBar();
+        setViewsListener();
+        updateRecordUI();
+        getVideoPreviewSize();
+        surfaceview = this.findViewById(R.id.videoView);
+        SurfaceHolder holder = surfaceview.getHolder();
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.addCallback(this);
+        resizeSurfaceView();
+    }    private Runnable runnable = new Runnable() {
 
         public void run() {
             end = new Date().getTime();
@@ -125,25 +143,6 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
             }
         }
     };
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFormat(PixelFormat.TRANSLUCENT); // 使得窗口支持透明度
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.nim_capture_video_activity);
-        setTitle(R.string.video_record);
-        parseIntent();
-        findViews();
-        initActionBar();
-        setViewsListener();
-        updateRecordUI();
-        getVideoPreviewSize();
-        surfaceview = this.findViewById(R.id.videoView);
-        SurfaceHolder holder = surfaceview.getHolder();
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.addCallback(this);
-        resizeSurfaceView();
-    }
 
     private void parseIntent() {
         filename = getIntent().getExtras().getString(EXTRA_DATA_FILE_NAME);
@@ -326,7 +325,6 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
             }
         }
     }
-
 
     @SuppressLint("NewApi")
     private void getVideoPreviewSize() {
@@ -692,6 +690,7 @@ public class CaptureVideoActivity extends UI implements SurfaceHolder.Callback {
         }
         return 0;
     }
+
 
 
 

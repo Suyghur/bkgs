@@ -34,6 +34,8 @@ public class FloatingViewService extends Service implements FloatingView.IFloati
 
     private NERtcVideoView vv_local_user;
     private String liveId;
+    private boolean isAnchor;
+    private long uid;
 
     @Override
     public void onCreate() {
@@ -54,15 +56,19 @@ public class FloatingViewService extends Service implements FloatingView.IFloati
             public void onClick(View v) {
 //                Toast.makeText(getApplication(), "点击了悬浮窗", Toast.LENGTH_SHORT).show();
                 // 这样启动activity是解决启动延迟的问题
-                Logger.d("liveId: " + liveId);
                 Bundle bundle = new Bundle();
                 bundle.putString("liveId", liveId);
+                bundle.putBoolean("isAnchor", isAnchor);
+                bundle.putLong("UID", uid);
                 Intent intent = new Intent(FloatingViewService.this, StartLiveAct.class);
                 intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//                stopSelf();
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 try {
                     pendingIntent.send();
+                    stopSelf();
                 } catch (PendingIntent.CanceledException e) {
                     e.printStackTrace();
                 }
@@ -88,7 +94,8 @@ public class FloatingViewService extends Service implements FloatingView.IFloati
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         liveId = intent.getStringExtra("liveId");
-        Logger.d("liveId: " + liveId);
+        isAnchor = intent.getBooleanExtra("isAnchor", true);
+        uid = intent.getLongExtra("UID", 0);
         return super.onStartCommand(intent, flags, startId);
     }
 

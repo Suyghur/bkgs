@@ -27,9 +27,11 @@ import com.pro.maluli.common.base.BaseMvpActivity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.oneToOne.answerPhone.presenter.AnswerPhonePresenter;
 import com.pro.maluli.module.home.oneToOne.answerPhone.presenter.IAnswerPhoneContraction;
 import com.pro.maluli.module.home.startLive.StartLiveAct;
+import com.pro.maluli.module.main.base.MainActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,8 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Kingsley
  * @date 2021/6/29
  */
-public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View, AnswerPhonePresenter>
-        implements IAnswerPhoneContraction.View {
+public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View, AnswerPhonePresenter> implements IAnswerPhoneContraction.View {
     @BindView(R.id.avatarCiv)
     CircleImageView avatarCiv;
     @BindView(R.id.userNameTv)
@@ -53,13 +54,21 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
     LinearLayout ivAccept;
     /**
      * 播放铃声
-     *
-     * @paramctx
-     * @paramtype
      */
     MediaPlayer mMediaPlayer;
     private InvitedEvent invitedEvent;
     private String roomId, avatar, userName, liveId, liveClassify;
+
+//    Observer<ChannelCommonEvent> observer = new Observer<ChannelCommonEvent>() {
+//        @Override
+//        public void onEvent(ChannelCommonEvent channelCommonEvent) {
+//            SignallingEventType eventType = channelCommonEvent.getEventType();
+//            Logger.d("AnswerPhoneAct onEvent: " + eventType.toString());
+//            if (eventType == SignallingEventType.CANCEL_INVITE) {
+//                AnswerPhoneAct.this.finish();
+//            }
+//        }
+//    };
 
     @Override
     public AnswerPhonePresenter initPresenter() {
@@ -68,11 +77,13 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
 
     @Override
     public void baseInitialization() {
+        Logger.d("baseInitialization");
         BarUtils.setStatusBarColor(this, Color.parseColor("#201D20"));
         BarUtils.setStatusBarLightMode(this, true);
         StatusbarUtils.setStatusBarView(this);
 //        StatusBarUtils.SetStatusBarLightMode(this, true);
         invitedEvent = (InvitedEvent) getIntent().getSerializableExtra("LIVE_INFO");
+//        NIMClient.getService(SignallingServiceObserver.class).observeOnlineNotification(observer, true);
     }
 
     @Override
@@ -106,6 +117,7 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
     protected void onDestroy() {
         super.onDestroy();
         releaseMediaPlayer();
+        MainActivity.hasShowAnswerPage = false;
     }
 
     private void releaseMediaPlayer() {
@@ -114,7 +126,7 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
                 mMediaPlayer.stop();
                 mMediaPlayer.release();
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
         }
@@ -122,9 +134,6 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
 
     /**
      * 播放系统默认来电铃声
-     *
-     * @return MediaPlayer对象
-     * @throws Exception
      */
     public void defaultCallMediaPlayer() throws Exception {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
@@ -134,23 +143,15 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
 
     /**
      * 获取的是铃声的Uri
-     *
-     * @return
-     * @paramctx
-     * @paramtype
      */
     public Uri getDefaultRingtoneUri(Context ctx, int type) {
-
         return RingtoneManager.getActualDefaultRingtoneUri(ctx, type);
-
     }
 
     public void PlayRingTone(Context ctx, int type) {
-        mMediaPlayer = MediaPlayer.create(ctx,
-                getDefaultRingtoneUri(ctx, type));
+        mMediaPlayer = MediaPlayer.create(ctx, getDefaultRingtoneUri(ctx, type));
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
-
     }
 
     /**
@@ -158,58 +159,43 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
      */
     private void acceptInvite() {
         enableClick(false);
-        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(),
-                invitedEvent.getFromAccountId(),
-                invitedEvent.getRequestId());
-        NIMClient.getService(SignallingService.class).acceptInviteAndJoin(inviteParam, 0).setCallback(
-                new RequestCallbackWrapper<ChannelFullInfo>() {
-
-                    @Override
-                    public void onResult(int code, ChannelFullInfo channelFullInfo, Throwable throwable) {
-                        enableClick(true);                    //参考官方文档中关于api以及错误码的说明
-                        if (code == ResponseCode.RES_SUCCESS) {//接收邀请成功
-//                            channelInfo = channelFullInfo.getChannelBaseInfo();
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("isAnchor", false);
-                            bundle.putString("liveId", liveId);
-                            gotoActivity(StartLiveAct.class, true, bundle);
-                            releaseMediaPlayer();
-                            leave();
-                            finish();
-
-                        } else {
-                            ToastHelper.showToast(AnswerPhoneAct.this, "接收邀请返回的结果 ， code = " + code +
-                                    (throwable == null ? "" : ", throwable = " +
-                                            throwable.getMessage()));
-                            finish();
-                        }
-                    }
-                });
+        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(), invitedEvent.getFromAccountId(), invitedEvent.getRequestId());
+        NIMClient.getService(SignallingService.class).acceptInviteAndJoin(inviteParam, 0).setCallback(new RequestCallbackWrapper<ChannelFullInfo>() {
+            @Override
+            public void onResult(int code, ChannelFullInfo channelFullInfo, Throwable throwable) {
+                enableClick(true);                    //参考官方文档中关于api以及错误码的说明
+                if (code == ResponseCode.RES_SUCCESS) {
+//                    channelInfo = channelFullInfo.getChannelBaseInfo();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isAnchor", false);
+                    bundle.putString("liveId", liveId);
+                    gotoActivity(StartLiveAct.class, true, bundle);
+                    releaseMediaPlayer();
+                    leave();
+                } else {
+                    ToastHelper.showToast(AnswerPhoneAct.this, "接收邀请返回的结果 ， code = " + code + (throwable == null ? "" : ", throwable = " + throwable.getMessage()));
+                }
+                finish();
+            }
+        });
     }
 
     /**
      * 离开频道,方便再次呼叫，防止返回10407，对方已经频道内
      */
     private void leave() {
-        NIMClient.getService(SignallingService.class).leave(invitedEvent.getChannelBaseInfo().getChannelId(), false, null).setCallback(
-                new RequestCallbackWrapper<Void>() {
-
-                    @Override
-                    public void onResult(int i, Void aVoid, Throwable throwable) {
-                        if (i == ResponseCode.RES_SUCCESS) {
-                        } else {
-                        }
-                    }
-                });
+        NIMClient.getService(SignallingService.class).leave(invitedEvent.getChannelBaseInfo().getChannelId(), false, null).setCallback(new RequestCallbackWrapper<Void>() {
+            @Override
+            public void onResult(int i, Void aVoid, Throwable throwable) {
+            }
+        });
     }
 
     /**
      * 拒绝对方的邀请
      */
     private void rejectInvite(String customInfo) {
-        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(),
-                invitedEvent.getFromAccountId(),
-                invitedEvent.getRequestId());
+        InviteParamBuilder inviteParam = new InviteParamBuilder(invitedEvent.getChannelBaseInfo().getChannelId(), invitedEvent.getFromAccountId(), invitedEvent.getRequestId());
         if (!TextUtils.isEmpty(customInfo)) {
             inviteParam.customInfo(customInfo);
         }
@@ -249,21 +235,6 @@ public class AnswerPhoneAct extends BaseMvpActivity<IAnswerPhoneContraction.View
                 rejectInvite("跳过");
                 break;
         }
-    }
-
-    public void jieting() {
-//    NERTCVideoCall.sharedInstance().accept(invitedParam, selfUserId, new JoinChannelCallBack() {
-//        @Override
-//        public void onJoinChannel(ChannelFullInfo channelFullInfo) {
-//
-//        }
-//
-//        @Override
-//        public void onJoinFail(String msg, int code) {
-//
-//        }
-//    });
-
     }
 
 }

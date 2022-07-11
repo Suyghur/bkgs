@@ -25,7 +25,7 @@ public class WheelView extends ScrollView {
     public static final String TAG = WheelView.class.getSimpleName();
     public static final int OFF_SET_DEFAULT = 1;
     private static final int SCROLL_DIRECTION_UP = 0;
-//    private ScrollView scrollView;
+    //    private ScrollView scrollView;
     private static final int SCROLL_DIRECTION_DOWN = 1;
     //    String[] items;
     List<String> items;
@@ -46,6 +46,7 @@ public class WheelView extends ScrollView {
     private LinearLayout views;
     private int scrollDirection = -1;
     private OnWheelViewListener onWheelViewListener;
+
     public WheelView(Context context) {
         super(context);
         init(context);

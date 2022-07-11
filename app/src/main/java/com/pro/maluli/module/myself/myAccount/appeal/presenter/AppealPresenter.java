@@ -58,7 +58,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
      */
     @Override
     public void subFeedBlack(String content, String images, String type, String rel) {
-        add(mService.getsubReport(content, images, type, rel)
+        add(mService.getSubReport(content, images, type, rel)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
@@ -79,7 +79,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
      */
     @Override
     public void liveAppeal(String trim, String images, String type, String trim1) {
-        add(mService.getLivesubReport(trim, images, type, trim1)
+        add(mService.getLiveSubReport(trim, images, type, trim1)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
@@ -100,7 +100,7 @@ public class AppealPresenter extends BasePresenter<IAppealContraction.View> impl
      */
     @Override
     public void reportLive(String content, String images, String msgType, String trim, String s, String userid, String liveId) {
-        add(mService.getreport(content, images, msgType, trim, s, userid, liveId)
+        add(mService.getReport(content, images, msgType, trim, s, userid, liveId)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

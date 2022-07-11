@@ -92,6 +92,7 @@ public abstract class BaseFetchLoadAdapter<T, K extends BaseViewHolder> extends 
     private boolean mIsUseEmpty = true;
     private boolean isScrolling = false;
     private SpanSizeLookup mSpanSizeLookup;
+
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
      * some initialization data.

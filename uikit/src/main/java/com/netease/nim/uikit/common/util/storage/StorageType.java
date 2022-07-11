@@ -43,7 +43,7 @@ public enum StorageType {
 
         private String path;
 
-        private DirectoryName(String path) {
+        DirectoryName(String path) {
             this.path = path;
         }
 

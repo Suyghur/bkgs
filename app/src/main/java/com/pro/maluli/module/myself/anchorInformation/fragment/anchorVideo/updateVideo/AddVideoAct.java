@@ -110,8 +110,7 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
 
             }
         });
-        intentActivityResultLauncher = registerForActivityResult(new
-                ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 Intent data = result.getData();
@@ -201,7 +200,6 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
     @Override
     public void setUpdateImgSuccess(UpdateImgEntity data) {
         videoUrl = data.getUrl().get(0);
-
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.pro.maluli.common.networkRequest;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pro.maluli.common.utils.AcacheUtil;
@@ -53,10 +55,8 @@ public class ApiFactory {
                                 Request request = chain.request();
                                 Request.Builder requestBuilder = request.newBuilder();
                                 String token = AcacheUtil.getToken(BKGSApplication.getApp(), false);
-                                requestBuilder.addHeader("Authorization",
-                                        TextUtils.isEmpty(token) ? "" : token);
-                                requestBuilder.addHeader("X-Device-Id",
-                                        JPushInterface.getRegistrationID(BKGSApplication.getApp()));
+                                requestBuilder.addHeader("Authorization", TextUtils.isEmpty(token) ? "" : token);
+                                requestBuilder.addHeader("X-Device-Id", JPushInterface.getRegistrationID(BKGSApplication.getApp()));
                                 return chain.proceed(requestBuilder.build());
                             }
                         })
@@ -64,8 +64,8 @@ public class ApiFactory {
                         .readTimeout(30, TimeUnit.SECONDS)
                         .addInterceptor(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                             @Override
-                            public void log(String message) {
-                                Logger.e("bkgs_network", message);
+                            public void log(@NonNull String message) {
+                                Logger.d(message);
                             }
                         }).setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build())

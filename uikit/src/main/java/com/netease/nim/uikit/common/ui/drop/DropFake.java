@@ -29,6 +29,7 @@ public class DropFake extends View {
     private String text; // 要显示的文本（数字）
     private boolean firstInit = true; // params init once
     private ITouchListener touchListener;
+
     public DropFake(Context context, AttributeSet attrs) {
         super(context, attrs);
 

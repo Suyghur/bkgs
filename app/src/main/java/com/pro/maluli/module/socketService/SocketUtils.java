@@ -47,26 +47,7 @@ public enum SocketUtils {
                 }
             }
         }.start();
-    }    private final Runnable heartBeatRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Logger.e("心跳包检测websocket连接状态");
-            if (isFinish) {
-                return;
-            }
-            if (mWebSocketClient != null) {
-                if (mWebSocketClient.isClosed()) {
-                    reconnectWs();
-                }
-            } else {
-                //如果client已为空，重新初始化连接
-                mWebSocketClient = null;
-                initSocket(socketUrl);
-            }
-            //每隔一定的时间，对长连接进行一次心跳检测
-            mHandler.postDelayed(this, HEART_BEAT_RATE);
-        }
-    };
+    }
 
     public void initSocket(String url) {
         this.socketUrl = url;
@@ -121,7 +102,26 @@ public enum SocketUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }    private final Runnable heartBeatRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Logger.e("心跳包检测websocket连接状态");
+            if (isFinish) {
+                return;
+            }
+            if (mWebSocketClient != null) {
+                if (mWebSocketClient.isClosed()) {
+                    reconnectWs();
+                }
+            } else {
+                //如果client已为空，重新初始化连接
+                mWebSocketClient = null;
+                initSocket(socketUrl);
+            }
+            //每隔一定的时间，对长连接进行一次心跳检测
+            mHandler.postDelayed(this, HEART_BEAT_RATE);
+        }
+    };
 
     /**
      * 连接websocket
@@ -157,10 +157,12 @@ public enum SocketUtils {
         }
     }
 
-
     public interface SocketListener {
         void OnTwoOneYY(OnTwoOneSocketEntity entity);
     }
+
+
+
 
 
 }

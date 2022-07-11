@@ -25,6 +25,7 @@ public class StarBar extends View {
     private OnStarChangeListener onStarChangeListener;//监听星星变化接口
     private Paint paint;         //绘制星星画笔
     private boolean integerMark = false;
+
     public StarBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;

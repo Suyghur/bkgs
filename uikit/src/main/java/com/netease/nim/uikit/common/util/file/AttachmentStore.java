@@ -149,6 +149,7 @@ public class AttachmentStore {
             f.createNewFile();
             return f;
         } catch (IOException e) {
+            e.printStackTrace();
             if (f != null && f.exists()) {
                 f.delete();
             }

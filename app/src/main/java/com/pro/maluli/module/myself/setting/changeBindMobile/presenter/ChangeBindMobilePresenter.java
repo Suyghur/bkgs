@@ -44,7 +44,7 @@ public class ChangeBindMobilePresenter extends BasePresenter<IChangeBindMobileCo
     @Override
     public void changeBindmobile(String mobile, String code, String type) {
         showLoading(mContext);
-        add(mService.changeBingdMobile(mobile, code, type)
+        add(mService.changeBindMobile(mobile, code, type)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

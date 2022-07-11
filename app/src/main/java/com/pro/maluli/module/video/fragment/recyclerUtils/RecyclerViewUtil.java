@@ -46,6 +46,7 @@ public class RecyclerViewUtil {
             }
         }
     };
+
     public RecyclerViewUtil() {
     }
 

@@ -24,6 +24,14 @@ public class JoinLiveEntity implements Serializable {
         this.info = info;
     }
 
+    @Override
+    public String toString() {
+        return "JoinLiveEntity{" +
+                "status_code='" + status_code + '\'' +
+                ", info=" + info +
+                '}';
+    }
+
     public static class InfoBean implements Serializable {
         private int is_anchor;
         private String push_url;
@@ -215,6 +223,33 @@ public class JoinLiveEntity implements Serializable {
             this.chat = chat;
         }
 
+        @Override
+        public String toString() {
+            return "InfoBean{" +
+                    "is_anchor=" + is_anchor +
+                    ", push_url='" + push_url + '\'' +
+                    ", room_id=" + room_id +
+                    ", anchor_id=" + anchor_id +
+                    ", accid='" + accid + '\'' +
+                    ", anchor_accid='" + anchor_accid + '\'' +
+                    ", channelName='" + channelName + '\'' +
+                    ", live_cid='" + live_cid + '\'' +
+                    ", uid=" + uid +
+                    ", http_pull_url='" + http_pull_url + '\'' +
+                    ", hls_pull_url='" + hls_pull_url + '\'' +
+                    ", rtmp_pull_url='" + rtmp_pull_url + '\'' +
+                    ", chat=" + chat +
+                    ", nertc_token='" + nertc_token + '\'' +
+                    ", signal_channel_name='" + signal_channel_name + '\'' +
+                    ", signal_channel_id='" + signal_channel_id + '\'' +
+                    ", cate_one='" + cate_one + '\'' +
+                    ", cate='" + cate + '\'' +
+                    ", start_time=" + start_time +
+                    ", is_appoint=" + is_appoint +
+                    ", chat_notice=" + chat_notice +
+                    '}';
+        }
+
         public static class ChatBean implements Serializable {
             private String broadcasturl;
             private boolean valid;
@@ -305,6 +340,22 @@ public class JoinLiveEntity implements Serializable {
 
             public void setQueuelevel(int queuelevel) {
                 this.queuelevel = queuelevel;
+            }
+
+            @Override
+            public String toString() {
+                return "ChatBean{" +
+                        "broadcasturl='" + broadcasturl + '\'' +
+                        ", valid=" + valid +
+                        ", ext='" + ext + '\'' +
+                        ", creator='" + creator + '\'' +
+                        ", name='" + name + '\'' +
+                        ", ionotify=" + ionotify +
+                        ", muted=" + muted +
+                        ", roomid=" + roomid +
+                        ", announcement='" + announcement + '\'' +
+                        ", queuelevel=" + queuelevel +
+                        '}';
             }
         }
     }

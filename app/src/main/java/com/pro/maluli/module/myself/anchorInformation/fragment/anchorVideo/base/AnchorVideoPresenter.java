@@ -39,7 +39,7 @@ public class AnchorVideoPresenter extends BasePresenter<IAnchorVideoContraction.
 //    }
     @Override
     public void getAnchorInfo(String anchorID) {
-        add(mService.getAnchorInfomation(anchorID)
+        add(mService.getAnchorInformation(anchorID)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorInfoEntity>>(mView) {
                     @Override

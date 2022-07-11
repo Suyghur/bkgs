@@ -42,7 +42,6 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     MyPagerAdapter mAdapter;
     List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> allBeanList;
     private int selectPosition;
-    private boolean isAll;
 
     public static Fragment newInstance(List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> children) {
         HomeChildFrag treasureGameFrag = new HomeChildFrag();
@@ -59,7 +58,6 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
 
     @Override
     public void onWakeBusiness() {
-//        presenter.getUserInfo();
     }
 
     public void searchDuoBaoGoods(int searchContent) {
@@ -74,8 +72,7 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     public void baseInitialization() {
         BarUtils.setStatusBarColor(getActivity(), Color.parseColor("#ffffff"));
         BarUtils.setStatusBarLightMode(getActivity(), true);
-        allBeanList = (List<HomeInfoEntity.CategoryBean.ListBean.ChildBean>)
-                getArguments().getSerializable(ARG_COLUMN_COUNT);
+        allBeanList = (List<HomeInfoEntity.CategoryBean.ListBean.ChildBean>) requireArguments().getSerializable(ARG_COLUMN_COUNT);
     }
 
     @Override
@@ -87,28 +84,23 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     public void viewInitialization() {
         ButterKnife.bind(this, mainView);
         fragments = new ArrayList<>();
-//        if (allBeanList != null) {
-        isAll = false;
+
         if (allBeanList.get(0).getTitle().equalsIgnoreCase("全部")) {
             childSPL.setVisibility(View.GONE);
         }
+
         for (int i = 0; i < allBeanList.size(); i++) {
             fragments.add(ChildLiveListFrag.newInstance(String.valueOf(allBeanList.get(i).getId())));
         }
-//        } else {
-//            isAll = true;
-//            childSPL.setVisibility(View.GONE);
-//            fragments.add(ChildLiveListFrag.newInstance(""));
-//        }
 
-        //new一个适配器
+        // new一个适配器
         mAdapter = new MyPagerAdapter(getChildFragmentManager());
-        //设置ViewPager与适配器关联
+        // 设置ViewPager与适配器关联
         childVP.setAdapter(mAdapter);
-        //设置Tab与ViewPager关联
+        // 设置Tab与ViewPager关联
         childSPL.setViewPager(childVP);
         setSelectPagerTab(selectPosition);
-        childVP.setCurrentItem(0);   //һ��ʼ��ѡ��
+        childVP.setCurrentItem(0);
         childVP.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -133,25 +125,27 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
             if (selectPosition == i) {
                 childSPL.getTitleView(i).setTextColor(getResources().getColor(R.color.c_8e1d77));
                 childSPL.getTitleView(i).setBackground(getResources().getDrawable(R.drawable.shape_8e1d77_32_1));
-                childSPL.getTitleView(i).setPadding(20, 0, 20, 0);
             } else {
                 childSPL.getTitleView(i).setTextColor(getResources().getColor(R.color.c_958f94));
                 childSPL.getTitleView(i).setBackground(getResources().getDrawable(R.drawable.shape_ffffff_10));
-                childSPL.getTitleView(i).setPadding(20, 0, 20, 0);
             }
+            childSPL.getTitleView(i).setPadding(20, 0, 20, 0);
         }
     }
-//    @OnClick({R.id.iv})
-//    public void onViewClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.iv:
-//                break;
-//        }
-//    }
 
     @Override
     public void doBusiness() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {

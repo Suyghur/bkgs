@@ -40,6 +40,7 @@ import com.marvhong.videoeffect.helper.MagicFilterFactory;
 import com.marvhong.videoeffect.helper.MagicFilterType;
 import com.marvhong.videoeffect.utils.ConfigUtils;
 import com.pro.maluli.R;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.adapter.TrimVideoAdapter;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.utilsTailor.BaseActivity1;
@@ -136,7 +137,7 @@ public class TrimVideoActivity extends BaseActivity1 {
     private boolean isOverScaledTouchSlop;
     private ValueAnimator animator;
 
-//    @Override
+    //    @Override
 //    protected void initToolbar(ToolbarHelper toolbarHelper) {
 //        toolbarHelper.setTitle("裁剪");
 //        toolbarHelper.setMenuTitle("发布", v -> {
@@ -207,8 +208,7 @@ public class TrimVideoActivity extends BaseActivity1 {
     @Override
     protected void initView() {
         title.setText("裁剪");
-        mRecyclerView
-                .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         videoEditAdapter = new TrimVideoAdapter(this, mMaxWidth / 10);
         mRecyclerView.setAdapter(videoEditAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
@@ -229,10 +229,9 @@ public class TrimVideoActivity extends BaseActivity1 {
                 MagicFilterType.GRAYSCALE, MagicFilterType.CGACOLORSPACE,
         };
 
-        for (int i = 0; i < mMagicFilterTypes.length; i++) {
+        for (MagicFilterType mMagicFilterType : mMagicFilterTypes) {
             FilterModel model = new FilterModel();
-            model.setName(
-                    UIUtils.getString(MagicFilterFactory.filterType2Name(mMagicFilterTypes[i])));
+            model.setName(UIUtils.getString(MagicFilterFactory.filterType2Name(mMagicFilterType)));
             mVideoEffects.add(model);
         }
 
@@ -488,6 +487,55 @@ public class TrimVideoActivity extends BaseActivity1 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 视频裁剪
+     */
+    private void trimmerVideo() {
+        NormalProgressDialog.showLoading(this, getResources().getString(R.string.in_process), false);
+        videoPause();
+        Log.e(TAG, "trimVideo...startSecond:" + leftProgress + ", endSecond:"
+                + rightProgress); //start:44228, end:48217
+        //裁剪后的小视频第一帧图片
+        // /storage/emulated/0/haodiaoyu/small_video/picture_1524055390067.jpg
+//        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame(leftProgress);
+//        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
+//        if (bitmap != null && !bitmap.isRecycled()) {
+//            bitmap.recycle();
+//            bitmap = null;
+//        }
+        VideoUtil.cutVideo(mVideoPath, VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo", "trimmedVideo_"), leftProgress / 1000, rightProgress / 1000)
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        subscribe(d);
+                    }
+
+                    @Override
+                    public void onNext(String outputPath) {
+                        // /storage/emulated/0/Android/data/com.kangoo.diaoyur/files/small_video/trimmedVideo_20180416_153217.mp4
+                        Log.e(TAG, "cutVideo---onSuccess");
+                        try {
+//                        startMediaCodec(outputPath);
+                            compressVideo(outputPath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "cutVideo---onError:" + e.toString());
+                        NormalProgressDialog.stopLoading();
+                        Toast.makeText(TrimVideoActivity.this, "视频裁剪失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -535,59 +583,6 @@ public class TrimVideoActivity extends BaseActivity1 {
     };
 
     /**
-     * 视频裁剪
-     */
-    private void trimmerVideo() {
-        NormalProgressDialog
-                .showLoading(this, getResources().getString(R.string.in_process), false);
-        videoPause();
-        Log.e(TAG, "trimVideo...startSecond:" + leftProgress + ", endSecond:"
-                + rightProgress); //start:44228, end:48217
-        //裁剪后的小视频第一帧图片
-        // /storage/emulated/0/haodiaoyu/small_video/picture_1524055390067.jpg
-//        Bitmap bitmap = mExtractVideoInfoUtil.extractFrame(leftProgress);
-//        String firstFrame = FileUtil.saveBitmap("small_video", bitmap);
-//        if (bitmap != null && !bitmap.isRecycled()) {
-//            bitmap.recycle();
-//            bitmap = null;
-//        }
-        VideoUtil
-                .cutVideo(mVideoPath, VideoUtil.getTrimmedVideoPath(this, "small_video/trimmedVideo",
-                                "trimmedVideo_"), leftProgress / 1000,
-                        rightProgress / 1000)
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        subscribe(d);
-                    }
-
-                    @Override
-                    public void onNext(String outputPath) {
-                        // /storage/emulated/0/Android/data/com.kangoo.diaoyur/files/small_video/trimmedVideo_20180416_153217.mp4
-                        Log.e(TAG, "cutVideo---onSuccess");
-                        try {
-//                        startMediaCodec(outputPath);
-                            compressVideo(outputPath);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "cutVideo---onError:" + e.toString());
-                        NormalProgressDialog.stopLoading();
-                        Toast.makeText(TrimVideoActivity.this, "视频裁剪失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-    }
-
-    /**
      * 视频压缩
      */
     private void compressVideo(String srcPath) {
@@ -600,15 +595,16 @@ public class TrimVideoActivity extends BaseActivity1 {
                             int outHeight = 0;
                             if (mOriginalWidth > mOriginalHeight) {
                                 //横屏
-                                outWidth = 720;
-                                outHeight = 480;
+                                outWidth = 1280;
+                                outHeight = 720;
                             } else {
                                 //竖屏
-                                outWidth = 480;
-                                outHeight = 720;
+                                outWidth = 720;
+                                outHeight = 1280;
                             }
-                            String compressedFilePath = SiliCompressor.with(TrimVideoActivity.this)
-                                    .compressVideo(srcPath, destDirPath, mOriginalWidth, mOriginalHeight, 0);
+                            Logger.d("original width: " + mOriginalWidth + ", height: " + mOriginalHeight);
+                            Logger.d("width: " + outWidth + ", height: " + outHeight);
+                            String compressedFilePath = SiliCompressor.with(TrimVideoActivity.this).compressVideo(srcPath, destDirPath, outWidth, outHeight, 1024000);
                             emitter.onNext(compressedFilePath);
                         } catch (Exception e) {
                             emitter.onError(e);
@@ -626,9 +622,9 @@ public class TrimVideoActivity extends BaseActivity1 {
 
                     @Override
                     public void onNext(String outputPath) {
-                        //源路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/trimmedVideo_20180514_163858.mp4
-                        //压缩路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/VIDEO_20180514_163859.mp4
-                        Log.e(TAG, "compressVideo---onSuccess");
+                        // 源路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/trimmedVideo_20180514_163858.mp4
+                        // 压缩路径: /storage/emulated/0/Android/data/com.kangoo.diaoyur/cache/small_video/VIDEO_20180514_163859.mp4
+                        Logger.d("compressVideo---onSuccess");
                         //获取视频第一帧图片
                         mExtractVideoInfoUtil = new ExtractVideoInfoUtil(outputPath);
                         Bitmap bitmap = mExtractVideoInfoUtil.extractFrame();
@@ -680,16 +676,10 @@ public class TrimVideoActivity extends BaseActivity1 {
         if (mIvPosition.getVisibility() == View.GONE) {
             mIvPosition.setVisibility(View.VISIBLE);
         }
-        final LayoutParams params = (LayoutParams) mIvPosition
-                .getLayoutParams();
-        int start = (int) (MARGIN
-                + (leftProgress/*mVideoView.getCurrentPosition()*/ - scrollPos) * averagePxMs);
+        final LayoutParams params = (LayoutParams) mIvPosition.getLayoutParams();
+        int start = (int) (MARGIN + (leftProgress/*mVideoView.getCurrentPosition()*/ - scrollPos) * averagePxMs);
         int end = (int) (MARGIN + (rightProgress - scrollPos) * averagePxMs);
-        animator = ValueAnimator
-                .ofInt(start, end)
-                .setDuration(
-                        (rightProgress - scrollPos) - (leftProgress/*mVideoView.getCurrentPosition()*/
-                                - scrollPos));
+        animator = ValueAnimator.ofInt(start, end).setDuration((rightProgress - scrollPos) - (leftProgress/*mVideoView.getCurrentPosition()*/ - scrollPos));
         animator.setInterpolator(new LinearInterpolator());
         animator.addUpdateListener(new AnimatorUpdateListener() {
             @Override
@@ -724,10 +714,34 @@ public class TrimVideoActivity extends BaseActivity1 {
             }
             anim();
         }
+    }
+
+    private void videoPause() {
+        isSeeking = false;
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            handler.removeCallbacks(run);
+        }
+        Log.d(TAG, "----videoPause----->>>>>>>");
+        if (mIvPosition.getVisibility() == View.VISIBLE) {
+            mIvPosition.setVisibility(View.GONE);
+        }
+        mIvPosition.clearAnimation();
+        if (animator != null && animator.isRunning()) {
+            animator.cancel();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.seekTo((int) leftProgress);
+//            videoStart();
+        }
     }    private final RangeSeekBar.OnRangeSeekBarChangeListener mOnRangeSeekBarChangeListener = new RangeSeekBar.OnRangeSeekBarChangeListener() {
         @Override
-        public void onRangeSeekBarValuesChanged(RangeSeekBar bar, long minValue, long maxValue,
-                                                int action, boolean isMin, RangeSeekBar.Thumb pressedThumb) {
+        public void onRangeSeekBarValuesChanged(RangeSeekBar bar, long minValue, long maxValue, int action, boolean isMin, RangeSeekBar.Thumb pressedThumb) {
             Log.d(TAG, "-----minValue----->>>>>>" + minValue);
             Log.d(TAG, "-----maxValue----->>>>>>" + maxValue);
             leftProgress = minValue + scrollPos;
@@ -760,31 +774,6 @@ public class TrimVideoActivity extends BaseActivity1 {
             }
         }
     };
-
-    private void videoPause() {
-        isSeeking = false;
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-            handler.removeCallbacks(run);
-        }
-        Log.d(TAG, "----videoPause----->>>>>>>");
-        if (mIvPosition.getVisibility() == View.VISIBLE) {
-            mIvPosition.setVisibility(View.GONE);
-        }
-        mIvPosition.clearAnimation();
-        if (animator != null && animator.isRunning()) {
-            animator.cancel();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.seekTo((int) leftProgress);
-//            videoStart();
-        }
-    }
 
     @Override
     protected void onPause() {
@@ -850,6 +839,10 @@ public class TrimVideoActivity extends BaseActivity1 {
             }
         }
     }
+
+
+
+
 
 
     private Runnable run = new Runnable() {

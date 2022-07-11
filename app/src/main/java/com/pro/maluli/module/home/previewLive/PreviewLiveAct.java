@@ -469,27 +469,22 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
     }
 
     private void gotoLiveStar(JoinLiveEntity data) {
+        Bundle bundle = new Bundle();
         if (anchorInfoEntity.getLive().getType() == 1) {
 //            if (entity.getIs_edit() == 1) {
 //                gotoActivity(StartLiveAct.class, false);
 //            } else {
-            Bundle bundle = new Bundle();
             bundle.putString("ANCHOR_ID", anchorId);
             gotoActivity(OneToOneQueueAct.class, false, bundle);
 //            }
         } else {
-            Bundle bundle = new Bundle();
             bundle.putString("LIVE_BG", anchorInfoEntity.getLive().getImage());
             bundle.putString("LIVE_TITLE", anchorInfoEntity.getLive().getTitle());
             bundle.putInt("UID", data.getInfo().getUid());
             bundle.putString("ANCHOR_ID", anchorId);
             bundle.putString("LIVE_ID", String.valueOf(data.getInfo().getRoom_id()));
             //对众直播
-            if (anchorInfoEntity.getIs_edit() == 1) {
-                bundle.putBoolean("IS_AVATER", true);
-            } else {
-                bundle.putBoolean("IS_AVATER", false);
-            }
+            bundle.putBoolean("IS_AVATER", anchorInfoEntity.getIs_edit() == 1);
             gotoActivity(StartOneToMoreLiveAct.class, false, bundle);
         }
     }

@@ -165,7 +165,7 @@ public class MainPresenter extends BasePresenter<IMainContraction.View> implemen
 
     @Override
     public void sendGift(int giftId, String accid) {
-        add(mService.sendGiftforSX(String.valueOf(giftId), accid)
+        add(mService.sendGiftForSX(String.valueOf(giftId), accid)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<ProtocolDetailEntity>>(mView) {
                     @Override
@@ -276,7 +276,7 @@ public class MainPresenter extends BasePresenter<IMainContraction.View> implemen
 
     @Override
     public void sendScoreForAnchor(String accid, int ablitityNumber, int serviceNumber) {
-        add(mService.sendevaluationForAnchor(accid, String.valueOf(serviceNumber), String.valueOf(ablitityNumber))
+        add(mService.sendEvaluationForAnchor(accid, String.valueOf(serviceNumber), String.valueOf(ablitityNumber))
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<MessageCanScoreEntity>>(mView) {
                     @Override

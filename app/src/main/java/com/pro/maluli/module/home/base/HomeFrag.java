@@ -42,6 +42,8 @@ import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
 import com.pro.maluli.common.view.myselfView.CustomViewpager;
+import com.pro.maluli.ktx.bus.BusKey;
+import com.pro.maluli.ktx.bus.LiveDataBus;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.home.announcement.AnnouncementAct;
@@ -83,7 +85,7 @@ import butterknife.OnClick;
  * @author 23203
  */
 public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresenter> implements IHomeContraction.View {
-    private static final int UPTATE_VIEWPAGER = 0;
+    private static final int UPDATE_VIEWPAGER = 0;
     @BindView(R.id.mine_mian_ll)
     CoordinatorLayout mine_mian_ll;
     @BindView(R.id.marqueeView)
@@ -114,16 +116,13 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     boolean isFirstResume = true;
     CountDownTimer countDownTimer;
     private List<HomeInfoEntity.NoticeBean> noticeBeans = new ArrayList<>();
-    //    private BannerViewAdapter bannerViewAdapter;
     private int autoCurrIndex = 0;
-    //    private Timer timer;
-//    private TimerTask timerTask;
     private ImageView[] tips;
-    private long period = 5000;
     private HomeInfoEntity homeInfoEntity;
     private UserInfoEntity userInfoEntity;
     private LastTimeLiveEntity lastTimeLiveEntity;
-    private boolean isRefresh = true;//是否下拉刷新了
+    //是否下拉刷新了
+    private boolean isRefresh = true;
     private int positionLive = 0;
     private int one, two;
 
@@ -134,25 +133,33 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void onWakeBusiness() {
-//        presenter.getUserInfo();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
-//                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
-                if (BKGSApplication.youthModeStatus == 1) {
-                    gotoLiveIv.setVisibility(View.GONE);
-                    exitTeenagerTv.setVisibility(View.VISIBLE);
-                    if (isFirstResume) {
-                        presenter.getHomeInfo();
-                    }
-                } else {
-                    gotoLiveIv.setVisibility(View.VISIBLE);
-                    exitTeenagerTv.setVisibility(View.GONE);
-                }
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+////                userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
+////                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
+//                if (BKGSApplication.youthModeStatus == 1) {
+//                    gotoLiveIv.setVisibility(View.GONE);
+//                    exitTeenagerTv.setVisibility(View.VISIBLE);
+//                    if (isFirstResume) {
+//                        presenter.getHomeInfo();
+//                    }
+//                } else {
+//                    gotoLiveIv.setVisibility(View.VISIBLE);
+//                    exitTeenagerTv.setVisibility(View.GONE);
+//                }
+//            }
+//        }, 500);
+        if (BKGSApplication.youthModeStatus == 1) {
+            gotoLiveIv.setVisibility(View.GONE);
+            exitTeenagerTv.setVisibility(View.VISIBLE);
+            if (isFirstResume) {
+                presenter.getHomeInfo();
             }
-        }, 500);
-
+        } else {
+            gotoLiveIv.setVisibility(View.VISIBLE);
+            exitTeenagerTv.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -167,15 +174,9 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             GSYVideoManager.releaseAllVideos();
 
         } else {
-//            可见
             isStartVideo = true;
             startTime();
         }
-    }
-
-    @Override
-    public boolean getUserVisibleHint() {
-        return super.getUserVisibleHint();
     }
 
     @Override
@@ -187,9 +188,9 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void baseInitialization() {
-//        BarUtils.setStatusBarColor(getActivity(), Color.parseColor("#ffffff"));
-//        BarUtils.setStatusBarLightMode(getActivity(), true);
-
+        LiveDataBus.get().with(BusKey.EVENT_UPDATE_HOME_DATA, Integer.class).observe(this, flag -> {
+            presenter.getHomeInfo();
+        });
     }
 
     public boolean isLogin() {
@@ -201,29 +202,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         return R.layout.frag_home1;
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 110 && resultCode == Activity.RESULT_OK) {
-//            if (data != null) {
-//                one = data.getIntExtra("ClassiftOne", 0);
-//                two = data.getIntExtra("ClassiftTwo", 0);
-//                isFristResume = false;
-//            }
-//            homeViewPager.setCurrentItem(one + 1);   //һ��ʼ��ѡ��
-//            HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
-//            frag.searchDuoBaoGoods(two);
-//        }
-//    }
-
     @Override
     public void viewInitialization() {
         ButterKnife.bind(this, mainView);
-//        BarUtils.addMarginTopEqualStatusBarHeight(mine_mian_ll);
-//        marqueeView.setAdapter(simpleTextAdapter);
         fragments = new ArrayList<>();
         topVideoFragment = new ArrayList<>();
-
 
         homeViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -280,8 +263,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
         NIMClient.getService(MsgService.class).setChattingAccount(MsgService.MSG_CHATTING_ACCOUNT_NONE, SessionTypeEnum.None);
 
-        intentActivityResultLauncher = registerForActivityResult(new
-                ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 Intent data = result.getData();
@@ -295,7 +277,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                     homeViewPager.setCurrentItem(one + 1);
                     HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
                     frag.searchDuoBaoGoods(two);
-
                 }
             }
         });
@@ -328,10 +309,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
+        userInfoEntity = (UserInfoEntity) ACache.get(requireActivity()).getAsObject(ACEConstant.USERINFO);
         if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
             gotoLiveIv.setVisibility(View.GONE);
             exitTeenagerTv.setVisibility(View.VISIBLE);
@@ -339,11 +321,18 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             gotoLiveIv.setVisibility(View.VISIBLE);
             exitTeenagerTv.setVisibility(View.GONE);
         }
+
         if (isFirstResume) {
+            Logger.d("onResume isFirstResume");
             presenter.getHomeInfo();
         }
-        isFirstResume = true;
+
+        isFirstResume = false;
         isStartVideo = true;
+
+        if (PlayerFactory.getPlayManager().getMediaPlayer() == null) {
+            return;
+        }
 
         if (ACache.get(getActivity()).getAsString("MUTE").equalsIgnoreCase("1")) {
             GSYVideoManager.instance().setNeedMute(true);
@@ -369,14 +358,12 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void setHomeInfo(HomeInfoEntity data) {
-        if (homeInfoEntity != null) {
-            if (homeInfoEntity.getCategory().getList().size() == data.getCategory().getList().size() + 1 && !isRefresh) {
-                // 判断数组一样就不更新数据
-                // 为了实现 首页进入直播主页后返回首页需要回来原先的位置
-                Logger.e("判断数组一样就不更新数据");
-                homeInfoEntity = data;
-                return;
-            }
+        if (homeInfoEntity != null && homeInfoEntity.getCategory().getList().size() == data.getCategory().getList().size() + 1 && !isRefresh) {
+            // 判断数组一样就不更新数据
+            // 为了实现 首页进入直播主页后返回首页需要回来原先的位置
+            Logger.e("判断数组一样就不更新数据");
+            homeInfoEntity = data;
+            return;
         }
 
         isRefresh = false;
@@ -386,7 +373,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         noticeBeans.clear();
         noticeBeans = data.getNotice();
         if (noticeBeans.size() > 0) {
-            simpleTextAdapter = new SimpleTextAdapter(mContext, noticeBeans);
+            simpleTextAdapter = new SimpleTextAdapter(requireActivity(), noticeBeans);
             simpleTextAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position, View view) {
@@ -408,13 +395,11 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         HomeInfoEntity.CategoryBean.ListBean listBean = new HomeInfoEntity.CategoryBean.ListBean();
         HomeInfoEntity.CategoryBean.ListBean.ChildBean childBean = new HomeInfoEntity.CategoryBean.ListBean.ChildBean();
         List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> childBeans = new ArrayList<>();
-        childBeans.add(childBean);
+
         listBean.setTitle("全部");
         childBean.setTitle("全部");
+        childBeans.add(childBean);
         listBean.setChildren(childBeans);
-//        Fragment fragment1 = HomeChildFrag.newInstance(listBean.getChildren());
-//        fragments.add(0, fragment1);
-//        homeInfoEntity.getCategory().getList().;
         homeInfoEntity.getCategory().getList().add(0, listBean);
         for (int i = 0; i < homeInfoEntity.getCategory().getList().size(); i++) {
             Fragment fragment = HomeChildFrag.newInstance(homeInfoEntity.getCategory().getList().get(i).getChildren());
@@ -609,13 +594,14 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             countDownTimer.cancel();
         }
         countDownTimer = new CountDownTimer(3000, 1000) {
+
             public void onTick(long millisUntilFinished) {
 
             }
 
             public void onFinish() {
                 Message message = new Message();
-                message.what = UPTATE_VIEWPAGER;
+                message.what = UPDATE_VIEWPAGER;
                 if (homeInfoEntity == null) {
                     return;
                 }
@@ -643,24 +629,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 tips[i].setBackgroundResource(R.drawable.shape_yuan_000000_2);
             }
         }
-    }    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if (msg.what == UPTATE_VIEWPAGER) {
-                if (isHidden) {
-                    return;
-                }
-                Logger.e("setCurrentItem");
-                if (msg.arg1 != 0) {
-                    bannerViewPager.setCurrentItem(msg.arg1);
-                } else {
-                    bannerViewPager.setCurrentItem(msg.arg1, false);
-                }
-                startTime();
-            }
-        }
-    };
+    }
 
     private void setDianDian(int a) {
         tips = new ImageView[a];
@@ -681,6 +650,26 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             layoutParams.bottomMargin = 40;
             pointLL.addView(imageView, layoutParams);
         }
+    }    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == UPDATE_VIEWPAGER) {
+                if (isHidden) {
+                    return;
+                }
+                if (msg.arg1 != 0) {
+                    bannerViewPager.setCurrentItem(msg.arg1);
+                } else {
+                    bannerViewPager.setCurrentItem(msg.arg1, false);
+                }
+                startTime();
+            }
+        }
+    };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override

@@ -161,6 +161,7 @@ public class NimUserInfoCache {
         }
         return account2UserMap.containsKey(account);
     }
+
     /**
      * ************************************ 用户资料变更监听(监听SDK) *****************************************
      */

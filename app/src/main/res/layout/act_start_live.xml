@@ -1,7 +1,8 @@
 <com.pro.maluli.common.view.slideView.SlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/slide_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,7 +14,6 @@
             android:id="@+id/vv_remote_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
 
         <TextView
             android:id="@+id/liveTipsTv"

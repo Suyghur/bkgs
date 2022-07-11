@@ -222,9 +222,13 @@ public class CaptureActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RESULT_CODE_CONFIRM_VIDEO) {
             if (resultCode == Activity.RESULT_OK) {
-                GLImage yixinVideo = GLImage.Builder.newBuilder().setAddTime(TimeUtil.getNow_millisecond()).setDuration(
-                                currentTime * 1000).setSize(new File(videoSavePath).length()).setHeight(videoHeight).setWidth(
-                                videoWidth).setMimeType("video/mp4") // FIXME
+                GLImage yixinVideo = GLImage.Builder.newBuilder()
+                        .setAddTime(TimeUtil.getNow_millisecond())
+                        .setDuration(currentTime * 1000)
+                        .setSize(new File(videoSavePath).length())
+                        .setHeight(videoHeight)
+                        .setWidth(videoWidth)
+                        .setMimeType("video/mp4") // FIXME
                         .setPath(videoSavePath).build();
                 ArrayList<GLImage> selectedVideos = new ArrayList<>(1);
                 selectedVideos.add(yixinVideo);
@@ -237,8 +241,7 @@ public class CaptureActivity extends AppCompatActivity {
             }
         } else if (requestCode == Constants.RESULT_CODE_CONFIRM_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
-                ArrayList<GLImage> GLImages = (ArrayList<GLImage>) data.getSerializableExtra(
-                        Constants.RESULT_EXTRA_CONFIRM_IMAGES);
+                ArrayList<GLImage> GLImages = (ArrayList<GLImage>) data.getSerializableExtra(Constants.RESULT_EXTRA_CONFIRM_IMAGES);
                 Intent intent = new Intent();
                 intent.putExtra(Constants.EXTRA_RESULT_ITEMS, GLImages);
                 setResult(RESULT_OK, intent);
@@ -432,27 +435,7 @@ public class CaptureActivity extends AppCompatActivity {
             mCamera.release();        // release the camera for other applications
             mCamera = null;
         }
-    }    private Runnable progressRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            currentTime++;
-            Log.i(TAG, "recordRunnable currentTime:" + currentTime);
-            //开始显示进度条
-            mProgressView.setVisibility(View.VISIBLE);
-            mProgressView.setIsStart(true);
-            //显示时间
-            tvBalanceTime.setVisibility(View.VISIBLE);
-            tvBalanceTime.setText(RECORD_MAX_TIME - currentTime + "s");
-            //如果超过最大录制时长则自动结束
-            if (currentTime > RECORD_MAX_TIME) {
-                isAction = false;
-                stopMediaRecorder();
-            } else {
-                mainHandler.postDelayed(this, 1000);
-            }
-        }
-    };
+    }
 
     //开始按下按钮动画
     public void startButtonAnimation() {
@@ -483,7 +466,27 @@ public class CaptureActivity extends AppCompatActivity {
         });
         animatorSet.start();
         cameraTip.setVisibility(View.INVISIBLE);
-    }
+    }    private Runnable progressRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            currentTime++;
+            Log.i(TAG, "recordRunnable currentTime:" + currentTime);
+            //开始显示进度条
+            mProgressView.setVisibility(View.VISIBLE);
+            mProgressView.setIsStart(true);
+            //显示时间
+            tvBalanceTime.setVisibility(View.VISIBLE);
+            tvBalanceTime.setText(RECORD_MAX_TIME - currentTime + "s");
+            //如果超过最大录制时长则自动结束
+            if (currentTime > RECORD_MAX_TIME) {
+                isAction = false;
+                stopMediaRecorder();
+            } else {
+                mainHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     //停止按下按钮动画
     public void stopButtonAnimation() {
@@ -561,6 +564,8 @@ public class CaptureActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
 }

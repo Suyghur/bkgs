@@ -29,5 +29,12 @@ public class BaseResponse<T> {
         this.message = msg;
     }
 
-
+    @Override
+    public String toString() {
+        return "BaseResponse{" +
+                "code=" + code +
+                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

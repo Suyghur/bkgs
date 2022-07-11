@@ -37,7 +37,7 @@ public class LineUpPresenter extends BasePresenter<ILineUpContraction.View> impl
 
     @Override
     public void readLineUpmsg(int id) {
-        add(mService.getReadlineUpMsg(String.valueOf(id))
+        add(mService.getReadLineUpMsg(String.valueOf(id))
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override

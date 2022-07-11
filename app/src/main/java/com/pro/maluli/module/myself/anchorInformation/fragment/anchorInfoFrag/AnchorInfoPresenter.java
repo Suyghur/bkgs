@@ -18,8 +18,7 @@ public class AnchorInfoPresenter extends BasePresenter<IAnchorInfoContraction.Vi
 
     @Override
     public void getAnchorInfo() {
-
-        add(mService.getAnchorInfomation(anchorID)
+        add(mService.getAnchorInformation(anchorID)
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<AnchorInfoEntity>>(mView) {
                     @Override

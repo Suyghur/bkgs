@@ -22,6 +22,7 @@ import io.reactivex.functions.Consumer;
 public class SearchMsgPresenter extends BasePresenter<ISearchMsgContraction.View> implements ISearchMsgContraction.Presenter {
     public int page;
     public String keyword;
+
     public SearchMsgPresenter(Context context) {
         super(context);
     }
