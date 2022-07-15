@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -32,6 +33,8 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.csz.okhttp.http.DownloadCallback;
+import com.csz.okhttp.http.DownloadManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.pro.maluli.R;
@@ -48,6 +51,8 @@ import com.pro.maluli.common.view.dialogview.presenter.InputTextMsgDialog;
 import com.pro.maluli.common.view.dialogview.presenter.adapter.CommentListAdapter;
 import com.pro.maluli.common.view.myselfView.LikeLayout;
 import com.pro.maluli.common.view.myselfView.StarBar;
+import com.pro.maluli.ktx.ext.VideoExtKt;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.video.events.CanStartEvent;
 import com.pro.maluli.module.video.events.ClearPositionEvent;
 import com.pro.maluli.module.video.fragment.recyclerUtils.RecyclerViewUtil;
@@ -86,13 +91,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter>
-        implements IVideoFragmentContraction.View, View.OnClickListener {
+public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter> implements IVideoFragmentContraction.View, View.OnClickListener {
     StandardGSYVideoPlayer videoPlayer;
     File videoFile;
     ProgressDialog pd; // 进度条对话框
     //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -113,8 +117,7 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
     private int mCurrentPosition;
     private LinearLayout commentLL;
     private LikeLayout likeLayout;
-    private TextView commentNumberTv, likeNumberTv,
-            shareNumberTv, anchorNameTv, liveIdTv, attentionTv, serviceTv, statusTv;
+    private TextView commentNumberTv, likeNumberTv, shareNumberTv, anchorNameTv, liveIdTv, attentionTv, serviceTv, statusTv;
     private LinearLayout LiveingLL;
     private CircleImageView anchorAvaterCiv;
     private ImageView liveingIv, leveImg, LoveIv, shareVideoIv;
@@ -154,11 +157,6 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
 
     /**
      * 视频存在本地
-     *
-     * @param paramContext
-     * @param paramFile
-     * @param paramLong
-     * @return
      */
     public static ContentValues getVideoContentValues(Context paramContext, File paramFile, long paramLong) {
         ContentValues localContentValues = new ContentValues();
@@ -333,10 +331,7 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
         pd.show();
         try {
             OkHttpClient client = HttpUtil.getHttpClient();
-            Request request = new Request.Builder()
-                    //访问路径
-                    .url(path)
-                    .build();
+            Request request = new Request.Builder().url(path).build();
             Response response = null;
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
@@ -917,8 +912,33 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
             ToastUtils.showShort("下载视频失败");
             return;
         }
-        getFileFromNew(download_url);
+        pd = new ProgressDialog(getActivity());
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        //正在下载更新
+        pd.setMessage("下载中...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+
+        DownloadManager.getInstance().download(download_url, new DownloadCallback() {
+            @Override
+            public void onSuccess(File file) {
+                Logger.d("download onSuccess file: " + file.getAbsolutePath());
+                VideoExtKt.copyVideo(file.getAbsolutePath(), requireActivity());
+                pd.dismiss();
+                ToastUtils.showShort("下载视频成功");
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                Logger.e("download onFailure, code: " + code + ", msg: " + msg);
+                pd.dismiss();
+                ToastUtils.showShort("下载视频失败");
+            }
+
+            @Override
+            public void onProgress(int progress) {
+                pd.setProgress(progress);
+            }
+        });
     }
-
-
 }

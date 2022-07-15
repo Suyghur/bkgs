@@ -10,6 +10,7 @@ import com.pro.maluli.common.base.BaseResponse;
 import com.pro.maluli.common.entity.CommentVideoEntity;
 import com.pro.maluli.common.entity.VideoEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
+import com.pro.maluli.ktx.utils.Logger;
 
 import io.reactivex.functions.Consumer;
 
@@ -177,8 +178,7 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
                     @Override
                     public void onSuccess(BaseResponse<Object> response) {
-//                        mView.userInfo();
-//                        download_url
+                        Logger.d("downLoadVideo onSuccess");
                         Gson gson = new Gson();
                         String myJson = gson.toJson(response);
                         JSONObject jsonObject = JSONObject.parseObject(myJson);

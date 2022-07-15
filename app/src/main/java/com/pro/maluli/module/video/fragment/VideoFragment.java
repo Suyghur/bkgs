@@ -2,15 +2,14 @@ package com.pro.maluli.module.video.fragment;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -32,13 +31,14 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.csz.okhttp.http.DownloadCallback;
+import com.csz.okhttp.http.DownloadManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.CommentVideoEntity;
 import com.pro.maluli.common.entity.VideoEntity;
-import com.pro.maluli.common.utils.HttpUtil;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.utils.glideImg.GlideUtils;
 import com.pro.maluli.common.view.dialogview.DeleteDialog;
@@ -47,6 +47,7 @@ import com.pro.maluli.common.view.dialogview.presenter.InputTextMsgDialog;
 import com.pro.maluli.common.view.dialogview.presenter.adapter.CommentListAdapter;
 import com.pro.maluli.common.view.myselfView.LikeLayout;
 import com.pro.maluli.common.view.myselfView.StarBar;
+import com.pro.maluli.ktx.ext.VideoExtKt;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.video.events.CanStartEvent;
@@ -69,11 +70,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,17 +81,12 @@ import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.View, VideoFragmentPresenter> implements IVideoFragmentContraction.View, View.OnClickListener {
     ProgressDialog pd; // 进度条对话框
     File videoFile;
     //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -126,13 +120,13 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
     private RelativeLayout avatarRl;
     private TextView videoContentTv;
     private int shareNum;
-    private List<CommentVideoEntity.ListBean> commentlist = new ArrayList<>();
+    private final List<CommentVideoEntity.ListBean> commentlist = new ArrayList<>();
     private int deletePosition;
     private BottomSheetDialog bottomSheetDialog;
     private CommentListAdapter bottomSheetAdapter;
     private RecyclerView rv_dialog_lists;
     private View nodataView;
-    private long totalCount = 30;//总条数不得超过它
+    private final long totalCount = 30;//总条数不得超过它
     private int offsetY;
     private float slideOffset = 0;
     private InputTextMsgDialog inputTextMsgDialog;
@@ -298,105 +292,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 
     }
 
-    /***
-     * 下载MP4
-     */
-    private void downMp4(File videoUrl1) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + videoUrl1)));
-                    //sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(String.valueOf(file))));
-//                    //获取ContentResolve对象，来操作插入视频
-                    ContentResolver localContentResolver = getActivity().getContentResolver();
-//                    //ContentValues：用于储存一些基本类型的键值对
-                    ContentValues localContentValues = getVideoContentValues(getActivity(), videoUrl1, System.currentTimeMillis());
-//                    //insert语句负责插入一条新的纪录，如果插入成功则会返回这条记录的id，如果插入失败会返回-1。
-                    Uri localUri = localContentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, localContentValues);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ToastUtils.showShort("下载成功！");
-                            pd.dismiss(); // 结束掉进度条对话框
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
-
-    public void getFileFromNew(String path) {
-        pd = new ProgressDialog(getActivity());
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        //正在下载更新
-        pd.setMessage("下载中...");
-        pd.setCanceledOnTouchOutside(false);
-        pd.show();
-        try {
-            OkHttpClient client = HttpUtil.getHttpClient();
-            Request request = new Request.Builder()
-                    //访问路径
-                    .url(path)
-                    .build();
-            Response response = null;
-            Call call = client.newCall(request);
-            call.enqueue(new Callback() {
-                //失败的回调进行补充逻辑
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    ToastUtils.showShort("下载失败");
-                    pd.dismiss();
-                    if (call.isCanceled()) {
-                        System.out.println("远程调用取消");
-                    }
-                    if (call.isExecuted()) {
-                        System.out.println("远程调用执行");
-                    }
-
-                }
-
-                //成功的回调
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull okhttp3.Response response) throws IOException {
-                    if (call.isCanceled()) {
-                        System.err.println("远程调用取消");
-                    }
-                    if (call.isExecuted()) {
-                        System.err.println("远程调用执行成功");
-                    }
-                    //请求成功返回的流
-                    InputStream inputStream = response.body().source().inputStream();
-                    File sd1 = Environment.getExternalStorageDirectory();
-                    String path1 = sd1.getPath() + "/" + String.valueOf((int) System.currentTimeMillis() / 10000);
-                    File myfile1 = new File(path1);
-                    if (!myfile1.exists()) {
-                        myfile1.mkdir();
-                    }
-                    videoFile = new File(myfile1, "bkgs.mp4");
-                    //下载文件保存位置
-                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(videoFile));
-                    byte[] data = new byte[1024];
-                    int len;
-                    int available = inputStream.available();
-                    while ((len = inputStream.read(data)) != -1) {
-                        bufferedOutputStream.write(data, 0, len);
-                    }
-                    bufferedOutputStream.flush();
-                    bufferedOutputStream.close();
-                    inputStream.close();
-                    downMp4(videoFile);
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void viewInitialization() {
         videoPlayer = mainView.findViewById(R.id.videoPlayer);
@@ -404,7 +299,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         commentLL = mainView.findViewById(R.id.commentLL);
         avatarRl = (RelativeLayout) mainView.findViewById(R.id.avatarRl);
         videoContentTv = (TextView) mainView.findViewById(R.id.videoContentTv);
-
 
         commentNumberTv = (TextView) mainView.findViewById(R.id.commentNumberTv);
         likeNumberTv = (TextView) mainView.findViewById(R.id.likeNumberTv);
@@ -935,12 +829,7 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         commentNumberTv.setText(videoBean.getVideo().getComment_num() + "");
         likeNumberTv.setText(data.getVideo().getLike_num() + "");
         shareNumberTv.setText(videoBean.getVideo().getShare_num() + "");
-        if (videoBean.getVideo().getIs_like() == 1) {
-            LoveIv.setSelected(true);
-        } else {
-            LoveIv.setSelected(false);
-
-        }
+        LoveIv.setSelected(videoBean.getVideo().getIs_like() == 1);
     }
 
     @Override
@@ -1036,13 +925,36 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 
     @Override
     public void downVideoSuccess(String download_url) {
-//        downMp4(download_url);
         if (TextUtils.isEmpty(download_url)) {
             ToastUtils.showShort("下载视频失败");
             return;
         }
-        getFileFromNew(download_url);
+        pd = new ProgressDialog(getActivity());
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        //正在下载更新
+        pd.setMessage("下载中...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+        DownloadManager.getInstance().download(download_url, new DownloadCallback() {
+            @Override
+            public void onSuccess(File file) {
+                Logger.d("download onSuccess file: " + file.getAbsolutePath());
+                VideoExtKt.copyVideo(file.getAbsolutePath(), requireActivity());
+                pd.dismiss();
+                ToastUtils.showShort("下载视频成功");
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                Logger.e("download onFailure, code: " + code + ", msg: " + msg);
+                pd.dismiss();
+                ToastUtils.showShort("下载视频失败");
+            }
+
+            @Override
+            public void onProgress(int progress) {
+                pd.setProgress(progress);
+            }
+        });
     }
-
-
 }

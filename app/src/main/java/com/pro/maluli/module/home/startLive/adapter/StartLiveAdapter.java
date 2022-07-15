@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class StartLiveAdapter extends BaseProviderMultiAdapter<ChatRoomMessage> {
+
     public StartLiveAdapter() {
         super();
         // 注册 Provider
@@ -28,8 +29,6 @@ public class StartLiveAdapter extends BaseProviderMultiAdapter<ChatRoomMessage> 
     @Override
     protected int getItemType(@NotNull List<? extends ChatRoomMessage> list, int i) {
         MsgTypeEnum msgType = list.get(i).getMsgType();
-
-
         if (msgType == MsgTypeEnum.text) {
             return 0;
         } else if (msgType == MsgTypeEnum.audio) {
@@ -47,10 +46,8 @@ public class StartLiveAdapter extends BaseProviderMultiAdapter<ChatRoomMessage> 
                 }
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
-
-
         } else if (msgType == MsgTypeEnum.notification) {
             return 4;
         }

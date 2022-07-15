@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -68,8 +69,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Kingsley
  * @date 2021/6/15
  */
-public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationContraction.View,
-        AnchorInformationPresenter> implements IAnchorInformationContraction.View {
+public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationContraction.View, AnchorInformationPresenter> implements IAnchorInformationContraction.View {
 
     @BindView(R.id.appbarLayout)
     AppBarLayout appbarLayout;
@@ -159,7 +159,7 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
 //        return super.onTouchEvent(event);
 //    }
 //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -414,8 +414,7 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
 //        imgUrl = data.getShare().getImage();
     }
 
-    @OnClick({R.id.oneTomoreLl, R.id.likeAnchorLL, R.id.oneToOneLL, R.id.moreIv, R.id.topMoreIv,
-            R.id.leftImg_ly, R.id.shareAppLL, R.id.finishIv, R.id.messageLL, R.id.anchorAvaterCiv})
+    @OnClick({R.id.oneTomoreLl, R.id.likeAnchorLL, R.id.oneToOneLL, R.id.moreIv, R.id.topMoreIv, R.id.leftImg_ly, R.id.shareAppLL, R.id.finishIv, R.id.messageLL, R.id.anchorAvaterCiv})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -457,6 +456,7 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
 //                if (!ToolUtils.isFastClick()) {
 //                    return;
 //                }
+                Logger.d(anchorInfoEntity.toString());
                 if (!ToolUtils.isLoginTips(AnchorInformationAct.this, getSupportFragmentManager())) {
                     return;
                 }
@@ -464,9 +464,15 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
                     ToastUtils.showShort("青少年模式不能开启直播");
                     return;
                 }
+
+                if (anchorInfoEntity.getIs_ban_live() == 1) {
+                    ToastUtils.showShort("您已被平台管理员禁播");
+                    return;
+                }
+
                 if (anchorInfoEntity.getIs_edit() == 1 && anchorInfoEntity.getLive().getType() == 0) {
                     if (anchorInfoEntity.getIs_ban_live() == 1) {
-                        ToastUtils.showShort("您被禁播了");
+                        ToastUtils.showShort("您已被平台管理员禁播");
                         return;
                     }
                     ToastUtils.showShort("暂未开始直播，请到首页开启直播间");
@@ -489,6 +495,10 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
                 }
                 if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
                     ToastUtils.showShort("青少年模式不能开启直播");
+                    return;
+                }
+                if (anchorInfoEntity.getIs_ban_live() == 1) {
+                    ToastUtils.showShort("您已被平台管理员禁播");
                     return;
                 }
                 //,直播类型 (1:一对一, 2:一对多,3:接受预约)

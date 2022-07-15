@@ -15,6 +15,7 @@ import com.chad.library.adapter.base.provider.BaseItemProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage;
 import com.pro.maluli.R;
+import com.pro.maluli.ktx.utils.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,6 @@ public class SystemProvide extends BaseItemProvider<ChatRoomMessage> {
 
     @Override
     public void convert(@NotNull BaseViewHolder baseViewHolder, ChatRoomMessage chatRoomMessage) {
-
         String alldata = chatRoomMessage.getAttachment().toJson(false);
         JSONObject jsonObjectTop = JSONObject.parseObject(alldata);
         JSONObject jsonObject = jsonObjectTop.getJSONObject("data");

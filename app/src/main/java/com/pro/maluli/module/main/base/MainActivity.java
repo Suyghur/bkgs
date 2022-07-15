@@ -110,8 +110,6 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
         @Override
         public void onEvent(ChannelCommonEvent channelCommonEvent) {
             SignallingEventType eventType = channelCommonEvent.getEventType();
-            Logger.d("onEvent: " + eventType.toString());
-
             switch (eventType) {
                 case CLOSE:
                     ChannelCloseEvent channelCloseEvent = (ChannelCloseEvent) channelCommonEvent;
@@ -462,6 +460,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
 
     @Override
     public void setUserInfoSuccess(UserInfoEntity data) {
+        BKGSApplication.youthModeBan = data.getIs_ban();
         userInfoEntity = data;
         if (!PackageUtils.getVersionName(MainActivity.this).equalsIgnoreCase(data.getAndroid_version()) || data.getNew_report() == 1) {
             customerNewTv.setVisibility(View.VISIBLE);
@@ -509,12 +508,27 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
             rbMainTabWealth.setVisibility(View.VISIBLE);
             rbMainTabMessage.setVisibility(View.VISIBLE);
         }
+
+        if (data.getIs_ban() == 1) {
+            teenagerNoSeeDialog = new TeenagerNoSeeDialog();
+            teenagerNoSeeDialog.show(getSupportFragmentManager(), "TeenagerNoSeeDialog");
+            teenagerNoSeeDialog.setOnConfirmListener(new TeenagerNoSeeDialog.OnBaseTipsListener() {
+                @Override
+                public void comfirm() {
+                    gotoActivity(YouthModeAct.class);
+                }
+
+                @Override
+                public void finishAll() {
+                    finish();
+                    System.exit(0);
+                }
+            });
+        }
     }
 
     /**
      * 隐私协议弹框
-     *
-     * @param data
      */
     @Override
     public void setProtocolDetail(ProtocolDetailEntity data) {
@@ -613,6 +627,7 @@ public class MainActivity extends BaseMvpActivity<IMainContraction.View, MainPre
     @Override
     public void setYouthSuccess(YouthEntity data) {
         BKGSApplication.youthModeStatus = data.getMember().getIs_teenager();
+        BKGSApplication.youthModeBan = data.getMember().getIs_ban();
         if (data.getMember().getIs_teenager() == 1 && data.getMember().getIs_ban() == 1) {
             // 青少年模式禁止登陆
             teenagerNoSeeDialog = new TeenagerNoSeeDialog();

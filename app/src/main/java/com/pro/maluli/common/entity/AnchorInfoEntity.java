@@ -340,6 +340,17 @@ public class AnchorInfoEntity implements Serializable {
         public void setStart_time(String start_time) {
             this.start_time = start_time;
         }
+
+        @Override
+        public String toString() {
+            return "LiveBean{" +
+                    "id=" + id +
+                    ", type=" + type +
+                    ", title='" + title + '\'' +
+                    ", image='" + image + '\'' +
+                    ", start_time='" + start_time + '\'' +
+                    '}';
+        }
     }
 
     public static class TagsBean implements Serializable {
@@ -360,6 +371,14 @@ public class AnchorInfoEntity implements Serializable {
 
         public void setTag_name(String tag_name) {
             this.tag_name = tag_name;
+        }
+
+        @Override
+        public String toString() {
+            return "TagsBean{" +
+                    "id=" + id +
+                    ", tag_name='" + tag_name + '\'' +
+                    '}';
         }
     }
 
@@ -390,6 +409,15 @@ public class AnchorInfoEntity implements Serializable {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        @Override
+        public String toString() {
+            return "PictureBean{" +
+                    "id=" + id +
+                    ", sort=" + sort +
+                    ", url='" + url + '\'' +
+                    '}';
         }
     }
 
@@ -430,5 +458,53 @@ public class AnchorInfoEntity implements Serializable {
         public void setCover(String cover) {
             this.cover = cover;
         }
+
+        @Override
+        public String toString() {
+            return "VideoBean{" +
+                    "id=" + id +
+                    ", url='" + url + '\'' +
+                    ", cover='" + cover + '\'' +
+                    ", desc='" + desc + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "AnchorInfoEntity{" +
+                "anchor_id=" + anchor_id +
+                ", is_ban_live=" + is_ban_live +
+                ", member_id=" + member_id +
+                ", is_live=" + is_live +
+                ", is_report=" + is_report +
+                ", is_edit=" + is_edit +
+                ", is_sub=" + is_sub +
+                ", is_back=" + is_back +
+                ", is_appoint=" + is_appoint +
+                ", anchor_no='" + anchor_no + '\'' +
+                ", anchor_accid='" + anchor_accid + '\'' +
+                ", new_video='" + new_video + '\'' +
+                ", new_video_cover='" + new_video_cover + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", sex='" + sex + '\'' +
+                ", fans=" + fans +
+                ", cate_one='" + cate_one + '\'' +
+                ", cate='" + cate + '\'' +
+                ", level='" + level + '\'' +
+                ", professional=" + professional +
+                ", service=" + service +
+                ", service_num=" + service_num +
+                ", desc='" + desc + '\'' +
+                ", share_url='" + share_url + '\'' +
+                ", appoint_num=" + appoint_num +
+                ", report_num=" + report_num +
+                ", max_desc='" + max_desc + '\'' +
+                ", live=" + live +
+                ", tags=" + tags +
+                ", picture=" + picture +
+                ", video=" + video +
+                '}';
     }
 }

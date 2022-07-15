@@ -18,8 +18,7 @@ public final class VideoAnchorAdapter extends FragmentStateAdapter {
     private List<AnchorInfoEntity.VideoBean> list = new ArrayList<>();
     private String anchorId;
 
-    public VideoAnchorAdapter(@NonNull @NotNull FragmentManager fragmentManager,
-                              @NonNull @NotNull Lifecycle lifecycle, List<AnchorInfoEntity.VideoBean> list, String anchorId) {
+    public VideoAnchorAdapter(@NonNull @NotNull FragmentManager fragmentManager, @NonNull @NotNull Lifecycle lifecycle, List<AnchorInfoEntity.VideoBean> list, String anchorId) {
         super(fragmentManager, lifecycle);
         this.list = list;
         this.anchorId = anchorId;

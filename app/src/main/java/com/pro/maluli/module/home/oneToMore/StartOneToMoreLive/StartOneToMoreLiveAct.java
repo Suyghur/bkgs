@@ -21,7 +21,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -272,6 +271,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     LianmaiDialog lianmaiDialog;
     LianmaiEntity lianmaiEntity;
     LianmaiDialog lianmaiDialogPD;
+    private boolean isLianmai = false;
     /**
      * 邀请别人
      */
@@ -347,7 +347,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private AbortableFuture<EnterChatRoomResultData> enterRequest;
     private List<ChatRoomMessage> messageList;
     private SeeLiveUserEntity seeliveEntity;
-    private boolean touched = false; // 是否按着
     private UserInfoEntity userInfoEntity;
     private List<NoticeEntity.ListBean> listBeans = new ArrayList<>();
     private PushStream pushStream;
@@ -357,11 +356,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private boolean bPermission = false;
     private boolean isAvater;
     private MediaInfo mediaInfo;
-    /**
-     * 拉流播放器
-     *
-     * @return
-     */
     private SDKOptions config;
     private String anchorAccid, userAccid;
     private GiftEntity giftEntity;
@@ -486,7 +480,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         }
                     } catch (Exception e) {
@@ -505,11 +498,11 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     @Override
     public StartOneToMoreLivePresenter initPresenter() {
         return new StartOneToMoreLivePresenter(this);
-    }    private final LivePlayerObserver playerObserver = new LivePlayerObserver() {
+    }
 
+    private final LivePlayerObserver playerObserver = new LivePlayerObserver() {
         @Override
         public void onPreparing() {
-            Log.e("haode", "a---onPreparing---a");
         }
 
         @Override
@@ -563,7 +556,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
         @Override
         public void onHttpResponseInfo(int code, String header) {
-            Log.e("haode", "a---header---a");
         }
     };
 
@@ -662,8 +654,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         chronometer.setBase(SystemClock.elapsedRealtime() - data.getInfo().getStart_time() * 1000);
         chronometer.setFormat("已播: %s ");
         chronometer.start();
-
-
     }
 
     @Override
@@ -744,7 +734,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             LMavatar = userInfoEntity.getAvatar();
             checkImg.setVisibility(View.VISIBLE);
             checkOnlineIv.setVisibility(View.GONE);
-
         }
         if (isAvater) {
             return;
@@ -849,7 +838,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
     private void start() {
         player.registerPlayerObserver(playerObserver, true);
         player.start();
-    }    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
+    }
+
+    Observer<ChannelCommonEvent> nimOnlineObserver = new Observer<ChannelCommonEvent>() {
         @Override
         public void onEvent(ChannelCommonEvent channelCommonEvent) {
             SignallingEventType eventType = channelCommonEvent.getEventType();
@@ -863,11 +854,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
                     break;
                 case INVITE://接收到邀请通知
+                    Logger.d("接收到邀请通知");
                     invitedEvent = (InvitedEvent) channelCommonEvent;
                     String customInfo = invitedEvent.getCustomInfo();
                     JSONObject json = JSONObject.parseObject(customInfo);
                     String type = json.getString("type");
                     String avatar = json.getString("avatar");
+                    Logger.d("json: " + json);
 
                     if (!TextUtils.isEmpty(type) && "2".equals(type)) {
                         LianmaiEntity entity = new LianmaiEntity();
@@ -883,11 +876,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         if (!isCongfu) {
                             lianmaiEntities.add(entity);
                         }
+                        Logger.d(userInfoEntity.toString());
+                        Logger.d(isAvater);
                         if (lianmaiEntities.size() > 1) {//如果多人同时发起连麦，弹出选择框，
                             lianmaiPaidui(lianmaiEntities);
                             connectLL.setVisibility(View.GONE);//收到连麦邀请
                         } else {
-                            //如果同时只有一个人发起连麦，直接显示
+                            // 如果同时只有一个人发起连麦，直接显示
                             connectLL.setVisibility(View.VISIBLE);//收到连麦邀请
                             lianmaiYesTv.setVisibility(View.VISIBLE);
                             lianmaiNotv.setVisibility(View.VISIBLE);
@@ -895,11 +890,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                             lianmaiYesTv.setText("同意连麦");
                             lianmaiNotv.setText("拒绝连麦");
                             cancelLianmaiTv.setVisibility(View.GONE);
-                            if (isAvater) {
-                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, avatar, lianmaiAchonrIv);
-                            } else {
-                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, userInfoEntity.getAvatar(), lianmaiAchonrIv);
-                            }
+                            GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, avatar, lianmaiAchonrIv);
+
+//                            if (isAvater) {
+//                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, avatar, lianmaiAchonrIv);
+//                            } else {
+//                                GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, userInfoEntity.getAvatar(), lianmaiAchonrIv);
+//                            }
                         }
                     }
                     break;
@@ -917,8 +914,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         handler.removeCallbacks(runnable);
                     }
                     //更新列表数据
-                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null
-                            && lianmaiDialogPD.getDialog().isShowing()) {
+                    if (lianmaiDialogPD != null && lianmaiDialogPD.getDialog() != null && lianmaiDialogPD.getDialog().isShowing()) {
                         lianmaiDialogPD.setDataForLianmai(lianmaiEntities);
                     }
 //                    lianmaiPaidui(lianmaiEntities);
@@ -1048,12 +1044,9 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         bundle.putString("ANCHORID", anchorAccid);
         if (memberDialog == null) {
             memberDialog = new OnlineMemberDialog();
-            memberDialog.setArguments(bundle);
-            memberDialog.show(getSupportFragmentManager(), "OnlineMemberDialog");
-        } else {
-            memberDialog.setArguments(bundle);
-            memberDialog.show(getSupportFragmentManager(), "OnlineMemberDialog");
         }
+        memberDialog.setArguments(bundle);
+        memberDialog.show(getSupportFragmentManager(), "OnlineMemberDialog");
 
     }
 
@@ -1536,6 +1529,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         NIMClient.getService(SignallingService.class).sendControl(channelId, accid, "断开连麦").setCallback(new RequestCallback<Void>() {
             @Override
             public void onSuccess(Void param) {
+                isLianmai = false;
                 connectLL.setVisibility(View.GONE);
                 leave();
                 if (!isAvater) {
@@ -1631,14 +1625,15 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
                     @Override
                     public void onResult(int code, ChannelFullInfo channelFullInfo, Throwable throwable) {
-                        //参考官方文档中关于api以及错误码的说明
+                        // 参考官方文档中关于api以及错误码的说明
                         if (code == ResponseCode.RES_SUCCESS) {
                             //接收邀请成功
                             if (!isAvater) {
                                 releasePlayer();
                                 joinChannel(nertc_token, channelName, uid);
+                                isLianmai = true;
                             }
-
+                            Logger.d("LMavatar: " + LMavatar);
                             ToastHelper.showToast(StartOneToMoreLiveAct.this, "连麦成功！");
                             lianmainIngView();
 
@@ -1647,16 +1642,15 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                         }
                     }
                 });
-//        InvocationFuture<Integer> queryChannelMemberCount(String channelName);
-//
-//        NIMClient.getService(SignallingService.class).acceptInviteAndJoin
     }
 
     private void lianmainIngView() {
         if (lianmaiEntity != null) {
             if (isAvater) {
+                updateInfoChatroom(lianmaiEntity.getAvatar());
                 GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, lianmaiEntity.getAvatar(), lianmaiAchonrIv);
             } else {
+                updateInfoChatroom(userInfoEntity.getAvatar());
                 GlideUtils.loadHeardImg(StartOneToMoreLiveAct.this, userInfoEntity.getAvatar(), lianmaiAchonrIv);
             }
         }
@@ -1770,6 +1764,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      * @param roomID 房间ID
      */
     private void joinChannel(String wyToken, String roomID, long userID) {
+        Logger.d("joinChannel");
         NERtcEx.getInstance().setChannelProfile(1);// 0 - COMMUNICATION（通信模式），  1 - LIVE_BROADCASTING（直播模式）
         int i = NERtcEx.getInstance().joinChannel(wyToken, roomID, userID);
         vv_local_user.setZOrderMediaOverlay(true);
@@ -1790,14 +1785,20 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
         enterRequest.setCallback(new RequestCallback<EnterChatRoomResultData>() {
             @Override
             public void onSuccess(EnterChatRoomResultData result) {
+                Logger.d("enterChatRoomEx: onSuccess");
                 Map<String, Object> remote = result.getRoomInfo().getExtension();
                 if (remote != null && !remote.isEmpty()) {
+                    for (String key : remote.keySet()) {
+                        Logger.d(key);
+                        Logger.d(remote.get(key));
+                    }
                     try {
                         String avatar = (String) remote.get("avatar");
                         if (connectLL.isShown() || avatar.equals("1")) {
                         } else if (!"1".equalsIgnoreCase(avatar)) {
                             showLianmaiView(avatar, !avatar.equals("1"));
                         }
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1844,6 +1845,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
      * 更新聊天室信息，以方便连麦显示
      */
     private void updateInfoChatroom(String avatar) {
+        Logger.d("updateInfoChatroom: " + avatar);
         ChatRoomUpdateInfo chatRoomUpdateInfo = new ChatRoomUpdateInfo();
         chatRoomUpdateInfo.setAnnouncement(avatar);
         Map<String, Object> extension = new HashMap<>();
@@ -1924,6 +1926,21 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
         container = new Container(this, roomId, SessionTypeEnum.ChatRoom, this);
         audioInputPanel = new AudioInputPanel(container, layoutPlayAudio, timer_tip_container, timer, timer_tip, sendAudioIv);
+        audioInputPanel.setAudioRecordCallback(new AudioInputPanel.IAudioRecrod() {
+            @Override
+            public void onStart() {
+                if (player != null) {
+                    player.setMute(true);
+                }
+            }
+
+            @Override
+            public void onEnd() {
+                if (player != null) {
+                    player.setMute(false);
+                }
+            }
+        });
 //        messageListPanel = new ChatRoomMsgListPanelTest(container, comment_list);
 
 
@@ -2186,12 +2203,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onUserAudioStart(long l) {
-        Log.e("haode", "onUserAudioStart");
+        Logger.d("onUserAudioStart");
     }
 
     @Override
     public void onUserAudioStop(long l) {
-        Log.e("haode", "onUserAudioStop");
+        Logger.d("onUserAudioStop");
     }
 
     @Override
@@ -2214,7 +2231,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onUserVideoStop(long l) {
-        Log.e("haode", "onUserVideoStop");
+        Logger.d("onUserVideoStop");
     }
 
     /**
@@ -2223,12 +2240,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onDisconnect(int i) {
-        Log.e("haode", "onDisconnect");
+        Logger.d("onDisconnect");
     }
 
     @Override
     public void onClientRoleChange(int i, int i1) {
-        Log.e("haode", "onClientRoleChange");
+        Logger.d("onClientRoleChange");
     }
 
     @Override
@@ -2289,7 +2306,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             lianmaiNotv.setVisibility(View.GONE);
             cancelLianmaiTv.setVisibility(View.GONE);
         } else {
-            if (lianmaiYesTv.getText().toString().trim().equalsIgnoreCase("断开连麦")) {
+            if (lianmaiYesTv.getText().toString().equals("断开连麦")) {
                 return;
             }
             connectLL.setVisibility(View.GONE);
@@ -2544,12 +2561,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onUserAudioMute(long l, boolean b) {
-        Log.e("haode", "onUserAudioMute");
+        Logger.d("onUserAudioMute");
     }
 
     @Override
     public void onUserVideoMute(long l, boolean b) {
-        Log.e("haode", "onUserVideoMute");
+        Logger.d("onUserVideoMute");
     }
 
     @Override
@@ -2579,22 +2596,22 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onAudioDeviceChanged(int i) {
-        Log.e("haode", "onAudioDeviceChanged");
+        Logger.d("onAudioDeviceChanged");
     }
 
     @Override
     public void onAudioDeviceStateChange(int i, int i1) {
-        Log.e("haode", "onAudioDeviceStateChange");
+        Logger.d("onAudioDeviceStateChange");
     }
 
     @Override
     public void onVideoDeviceStageChange(int i) {
-        Log.e("haode", "onVideoDeviceStageChange");
+        Logger.d("onVideoDeviceStageChange");
     }
 
     @Override
     public void onConnectionTypeChanged(int i) {
-        Log.e("haode", "onConnectionTypeChanged");
+        Logger.d("onConnectionTypeChanged");
     }
 
     @Override
@@ -2641,7 +2658,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onConnectionStateChanged(int i, int i1) {
-        Log.e("haode", "onConnectionStateChanged");
+        Logger.d("onConnectionStateChanged");
 //        if (i1 == 2) {//房间被关闭
 //            BaseTipsDialog baseTipsDialog1 = new BaseTipsDialog();
 //            Bundle bundle2 = new Bundle();
@@ -2682,12 +2699,12 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     @Override
     public void onError(int i) {
-        Log.e("haode", "onError");
+        Logger.d("onError");
     }
 
     @Override
     public void onWarning(int i) {
-        Log.e("haode", "onWarning");
+        Logger.d("onWarning");
     }
 
     @Override
@@ -2770,7 +2787,7 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
                     presenter.closeLive();
                     return;
                 }
-                if (lianmaiYesTv.getText().toString().trim().equalsIgnoreCase("断开连麦")) {
+                if (isLianmai) {
                     ToastUtils.showShort("连麦过程中不可以最小化");
                     return;
                 }
@@ -2947,10 +2964,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
             animSet.start();
         }
     }
-
-
-
-
 
 
 }

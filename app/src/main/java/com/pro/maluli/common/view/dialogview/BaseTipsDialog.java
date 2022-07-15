@@ -25,6 +25,7 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
     private LinearLayout dismissLL;
     private TextView cancelTv, comfirmTv, contentTv, titleTv;
     private String showContent, comfirm, title, cancel;
+    private boolean closeEnable = true;
     private boolean hideCancel;//是否显示取消按钮
     private boolean isCanfinish = true;//是否显示取消按钮
     private OnBaseTipsListener onFreezeTipsListener;
@@ -53,6 +54,12 @@ public class BaseTipsDialog extends DialogFragment implements View.OnClickListen
         cancel = getArguments().getString("cancel");
         hideCancel = getArguments().getBoolean("CANCEL_SEE", false);
         isCanfinish = getArguments().getBoolean("isCanfinish", false);
+        closeEnable = getArguments().getBoolean("closeEnable", true);
+        if (closeEnable) {
+            dismissLL.setVisibility(View.VISIBLE);
+        } else {
+            dismissLL.setVisibility(View.GONE);
+        }
         //是否显示取消按钮
         if (hideCancel) {
             cancelTv.setVisibility(View.GONE);

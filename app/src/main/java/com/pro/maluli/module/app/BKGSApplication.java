@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import androidx.multidex.MultiDex;
 
 import com.bumptech.glide.Glide;
+import com.csz.okhttp.Downloader;
 import com.mob.MobSDK;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.business.session.myCustom.base.DemoCache;
@@ -33,6 +34,7 @@ public class BKGSApplication extends Application {
      */
     public static final int UPLOAD_STEP = 100;//多少步上传一次；
     public static int youthModeStatus = 0;
+    public static int youthModeBan = 0;
     private static BKGSApplication mApplication;
     /**
      * 缓存拍照图片路径
@@ -61,6 +63,7 @@ public class BKGSApplication extends Application {
         baseInit();
         //初始化shareSdk
         MobSDK.submitPolicyGrantResult(true, null);
+        Downloader.init(this);
     }
 
     private void baseInit() {

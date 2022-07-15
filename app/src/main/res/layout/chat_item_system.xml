@@ -18,8 +18,7 @@
             android:id="@+id/msgTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="系统通知：请勿在直播间内传播色情、
-赌博等信息"
+            android:text="系统通知：请勿在直播间内传播色情、赌博等信息"
             android:textColor="@color/c_ffffff"
             android:textSize="@dimen/sp_14" />
 

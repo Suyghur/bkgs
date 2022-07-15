@@ -164,7 +164,7 @@ public class OnlineMemberDialog extends DialogFragment implements View.OnClickLi
      * @param account 用户id
      */
     private void jinyan(String account, boolean isAdd) {
-// 以添加到禁言名单为例
+        // 以添加到禁言名单为例
         MemberOption option = new MemberOption(roomId, account);
         NIMClient.getService(ChatRoomService.class).markChatRoomMutedList(isAdd, option)
                 .setCallback(new RequestCallback<ChatRoomMember>() {
@@ -229,7 +229,18 @@ public class OnlineMemberDialog extends DialogFragment implements View.OnClickLi
         NIMClient.getService(ChatRoomService.class).fetchRoomMembers(roomId, MemberQueryType.GUEST_DESC, 0, 1000).setCallback(new RequestCallback<List<ChatRoomMember>>() {
             @Override
             public void onSuccess(List<ChatRoomMember> chatRoomMembers) {
-                chatRoomMemberList.addAll(chatRoomMembers);
+                List<ChatRoomMember> mutedList = new ArrayList<>();
+                List<ChatRoomMember> normalList = new ArrayList<>();
+                for (ChatRoomMember member : chatRoomMembers) {
+                    if (member.isMuted()) {
+                        mutedList.add(member);
+                    } else {
+                        normalList.add(member);
+                    }
+                }
+                chatRoomMemberList.addAll(mutedList);
+                chatRoomMemberList.addAll(normalList);
+
                 Set set = new HashSet();
                 set.addAll(chatRoomMemberList);
                 memberAll.addAll(set);

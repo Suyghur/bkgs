@@ -5,6 +5,7 @@ import java.util.List;
 
 public class UserInfoEntity implements Serializable {
     private int id;
+    private int is_ban;
     private int is_anchor;
     private String avatar;
     private String nickname;
@@ -35,6 +36,14 @@ public class UserInfoEntity implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIs_ban() {
+        return is_ban;
+    }
+
+    public void setIs_ban(int is_ban) {
+        this.is_ban = is_ban;
     }
 
     public int getIs_anchor() {
@@ -225,6 +234,7 @@ public class UserInfoEntity implements Serializable {
     public String toString() {
         return "UserInfoEntity{" +
                 "id=" + id +
+                ", is_ban=" + is_ban +
                 ", is_anchor=" + is_anchor +
                 ", avatar='" + avatar + '\'' +
                 ", nickname='" + nickname + '\'' +

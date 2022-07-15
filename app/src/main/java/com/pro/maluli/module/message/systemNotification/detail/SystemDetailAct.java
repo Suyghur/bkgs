@@ -66,7 +66,6 @@ public class SystemDetailAct extends BaseMvpActivity<ISystemDetailContraction.Vi
         titleTv.setText(data.getInfo().getTitle());
         timeTv.setText(data.getInfo().getCreated_at());
         contentWb.loadDataWithBaseURL(null, data.getInfo().getContent(), "text/html", "utf-8", null);
-
     }
 
 }

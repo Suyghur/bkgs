@@ -25,7 +25,7 @@ import com.netease.nim.uikit.business.session.activity.my.GiftEntity;
 import com.netease.nim.uikit.business.session.activity.my.GiftEvent;
 import com.netease.nim.uikit.business.session.activity.my.GiftForMeEntity;
 import com.netease.nim.uikit.business.session.activity.my.GoSettingEvent;
-import com.netease.nim.uikit.business.session.activity.my.dialog.MessageAssessDialog;
+import com.netease.nim.uikit.business.session.activity.my.dialog.MessageAssessDialog2;
 import com.netease.nim.uikit.business.session.activity.my.dialog.gift.BaseTipsDialog;
 import com.netease.nim.uikit.business.session.activity.my.dialog.gift.GiftDialog;
 import com.netease.nim.uikit.business.session.constant.Extras;
@@ -251,9 +251,8 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     }
 
     private void showScoreDialog() {
-        MessageAssessDialog dialog = new MessageAssessDialog();
-        dialog.show(getChildFragmentManager(), "MessageAssessDialog");
-        dialog.setOnConfirmListener(new MessageAssessDialog.OnBaseTipsListener() {
+        MessageAssessDialog2 dialog = new MessageAssessDialog2(requireActivity());
+        dialog.setOnConfirmListener(new MessageAssessDialog2.OnBaseTipsListener() {
             @Override
             public void comfirm(int abilityNumber, int srviceNumber) {
                 GoSettingEvent goSettingEvent = new GoSettingEvent(sessionId);
@@ -262,8 +261,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
                 EventBus.getDefault().post(goSettingEvent);
             }
         });
-
-
+        dialog.show();
     }
 
     private void sendScoreCustorm() {

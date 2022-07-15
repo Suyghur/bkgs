@@ -51,11 +51,11 @@ public class AudioInputPanel implements IAudioRecordCallback {
     private boolean started = false;
     private boolean cancelled = false;
     private boolean touched = false; // 是否按着
+    private IAudioRecrod audioRecrodCallback = null;
 
     private IMMessage replyMessage = null;
 
-    public AudioInputPanel(Container container, View audioAnimLayout
-            , LinearLayout timerTipContainer, Chronometer time, TextView timer_tip, Button audioRecordBtn) {
+    public AudioInputPanel(Container container, View audioAnimLayout, LinearLayout timerTipContainer, Chronometer time, TextView timer_tip, Button audioRecordBtn) {
         this.container = container;
         this.audioAnimLayout = audioAnimLayout;
         this.time = time;
@@ -70,13 +70,7 @@ public class AudioInputPanel implements IAudioRecordCallback {
     private static boolean isCancelled(View view, MotionEvent event) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
-
-        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
-                || event.getRawY() < location[1] - 40) {
-            return true;
-        }
-
-        return false;
+        return event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth() || event.getRawY() < location[1] - 40;
     }
 
     public void onPause() {
@@ -95,7 +89,11 @@ public class AudioInputPanel implements IAudioRecordCallback {
 
     private void init() {
         initAudioRecordButton();
+    }
 
+
+    public void setAudioRecordCallback(IAudioRecrod callback) {
+        this.audioRecrodCallback = callback;
     }
 
     /**
@@ -110,8 +108,6 @@ public class AudioInputPanel implements IAudioRecordCallback {
 
     /**
      * 送礼物
-     *
-     * @return
      */
     public void sendGift(GiftEntity.ListBean entity) {
         RedPacketAttachment attachment = new RedPacketAttachment();
@@ -160,15 +156,13 @@ public class AudioInputPanel implements IAudioRecordCallback {
                     touched = true;
                     initAudioRecord();
                     onStartAudioRecord();
-                } else if (event.getAction() == MotionEvent.ACTION_CANCEL
-                        || event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
                     touched = false;
                     onEndAudioRecord(isCancelled(v, event));
                 } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     touched = true;
                     cancelAudioRecord(isCancelled(v, event));
                 }
-
                 return false;
             }
         });
@@ -188,29 +182,29 @@ public class AudioInputPanel implements IAudioRecordCallback {
      * 开始语音录制
      */
     private void onStartAudioRecord() {
-        container.activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        container.activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         audioMessageHelper.startRecord();
+        if (audioRecrodCallback != null) {
+            audioRecrodCallback.onStart();
+        }
         cancelled = false;
     }
 
     /**
      * 结束语音录制
-     *
-     * @param cancel
      */
     private void onEndAudioRecord(boolean cancel) {
         started = false;
         container.activity.getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         audioMessageHelper.completeRecord(cancel);
-//        audioRecordBtn.setBackgroundResource(R.drawable.nim_message_input_edittext_box);
+        if (audioRecrodCallback != null) {
+            audioRecrodCallback.onEnd();
+        }
         stopAudioRecordAnim();
     }
 
     /**
      * 取消语音录制
-     *
-     * @param cancel
      */
     private void cancelAudioRecord(boolean cancel) {
         // reject
@@ -321,5 +315,11 @@ public class AudioInputPanel implements IAudioRecordCallback {
         }
     }
 
+
+    public interface IAudioRecrod {
+        void onStart();
+
+        void onEnd();
+    }
 
 }

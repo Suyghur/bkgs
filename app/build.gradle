@@ -136,6 +136,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.8.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.7'
+    implementation 'com.github.zsgfrtttt.HttpUtil:download-core:1.1.2@aar'
 
     /**SmartRefreshLayout  下拉刷新**/
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'

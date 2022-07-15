@@ -943,10 +943,11 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         bundle1.putString("TITLE_DIO", "退出直播间");
         if (isAnchor) {
             bundle1.putString("comfirm", "结束直播");
+            bundle1.putString("cancel", "最小化");
         } else {
             bundle1.putString("comfirm", "退出");
+            bundle1.putString("cancel", "取消");
         }
-        bundle1.putString("cancel", "最小化");
         baseTipsDialog.setArguments(bundle1);
         baseTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
         baseTipsDialog.setOnTwoBaseTipsListener(new BaseTipsDialog.OnTwoBaseTipsListener() {
@@ -962,9 +963,13 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
             @Override
             public void cancel() {
-                //最小化
-                isSmall = true;
-                showFloatingView(StartLiveAct.this);
+                if (isAnchor) {
+                    //最小化
+                    isSmall = true;
+                    showFloatingView(StartLiveAct.this);
+                } else {
+                    baseTipsDialog.dismiss();
+                }
             }
         });
     }
@@ -1146,10 +1151,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
                             messageList.add(message);
                         }
                     }
-                    SystemAttachment systemAttachment = new SystemAttachment();
-                    systemAttachment.setTips(joinLiveEntity.getInfo().getChat().getAnnouncement());
-                    ChatRoomMessage message = ChatRoomMessageBuilder.createChatRoomCustomMessage(container.account, systemAttachment);
-                    messageList.add(message);
+//                    SystemAttachment systemAttachment = new SystemAttachment();
+//                    systemAttachment.setTips(joinLiveEntity.getInfo().getChat().getAnnouncement());
+//                    ChatRoomMessage message = ChatRoomMessageBuilder.createChatRoomCustomMessage(container.account, systemAttachment);
+//                    messageList.add(message);
                     adapter.setList(messageList);
                     doScrollToBottom();
                 } else {
@@ -1985,42 +1990,41 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         ChatRoomMessage message = (ChatRoomMessage) msg;
 
         ChatRoomHelper.buildMemberTypeInRemoteExt(message, roomId);
-        NIMClient.getService(ChatRoomService.class).sendMessage(message, false)
-                .setCallback(new RequestCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void param) {
-                        messageList.add(message);
-                        adapter.addData(message);
-                        if (message.getMsgType() == MsgTypeEnum.custom) {
-                            try {
-                                String allData = message.getAttachStr();
-                                JSONObject jsonObjectTop = JSONObject.parseObject(allData);
-                                int type = jsonObjectTop.getInteger("type");
-                                if (type == 5) {
-                                    showGift(message);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+        NIMClient.getService(ChatRoomService.class).sendMessage(message, false).setCallback(new RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void param) {
+                messageList.add(message);
+                adapter.addData(message);
+                if (message.getMsgType() == MsgTypeEnum.custom) {
+                    try {
+                        String allData = message.getAttachStr();
+                        JSONObject jsonObjectTop = JSONObject.parseObject(allData);
+                        int type = jsonObjectTop.getInteger("type");
+                        if (type == 5) {
+                            showGift(message);
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
+            }
 
-                    @Override
-                    public void onFailed(int code) {
-                        if (code == ResponseCode.RES_CHATROOM_MUTED) {
-                            ToastHelper.showToast(NimUIKit.getContext(), "用户被禁言");
-                        } else if (code == ResponseCode.RES_CHATROOM_ROOM_MUTED) {
-                            ToastHelper.showToast(NimUIKit.getContext(), "全体禁言");
-                        } else {
-                            ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败!");
-                        }
-                    }
+            @Override
+            public void onFailed(int code) {
+                if (code == ResponseCode.RES_CHATROOM_MUTED) {
+                    ToastHelper.showToast(NimUIKit.getContext(), "用户被禁言");
+                } else if (code == ResponseCode.RES_CHATROOM_ROOM_MUTED) {
+                    ToastHelper.showToast(NimUIKit.getContext(), "全体禁言");
+                } else {
+                    ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败!");
+                }
+            }
 
-                    @Override
-                    public void onException(Throwable exception) {
-                        ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败！");
-                    }
-                });
+            @Override
+            public void onException(Throwable exception) {
+                ToastHelper.showToast(NimUIKit.getContext(), "消息发送失败！");
+            }
+        });
 
 //        if (aitManager != null) {
 //            aitManager.reset();
@@ -2261,6 +2265,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             bundle2.putString("showContent", "对方拒绝邀请");
             bundle2.putString("comfirm", "再次邀请");
             bundle2.putString("cancel", "结束");
+            bundle2.putBoolean("closeEnable", false);
             baseTipsDialog1.setArguments(bundle2);
             baseTipsDialog1.show(getSupportFragmentManager(), "BaseTipsDialog");
             baseTipsDialog1.setOnTwoBaseTipsListener(new BaseTipsDialog.OnTwoBaseTipsListener() {

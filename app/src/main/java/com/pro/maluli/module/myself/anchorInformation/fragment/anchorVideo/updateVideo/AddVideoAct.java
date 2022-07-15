@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.pro.maluli.common.entity.CanTimeVideoEntity;
 import com.pro.maluli.common.entity.UpdateImgEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.utils.glideImg.GlideEngine;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.tailoring.TrimVideoActivity;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo.presenter.AddVideoPresenter;
 import com.pro.maluli.module.myself.anchorInformation.fragment.anchorVideo.updateVideo.presenter.IAddVideoContraction;
@@ -56,6 +58,7 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
     String videoUrl, videoUrlOnUpdate;
     ActivityResultLauncher<Intent> intentActivityResultLauncher;
     private int maxVideoTime;
+    private int maxVideoDesc;
 
     @Override
     public AddVideoPresenter initPresenter() {
@@ -67,7 +70,6 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
         BarUtils.setStatusBarColor(this, Color.parseColor("#ffffff"));
         BarUtils.setStatusBarLightMode(this, true);
         StatusbarUtils.setStatusBarView(this);
-
     }
 
     @Override
@@ -79,37 +81,6 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
     public void viewInitialization() {
         setTitleTx("发布小视频");
         setBackPress();
-        editGgEt.addTextChangedListener(new TextWatcher() {
-            private CharSequence wordNum;//记录输入的字数
-            private int selectionStart;
-            private int selectionEnd;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                wordNum = s;//实时记录输入的字数
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                //TextView显示剩余字数
-                inputMaxTv.setText(s.length() + "/" + 200);
-                selectionStart = editGgEt.getSelectionStart();
-                selectionEnd = editGgEt.getSelectionEnd();
-                if (wordNum.length() > 200) {
-                    //删除多余输入的字（不会显示出来）
-                    s.delete(selectionStart - 1, selectionEnd);
-                    int tempSelection = selectionEnd;
-                    editGgEt.setText(s);
-                    editGgEt.setSelection(tempSelection);//设置光标在最后
-                }
-
-            }
-        });
         intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -205,6 +176,26 @@ public class AddVideoAct extends BaseMvpActivity<IAddVideoContraction.View, AddV
     @Override
     public void setVideoTime(CanTimeVideoEntity data) {
         maxVideoTime = Integer.parseInt(data.getMax_video_time());
+        maxVideoDesc = Integer.parseInt(data.getMax_video_desc());
+        inputMaxTv.setText("0/" + maxVideoDesc);
+        editGgEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxVideoDesc)});
+        editGgEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //TextView显示剩余字数
+                inputMaxTv.setText(s.length() + "/" + maxVideoDesc);
+            }
+        });
+
         addvideoIv.performClick();
     }
 

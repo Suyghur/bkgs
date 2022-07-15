@@ -190,9 +190,6 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
             R.id.ReserveTv, R.id.StartLiveTv, R.id.closeIv,
             R.id.AnchorInfoRl})
     public void onClick(View view) {
-//        if (!ToolUtils.isFastClick()) {
-//            return;
-//        }
         switch (view.getId()) {
             case R.id.attentionTv://关注
                 if (!ToolUtils.isLoginTips(PreviewLiveAct.this, getSupportFragmentManager())) {
