@@ -22,12 +22,12 @@ import com.pro.maluli.module.myself.setting.feedback.base.adapter.FeedBackAdapte
 import com.pro.maluli.module.myself.setting.feedback.base.presenter.FeedBackPresenter;
 import com.pro.maluli.module.myself.setting.feedback.base.presenter.IFeedBackContraction;
 import com.pro.maluli.module.myself.setting.feedback.feedBackDetail.FeedBackDetailAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,8 +79,6 @@ public class FeedBackAct extends BaseMvpActivity<IFeedBackContraction.View, Feed
         right_tv.setTextColor(getResources().getColor(R.color.c_8e1d77));
         nodataTipsTv.setText("暂无数据");
         setBackPress();
-        fbSfl.setRefreshHeader(new ClassicsHeader(this));
-        fbSfl.setRefreshFooter(new ClassicsFooter(this));
         feedBackXrl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new FeedBackAdapter(listBeans);
         feedBackXrl.setAdapter(blackListAdapter);
@@ -96,9 +94,8 @@ public class FeedBackAct extends BaseMvpActivity<IFeedBackContraction.View, Feed
                 gotoActivity(FeedBackDetailAct.class, false, bundle);
             }
         });
-        /**
-         * 加载更多
-         */
+        fbSfl.setRefreshHeader(new ClassicsHeader(this));
+        fbSfl.setRefreshFooter(new ClassicsFooter(this));
         fbSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
@@ -106,9 +103,7 @@ public class FeedBackAct extends BaseMvpActivity<IFeedBackContraction.View, Feed
                 presenter.getFeedBackList();
             }
         });
-        /**
-         * 下拉刷新
-         */
+
         fbSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,7 +37,6 @@ import cn.sharesdk.wechat.moments.WechatMoments;
  */
 public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutMePresenter> implements IAboutMeContraction.View {
 
-
     @BindView(R.id.versionNumberTv)
     TextView versionNumberTv;
     @BindView(R.id.checkWebsiteTv)
@@ -46,7 +46,7 @@ public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutM
     @BindView(R.id.checkUpdatesTv)
     LinearLayout checkUpdatesTv;
     //要用Handler回到主线程操作UI，否则会报错
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -90,9 +90,6 @@ public class AboutMeAct extends BaseMvpActivity<IAboutMeContraction.View, AboutM
 
     @OnClick({R.id.shareAppLL, R.id.checkWebsiteTv, R.id.checkUpdatesTv})
     public void onClick(View view) {
-//        if (!ToolUtils.isFastClick()) {
-//            return;
-//        }
         switch (view.getId()) {
             case R.id.shareAppLL:
                 //分享

@@ -23,12 +23,12 @@ import com.pro.maluli.module.myself.myAccount.withdraw.detail.adapter.RewardDeta
 import com.pro.maluli.module.myself.myAccount.withdraw.detail.presenter.IRewardDetailContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.detail.presenter.RewardDetailPresenter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.SearchRewardAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,9 +91,6 @@ public class RewardDetailAct extends BaseMvpActivity<IRewardDetailContraction.Vi
         iv_title.setBackground(getResources().getDrawable(R.mipmap.ic_search_hui_bg));
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
         bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-        /**
-         * 加载更多
-         */
         bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
@@ -101,9 +98,6 @@ public class RewardDetailAct extends BaseMvpActivity<IRewardDetailContraction.Vi
                 presenter.getBkDetail();
             }
         });
-        /**
-         * 下拉刷新
-         */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

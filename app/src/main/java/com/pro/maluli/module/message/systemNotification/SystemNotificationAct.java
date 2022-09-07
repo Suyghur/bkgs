@@ -25,12 +25,12 @@ import com.pro.maluli.module.message.systemNotification.adapter.SystemNotificati
 import com.pro.maluli.module.message.systemNotification.detail.SystemDetailAct;
 import com.pro.maluli.module.message.systemNotification.presenter.ISystemNotificationContraction;
 import com.pro.maluli.module.message.systemNotification.presenter.SystemNotificationPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -81,11 +81,8 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if (mPopupWindowList != null) {
         getX = (int) ev.getX();
         getY = (int) ev.getY();
-//        }
-
         return super.dispatchTouchEvent(ev);
     }
 
@@ -94,8 +91,6 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
         setTitleTx("系统通知");
         setBackPress();
         nodataTipsTv.setText("暂无数据");
-        watchSfl.setRefreshHeader(new ClassicsHeader(this));
-        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchListRl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new SystemNotificationAdapter(listBeans, this);
         watchListRl.setAdapter(blackListAdapter);
@@ -115,9 +110,8 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
             }
         });
 
-        /**
-         * 加载更多
-         */
+        watchSfl.setRefreshHeader(new ClassicsHeader(this));
+        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
@@ -125,9 +119,6 @@ public class SystemNotificationAct extends BaseMvpActivity<ISystemNotificationCo
                 presenter.getSystemMsg();
             }
         });
-        /**
-         * 下拉刷新
-         */
         watchSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

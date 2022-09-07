@@ -121,7 +121,7 @@
     </LinearLayout>
 
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/bkDetailSfl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -151,6 +151,7 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

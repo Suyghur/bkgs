@@ -29,12 +29,12 @@ import com.pro.maluli.module.home.homeSearch.adapter.SearchHomeAdapter;
 import com.pro.maluli.module.home.homeSearch.presenter.ISearchHomeContraction;
 import com.pro.maluli.module.home.homeSearch.presenter.SearchHomePresenter;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -100,19 +100,6 @@ public class SearchHomeAct extends BaseMvpActivity<ISearchHomeContraction.View, 
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
         bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
         bkDetailSfl.setEnableLoadMore(false);
-        /**
-         * 加载更多
-         */
-        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                bkDetailSfl.finishLoadMore(1000);
-                presenter.getBkDetail();
-            }
-        });
-        /**
-         * 下拉刷新
-         */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -120,6 +107,14 @@ public class SearchHomeAct extends BaseMvpActivity<ISearchHomeContraction.View, 
                 bkDetailSfl.finishRefresh(1000);
             }
         });
+        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                bkDetailSfl.finishLoadMore(1000);
+                presenter.getBkDetail();
+            }
+        });
+
         bkDetailRv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SearchHomeAdapter(entities, this);
         bkDetailRv.setAdapter(adapter);

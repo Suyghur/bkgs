@@ -29,10 +29,10 @@ import com.pro.maluli.module.myself.setting.base.SettingAct;
 import com.pro.maluli.module.myself.userAgreement.base.UserAgreementAct;
 import com.pro.maluli.module.myself.watchlist.WatchListAct;
 import com.pro.maluli.module.other.login.LoginAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -144,9 +144,6 @@ public class MyselfFrag extends BaseMvpFragment<IMyselfContraction.View, MyselfP
         BarUtils.addMarginTopEqualStatusBarHeight(mine_mian_ll);
         myselfSrl.setEnableLoadMore(false);
         myselfSrl.setRefreshHeader(new ClassicsHeader(getActivity()));
-        /**
-         * 下拉刷新
-         */
         myselfSrl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

@@ -57,6 +57,7 @@ import com.pro.maluli.common.view.dialogview.EditPersonDialog;
 import com.pro.maluli.common.view.dialogview.SubReserveDialog;
 import com.pro.maluli.common.view.dialogview.checkMsg.CheckMsgDialog;
 import com.pro.maluli.common.view.myselfView.QFolderTextView;
+import com.pro.maluli.ktx.ext.ToastExtKt;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueAdapter;
 import com.pro.maluli.module.home.oneToOne.queue.adapter.QueueTopVideoFrg;
@@ -65,7 +66,6 @@ import com.pro.maluli.module.home.oneToOne.queue.presenter.OneToOneQueuePresente
 import com.pro.maluli.module.home.startLive.StartLiveAct;
 import com.pro.maluli.module.socketService.SocketUtils;
 import com.pro.maluli.module.socketService.event.OnTwoOneEvent;
-import com.pro.maluli.toolkit.ToastExtKt;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import org.greenrobot.eventbus.EventBus;

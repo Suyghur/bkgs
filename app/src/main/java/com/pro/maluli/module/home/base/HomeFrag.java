@@ -27,7 +27,6 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyco.tablayout.SlidingTabLayout;
-import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
@@ -60,12 +59,12 @@ import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.xj.marqueeview.MarqueeView;
@@ -100,6 +99,8 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     LinearLayout pointLL;
     @BindView(R.id.smarRef)
     SmartRefreshLayout smarRef;
+    @BindView(R.id.header)
+    ClassicsHeader header;
     @BindView(R.id.gotoLiveIv)
     ImageView gotoLiveIv;
     @BindView(R.id.exitTeenagerTv)
@@ -191,6 +192,12 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         LiveDataBus.get().with(BusKey.EVENT_UPDATE_HOME_DATA, Integer.class).observe(this, flag -> {
             presenter.getHomeInfo();
         });
+//        LiveDataBus.get().with(BusKey.EVENT_LOAD_VIEW_PAGER_FINISH, Object.class).observe(this, flag -> {
+//            View view = fragments.get(homeViewPager.getCurrentItem()).getView();
+//            if (view != null) {
+//                ViewPagerExtKt.updatePagerHeightForChild(view, homeViewPager);
+//            }
+//        });
     }
 
     public boolean isLogin() {
@@ -207,7 +214,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         ButterKnife.bind(this, mainView);
         fragments = new ArrayList<>();
         topVideoFragment = new ArrayList<>();
-
         homeViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -216,6 +222,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
             @Override
             public void onPageSelected(int position) {
+//                homeViewPager.resetHeight(position);
                 positionLive = position;
                 for (int i = 0; i < homeTpStl.getTabCount(); i++) {
                     if (position == i) {
@@ -232,28 +239,44 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             }
         });
 
-        smarRef.setRefreshHeader(new ClassicsHeader(requireActivity()));
+//        smarRef.setRefreshHeader(new ClassicsHeader(requireActivity()));
+//        smarRef.setRefreshFooter(new ClassicsFooter(requireActivity()));
+//        smarRef.setEnableLoadMore(false);
+//        /*
+//          加载更多
+//         */
+//        smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//                smarRef.finishLoadMore(1000);
+//            }
+//        });
+//        /*
+//          下拉刷新
+//         */
+//        smarRef.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//                presenter.getHomeInfo();
+//                isRefresh = true;
+//                smarRef.finishRefresh(1000);
+//            }
+//        });
+
+        smarRef.setRefreshHeader(header);
         smarRef.setRefreshFooter(new ClassicsFooter(requireActivity()));
-        smarRef.setEnableLoadMore(false);
-        /*
-          加载更多
-         */
-        smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                smarRef.finishLoadMore(1000);
-                ToastHelper.showToast(getContext(), "sdfasdf");
-            }
-        });
-        /*
-          下拉刷新
-         */
         smarRef.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+            public void onRefresh(@NonNull RefreshLayout refreshlayout) {
                 presenter.getHomeInfo();
                 isRefresh = true;
                 smarRef.finishRefresh(1000);
+            }
+        });
+        smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
+                smarRef.finishLoadMore(1000);
             }
         });
 
@@ -323,7 +346,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         }
 
         if (isFirstResume) {
-            Logger.d("onResume isFirstResume");
             presenter.getHomeInfo();
         }
 
@@ -358,6 +380,13 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void setHomeInfo(HomeInfoEntity data) {
+        if (BKGSApplication.youthModeStatus == 1) {
+            gotoLiveIv.setVisibility(View.GONE);
+            exitTeenagerTv.setVisibility(View.VISIBLE);
+        } else {
+            gotoLiveIv.setVisibility(View.VISIBLE);
+            exitTeenagerTv.setVisibility(View.GONE);
+        }
         if (homeInfoEntity != null && homeInfoEntity.getCategory().getList().size() == data.getCategory().getList().size() + 1 && !isRefresh) {
             // 判断数组一样就不更新数据
             // 为了实现 首页进入直播主页后返回首页需要回来原先的位置
@@ -406,7 +435,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             fragments.add(fragment);
         }
         //new一个适配器
-        mAdapter = new MyPagerAdapter(getChildFragmentManager());
+        mAdapter = new MyPagerAdapter(requireActivity().getSupportFragmentManager());
         //设置ViewPager与适配器关联
         homeViewPager.setAdapter(mAdapter);
         //设置Tab与ViewPager关联
@@ -650,7 +679,9 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             layoutParams.bottomMargin = 40;
             pointLL.addView(imageView, layoutParams);
         }
-    }    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+    }
+
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == UPDATE_VIEWPAGER) {
@@ -681,10 +712,35 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
+        mHandler.removeCallbacksAndMessages(null);
     }
+
+//    private static class MyPagerAdapter extends FragmentStateAdapter {
+//
+//        private final ArrayList<Fragment> list = new ArrayList<>();
+//
+//        public MyPagerAdapter(@NonNull Fragment fragment) {
+//            super(fragment);
+//        }
+//
+//
+//        @NonNull
+//        @Override
+//        public Fragment createFragment(int position) {
+//            return list.get(position);
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return list.size();
+//        }
+//
+//        public void setList(List<Fragment> list) {
+//            this.list.clear();
+//            this.list.addAll(list);
+//            notifyDataSetChanged();
+//        }
+//    }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {

@@ -1,17 +1,13 @@
 package com.pro.maluli.module.video.fragment;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -27,7 +23,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -35,6 +30,9 @@ import com.csz.okhttp.http.DownloadCallback;
 import com.csz.okhttp.http.DownloadManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.CommentVideoEntity;
@@ -56,11 +54,12 @@ import com.pro.maluli.module.video.fragment.recyclerUtils.RecyclerViewUtil;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.VideoFragmentPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
@@ -71,8 +70,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,11 +143,6 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 
     /**
      * 视频存在本地
-     *
-     * @param paramContext
-     * @param paramFile
-     * @param paramLong
-     * @return
      */
     public static ContentValues getVideoContentValues(Context paramContext, File paramFile, long paramLong) {
         ContentValues localContentValues = new ContentValues();
@@ -266,30 +258,26 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
                         if (!ToolUtils.isLoginTips(getActivity(), getChildFragmentManager())) {
                             return;
                         }
-
-//                        DonwloadSaveImg.httpDownload(videoBean.getVideo().getUrl());//iPath
-                        if (PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                            presenter.dawnLoadVideo(videoBean.getVideo().getVideo_id());
+                        if (XXPermissions.isGranted(getActivity(), Permission.Group.STORAGE)) {
+                            presenter.downloadVideo(videoBean.getVideo().getVideo_id());
                         } else {
-                            PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE).callback(new PermissionUtils.SimpleCallback() {
+                            XXPermissions.with(getActivity()).permission(Permission.Group.STORAGE).request(new OnPermissionCallback() {
                                 @Override
-                                public void onGranted() {
-                                    presenter.dawnLoadVideo(videoBean.getVideo().getVideo_id());
-
+                                public void onGranted(List<String> permissions, boolean all) {
+                                    presenter.downloadVideo(videoBean.getVideo().getVideo_id());
                                 }
 
                                 @Override
-                                public void onDenied() {
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    OnPermissionCallback.super.onDenied(permissions, never);
                                     ToastUtils.showShort("请开启权限，才能下载");
                                 }
-
                             });
                         }
                     }
                 });
                 break;
         }
-
     }
 
     @Override
@@ -297,12 +285,12 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         videoPlayer = mainView.findViewById(R.id.videoPlayer);
         likeLayout = mainView.findViewById(R.id.likeLayout);
         commentLL = mainView.findViewById(R.id.commentLL);
-        avatarRl = (RelativeLayout) mainView.findViewById(R.id.avatarRl);
-        videoContentTv = (TextView) mainView.findViewById(R.id.videoContentTv);
+        avatarRl = mainView.findViewById(R.id.avatarRl);
+        videoContentTv = mainView.findViewById(R.id.videoContentTv);
 
-        commentNumberTv = (TextView) mainView.findViewById(R.id.commentNumberTv);
-        likeNumberTv = (TextView) mainView.findViewById(R.id.likeNumberTv);
-        shareNumberTv = (TextView) mainView.findViewById(R.id.shareNumberTv);
+        commentNumberTv = mainView.findViewById(R.id.commentNumberTv);
+        likeNumberTv = mainView.findViewById(R.id.likeNumberTv);
+        shareNumberTv = mainView.findViewById(R.id.shareNumberTv);
         LiveingLL = mainView.findViewById(R.id.LiveingLL);
         anchorAvaterCiv = mainView.findViewById(R.id.anchorAvaterCiv);
         liveingIv = mainView.findViewById(R.id.liveingIv);
@@ -551,16 +539,16 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
         View view = View.inflate(getActivity(), R.layout.dialog_bottomsheet, null);
 
 
-        ImageView iv_dialog_close = (ImageView) view.findViewById(R.id.dialog_bottomsheet_iv_close);
-        rv_dialog_lists = (RecyclerView) view.findViewById(R.id.dialog_bottomsheet_rv_lists);
-        nodataView = (View) view.findViewById(R.id.nodataView);
+        ImageView iv_dialog_close = view.findViewById(R.id.dialog_bottomsheet_iv_close);
+        rv_dialog_lists = view.findViewById(R.id.dialog_bottomsheet_rv_lists);
+        nodataView = view.findViewById(R.id.nodataView);
         RelativeLayout rl_comment = view.findViewById(R.id.rl_comment);
         avaterIv = view.findViewById(R.id.avaterIv);
         nameTv = view.findViewById(R.id.nameTv);
         anchorNumberTv = view.findViewById(R.id.anchorNumberTv);
         commentSfl = view.findViewById(R.id.commentSfl);
-        commentSfl.setRefreshHeader(new ClassicsHeader(getActivity()));
-        commentSfl.setRefreshFooter(new ClassicsFooter(getActivity()));
+        commentSfl.setRefreshHeader(new ClassicsHeader(requireActivity()));
+        commentSfl.setRefreshFooter(new ClassicsFooter(requireActivity()));
         commentSfl.setEnableNestedScroll(false);
 
         iv_dialog_close.setOnClickListener(v -> bottomSheetDialog.dismiss());
@@ -598,14 +586,14 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 
         initListener();
 
-        bottomSheetDialog = new BottomSheetDialog(getActivity(), R.style.dialog);
+        bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.dialog);
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
         int flag = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         bottomSheetDialog.getWindow().getDecorView().setSystemUiVisibility(flag);
         //设置背景为透明
-        bottomSheetDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(), android.R.color.transparent));
-        int dialogHeight = ToolUtils.getContextRect(getActivity());
+        bottomSheetDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(), android.R.color.transparent));
+        int dialogHeight = ToolUtils.getContextRect(requireActivity());
         //设置弹窗大小为会屏
         bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight == 0 ? ViewGroup.LayoutParams.MATCH_PARENT : dialogHeight);
 
@@ -660,19 +648,14 @@ public class VideoFragment extends BaseMvpFragment<IVideoFragmentContraction.Vie
 //                presenter.page = 1;
 //            }
 //        });
-        /**
-         * 加载更多
-         */
-        commentSfl.setOnLoadMoreListener(new com.scwang.smartrefresh.layout.listener.OnLoadMoreListener() {
+
+        commentSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 commentSfl.finishLoadMore(1000);
                 presenter.getCommentVideo(String.valueOf(videoBean.getVideo().getVideo_id()));
             }
         });
-        /**
-         * 下拉刷新
-         */
         commentSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

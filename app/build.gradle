@@ -60,7 +60,7 @@ android {
 
         ndk {
             //设置支持的SO库架构
-            abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
 
         manifestPlaceholders = [
@@ -125,11 +125,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.multidex:multidex:2.0.1'
-//    implementation 'fm.jiecao:jiecaovideoplayer:5.8.1'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.8.0'
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
-//    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -139,11 +137,15 @@ dependencies {
     implementation 'com.github.zsgfrtttt.HttpUtil:download-core:1.1.2@aar'
 
     /**SmartRefreshLayout  下拉刷新**/
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+//    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.0.5'
+    implementation 'io.github.scwang90:refresh-header-classics:2.0.5'
+    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'
     /**
      * 工具类
      */
-    implementation 'com.blankj:utilcodex:1.30.5'
+    implementation 'com.blankj:utilcodex:1.31.0'
+    implementation 'com.github.getActivity:XXPermissions:16.0'
     /**
      * 图片加载
      */
@@ -158,21 +160,10 @@ dependencies {
      * 选择照片和拍摄照片
      */
     implementation "io.github.lucksiege:pictureselector:v2.7.3-rc09"
-    /**
-     * 视频播放
-     */
-//    implementation 'com.shuyu:gsyVideoPlayer-java:7.1.2'
-//    implementation 'com.github.carguo.GSYvideoplayer:gsyVideoPlayer-java:v8.1.7-release-jitpack'
-//    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
-//    implementation 'com.shuyu:gsyVideoPlayer-armv64:7.1.2'
-    //根据你的需求ijk模式的so
-//    implementation 'com.shuyu:gsyVideoPlayer-armv5:7.1.2'
-//    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
-
     implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.1.7-release-jitpack'
-/**
- * 一个强大并且灵活的RecyclerViewAdapter
- */
+    /**
+     * 一个强大并且灵活的RecyclerViewAdapter
+     */
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
     /**
      * 垂直滚动轮播
@@ -184,9 +175,19 @@ dependencies {
     implementation 'io.github.youth5201314:banner:2.2.2'
 
     /** Android TabLayout库 **/
-    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+    implementation 'io.github.h07000223:flycoTabLayout:3.0.0'
 
     implementation 'com.makeramen:roundedimageview:2.3.0'
+
+
+    implementation 'com.github.angcyo.DslTablayout:TabLayout:3.2.4'
+
+    //可选
+    implementation 'com.github.angcyo.DslTablayout:ViewPager1Delegate:3.2.4'
+    //可选
+    implementation 'com.github.angcyo.DslTablayout:ViewPager2Delegate:3.2.4'
+
+
     /**
      * 圆形图片
      */
@@ -196,41 +197,15 @@ dependencies {
      */
     implementation 'com.github.zyyoona7:pickerview:1.0.9'
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
-    /**
-     * 图片查看
-     */
-//    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
-//    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
     implementation 'com.netease.yunxin:nertc:4.4.2'
     implementation 'com.effective.android:panelSwitchHelper-androidx:1.3.13'
-//    api 'com.netease.yunxin.kit:call-ui:1.3.0'
 
-/**
- * 拉流播放器
- */
-//    implementation 'com.netease.nimlib:neliveplayer:2.6.0'
-//    implementation 'com.netease:gslb:1.0.0'
-//    /**
-//     * 网易云信即时通讯
-//     */
-//    // 基础功能 (必需)
-//    api 'com.netease.nimlib:basesdk:8.7.0'
-//
-//    // 聊天室需要
-//    api 'com.netease.nimlib:chatroom:8.7.0'
     implementation 'com.netease.nimlib:avsignalling:9.2.5'
     /**
      * socket连接
      */
     implementation "org.java-websocket:Java-WebSocket:1.4.0"
-
-////bugly
-//    implementation 'com.tencent.bugly:crashreport:latest.release'
-//    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-//    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
-//    //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
-
 
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
@@ -240,16 +215,6 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:4.6.6'
     implementation 'cn.jiguang.sdk:jcore:3.2.4'
 
-//    implementation 'io.github.suyghur.dolin:zap:1.0.0'
-//    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
-//    implementation 'com.tencent:mmkv-static:1.2.10'
-
-//    implementation 'xyz.doikki.android.dkplayer:dkplayer-java:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:player-exo:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:videocache:3.3.5'
-
-//    implementation project(':toolkit')
     implementation project(':uikit')
     implementation project(':playerkit')
     implementation project(':video-effect')

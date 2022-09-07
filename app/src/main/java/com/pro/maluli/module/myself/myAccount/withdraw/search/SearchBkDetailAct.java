@@ -26,10 +26,10 @@ import com.pro.maluli.common.view.myselfView.LabelsView;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.adapter.SearchBkDetailAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.ISearchBkDetailContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.presenter.SearchBkDetailPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,20 +94,6 @@ public class SearchBkDetailAct extends BaseMvpActivity<ISearchBkDetailContractio
     public void viewInitialization() {
         nodataTipsTv.setText("抱歉，未查找到相关结果");
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
-//        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-//        /**
-//         * 加载更多
-//         */
-//        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//                bkDetailSfl.finishLoadMore(1000);
-//                presenter.getBkDetail();
-//            }
-//        });
-        /**
-         * 下拉刷新
-         */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

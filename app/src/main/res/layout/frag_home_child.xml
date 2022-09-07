@@ -21,6 +21,12 @@
         app:tl_textUnselectColor="@color/c_94959B"
         app:tl_textsize="@dimen/sp_16" />
 
+
+    <!--        <androidx.viewpager.widget.ViewPager-->
+    <!--            android:id="@+id/childVP"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:background="@color/c_f9f9f9" />-->
     <com.pro.maluli.common.view.myselfView.CustomViewpager
         android:id="@+id/childVP"
         android:layout_width="match_parent"

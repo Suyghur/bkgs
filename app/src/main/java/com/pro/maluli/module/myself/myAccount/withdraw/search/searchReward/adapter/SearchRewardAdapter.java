@@ -32,16 +32,22 @@ public class SearchRewardAdapter extends BaseQuickAdapter<RewardDetailEntity.Lis
         GlideUtils.loadImage(context, entity.getAvatar(), avatarClv);
         baseViewHolder.setText(R.id.nameTv, entity.getNickname());
         baseViewHolder.setText(R.id.timeTv, entity.getCreated_at());
-//        baseViewHolder.setText(R.id.giftTypeTv, entity.getGift_title());
+        baseViewHolder.setText(R.id.giftTypeTv, entity.getGift_title());
         baseViewHolder.setText(R.id.resourceTv, entity.getProduct_type() + "");
         TextView giftTypeTv = baseViewHolder.getView(R.id.giftTypeTv);
-
+//        if (entity.getType() != 1) {
         if (!TextUtils.isEmpty(entity.getGift_title())) {
             giftTypeTv.setText(entity.getGift_title());
             giftTypeTv.setPadding((int) context.getResources().getDimension(R.dimen.dp_6), 0, 0, 0);
         } else {
             giftTypeTv.setPadding(0, 0, 0, 0);
         }
+//        }
+//        if (entity.getProduct_type().equals("进入付费直播间")) {
+//            giftTypeTv.setText("");
+//            giftTypeTv.setPadding(0, 0, 0, 0);
+//        }
+
         TextView textView = baseViewHolder.getView(R.id.numberBkTv);
         textView.setPadding(0, 0, 0, 0);
         if (entity.getType() == 0) {//0-收入 1-提现

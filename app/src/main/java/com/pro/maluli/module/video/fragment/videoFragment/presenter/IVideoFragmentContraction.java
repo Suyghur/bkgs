@@ -38,6 +38,6 @@ public interface IVideoFragmentContraction extends BaseView {
 
         void shareVideo();
 
-        void dawnLoadVideo(int video_id);
+        void downloadVideo(int video_id);
     }
 }

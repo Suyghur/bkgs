@@ -62,6 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_1"
         android:layout_marginHorizontal="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_20"
         android:background="@color/c_dcdcdc" />
 
     <RelativeLayout

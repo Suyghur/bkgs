@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/smarRef"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:srlEnableLoadMore="true"
-    app:srlEnableRefresh="true">
+    android:fitsSystemWindows="true">
+
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/mine_mian_ll"
@@ -146,9 +150,7 @@
                             android:layout_height="match_parent"
                             app:mvAnimDuration="500"
                             app:mvDirection="top_to_bottom"
-                            app:mvInterval="3000">
-
-                        </com.xj.marqueeview.MarqueeView>
+                            app:mvInterval="3000" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -158,12 +160,10 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-
                         <com.flyco.tablayout.SlidingTabLayout
                             android:id="@+id/homeTpStl"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/dp_44"
-
                             android:layout_weight="1"
                             android:background="@color/white"
                             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -188,25 +188,17 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/c_f9f9f9"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
+            <com.pro.maluli.common.view.myselfView.CustomViewpager
+                android:id="@+id/homeViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.pro.maluli.common.view.myselfView.CustomViewpager
-                    android:id="@+id/homeViewPager"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                android:layout_height="wrap_content" />
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</com.scwang.smart.refresh.layout.SmartRefreshLayout>
 

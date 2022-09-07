@@ -21,12 +21,12 @@ import com.pro.maluli.module.home.oneToOne.queue.OneToOneQueueAct;
 import com.pro.maluli.module.message.lineUp.adapter.LineUpAdapter;
 import com.pro.maluli.module.message.lineUp.presenter.ILineUpContraction;
 import com.pro.maluli.module.message.lineUp.presenter.LineUpPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -75,8 +75,6 @@ public class LineUpAct extends BaseMvpActivity<ILineUpContraction.View, LineUpPr
         setTitleTx("预约排队");
         setBackPress();
         nodataTipsTv.setText("暂无数据");
-        watchSfl.setRefreshHeader(new ClassicsHeader(this));
-        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchListRl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new LineUpAdapter(listBeans, this);
         watchListRl.setAdapter(blackListAdapter);
@@ -90,9 +88,8 @@ public class LineUpAct extends BaseMvpActivity<ILineUpContraction.View, LineUpPr
             }
         });
 
-        /**
-         * 加载更多
-         */
+        watchSfl.setRefreshHeader(new ClassicsHeader(this));
+        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchSfl.setEnableLoadMore(false);
         watchSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -101,9 +98,6 @@ public class LineUpAct extends BaseMvpActivity<ILineUpContraction.View, LineUpPr
                 presenter.getReserveMsg();
             }
         });
-        /**
-         * 下拉刷新
-         */
         watchSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

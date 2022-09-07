@@ -1,10 +1,11 @@
 package com.pro.maluli.module.home.previewLive.presenter;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pro.maluli.common.base.BaseView;
 import com.pro.maluli.common.base.IClear;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
-import com.pro.maluli.common.entity.JoinLiveEntity;
 import com.pro.maluli.common.entity.LivePayInfoEntity;
+
 
 public interface IPreviewLiveContraction extends BaseView {
     interface View extends BaseView {
@@ -12,7 +13,7 @@ public interface IPreviewLiveContraction extends BaseView {
 
         void setAnchorInfo(AnchorInfoEntity data);
 
-        void setJoinLiveSuccess(JoinLiveEntity data);
+        void setJoinLiveSuccess(JSONObject data);
 
         void setGotoPay(LivePayInfoEntity entity);
 

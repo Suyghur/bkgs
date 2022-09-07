@@ -172,7 +172,7 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
      * @param video_id
      */
     @Override
-    public void dawnLoadVideo(int video_id) {
+    public void downloadVideo(int video_id) {
         add(mService.subDownloadVideo(String.valueOf(video_id))
                 .compose(getTransformer())
                 .subscribe(new SuccessConsumer<BaseResponse<Object>>(mView) {
@@ -191,7 +191,6 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         throwable.printStackTrace();
-
                     }
                 }));
     }

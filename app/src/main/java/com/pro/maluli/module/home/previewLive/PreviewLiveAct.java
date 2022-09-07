@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -381,22 +382,21 @@ public class PreviewLiveAct extends BaseMvpActivity<IPreviewLiveContraction.View
     }
 
     @Override
-    public void setJoinLiveSuccess(JoinLiveEntity data) {
-        //       type 直播间类型 (1:一对一, 2:一对多,3:接受预约,4:闲置中)
-        if (data.getStatus_code().equalsIgnoreCase("302")) {
-            ToastUtils.showShort("您已把主播拉黑，无法进入该主播直播间");
+    public void setJoinLiveSuccess(JSONObject jsonObject) {
+        String data = jsonObject.getString("data");
+        JoinLiveEntity entity = JSONObject.parseObject(data, JoinLiveEntity.class);
+        if (entity.getStatus_code().equalsIgnoreCase("302")) {
+            ToastUtils.showShort(jsonObject.getString("message"));
             return;
         }
-        if ("301".equalsIgnoreCase(data.getStatus_code())) {
+        if ("301".equalsIgnoreCase(entity.getStatus_code())) {
             ToastUtils.showShort("为合理控制青少年的使用时间，每日22:00至次日凌晨6:00无法使用百科高手");
             return;
         }
         if (anchorInfoEntity.getIs_live() == 0 && anchorInfoEntity.getIs_edit() != 1) {
             return;
         }
-        gotoStartLive(data);
-
-
+        gotoStartLive(entity);
     }
 
     /**

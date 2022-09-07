@@ -118,7 +118,6 @@ public class YouthPasswordAct extends BaseMvpActivity<IYouthPasswordContraction.
 
     @Override
     public void setYouthSuccess(YouthEntity data) {
-        Logger.d("setYouthSuccess");
         LiveDataBus.get().with(BusKey.EVENT_UPDATE_HOME_DATA).postValue(1);
     }
 

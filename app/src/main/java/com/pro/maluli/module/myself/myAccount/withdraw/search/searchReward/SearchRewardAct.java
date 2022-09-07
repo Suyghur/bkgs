@@ -23,13 +23,14 @@ import com.pro.maluli.common.entity.SearchEntity;
 import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.myselfView.LabelsView;
+import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.adapter.SearchRewardAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.presenter.ISearchRewardContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.searchReward.presenter.SearchRewardPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,21 +89,6 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
     @Override
     public void viewInitialization() {
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
-//        bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-//        /*
-//          加载更多
-//         */
-//        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//                Logger.d("加载更多");
-//                bkDetailSfl.finishLoadMore(1000);
-//                presenter.getBkDetail();
-//            }
-//        });
-        /*
-          下拉刷新
-         */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -213,6 +199,7 @@ public class SearchRewardAct extends BaseMvpActivity<ISearchRewardContraction.Vi
 
     @Override
     public void setBkDetailSuccess(RewardDetailEntity data) {
+        Logger.d("data: " + data.toString());
         bkDetailSfl.finishRefresh();
         bkDetailSfl.finishLoadMore();
 

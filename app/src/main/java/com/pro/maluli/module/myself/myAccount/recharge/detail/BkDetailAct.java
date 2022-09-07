@@ -23,12 +23,12 @@ import com.pro.maluli.module.myself.myAccount.recharge.detail.adapter.BkDetailAd
 import com.pro.maluli.module.myself.myAccount.recharge.detail.presenter.BkDetailPresenter;
 import com.pro.maluli.module.myself.myAccount.recharge.detail.presenter.IBkDetailContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.search.SearchBkDetailAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,19 +91,6 @@ public class BkDetailAct extends BaseMvpActivity<IBkDetailContraction.View, BkDe
         iv_title.setBackground(getResources().getDrawable(R.mipmap.ic_search_hui_bg));
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
         bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-        /**
-         * 加载更多
-         */
-        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                bkDetailSfl.finishLoadMore(1000);
-                presenter.getBkDetail();
-            }
-        });
-        /**
-         * 下拉刷新
-         */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -111,6 +98,14 @@ public class BkDetailAct extends BaseMvpActivity<IBkDetailContraction.View, BkDe
                 bkDetailSfl.finishRefresh(1000);
             }
         });
+        bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                bkDetailSfl.finishLoadMore(1000);
+                presenter.getBkDetail();
+            }
+        });
+
         bkDetailRv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BkDetailAdapter(entities, this);
         bkDetailRv.setAdapter(adapter);

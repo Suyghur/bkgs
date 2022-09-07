@@ -51,7 +51,6 @@ public class StartOneToMoreLivePresenter extends BasePresenter<IStartOneToMoreLi
                 .subscribe(new SuccessConsumer<BaseResponse<ShareLiveEntity>>(mView) {
                     @Override
                     public void onSuccess(BaseResponse<ShareLiveEntity> response) {
-//                        mView.setSeeLiveInfo(response.getData());
                         liveBgShareImg = response.getData().getInfo().getLogo();
                         mView.setShareImgSuccess(response.getData().getInfo().getLogo());
                     }

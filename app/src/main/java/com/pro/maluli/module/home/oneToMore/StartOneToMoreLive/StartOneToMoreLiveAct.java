@@ -45,10 +45,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.netease.lava.nertc.sdk.NERtcCallbackEx;
 import com.netease.lava.nertc.sdk.NERtcConstants;
 import com.netease.lava.nertc.sdk.NERtcEx;
@@ -143,6 +145,7 @@ import com.pro.maluli.common.view.dialogview.bigPicture.CheckBigPictureDialog;
 import com.pro.maluli.common.view.dialogview.gift.GiftDialog;
 import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.SlideLayout;
+import com.pro.maluli.ktx.ext.ToastExtKt;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
 import com.pro.maluli.module.home.oneToMore.StartOneToMoreLive.presenter.IStartOneToMoreLiveContraction;
@@ -157,7 +160,6 @@ import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.myAccount.recharge.RechargeAct;
 import com.pro.maluli.module.socketService.SocketLiveUtils;
 import com.pro.maluli.module.socketService.event.OTOEvent;
-import com.pro.maluli.toolkit.ToastExtKt;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -2817,8 +2819,6 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 
     /**
      * 显示悬浮窗
-     *
-     * @param context
      */
     private void showFloatingView(Context context) {
         // API22以下直接启动
@@ -2844,21 +2844,13 @@ public class StartOneToMoreLiveAct extends BaseMvpActivity<IStartOneToMoreLiveCo
 //                startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
+                    XXPermissions.with(StartOneToMoreLiveAct.this).permission(Permission.SYSTEM_ALERT_WINDOW).request(new OnPermissionCallback() {
                         @Override
-                        public void onGranted() {
-//同意
+                        public void onGranted(List<String> permissions, boolean all) {
                             startVideoService();
-
-                        }
-
-                        @Override
-                        public void onDenied() {//不同意
-
                         }
                     });
                 }
-
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

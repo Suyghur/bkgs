@@ -46,17 +46,17 @@
         <!--                </androidx.core.widget.NestedScrollView>-->
 
         <!--            </com.scwang.smartrefresh.layout.SmartRefreshLayout>-->
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/commentSfl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
-
                 android:id="@+id/dialog_bottomsheet_rv_lists"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_300" />
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </LinearLayout>
 
     <TextView

@@ -553,20 +553,16 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
                         // 1 QQ 2 微信 3朋友圈，4 QQ空间
                         switch (type) {
                             case 1:
-                                ToolUtils.shareURL(handler, QQ.NAME, webUrl,
-                                        anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
+                                ToolUtils.shareURL(handler, QQ.NAME, webUrl, anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
                                 break;
                             case 2:
-                                ToolUtils.shareURL(handler, Wechat.NAME, webUrl,
-                                        anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
+                                ToolUtils.shareURL(handler, Wechat.NAME, webUrl, anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
                                 break;
                             case 3:
-                                ToolUtils.shareURL(handler, WechatMoments.NAME, webUrl,
-                                        anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
+                                ToolUtils.shareURL(handler, WechatMoments.NAME, webUrl, anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
                                 break;
                             case 4:
-                                ToolUtils.shareURL(handler, QZone.NAME, webUrl,
-                                        anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
+                                ToolUtils.shareURL(handler, QZone.NAME, webUrl, anchorInfoEntity.getNickname(), anchorInfoEntity.getAvatar());
                                 break;
                         }
 

@@ -22,12 +22,12 @@ import com.pro.maluli.module.myself.anchorInformation.base.AnchorInformationAct;
 import com.pro.maluli.module.myself.watchlist.adapter.WatchListAdapter;
 import com.pro.maluli.module.myself.watchlist.presenter.IWatchListContraction;
 import com.pro.maluli.module.myself.watchlist.presenter.WatchListPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,17 +76,13 @@ public class WatchListAct extends BaseMvpActivity<IWatchListContraction.View, Wa
     public void viewInitialization() {
         setTitleTx("关注列表");
         setBackPress();
-        watchSfl.setRefreshHeader(new ClassicsHeader(this));
-        watchSfl.setRefreshFooter(new ClassicsFooter(this));
-
         nodataTipsTv.setText("暂无数据");
         watchListRl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new WatchListAdapter(listBeans, this);
         watchListRl.setAdapter(blackListAdapter);
 
-//         先注册需要点击的子控件id（注意，请不要写在convert方法里）
+        // 先注册需要点击的子控件id（注意，请不要写在convert方法里）
         blackListAdapter.addChildClickViewIds(R.id.likeTv);
-// 设置子控件点击监听
         blackListAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -104,9 +100,9 @@ public class WatchListAct extends BaseMvpActivity<IWatchListContraction.View, Wa
                 gotoActivity(AnchorInformationAct.class, false, bundle1);
             }
         });
-        /**
-         * 加载更多
-         */
+
+        watchSfl.setRefreshHeader(new ClassicsHeader(this));
+        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
@@ -114,9 +110,6 @@ public class WatchListAct extends BaseMvpActivity<IWatchListContraction.View, Wa
                 presenter.getWatchListInfo();
             }
         });
-        /**
-         * 下拉刷新
-         */
         watchSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

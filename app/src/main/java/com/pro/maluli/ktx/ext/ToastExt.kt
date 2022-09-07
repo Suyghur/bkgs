@@ -1,4 +1,4 @@
-package com.pro.maluli.toolkit
+package com.pro.maluli.ktx.ext
 
 import android.content.Context
 import android.view.Gravity

@@ -29,12 +29,12 @@ import com.pro.maluli.module.message.reserveMessage.adapter.ReserveMessageAdapte
 import com.pro.maluli.module.message.reserveMessage.presenter.IReserveMessageContraction;
 import com.pro.maluli.module.message.reserveMessage.presenter.ReserveMessagePresenter;
 import com.pro.maluli.module.message.systemNotification.SystemNotificationAct;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -84,11 +84,8 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if (mPopupWindowList != null) {
         SystemNotificationAct.getX = (int) ev.getX();
         SystemNotificationAct.getY = (int) ev.getY();
-//        }
-
         return super.dispatchTouchEvent(ev);
     }
 
@@ -97,10 +94,6 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
         setTitleTx("预约通知");
         setBackPress();
         nodataTipsTv.setText("暂无数据");
-        watchSfl.setRefreshHeader(new ClassicsHeader(this));
-        watchSfl.setRefreshFooter(new ClassicsFooter(this));
-
-
         watchListRl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new ReserveMessageAdapter(listBeans, this);
         watchListRl.setAdapter(blackListAdapter);
@@ -118,9 +111,8 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
             }
         });
 
-        /**
-         * 加载更多
-         */
+        watchSfl.setRefreshHeader(new ClassicsHeader(this));
+        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
@@ -128,9 +120,6 @@ public class ReserveMessageAct extends BaseMvpActivity<IReserveMessageContractio
                 presenter.getReserveMsg();
             }
         });
-        /**
-         * 下拉刷新
-         */
         watchSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

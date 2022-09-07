@@ -1,6 +1,5 @@
 package com.pro.maluli.module.video.videoact.fragment;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -29,7 +28,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -37,6 +35,9 @@ import com.csz.okhttp.http.DownloadCallback;
 import com.csz.okhttp.http.DownloadManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.AnchorInfoEntity;
@@ -59,11 +60,12 @@ import com.pro.maluli.module.video.fragment.recyclerUtils.RecyclerViewUtil;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.IVideoFragmentContraction;
 import com.pro.maluli.module.video.fragment.videoFragment.presenter.VideoFragmentPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
@@ -267,21 +269,20 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
                         if (!ToolUtils.isLoginTips(getActivity(), getChildFragmentManager())) {
                             return;
                         }
-//                        DonwloadSaveImg.httpDownload(videoBean.getVideo().getUrl());//iPath
-                        if (PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                            presenter.dawnLoadVideo(videoBean.getVideo().getVideo_id());
+                        if (XXPermissions.isGranted(getActivity(), Permission.Group.STORAGE)) {
+                            presenter.downloadVideo(videoBean.getVideo().getVideo_id());
                         } else {
-                            PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE).callback(new PermissionUtils.SimpleCallback() {
+                            XXPermissions.with(getActivity()).permission(Permission.Group.STORAGE).request(new OnPermissionCallback() {
                                 @Override
-                                public void onGranted() {
-                                    presenter.dawnLoadVideo(videoBean.getVideo().getVideo_id());
+                                public void onGranted(List<String> permissions, boolean all) {
+                                    presenter.downloadVideo(videoBean.getVideo().getVideo_id());
                                 }
 
                                 @Override
-                                public void onDenied() {
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    OnPermissionCallback.super.onDenied(permissions, never);
                                     ToastUtils.showShort("请开启权限，才能下载");
                                 }
-
                             });
                         }
                     }
@@ -643,19 +644,14 @@ public class VideoAnchorFragment extends BaseMvpFragment<IVideoFragmentContracti
 //                presenter.page = 1;
 //            }
 //        });
-        /**
-         * 加载更多
-         */
-        commentSfl.setOnLoadMoreListener(new com.scwang.smartrefresh.layout.listener.OnLoadMoreListener() {
+
+        commentSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 commentSfl.finishLoadMore(1000);
                 presenter.getCommentVideo(String.valueOf(videoBean.getVideo().getVideo_id()));
             }
         });
-        /**
-         * 下拉刷新
-         */
         commentSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

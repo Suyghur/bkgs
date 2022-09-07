@@ -43,9 +43,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.netease.lava.nertc.sdk.NERtcCallbackEx;
 import com.netease.lava.nertc.sdk.NERtcConstants;
 import com.netease.lava.nertc.sdk.NERtcEx;
@@ -120,6 +122,7 @@ import com.pro.maluli.common.view.dialogview.gift.GiftDialog;
 import com.pro.maluli.common.view.myselfView.MagicTextView;
 import com.pro.maluli.common.view.slideView.ISlideListener;
 import com.pro.maluli.common.view.slideView.SlideLayout;
+import com.pro.maluli.ktx.ext.ToastExtKt;
 import com.pro.maluli.ktx.utils.Logger;
 import com.pro.maluli.module.app.BKGSApplication;
 import com.pro.maluli.module.chatRoom.entity.CustomizeInfoEntity;
@@ -136,7 +139,6 @@ import com.pro.maluli.module.socketService.event.CallEvent;
 import com.pro.maluli.module.socketService.event.OTOEvent;
 import com.pro.maluli.module.socketService.event.OnTwoOneStartEntity;
 import com.pro.maluli.module.video.fragment.recyclerUtils.SoftKeyBoardListener;
-import com.pro.maluli.toolkit.ToastExtKt;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -943,11 +945,10 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         bundle1.putString("TITLE_DIO", "退出直播间");
         if (isAnchor) {
             bundle1.putString("comfirm", "结束直播");
-            bundle1.putString("cancel", "最小化");
         } else {
             bundle1.putString("comfirm", "退出");
-            bundle1.putString("cancel", "取消");
         }
+        bundle1.putString("cancel", "取消");
         baseTipsDialog.setArguments(bundle1);
         baseTipsDialog.show(getSupportFragmentManager(), "BaseTipsDialog");
         baseTipsDialog.setOnTwoBaseTipsListener(new BaseTipsDialog.OnTwoBaseTipsListener() {
@@ -963,13 +964,14 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
             @Override
             public void cancel() {
-                if (isAnchor) {
-                    //最小化
-                    isSmall = true;
-                    showFloatingView(StartLiveAct.this);
-                } else {
-                    baseTipsDialog.dismiss();
-                }
+//                if (isAnchor) {
+//                    //最小化
+//                    isSmall = true;
+//                    showFloatingView(StartLiveAct.this);
+//                } else {
+//                    baseTipsDialog.dismiss();
+//                }
+                baseTipsDialog.dismiss();
             }
         });
     }
@@ -2322,20 +2324,13 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 //                startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
+                    XXPermissions.with(StartLiveAct.this).permission(Permission.SYSTEM_ALERT_WINDOW).request(new OnPermissionCallback() {
                         @Override
-                        public void onGranted() {
-                            // 同意
+                        public void onGranted(List<String> permissions, boolean all) {
                             startVideoService();
-                        }
-
-                        @Override
-                        public void onDenied() {//不同意
-
                         }
                     });
                 }
-
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

@@ -16,12 +16,12 @@ import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.adapter.WithDrawRecordAdapter;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.presenter.IWithDrawRecordContraction;
 import com.pro.maluli.module.myself.myAccount.withdraw.withDrawRecord.presenter.WithDrawRecordPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +66,8 @@ public class WithDrawRecordAct extends BaseMvpActivity<IWithDrawRecordContractio
         setTitleTx("提现记录");
         bkDetailSfl.setRefreshHeader(new ClassicsHeader(this));
         bkDetailSfl.setRefreshFooter(new ClassicsFooter(this));
-        /**
-         * 加载更多
+        /*
+          加载更多
          */
         bkDetailSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -76,7 +76,7 @@ public class WithDrawRecordAct extends BaseMvpActivity<IWithDrawRecordContractio
                 presenter.getSearchHistory();
             }
         });
-        /**
+        /*
          * 下拉刷新
          */
         bkDetailSfl.setOnRefreshListener(new OnRefreshListener() {

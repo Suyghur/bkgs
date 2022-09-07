@@ -9,15 +9,11 @@ buildscript {
         targetSdkVersion = 30
         appTargetSdkVersion = 30
         versionCode = 1
-        versionName = '1.1'
+        versionName = '1.1.20220907'
         sdkSourceCompatibility = 1.8
         sdkTargetCompatibility = 1.8
         appSourceCompatibility = 1.8
         appTargetCompatibility = 1.8
-//        nimOutputDir = "nim-outputs-${versionName}-${getBuildTime()}-${getGitVersion()}"
-        //参考other-sdks 下的版本， 严格按照绑定的NRTC 版本来 ，使用 fetch_nrtc.sh 更新NRTC时会自动修改
-//        nosSdkVersion = '1.0.1'
-//        reportSdkVersion = '2.0.8'
     }
 
     repositories {

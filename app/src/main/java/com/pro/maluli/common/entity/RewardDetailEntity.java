@@ -225,6 +225,48 @@ public class RewardDetailEntity implements Serializable {
             public void setMoney(int money) {
                 this.money = money;
             }
+
+            @Override
+            public String toString() {
+                return "GiftBean{" +
+                        "id=" + id +
+                        ", title='" + title + '\'' +
+                        ", logo='" + logo + '\'' +
+                        ", money=" + money +
+                        '}';
+            }
         }
+
+        @Override
+        public String toString() {
+            return "ListBean{" +
+                    "id=" + id +
+                    ", anchor_id=" + anchor_id +
+                    ", member_id=" + member_id +
+                    ", live_id=" + live_id +
+                    ", flow_type=" + flow_type +
+                    ", product_type='" + product_type + '\'' +
+                    ", gift_id=" + gift_id +
+                    ", money='" + money + '\'' +
+                    ", created_at='" + created_at + '\'' +
+                    ", updated_at='" + updated_at + '\'' +
+                    ", deleted_at=" + deleted_at +
+                    ", nickname='" + nickname + '\'' +
+                    ", avatar='" + avatar + '\'' +
+                    ", gift_title='" + gift_title + '\'' +
+                    ", type=" + type +
+                    ", gift=" + gift +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "RewardDetailEntity{" +
+                "pay_in='" + pay_in + '\'' +
+                ", pay_out='" + pay_out + '\'' +
+                ", total=" + total +
+                ", list=" + list +
+                '}';
     }
 }

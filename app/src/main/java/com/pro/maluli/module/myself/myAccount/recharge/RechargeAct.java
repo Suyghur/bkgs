@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -88,29 +89,24 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
     private int selectPosition;
     private int selectId = -1;
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @SuppressWarnings("unused")
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SDK_PAY_FLAG: {
-                    @SuppressWarnings("unchecked")
-                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
-                    /**
-                     * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
-                     */
-                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
-                    String resultStatus = payResult.getResultStatus();
-                    // 判断resultStatus 为9000则代表支付成功
-                    if (TextUtils.equals(resultStatus, "9000")) {
-                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                        ToastUtils.showShort("充值成功，稍后到账");
-                    } else {
-                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                    }
-                    break;
+            if (msg.what == SDK_PAY_FLAG) {
+                @SuppressWarnings("unchecked")
+                PayResult payResult = new PayResult((Map<String, String>) msg.obj);
+                /*
+                 * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                 */
+                String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                String resultStatus = payResult.getResultStatus();
+                // 判断resultStatus 为9000则代表支付成功
+                // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                if (TextUtils.equals(resultStatus, "9000")) {
+                    // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+                    ToastUtils.showShort("充值成功，稍后到账");
                 }
-                default:
-                    break;
+
             }
         }
 
@@ -264,11 +260,7 @@ public class RechargeAct extends BaseMvpActivity<IRechargeContraction.View, Rech
                 selectPayType(1);
                 break;
             case R.id.successXyIv:
-                if (successXyIv.isSelected()) {
-                    successXyIv.setSelected(false);
-                } else {
-                    successXyIv.setSelected(true);
-                }
+                successXyIv.setSelected(!successXyIv.isSelected());
                 break;
             case R.id.nowPayTv:
                 if (!successXyIv.isSelected()) {

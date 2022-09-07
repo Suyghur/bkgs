@@ -190,7 +190,6 @@ public class ToolUtils {
         weChat.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, final HashMap<String, Object> hashMap) {
-                Logger.d("onComplete: ");
                 if (platform.getDb().exportData() != null) {
                     Message message = new Message();
                     message.what = 2;
@@ -201,8 +200,7 @@ public class ToolUtils {
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                Logger.d("onError: ");
-                String asda = platform.getDb().exportData();
+                Logger.e("onError: " + throwable.getMessage());
             }
 
             @Override
@@ -219,18 +217,20 @@ public class ToolUtils {
      */
     public static void shareImg(Handler handler, String type, String imgUrl) {
         Platform.ShareParams sp = new Platform.ShareParams();
-        sp.setTitle("百科高手");
-//        sp.setTitleUrl("http://sharesdk.cn"); // 标题的超链接
-//        sp.setText("测试分享的文本");
         sp.setShareType(Platform.SHARE_IMAGE);
         sp.setImageUrl(imgUrl);
+        sp.setTitle("百科高手");
+        sp.setTitleUrl(imgUrl); // 标题的超链接
+//        sp.setText("测试分享的文本");
+
 //        sp.setSite("发布分享的网站名称");
 //        sp.setSiteUrl("发布分享网站的地址");
         Platform platform = ShareSDK.getPlatform(type);
         Logger.e("type: " + type);
         // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
         platform.setPlatformActionListener(new PlatformActionListener() {
-            public void onError(Platform arg0, int arg1, Throwable arg2) {
+            public void onError(Platform arg0, int arg1, Throwable throwable) {
+                Logger.e("onError: " + throwable.getMessage());
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
                 Message message = new Message();
                 message.what = 0;
@@ -262,14 +262,15 @@ public class ToolUtils {
         sp.setImageUrl(avatar);
         sp.setUrl(imgurl);
         sp.setTitle(title);
+        sp.setTitleUrl(imgurl);
 //        sp.setSite("发布分享的网站名称");
 //        sp.setSiteUrl("发布分享网站的地址");
         Platform platform = ShareSDK.getPlatform(type);
-        Logger.e("type: " + type);
 // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
         platform.setPlatformActionListener(new PlatformActionListener() {
-            public void onError(Platform arg0, int arg1, Throwable arg2) {
+            public void onError(Platform arg0, int arg1, Throwable throwable) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
+                Logger.e("onError: " + throwable.getMessage());
                 Message message = new Message();
                 message.what = 0;
                 handler.sendMessage(message);
@@ -291,26 +292,25 @@ public class ToolUtils {
     }
 
     public static void shareVideoUrl(Handler handler, String type, String url, String desc, String imgUrl) {
+        Platform platform = ShareSDK.getPlatform(type);
         Platform.ShareParams sp = new Platform.ShareParams();
         sp.setShareType(Platform.SHARE_WEBPAGE);
         sp.setText(desc);
         sp.setImageUrl(imgUrl);
         sp.setUrl(url);
         sp.setTitle("百科高手");
-//        sp.setSite("发布分享的网站名称");
-//        sp.setSiteUrl("发布分享网站的地址");
-        Platform platform = ShareSDK.getPlatform(type);
-        Logger.e("type: " + type);
-// 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
+        sp.setTitleUrl(url);
+        // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
         platform.setPlatformActionListener(new PlatformActionListener() {
-            public void onError(Platform arg0, int arg1, Throwable arg2) {
+            public void onError(Platform p, int code, Throwable throwable) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
+                Logger.e("onError: " + throwable.getMessage());
                 Message message = new Message();
                 message.what = 0;
                 handler.sendMessage(message);
             }
 
-            public void onComplete(Platform arg0, int arg1, HashMap arg2) {
+            public void onComplete(Platform platform, int code, HashMap arg2) {
                 // 分享成功的回调
                 Message message = new Message();
                 message.what = 1;
@@ -321,7 +321,7 @@ public class ToolUtils {
                 // 取消分享的回调
             }
         });
-// 执行图文分享
+        // 执行图文分享
         platform.share(sp);
     }
 
@@ -329,7 +329,6 @@ public class ToolUtils {
      * 分享视频
      */
     public static void shareVideo(Handler handler, String type, String videoUrl, String text, String imgUrl) {
-        Logger.d("shareVideo");
         Platform.ShareParams sp = new Platform.ShareParams();
         sp.setTitle("百科高手");
         sp.setText(text);
@@ -339,11 +338,11 @@ public class ToolUtils {
         sp.setUrl(videoUrl);
 //        sp.setSiteUrl(videoUrl);
         Platform platform = ShareSDK.getPlatform(type);
-        Logger.e("type: " + type);
         // 设置分享事件回调（注：回调放在不能保证在主线程调用，不可以在里面直接处理UI操作）
         platform.setPlatformActionListener(new PlatformActionListener() {
-            public void onError(Platform arg0, int arg1, Throwable arg2) {
+            public void onError(Platform arg0, int arg1, Throwable throwable) {
                 // 失败的回调，arg:平台对象，arg1:表示当前的动作(9表示分享)，arg2:异常信息
+                Logger.e("onError: " + throwable.getMessage());
                 Message message = new Message();
                 message.what = 0;
                 handler.sendMessage(message);
@@ -376,9 +375,6 @@ public class ToolUtils {
 
     /**
      * 是否安装微信
-     *
-     * @param context
-     * @return
      */
     public static boolean isWeixinAvilible(Context context) {
 
@@ -426,9 +422,6 @@ public class ToolUtils {
 
     /**
      * 手机号用****号隐藏中间数字
-     *
-     * @param phone
-     * @return
      */
     public static String settingphone(String phone) {
         String phone_s = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");

@@ -69,8 +69,8 @@ public class PreviewLivePresenter extends BasePresenter<IPreviewLiveContraction.
                         JSONObject jsonObject = JSONObject.parseObject(myJson);
                         String data = jsonObject.getString("data");
                         if (response.getCode() == ResponseCode.SUCCESS) {
-                            JoinLiveEntity entity = JSONObject.parseObject(data, JoinLiveEntity.class);
-                            mView.setJoinLiveSuccess(entity);
+//                            JoinLiveEntity entity = JSONObject.parseObject(data, JoinLiveEntity.class);
+                            mView.setJoinLiveSuccess(jsonObject);
                         } else if (response.getCode() == ResponseCode.PAY_LIVE) {
                             LivePayInfoEntity entity = JSONObject.parseObject(data, LivePayInfoEntity.class);
                             mView.setGotoPay(entity);

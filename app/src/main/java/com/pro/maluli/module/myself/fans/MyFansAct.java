@@ -17,12 +17,12 @@ import com.pro.maluli.common.utils.StatusbarUtils;
 import com.pro.maluli.module.myself.fans.adapter.MyFansAdapter;
 import com.pro.maluli.module.myself.fans.presenter.IMyFansContraction;
 import com.pro.maluli.module.myself.fans.presenter.MyFansPresenter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,24 +69,19 @@ public class MyFansAct extends BaseMvpActivity<IMyFansContraction.View, MyFansPr
         setTitleTx("粉丝列表");
         setBackPress();
         nodataTipsTv.setText("暂无数据");
-        watchSfl.setRefreshHeader(new ClassicsHeader(this));
-        watchSfl.setRefreshFooter(new ClassicsFooter(this));
+
         watchListRl.setLayoutManager(new LinearLayoutManager(this));
         blackListAdapter = new MyFansAdapter(listBeans, this);
         watchListRl.setAdapter(blackListAdapter);
 
-        /**
-         * 加载更多
-         */
+        watchSfl.setRefreshHeader(new ClassicsHeader(this));
+        watchSfl.setRefreshFooter(new ClassicsFooter(this));
         watchSfl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 watchSfl.finishLoadMore(1000);
             }
         });
-        /**
-         * 下拉刷新
-         */
         watchSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

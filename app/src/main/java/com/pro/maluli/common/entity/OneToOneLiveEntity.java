@@ -77,7 +77,7 @@ public class OneToOneLiveEntity implements Serializable {
         private String name;
         private boolean ionotify;
         private boolean muted;
-        private int roomid;
+        private long roomid;
         private String announcement;
         private int queuelevel;
 
@@ -137,11 +137,11 @@ public class OneToOneLiveEntity implements Serializable {
             this.muted = muted;
         }
 
-        public int getRoomid() {
+        public long getRoomid() {
             return roomid;
         }
 
-        public void setRoomid(int roomid) {
+        public void setRoomid(long roomid) {
             this.roomid = roomid;
         }
 
