@@ -1,20 +1,25 @@
 package com.pro.maluli.module.home.base.fragment.child;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.flyco.tablayout.SlidingTabLayout;
+import com.cy.tablayoutniubility.FragPageAdapterVp;
+import com.cy.tablayoutniubility.TabAdapter;
+import com.cy.tablayoutniubility.TabLayoutScroll;
+import com.cy.tablayoutniubility.TabMediatorVp;
+import com.cy.tablayoutniubility.TabViewHolder;
 import com.pro.maluli.R;
 import com.pro.maluli.common.base.BaseMvpFragment;
 import com.pro.maluli.common.entity.HomeInfoEntity;
-import com.pro.maluli.common.view.myselfView.CustomViewpager;
+import com.pro.maluli.ktx.ext.ViewPagerExtKt;
 import com.pro.maluli.module.home.base.fragment.child.presenter.HomeChildPresenter;
 import com.pro.maluli.module.home.base.fragment.child.presenter.IHomeChildContraction;
 import com.pro.maluli.module.home.base.fragment.rechild.ChildLiveListFrag;
@@ -34,14 +39,15 @@ import butterknife.ButterKnife;
 public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, HomeChildPresenter> {
     private static final String ARG_COLUMN_COUNT = "column-count";
     @BindView(R.id.childVP)
-    CustomViewpager childVP;
-    @BindView(R.id.childSPL)
-    SlidingTabLayout childSPL;
+    public ViewPager childVP;
+    @BindView(R.id.childTbs)
+    TabLayoutScroll childTbs;
+
+    FragPageAdapterVp<HomeInfoEntity.CategoryBean.ListBean.ChildBean> fragmentPageAdapter;
+    TabAdapter<HomeInfoEntity.CategoryBean.ListBean.ChildBean> tabAdapter;
 
     List<Fragment> fragments;
-    MyPagerAdapter mAdapter;
     List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> allBeanList;
-    private int selectPosition;
 
     public static Fragment newInstance(List<HomeInfoEntity.CategoryBean.ListBean.ChildBean> children) {
         HomeChildFrag treasureGameFrag = new HomeChildFrag();
@@ -84,22 +90,43 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     public void viewInitialization() {
         ButterKnife.bind(this, mainView);
         fragments = new ArrayList<>();
+//        for (HomeInfoEntity.CategoryBean.ListBean.ChildBean bean : allBeanList) {
+//            fragments.add(ChildLiveListFrag.newInstance(String.valueOf(bean.getId())));
+//
+//        }
+        fragmentPageAdapter = new FragPageAdapterVp<HomeInfoEntity.CategoryBean.ListBean.ChildBean>(getChildFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+            @Override
+            public Fragment createFragment(HomeInfoEntity.CategoryBean.ListBean.ChildBean childBean, int i) {
+                return ChildLiveListFrag.newInstance(String.valueOf(childBean.getId()));
+            }
 
+            @Override
+            public void bindDataToTab(TabViewHolder holder, int i, HomeInfoEntity.CategoryBean.ListBean.ChildBean childBean, boolean isSelected) {
+                TextView textView = holder.getView(R.id.tv_label);
+                if (isSelected) {
+                    textView.setTextColor(Color.parseColor("#8E1D77"));
+                    textView.setBackground(getResources().getDrawable(R.drawable.shape_8e1d77_32_1));
+                } else {
+                    textView.setTextColor(Color.parseColor("#94959B"));
+                    textView.setBackground(getResources().getDrawable(R.drawable.shape_ffffff_10));
+                }
+                textView.setPadding(20, 0, 20, 0);
+                textView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+                textView.setText(childBean.getTitle());
+            }
+
+            @Override
+            public int getTabLayoutID(int i, HomeInfoEntity.CategoryBean.ListBean.ChildBean childBean) {
+                return R.layout.item_home_child_label;
+            }
+        };
+        tabAdapter = new TabMediatorVp<HomeInfoEntity.CategoryBean.ListBean.ChildBean>(childTbs, childVP).setAdapter(fragmentPageAdapter);
+        fragmentPageAdapter.add(allBeanList);
+        tabAdapter.add(allBeanList);
         if (allBeanList.get(0).getTitle().equalsIgnoreCase("全部")) {
-            childSPL.setVisibility(View.GONE);
+            childTbs.setVisibility(View.GONE);
         }
-
-        for (int i = 0; i < allBeanList.size(); i++) {
-            fragments.add(ChildLiveListFrag.newInstance(String.valueOf(allBeanList.get(i).getId())));
-        }
-
-        // new一个适配器
-        mAdapter = new MyPagerAdapter(getChildFragmentManager());
-        // 设置ViewPager与适配器关联
-        childVP.setAdapter(mAdapter);
-        // 设置Tab与ViewPager关联
-        childSPL.setViewPager(childVP);
-        setSelectPagerTab(selectPosition);
+//
         childVP.setCurrentItem(0);
         childVP.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -109,8 +136,10 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
 
             @Override
             public void onPageSelected(int position) {
-                selectPosition = position;
-                setSelectPagerTab(selectPosition);
+                View view = fragmentPageAdapter.getItem(position).getView();
+                if (view != null) {
+                    ViewPagerExtKt.updatePagerHeightForChild(view, childVP);
+                }
             }
 
             @Override
@@ -118,19 +147,6 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
 
             }
         });
-    }
-
-    public void setSelectPagerTab(int selectPosition) {
-        for (int i = 0; i < childSPL.getTabCount(); i++) {
-            if (selectPosition == i) {
-                childSPL.getTitleView(i).setTextColor(getResources().getColor(R.color.c_8e1d77));
-                childSPL.getTitleView(i).setBackground(getResources().getDrawable(R.drawable.shape_8e1d77_32_1));
-            } else {
-                childSPL.getTitleView(i).setTextColor(getResources().getColor(R.color.c_958f94));
-                childSPL.getTitleView(i).setBackground(getResources().getDrawable(R.drawable.shape_ffffff_10));
-            }
-            childSPL.getTitleView(i).setPadding(20, 0, 20, 0);
-        }
     }
 
     @Override
@@ -146,27 +162,5 @@ public class HomeChildFrag extends BaseMvpFragment<IHomeChildContraction.View, H
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-
-            return allBeanList.get(position).getTitle();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
     }
 }

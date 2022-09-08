@@ -34,7 +34,5 @@
             android:text="取消"
             android:textColor="@color/c_342C33"
             android:textSize="@dimen/sp_16" />
-
-
     </LinearLayout>
 </RelativeLayout>

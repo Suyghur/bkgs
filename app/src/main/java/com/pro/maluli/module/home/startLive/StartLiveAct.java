@@ -68,7 +68,6 @@ import com.netease.nim.uikit.business.session.myCustom.extension.CustomAttachmen
 import com.netease.nim.uikit.business.session.myCustom.extension.SystemAttachment;
 import com.netease.nim.uikit.common.ToastHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
-import com.netease.nim.uikit.common.util.log.sdk.wrapper.NimLog;
 import com.netease.nimlib.sdk.AbortableFuture;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -258,7 +257,7 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
             if (data == null) {
                 return;
             }
-            NimLog.i("@CJL/cdn req data", String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
+            Logger.d(String.format("reaDate=%s, failFinal=%s", data.getUrlReqData(), data.getFailFinal()));
         }
     };
     String accid;//信令通话ID
@@ -1000,12 +999,12 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
         comment_list.setLayoutManager(new LinearLayoutManager(this));
         comment_list.setAdapter(adapter);
 
-
 //        action_real_layout.setVisibility(View.GONE);
         actionShowLayout.setVisibility(View.VISIBLE);
         registerObservers(true);
 
-        if (isAnchor) {//主播
+        if (isAnchor) {
+            //主播
             create();
             startNetTv.setVisibility(View.VISIBLE);
             startNetTv.setText("下一位");
@@ -1549,8 +1548,6 @@ public class StartLiveAct extends BaseMvpActivity<IStartLiveContraction.View, St
 
     /**
      * 进入直播见成功，设置提示公告
-     *
-     * @param data
      */
     @Override
     public void setJoinLiveSuccess(JoinLiveEntity data) {

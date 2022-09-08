@@ -136,29 +136,8 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
     MyPagerAdapter mAdapter;
     AnchorInfoEntity anchorInfoEntity;
     UserInfoEntity userInfoEntity;
-    //    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//
-//        int height=huadogn.getHeight();
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_UP:
-//                offset=offset-(int)event.getY();
-//                if (offset>200){
-//                    linearParams.height=400;
-//                    huadogn.setLayoutParams(linearParams);
-//                }else if (offset<-200){
-//                    linearParams.height=800;
-//                    huadogn.setLayoutParams(linearParams);
-//                }
-//
-//                break;
-//            case MotionEvent.ACTION_DOWN:
-//                offset=(int) event.getY();
-//                break;
-//        }
-//        return super.onTouchEvent(event);
-//    }
-//要用Handler回到主线程操作UI，否则会报错
+
+    //要用Handler回到主线程操作UI，否则会报错
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -180,7 +159,6 @@ public class AnchorInformationAct extends BaseMvpActivity<IAnchorInformationCont
     private boolean isFrist;
     private String webUrl, accidAnchor, new_video;
     private int selectPosition = 0;
-    private int offset;
 
     @Override
     public AnchorInformationPresenter initPresenter() {

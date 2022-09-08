@@ -160,21 +160,20 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <com.flyco.tablayout.SlidingTabLayout
-                            android:id="@+id/homeTpStl"
-                            android:layout_width="match_parent"
+                        <com.cy.tablayoutniubility.TabLayoutScroll
+                            android:id="@+id/homeTbs"
+                            android:layout_width="0dp"
                             android:layout_height="@dimen/dp_44"
                             android:layout_weight="1"
-                            android:background="@color/white"
-                            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                            app:tl_indicator_color="@color/c_8e1d77"
-                            app:tl_indicator_corner_radius="@dimen/dp_4"
-                            app:tl_indicator_height="@dimen/dp_2"
-                            app:tl_indicator_width="@dimen/dp_25"
-                            app:tl_tab_space_equal="false"
-                            app:tl_textSelectColor="@color/c_8e1d77"
-                            app:tl_textUnselectColor="@color/c_94959B"
-                            app:tl_textsize="@dimen/sp_16" />
+                            android:background="@color/white">
+
+                            <com.cy.tablayoutniubility.IndicatorLineView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:cy_color_indicator="@color/c_8e1d77" />
+
+                        </com.cy.tablayoutniubility.TabLayoutScroll>
+
 
                         <ImageView
                             android:id="@+id/classificationIv"
@@ -188,17 +187,11 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/homeViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/c_f9f9f9"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <com.pro.maluli.common.view.myselfView.CustomViewpager
-                android:id="@+id/homeViewPager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </androidx.core.widget.NestedScrollView>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 

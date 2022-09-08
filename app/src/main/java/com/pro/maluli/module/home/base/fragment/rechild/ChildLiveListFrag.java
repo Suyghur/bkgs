@@ -98,7 +98,7 @@ public class ChildLiveListFrag extends BaseMvpFragment<IChildLiveListContraction
         // 打开或关闭加载更多功能（默认为true）
         homeLiveAdapter.getLoadMoreModule().setEnableLoadMore(true);
         // 是否自定加载下一页（默认为true）
-        homeLiveAdapter.getLoadMoreModule().setAutoLoadMore(false);
+        homeLiveAdapter.getLoadMoreModule().setAutoLoadMore(true);
         // 当数据不满一页时，是否继续自动加载（默认为true）
         homeLiveAdapter.getLoadMoreModule().setEnableLoadMoreIfNotFullPage(true);
         // 所有数据加载完成后，是否允许点击（默认为false）

@@ -13,6 +13,7 @@ import com.pro.maluli.common.entity.JoinLiveEntity;
 import com.pro.maluli.common.entity.SeeLiveUserEntity;
 import com.pro.maluli.common.entity.ShareLiveEntity;
 import com.pro.maluli.common.networkRequest.SuccessConsumer;
+import com.pro.maluli.ktx.utils.Logger;
 
 import io.reactivex.functions.Consumer;
 

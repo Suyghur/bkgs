@@ -30,7 +30,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         baseInitialization();
         viewInitialization();
         doBusiness();
-
         ActivityTaskManager.getInstance().put(this);
     }
 

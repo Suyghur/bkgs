@@ -136,6 +136,8 @@ public class VideoFragmentPresenter extends BasePresenter<IVideoFragmentContract
                     public void onSuccess(BaseResponse<VideoEntity> response) {
 //                        mView.userInfo();
                         ToastUtils.showShort(response.getMsg());
+                        getCommentVideo(videoId);
+                        getVideo();
                         mView.deleteSuccess();
                     }
                 }, new Consumer<Throwable>() {

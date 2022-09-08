@@ -69,7 +69,6 @@ public class DeleteDialog extends DialogFragment implements View.OnClickListener
         }
     }
 
-
     public interface OnBaseTipsListener {
         void comfirm();//0去申述，2去绑定
     }

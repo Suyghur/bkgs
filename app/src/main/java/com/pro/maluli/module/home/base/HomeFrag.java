@@ -2,6 +2,8 @@ package com.pro.maluli.module.home.base;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -23,10 +25,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.flyco.tablayout.SlidingTabLayout;
+import com.cy.tablayoutniubility.FragPageAdapterVp;
+import com.cy.tablayoutniubility.TabAdapter;
+import com.cy.tablayoutniubility.TabLayoutScroll;
+import com.cy.tablayoutniubility.TabMediatorVp;
+import com.cy.tablayoutniubility.TabViewHolder;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
@@ -40,7 +46,6 @@ import com.pro.maluli.common.utils.ACache;
 import com.pro.maluli.common.utils.ToolUtils;
 import com.pro.maluli.common.view.dialogview.BaseTipsDialog;
 import com.pro.maluli.common.view.dialogview.SelectClassificationDialog;
-import com.pro.maluli.common.view.myselfView.CustomViewpager;
 import com.pro.maluli.ktx.bus.BusKey;
 import com.pro.maluli.ktx.bus.LiveDataBus;
 import com.pro.maluli.ktx.utils.Logger;
@@ -59,11 +64,9 @@ import com.pro.maluli.module.home.oneToOne.base.oneToMore.OneToOneAct;
 import com.pro.maluli.module.home.previewLive.PreviewLiveAct;
 import com.pro.maluli.module.myself.myAccount.appeal.AppealAct;
 import com.pro.maluli.module.myself.setting.youthMode.base.YouthModeAct;
-import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
@@ -89,10 +92,10 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     CoordinatorLayout mine_mian_ll;
     @BindView(R.id.marqueeView)
     MarqueeView marqueeView;
-    @BindView(R.id.homeTpStl)
-    SlidingTabLayout homeTpStl;
+    @BindView(R.id.homeTbs)
+    TabLayoutScroll homeTbs;
     @BindView(R.id.homeViewPager)
-    CustomViewpager homeViewPager;
+    ViewPager homeViewPager;
     @BindView(R.id.viewPager)
     ViewPager bannerViewPager;
     @BindView(R.id.pointLL)
@@ -107,7 +110,8 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     TextView exitTeenagerTv;
     List<Fragment> fragments;
     List<Fragment> topVideoFragment;
-    MyPagerAdapter mAdapter;
+    FragPageAdapterVp<HomeInfoEntity.CategoryBean.ListBean> fragmentPageAdapter;
+    TabAdapter<HomeInfoEntity.CategoryBean.ListBean> tabAdapter;
     TopVideoAdapter topVideoAdapter;
     SimpleTextAdapter simpleTextAdapter;
     // 判断视频是否在播放，如果在播放，则不主动滑动viewpager
@@ -124,8 +128,7 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
     private LastTimeLiveEntity lastTimeLiveEntity;
     //是否下拉刷新了
     private boolean isRefresh = true;
-    private int positionLive = 0;
-    private int one, two;
+    private int one, two = 0;
 
     @Override
     public HomePresenter initPresenter() {
@@ -134,23 +137,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
 
     @Override
     public void onWakeBusiness() {
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-////                userInfoEntity = (UserInfoEntity) ACache.get(mContext).getAsObject(ACEConstant.USERINFO);
-////                if (userInfoEntity != null && userInfoEntity.getIs_teenager() == 1) {
-//                if (BKGSApplication.youthModeStatus == 1) {
-//                    gotoLiveIv.setVisibility(View.GONE);
-//                    exitTeenagerTv.setVisibility(View.VISIBLE);
-//                    if (isFirstResume) {
-//                        presenter.getHomeInfo();
-//                    }
-//                } else {
-//                    gotoLiveIv.setVisibility(View.VISIBLE);
-//                    exitTeenagerTv.setVisibility(View.GONE);
-//                }
-//            }
-//        }, 500);
         if (BKGSApplication.youthModeStatus == 1) {
             gotoLiveIv.setVisibility(View.GONE);
             exitTeenagerTv.setVisibility(View.VISIBLE);
@@ -168,10 +154,8 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         super.onHiddenChanged(hidden);
         isHidden = hidden;
         if (hidden) {
-            if (mHandler != null) {
-                isStartVideo = false;
-                mHandler.removeCallbacksAndMessages(null);
-            }
+            isStartVideo = false;
+            mHandler.removeCallbacksAndMessages(null);
             GSYVideoManager.releaseAllVideos();
 
         } else {
@@ -192,12 +176,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         LiveDataBus.get().with(BusKey.EVENT_UPDATE_HOME_DATA, Integer.class).observe(this, flag -> {
             presenter.getHomeInfo();
         });
-//        LiveDataBus.get().with(BusKey.EVENT_LOAD_VIEW_PAGER_FINISH, Object.class).observe(this, flag -> {
-//            View view = fragments.get(homeViewPager.getCurrentItem()).getView();
-//            if (view != null) {
-//                ViewPagerExtKt.updatePagerHeightForChild(view, homeViewPager);
-//            }
-//        });
     }
 
     public boolean isLogin() {
@@ -214,57 +192,34 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         ButterKnife.bind(this, mainView);
         fragments = new ArrayList<>();
         topVideoFragment = new ArrayList<>();
-        homeViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        fragmentPageAdapter = new FragPageAdapterVp<HomeInfoEntity.CategoryBean.ListBean>(getChildFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
+            public Fragment createFragment(HomeInfoEntity.CategoryBean.ListBean bean, int position) {
+                return fragments.get(position);
             }
 
             @Override
-            public void onPageSelected(int position) {
-//                homeViewPager.resetHeight(position);
-                positionLive = position;
-                for (int i = 0; i < homeTpStl.getTabCount(); i++) {
-                    if (position == i) {
-                        homeTpStl.getTitleView(position).setTextSize(18f);
-                    } else {
-                        homeTpStl.getTitleView(i).setTextSize(16f);
-                    }
+            public void bindDataToTab(TabViewHolder holder, int position, HomeInfoEntity.CategoryBean.ListBean bean, boolean isSelected) {
+                TextView textView = holder.getView(R.id.tv_label);
+                if (isSelected) {
+                    textView.setTextColor(Color.parseColor("#8E1D77"));
+                    textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                } else {
+                    textView.setTextColor(Color.parseColor("#94959B"));
+                    textView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                 }
+                textView.setText(bean.getTitle());
             }
 
             @Override
-            public void onPageScrollStateChanged(int i) {
-
+            public int getTabLayoutID(int position, HomeInfoEntity.CategoryBean.ListBean bean) {
+                return R.layout.item_home_label;
             }
-        });
-
-//        smarRef.setRefreshHeader(new ClassicsHeader(requireActivity()));
-//        smarRef.setRefreshFooter(new ClassicsFooter(requireActivity()));
-//        smarRef.setEnableLoadMore(false);
-//        /*
-//          加载更多
-//         */
-//        smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//                smarRef.finishLoadMore(1000);
-//            }
-//        });
-//        /*
-//          下拉刷新
-//         */
-//        smarRef.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//                presenter.getHomeInfo();
-//                isRefresh = true;
-//                smarRef.finishRefresh(1000);
-//            }
-//        });
+        };
+        tabAdapter = new TabMediatorVp<HomeInfoEntity.CategoryBean.ListBean>(homeTbs, homeViewPager).setAdapter(fragmentPageAdapter);
 
         smarRef.setRefreshHeader(header);
-        smarRef.setRefreshFooter(new ClassicsFooter(requireActivity()));
+        smarRef.setEnableLoadMore(false);
         smarRef.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
@@ -273,13 +228,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                 smarRef.finishRefresh(1000);
             }
         });
-        smarRef.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
-                smarRef.finishLoadMore(1000);
-            }
-        });
-
         GSYVideoManager.instance().setNeedMute(true);
         ACache.get(getActivity()).put("MUTE", "1");
         isStartVideo = true;
@@ -298,7 +246,8 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
                         isFirstResume = false;
                     }
                     homeViewPager.setCurrentItem(one + 1);
-                    HomeChildFrag frag = (HomeChildFrag) fragments.get(homeViewPager.getCurrentItem());
+                    HomeChildFrag frag = (HomeChildFrag) fragments.get(one + 1);
+                    frag.childVP.setCurrentItem(two);
                     frag.searchDuoBaoGoods(two);
                 }
             }
@@ -323,11 +272,9 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             case R.id.classificationIv://跳转到分类
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Home_data", homeInfoEntity);
-//                gotoActivity(ClassiftAct.class, false, bundle);
                 Intent intent = new Intent(requireActivity(), ClassiftAct.class);
                 intent.putExtras(bundle);
                 intentActivityResultLauncher.launch(intent);
-//                startActivityForResult(intent, 110);
                 break;
         }
     }
@@ -434,13 +381,10 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
             Fragment fragment = HomeChildFrag.newInstance(homeInfoEntity.getCategory().getList().get(i).getChildren());
             fragments.add(fragment);
         }
-        //new一个适配器
-        mAdapter = new MyPagerAdapter(requireActivity().getSupportFragmentManager());
-        //设置ViewPager与适配器关联
-        homeViewPager.setAdapter(mAdapter);
-        //设置Tab与ViewPager关联
-        homeTpStl.setViewPager(homeViewPager);
-        homeViewPager.setCurrentItem(positionLive);
+        fragmentPageAdapter.clear();
+        tabAdapter.clear();
+        fragmentPageAdapter.add(homeInfoEntity.getCategory().getList());
+        tabAdapter.add(homeInfoEntity.getCategory().getList());
     }
 
     /**
@@ -715,64 +659,6 @@ public class HomeFrag extends BaseMvpFragment<IHomeContraction.View, HomePresent
         mHandler.removeCallbacksAndMessages(null);
     }
 
-//    private static class MyPagerAdapter extends FragmentStateAdapter {
-//
-//        private final ArrayList<Fragment> list = new ArrayList<>();
-//
-//        public MyPagerAdapter(@NonNull Fragment fragment) {
-//            super(fragment);
-//        }
-//
-//
-//        @NonNull
-//        @Override
-//        public Fragment createFragment(int position) {
-//            return list.get(position);
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return list.size();
-//        }
-//
-//        public void setList(List<Fragment> list) {
-//            this.list.clear();
-//            this.list.addAll(list);
-//            notifyDataSetChanged();
-//        }
-//    }
-
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return homeInfoEntity.getCategory().getList().get(position).getTitle();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getItemPosition(@NonNull Object object) {
-            return PagerAdapter.POSITION_NONE;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            //修改getItemId   不与位置对应  返回List<Fragment>中Fragment的hashCode
-            return fragments.get(position).hashCode();
-        }
-    }
 
     private class TopVideoAdapter extends FragmentPagerAdapter {
         public TopVideoAdapter(FragmentManager fm) {

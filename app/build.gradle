@@ -140,7 +140,7 @@ dependencies {
 //    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
     implementation 'io.github.scwang90:refresh-layout-kernel:2.0.5'
     implementation 'io.github.scwang90:refresh-header-classics:2.0.5'
-    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'
+    implementation 'io.github.scwang90:refresh-footer-classics:2.0.5'
     /**
      * 工具类
      */
@@ -179,14 +179,7 @@ dependencies {
 
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-
-    implementation 'com.github.angcyo.DslTablayout:TabLayout:3.2.4'
-
-    //可选
-    implementation 'com.github.angcyo.DslTablayout:ViewPager1Delegate:3.2.4'
-    //可选
-    implementation 'com.github.angcyo.DslTablayout:ViewPager2Delegate:3.2.4'
-
+    implementation files('libs/tablayoutniubility-release.aar')
 
     /**
      * 圆形图片

@@ -88,7 +88,6 @@ public class ClassiftAct extends BaseMvpActivity<IClassiftContraction.View, Clas
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull @NotNull BaseQuickAdapter<?, ?> adapter, @NonNull @NotNull View view, int position) {
-
                 homeInfoEntity.getCategory().getList().get(selectPosition).setSelect(false);
                 selectPosition = position;
                 homeInfoEntity.getCategory().getList().get(selectPosition).setSelect(true);
@@ -104,6 +103,8 @@ public class ClassiftAct extends BaseMvpActivity<IClassiftContraction.View, Clas
             @Override
             public void onItemClick(@NonNull @NotNull BaseQuickAdapter<?, ?> adapter, @NonNull @NotNull View view, int position) {
                 Intent intent = new Intent();
+                Logger.d(selectPosition);
+                Logger.d(position);
                 intent.putExtra("ClassiftOne", selectPosition);
                 intent.putExtra("ClassiftTwo", position);
                 setResult(Activity.RESULT_OK, intent);

@@ -121,7 +121,6 @@ public class HomeLiveAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.Li
         //        @BindView(R.id.abilityStar)
         StarBar abilityStar;
 
-
         //        @BindView(R.id.horizaotalscrollview)
         HorizontalScrollView horizaotalscrollview;
 
@@ -141,7 +140,6 @@ public class HomeLiveAdapter extends BaseQuickAdapter<LiveListEntity.DataBean.Li
             statusLL = view.findViewById(R.id.statusLL);
             abilityStar = view.findViewById(R.id.abilityStar);
             horizaotalscrollview = view.findViewById(R.id.horizaotalscrollview);
-
         }
     }
 }
